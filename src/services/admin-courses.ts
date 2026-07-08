@@ -1,5 +1,5 @@
 import pb from '@/lib/pocketbase/client'
-import type { Module, Lesson } from '@/types'
+import type { Module, Lesson, Quiz, QuizQuestion } from '@/types'
 
 export const adminGetCourses = () => pb.collection('courses').getFullList({ sort: 'order' })
 
@@ -45,3 +45,32 @@ export const adminGetCourseAccessCount = async (courseId: string): Promise<numbe
     return 0
   }
 }
+
+export const adminGetQuizByModule = async (moduleId: string): Promise<Quiz | null> => {
+  try {
+    return (await pb.collection('quizzes').getFirstListItem(`module = "${moduleId}"`)) as Quiz
+  } catch {
+    return null
+  }
+}
+
+export const adminCreateQuiz = (data: { module: string; title: string; min_score: number }) =>
+  pb.collection('quizzes').create(data)
+
+export const adminUpdateQuiz = (id: string, data: Partial<{ title: string; min_score: number }>) =>
+  pb.collection('quizzes').update(id, data)
+
+export const adminDeleteQuiz = (id: string) => pb.collection('quizzes').delete(id)
+
+export const adminGetQuizQuestions = (quizId: string): Promise<QuizQuestion[]> =>
+  pb
+    .collection('quiz_questions')
+    .getFullList({ filter: `quiz = "${quizId}"`, sort: 'created' }) as Promise<QuizQuestion[]>
+
+export const adminCreateQuizQuestion = (data: Record<string, any>) =>
+  pb.collection('quiz_questions').create(data)
+
+export const adminUpdateQuizQuestion = (id: string, data: Record<string, any>) =>
+  pb.collection('quiz_questions').update(id, data)
+
+export const adminDeleteQuizQuestion = (id: string) => pb.collection('quiz_questions').delete(id)

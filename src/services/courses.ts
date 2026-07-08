@@ -6,6 +6,8 @@ import type {
   Module,
   Lesson,
   UserProgress,
+  Quiz,
+  QuizResult,
 } from '@/types'
 
 export const getCourses = (): Promise<Course[]> =>
@@ -69,5 +71,19 @@ export async function getCourseDetailData(
     .collection('user_progress')
     .getFullList({ filter: `user = "${userId}"` })) as UserProgress[]
 
-  return { course, modules, lessons, progress }
+  const quizzes =
+    moduleIds.length > 0
+      ? ((await pb.collection('quizzes').getFullList({
+          filter: moduleIds.map((id) => `module = "${id}"`).join(' || '),
+        })) as Quiz[])
+      : []
+  const quizIds = quizzes.map((q) => q.id)
+  const quizResults =
+    quizIds.length > 0
+      ? ((await pb.collection('quiz_results').getFullList({
+          filter: `user = "${userId}" && (${quizIds.map((id) => `quiz = "${id}"`).join(' || ')})`,
+        })) as QuizResult[])
+      : []
+
+  return { course, modules, lessons, progress, quizzes, quizResults }
 }

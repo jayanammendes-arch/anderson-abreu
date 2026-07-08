@@ -103,6 +103,8 @@ export interface CourseDetailData {
   modules: Module[]
   lessons: Lesson[]
   progress: UserProgress[]
+  quizzes: Quiz[]
+  quizResults: QuizResult[]
 }
 
 export interface UserAccess {
@@ -112,6 +114,56 @@ export interface UserAccess {
   created: string
   updated: string
   expand?: { course?: Course }
+}
+
+export interface Quiz {
+  id: string
+  module: string
+  title: string
+  min_score: number
+  created: string
+  updated: string
+}
+
+export interface QuizQuestion {
+  id: string
+  quiz: string
+  question: string
+  options: string[]
+  correct_answer: number
+  created: string
+  updated: string
+}
+
+export interface QuizResult {
+  id: string
+  user: string
+  quiz: string
+  score: number
+  total: number
+  passed: boolean
+  created: string
+  updated: string
+}
+
+export interface LessonMaterial {
+  id: string
+  lesson: string
+  file: string
+  label: string
+  created: string
+  updated: string
+}
+
+export interface LessonComment {
+  id: string
+  lesson: string
+  user: string
+  content: string
+  reactions: number
+  created: string
+  updated: string
+  expand?: { user?: { id: string; name: string; avatar: string } }
 }
 
 export interface PlatformSettings {
