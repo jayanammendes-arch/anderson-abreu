@@ -1,91 +1,102 @@
 import { Link, useLocation } from 'react-router-dom'
+import { useAuth } from '@/hooks/use-auth'
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
-  SidebarTrigger,
+  SidebarMenuButton,
 } from '@/components/ui/sidebar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
-  BookOpen,
-  HelpCircle,
-  Home,
+  Brain,
   LayoutDashboard,
+  BookOpen,
   ShoppingBag,
-  Store,
   Trophy,
+  HelpCircle,
+  LogOut,
 } from 'lucide-react'
 
-const navigation = [
-  { name: 'Início', href: '/', icon: Home },
-  { name: 'Produtos à Venda', href: '/produtos', icon: Store },
-  { name: 'Minhas Compras', href: '/compras', icon: BookOpen },
-  { name: 'Pontos e Ranking', href: '/ranking', icon: Trophy },
-  { name: 'Dúvidas Frequentes', href: '/faq', icon: HelpCircle },
+const navItems = [
+  { title: 'Dashboard', href: '/', icon: LayoutDashboard },
+  { title: 'Produtos', href: '/produtos', icon: BookOpen },
+  { title: 'Compras', href: '/compras', icon: ShoppingBag },
+  { title: 'Ranking', href: '/ranking', icon: Trophy },
+  { title: 'FAQ', href: '/faq', icon: HelpCircle },
 ]
 
 export function AppSidebar() {
+  const { user, signOut } = useAuth()
   const location = useLocation()
 
+  const userName = user?.name || 'Aluno'
+  const initials = userName
+    .split(' ')
+    .map((n: string) => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2)
+  const avatarUrl = user?.avatar
+    ? `${import.meta.env.VITE_POCKETBASE_URL}/api/files/users/${user.id}/${user.avatar}`
+    : undefined
+
   return (
-    <Sidebar variant="inset" className="border-r-border/50">
-      <SidebarHeader className="flex h-16 items-center justify-between px-4 pt-4 pb-2">
-        <div className="flex items-center gap-2 overflow-hidden px-2">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary">
-            <span className="text-primary-foreground font-bold text-lg">A</span>
+    <Sidebar className="border-r border-white/10">
+      <SidebarHeader>
+        <div className="flex items-center gap-3 px-2 py-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
+            <Brain className="h-5 w-5 text-white" />
           </div>
-          <span className="truncate font-semibold text-lg tracking-tight group-data-[collapsible=icon]:hidden">
-            Anderson Abreu
-          </span>
+          <div>
+            <span className="text-base font-bold text-white">Anderson Abreu</span>
+            <p className="text-xs text-muted-foreground">Área do Aluno</p>
+          </div>
         </div>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupContent className="pt-4">
+          <SidebarGroupLabel className="text-white/40">Menu</SidebarGroupLabel>
+          <SidebarGroupContent>
             <SidebarMenu>
-              {navigation.map((item) => {
-                const isActive = location.pathname === item.href
-                return (
-                  <SidebarMenuItem key={item.name}>
-                    <SidebarMenuButton
-                      asChild
-                      isActive={isActive}
-                      tooltip={item.name}
-                      className="hover:text-primary transition-colors data-[active=true]:bg-primary/10 data-[active=true]:text-primary"
-                    >
-                      <Link to={item.href}>
-                        <item.icon className="h-5 w-5" />
-                        <span>{item.name}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                )
-              })}
+              {navItems.map((item) => (
+                <SidebarMenuItem key={item.href}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={location.pathname === item.href}
+                    className="text-white/70 hover:bg-white/5 hover:text-white"
+                  >
+                    <Link to={item.href}>
+                      <item.icon className="h-4 w-4" />
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="p-4">
-        <div className="rounded-xl bg-card p-4 group-data-[collapsible=icon]:hidden border border-white/5">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 shrink-0 rounded-full bg-gradient-to-br from-primary to-yellow-600 flex items-center justify-center">
-              <Trophy className="h-5 w-5 text-primary-foreground" />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-foreground">Ranking Atual</p>
-              <p className="text-xs text-muted-foreground">Posição #12 de 3.4k</p>
-            </div>
+      <SidebarFooter>
+        <div className="flex items-center gap-3 rounded-lg p-2">
+          <Avatar className="h-9 w-9">
+            {avatarUrl && <AvatarImage src={avatarUrl} alt={userName} />}
+            <AvatarFallback className="bg-primary text-xs text-white">{initials}</AvatarFallback>
+          </Avatar>
+          <div className="flex-1 overflow-hidden">
+            <p className="truncate text-sm font-medium text-white">{userName}</p>
+            <p className="truncate text-xs text-muted-foreground">{user?.email}</p>
           </div>
+          <button onClick={signOut} className="text-white/50 hover:text-white" title="Sair">
+            <LogOut className="h-4 w-4" />
+          </button>
         </div>
       </SidebarFooter>
-      <div className="absolute -right-3 top-16 z-20 hidden md:block">
-        <SidebarTrigger className="h-6 w-6 rounded-full border border-border bg-background shadow-md hover:bg-accent" />
-      </div>
     </Sidebar>
   )
 }
