@@ -102,18 +102,6 @@ export function AppSidebar() {
           </SidebarGroup>
         )}
       </SidebarContent>
-      <SidebarFooter className="border-t p-4">
-        <div className="flex items-center gap-2">
-          <Avatar className="h-8 w-8">
-            <AvatarImage src={avatarUrl} />
-            <AvatarFallback>{getInitials(user?.name || '')}</AvatarFallback>
-          </Avatar>
-          <div className="flex flex-col">
-            <span className="text-sm font-medium">{user?.name || 'Aluno'}</span>
-            <span className="text-xs text-muted-foreground">{user?.email}</span>
-          </div>
-        </div>
-      </SidebarFooter>
     </Sidebar>
   )
 }
