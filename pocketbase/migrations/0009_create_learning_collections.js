@@ -53,7 +53,7 @@ migrate(
           },
           { name: 'question', type: 'text', required: true },
           { name: 'options', type: 'json', required: true },
-          { name: 'correct_answer', type: 'number', required: true },
+          { name: 'correct_answer', type: 'number', required: false },
           { name: 'created', type: 'autodate', onCreate: true, onUpdate: false },
           { name: 'updated', type: 'autodate', onCreate: true, onUpdate: true },
         ],

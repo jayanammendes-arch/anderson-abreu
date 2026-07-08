@@ -15,12 +15,10 @@ export const getQuizQuestions = (quizId: string): Promise<QuizQuestion[]> =>
     .getFullList({ filter: `quiz = "${quizId}"`, sort: 'created' }) as Promise<QuizQuestion[]>
 
 export const getQuizResults = (userId: string, quizId: string): Promise<QuizResult[]> =>
-  pb
-    .collection('quiz_results')
-    .getFullList({
-      filter: `user = "${userId}" && quiz = "${quizId}"`,
-      sort: '-created',
-    }) as Promise<QuizResult[]>
+  pb.collection('quiz_results').getFullList({
+    filter: `user = "${userId}" && quiz = "${quizId}"`,
+    sort: '-created',
+  }) as Promise<QuizResult[]>
 
 export const saveQuizResult = (data: {
   user: string
