@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { Badge } from '@/components/ui/badge'
-import { PlayCircle, Download, FileText, Certificate } from 'lucide-react'
+import { PlayCircle, Download, FileText, Award } from 'lucide-react'
 
 const purchasedCourses = [
   {
@@ -114,7 +114,7 @@ export default function Purchases() {
                         size="sm"
                         className="text-green-500 border-green-500/30 hover:bg-green-500/10 ml-auto"
                       >
-                        <Certificate className="mr-2 h-4 w-4" /> Emitir Certificado
+                        <Award className="mr-2 h-4 w-4" /> Emitir Certificado
                       </Button>
                     )}
                   </div>
