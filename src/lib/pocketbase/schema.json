@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-07-08T21:48:53.417Z",
+  "generatedAt": "2026-07-08T22:04:43.134Z",
   "collections": [
     {
       "name": "users",
       "type": "auth",
       "apiRules": {
-        "list": "id = @request.auth.id",
-        "view": "id = @request.auth.id",
-        "create": "",
+        "list": "id = @request.auth.id || @request.auth.is_admin = true",
+        "view": "id = @request.auth.id || @request.auth.is_admin = true",
+        "create": "(@request.body.is_admin != true) || (@request.auth.is_admin = true)",
         "update": "id = @request.auth.id",
         "delete": "id = @request.auth.id"
       },
@@ -37,6 +37,12 @@
           "required": false,
           "system": false,
           "autodateTriggers": ["onCreate", "onUpdate"]
+        },
+        {
+          "name": "is_admin",
+          "type": "bool",
+          "required": false,
+          "system": false
         }
       ],
       "indexes": [
@@ -50,9 +56,9 @@
       "apiRules": {
         "list": "",
         "view": "",
-        "create": null,
-        "update": null,
-        "delete": null
+        "create": "@request.auth.is_admin = true",
+        "update": "@request.auth.is_admin = true",
+        "delete": "@request.auth.is_admin = true"
       },
       "fields": [
         {
@@ -128,6 +134,19 @@
           "type": "text",
           "required": false,
           "system": false
+        },
+        {
+          "name": "discount_percentage",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "visibility",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": ["home", "templates", "both"]
         }
       ],
       "indexes": [
@@ -141,9 +160,9 @@
       "apiRules": {
         "list": "@request.auth.id != ''",
         "view": "@request.auth.id != ''",
-        "create": null,
-        "update": null,
-        "delete": null
+        "create": "@request.auth.is_admin = true",
+        "update": "@request.auth.is_admin = true",
+        "delete": "@request.auth.is_admin = true"
       },
       "fields": [
         {
@@ -191,9 +210,9 @@
       "apiRules": {
         "list": "@request.auth.id != ''",
         "view": "@request.auth.id != ''",
-        "create": null,
-        "update": null,
-        "delete": null
+        "create": "@request.auth.is_admin = true",
+        "update": "@request.auth.is_admin = true",
+        "delete": "@request.auth.is_admin = true"
       },
       "fields": [
         {
@@ -395,6 +414,118 @@
           "name": "message",
           "type": "text",
           "required": true,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "name": "user_access",
+      "type": "base",
+      "apiRules": {
+        "list": "@request.auth.id != '' && (user = @request.auth.id || @request.auth.is_admin = true)",
+        "view": "@request.auth.id != '' && (user = @request.auth.id || @request.auth.is_admin = true)",
+        "create": "@request.auth.is_admin = true",
+        "update": "@request.auth.is_admin = true",
+        "delete": "@request.auth.is_admin = true"
+      },
+      "fields": [
+        {
+          "name": "user",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "users"
+        },
+        {
+          "name": "course",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "courses"
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": ["CREATE UNIQUE INDEX idx_user_access_user_course ON user_access (user, course)"]
+    },
+    {
+      "name": "platform_settings",
+      "type": "base",
+      "apiRules": {
+        "list": "",
+        "view": "",
+        "create": "@request.auth.is_admin = true",
+        "update": "@request.auth.is_admin = true",
+        "delete": "@request.auth.is_admin = true"
+      },
+      "fields": [
+        {
+          "name": "company_name",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "logo",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "primary_color",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "landing_page_json",
+          "type": "json",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "login_image",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "login_text",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "login_gradient",
+          "type": "text",
+          "required": false,
           "system": false
         },
         {
