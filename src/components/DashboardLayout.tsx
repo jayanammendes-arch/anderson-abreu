@@ -1,4 +1,4 @@
-import { Navigate, Outlet, useLocation } from 'react-router-dom'
+import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/hooks/use-auth'
 import { AppSidebar } from '@/components/AppSidebar'
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar'
@@ -23,6 +23,7 @@ const pageTitles: Record<string, string> = {
 export function DashboardLayout() {
   const { isAuthenticated, loading, user, signOut } = useAuth()
   const location = useLocation()
+  const navigate = useNavigate()
 
   if (loading) {
     return (
@@ -70,7 +71,10 @@ export function DashboardLayout() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="border-white/10 bg-card">
                 <DropdownMenuItem
-                  onClick={signOut}
+                  onClick={() => {
+                    signOut()
+                    navigate('/login')
+                  }}
                   className="cursor-pointer text-white hover:bg-white/5"
                 >
                   <LogOut className="mr-2 h-4 w-4" />

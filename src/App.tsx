@@ -10,6 +10,7 @@ import Products from '@/pages/Products'
 import Purchases from '@/pages/Purchases'
 import Ranking from '@/pages/Ranking'
 import Faq from '@/pages/Faq'
+import CourseDetail from '@/pages/CourseDetail'
 import NotFound from '@/pages/NotFound'
 
 const App = () => (
@@ -26,6 +27,7 @@ const App = () => (
             <Route path="compras" element={<Purchases />} />
             <Route path="ranking" element={<Ranking />} />
             <Route path="faq" element={<Faq />} />
+            <Route path="curso/:courseId" element={<CourseDetail />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

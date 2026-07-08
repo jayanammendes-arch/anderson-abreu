@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/hooks/use-auth'
 import {
   Sidebar,
@@ -34,6 +34,7 @@ const navItems = [
 export function AppSidebar() {
   const { user, signOut } = useAuth()
   const location = useLocation()
+  const navigate = useNavigate()
 
   const userName = user?.name || 'Aluno'
   const initials = userName
@@ -92,7 +93,14 @@ export function AppSidebar() {
             <p className="truncate text-sm font-medium text-white">{userName}</p>
             <p className="truncate text-xs text-muted-foreground">{user?.email}</p>
           </div>
-          <button onClick={signOut} className="text-white/50 hover:text-white" title="Sair">
+          <button
+            onClick={() => {
+              signOut()
+              navigate('/login')
+            }}
+            className="text-white/50 hover:text-white"
+            title="Sair"
+          >
             <LogOut className="h-4 w-4" />
           </button>
         </div>
