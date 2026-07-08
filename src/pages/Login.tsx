@@ -52,7 +52,7 @@ export default function Login() {
       </div>
     )
   }
-  if (isAuthenticated) return <Navigate to="/" replace />
+  if (isAuthenticated) return <Navigate to="/dashboard" replace />
 
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault()
@@ -63,7 +63,7 @@ export default function Login() {
       setFieldErrors(extractFieldErrors(error))
       toast.error(getErrorMessage(error))
     } else {
-      navigate('/')
+      navigate('/dashboard')
     }
     setSubmitting(false)
   }
@@ -81,7 +81,7 @@ export default function Login() {
       setFieldErrors(extractFieldErrors(error))
       toast.error(getErrorMessage(error))
     } else {
-      navigate('/')
+      navigate('/dashboard')
     }
     setSubmitting(false)
   }

@@ -24,11 +24,11 @@ import {
 } from 'lucide-react'
 
 const navItems = [
-  { title: 'Dashboard', href: '/', icon: LayoutDashboard },
-  { title: 'Produtos', href: '/produtos', icon: BookOpen },
-  { title: 'Compras', href: '/compras', icon: ShoppingBag },
-  { title: 'Ranking', href: '/ranking', icon: Trophy },
-  { title: 'FAQ', href: '/faq', icon: HelpCircle },
+  { title: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+  { title: 'Produtos', href: '/dashboard/produtos', icon: BookOpen },
+  { title: 'Compras', href: '/dashboard/compras', icon: ShoppingBag },
+  { title: 'Ranking', href: '/dashboard/ranking', icon: Trophy },
+  { title: 'FAQ', href: '/dashboard/faq', icon: HelpCircle },
 ]
 
 export function AppSidebar() {

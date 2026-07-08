@@ -60,12 +60,10 @@ export async function getCourseDetailData(
   const moduleIds = modules.map((m) => m.id)
   const lessons =
     moduleIds.length > 0
-      ? ((await pb
-          .collection('lessons')
-          .getFullList({
-            filter: moduleIds.map((id) => `module = "${id}"`).join(' || '),
-            sort: 'order',
-          })) as Lesson[])
+      ? ((await pb.collection('lessons').getFullList({
+          filter: moduleIds.map((id) => `module = "${id}"`).join(' || '),
+          sort: 'order',
+        })) as Lesson[])
       : []
   const progress = (await pb
     .collection('user_progress')

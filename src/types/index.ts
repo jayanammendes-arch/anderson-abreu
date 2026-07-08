@@ -6,6 +6,31 @@ export interface Course {
   category: string
   is_available: boolean
   order: number
+  price?: number
+  discount_price?: number
+  external_buy_url?: string
+  short_description?: string
+  created: string
+  updated: string
+}
+
+export interface Event {
+  id: string
+  title: string
+  date: string
+  description: string
+  location: string
+  type: 'presencial' | 'online'
+  created: string
+  updated: string
+}
+
+export interface ContactSubmission {
+  id: string
+  name: string
+  email: string
+  phone: string
+  message: string
   created: string
   updated: string
 }

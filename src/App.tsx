@@ -6,6 +6,8 @@ import { AuthProvider } from '@/hooks/use-auth'
 import { DashboardLayout } from '@/components/DashboardLayout'
 import Index from '@/pages/Index'
 import Login from '@/pages/Login'
+import Landing from '@/pages/Landing'
+import AdminAgenda from '@/pages/admin/AdminAgenda'
 import Products from '@/pages/Products'
 import Purchases from '@/pages/Purchases'
 import Ranking from '@/pages/Ranking'
@@ -20,8 +22,10 @@ const App = () => (
         <Toaster />
         <Sonner />
         <Routes>
+          <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/" element={<DashboardLayout />}>
+          <Route path="/admin/agenda" element={<AdminAgenda />} />
+          <Route path="/dashboard" element={<DashboardLayout />}>
             <Route index element={<Index />} />
             <Route path="produtos" element={<Products />} />
             <Route path="compras" element={<Purchases />} />

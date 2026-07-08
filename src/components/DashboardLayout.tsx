@@ -13,11 +13,11 @@ import {
 import { LogOut, Loader2, Bell } from 'lucide-react'
 
 const pageTitles: Record<string, string> = {
-  '/': 'Dashboard',
-  '/produtos': 'Produtos',
-  '/compras': 'Compras',
-  '/ranking': 'Ranking',
-  '/faq': 'FAQ',
+  '/dashboard': 'Dashboard',
+  '/dashboard/produtos': 'Produtos',
+  '/dashboard/compras': 'Compras',
+  '/dashboard/ranking': 'Ranking',
+  '/dashboard/faq': 'FAQ',
 }
 
 export function DashboardLayout() {
