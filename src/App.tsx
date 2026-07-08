@@ -17,8 +17,8 @@ import AdminConfigHub from '@/pages/admin/AdminConfigHub'
 import AdminAgenda from '@/pages/admin/AdminAgenda'
 import Products from '@/pages/Products'
 import Purchases from '@/pages/Purchases'
-import Ranking from '@/pages/Ranking'
 import Faq from '@/pages/Faq'
+import AdminFaqs from '@/pages/admin/AdminFaqs'
 import CourseDetail from '@/pages/CourseDetail'
 import Profile from '@/pages/Profile'
 import Certificates from '@/pages/Certificates'
@@ -42,12 +42,12 @@ const App = () => (
               <Route path="configuracoes" element={<AdminConfigHub />} />
               <Route path="plataforma" element={<AdminSettings />} />
               <Route path="agenda" element={<AdminAgenda />} />
+              <Route path="faqs" element={<AdminFaqs />} />
             </Route>
             <Route path="/dashboard" element={<DashboardLayout />}>
               <Route index element={<Index />} />
               <Route path="produtos" element={<Products />} />
               <Route path="compras" element={<Purchases />} />
-              <Route path="ranking" element={<Ranking />} />
               <Route path="faq" element={<Faq />} />
               <Route path="profile" element={<Profile />} />
               <Route path="certificates" element={<Certificates />} />

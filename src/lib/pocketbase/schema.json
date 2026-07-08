@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-08T22:41:29.845Z",
+  "generatedAt": "2026-07-08T23:12:53.106Z",
   "collections": [
     {
       "name": "users",
@@ -547,9 +547,103 @@
           "required": false,
           "system": false,
           "autodateTriggers": ["onCreate", "onUpdate"]
+        },
+        {
+          "name": "whatsapp_number",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "instagram_handle",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "support_email",
+          "type": "email",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "agenda_highlight_title",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "about_content",
+          "type": "editor",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "about_image",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "home_hero_image",
+          "type": "file",
+          "required": false,
+          "system": false
         }
       ],
       "indexes": []
+    },
+    {
+      "name": "faqs",
+      "type": "base",
+      "apiRules": {
+        "list": "",
+        "view": "",
+        "create": "@request.auth.is_admin = true",
+        "update": "@request.auth.is_admin = true",
+        "delete": "@request.auth.is_admin = true"
+      },
+      "fields": [
+        {
+          "name": "question",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "answer",
+          "type": "editor",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "category",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "order",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": ["CREATE INDEX idx_faqs_order ON faqs (order)"]
     }
   ]
 }

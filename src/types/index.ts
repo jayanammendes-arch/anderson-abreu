@@ -38,6 +38,28 @@ export interface ContactSubmission {
   updated: string
 }
 
+export interface FAQ {
+  id: string
+  question: string
+  answer: string
+  category: string
+  order: number
+  created: string
+  updated: string
+}
+
+export interface LandingPageJson {
+  home?: {
+    badge?: string
+    title?: string
+    titleHighlight?: string
+    subtitle?: string
+    primaryButtonText?: string
+    secondaryButtonText?: string
+  }
+  stats?: Array<{ value: string; label: string }>
+}
+
 export interface Module {
   id: string
   course: string
@@ -97,10 +119,17 @@ export interface PlatformSettings {
   company_name: string
   logo: string
   primary_color: string
-  landing_page_json: any
+  landing_page_json: LandingPageJson | null
   login_image: string
   login_text: string
   login_gradient: string
+  whatsapp_number: string
+  instagram_handle: string
+  support_email: string
+  agenda_highlight_title: string
+  about_content: string
+  about_image: string
+  home_hero_image: string
   created: string
   updated: string
 }

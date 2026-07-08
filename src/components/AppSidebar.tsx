@@ -13,21 +13,12 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import {
-  Home,
-  Package,
-  ShoppingBag,
-  Trophy,
-  HelpCircle,
-  GraduationCap,
-  Settings,
-} from 'lucide-react'
+import { Home, Package, ShoppingBag, HelpCircle, GraduationCap, Settings } from 'lucide-react'
 
 const studentNavItems = [
   { title: 'Início', href: '/dashboard', icon: Home },
   { title: 'Produtos', href: '/dashboard/produtos', icon: Package },
   { title: 'Compras', href: '/dashboard/compras', icon: ShoppingBag },
-  { title: 'Ranking', href: '/dashboard/ranking', icon: Trophy },
   { title: 'FAQ', href: '/dashboard/faq', icon: HelpCircle },
 ]
 

@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { useAuth } from '@/hooks/use-auth'
 import { Button } from '@/components/ui/button'
@@ -110,7 +110,7 @@ export default function Login() {
     <div className="flex min-h-screen bg-black">
       <div className="flex w-full flex-col justify-center px-6 py-12 lg:max-w-xl lg:px-12 xl:px-16">
         <div className="mx-auto w-full max-w-sm">
-          <div className="mb-8 flex items-center gap-3">
+          <Link to="/" className="mb-8 flex items-center gap-3 transition-opacity hover:opacity-80">
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary">
               <Brain className="h-6 w-6 text-white" />
             </div>
@@ -118,7 +118,7 @@ export default function Login() {
               <h1 className="text-xl font-bold text-white">Anderson Abreu</h1>
               <p className="text-sm text-muted-foreground">Área do Aluno</p>
             </div>
-          </div>
+          </Link>
 
           {mode === 'recovery' && recoverySent ? (
             <div className="animate-fade-in-up space-y-6">
@@ -317,15 +317,18 @@ export default function Login() {
       <div className="relative hidden items-center justify-center overflow-hidden lg:flex lg:flex-1 bg-gradient-to-b from-blue-900 via-blue-950 to-black">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-900/40 via-transparent to-black/60" />
         <div className="relative z-10 flex flex-col items-center gap-8 px-12 text-center">
-          <div className="flex h-24 w-24 items-center justify-center rounded-3xl border border-white/10 bg-white/5 backdrop-blur-sm">
+          <Link
+            to="/"
+            className="flex h-24 w-24 items-center justify-center rounded-3xl border border-white/10 bg-white/5 backdrop-blur-sm transition-opacity hover:opacity-80"
+          >
             <Brain className="h-12 w-12 text-white" />
-          </div>
-          <div className="space-y-3">
+          </Link>
+          <Link to="/" className="space-y-3 transition-opacity hover:opacity-80">
             <h2 className="text-3xl font-bold text-white">Anderson Abreu</h2>
             <p className="max-w-md text-lg text-white/60">
               Hipnose, inteligência emocional e mentoria de alta performance
             </p>
-          </div>
+          </Link>
           <div className="flex gap-8 pt-4">
             <div className="text-center">
               <div className="text-2xl font-bold text-white">+10k</div>

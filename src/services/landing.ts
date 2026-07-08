@@ -1,5 +1,5 @@
 import pb from '@/lib/pocketbase/client'
-import type { Event, Course } from '@/types'
+import type { Event, Course, FAQ, PlatformSettings } from '@/types'
 
 export const getEvents = (): Promise<Event[]> =>
   pb.collection('events').getFullList({ sort: '-date' })
@@ -28,3 +28,38 @@ export const submitContact = (data: {
 
 export const getPublicCourses = (): Promise<Course[]> =>
   pb.collection('courses').getFullList({ sort: 'order' })
+
+export const getFaqs = (): Promise<FAQ[]> => pb.collection('faqs').getFullList({ sort: 'order' })
+
+export const getPlatformSettingsPublic = async (): Promise<PlatformSettings | null> => {
+  try {
+    const records = await pb.collection('platform_settings').getFullList()
+    return records[0] || null
+  } catch {
+    return null
+  }
+}
+
+export function getAboutImageUrl(settings: { id: string; about_image?: string }): string | null {
+  if (settings.about_image) {
+    return `${import.meta.env.VITE_POCKETBASE_URL}/api/files/platform_settings/${settings.id}/${settings.about_image}`
+  }
+  return null
+}
+
+export function getHomeHeroImageUrl(settings: {
+  id: string
+  home_hero_image?: string
+}): string | null {
+  if (settings.home_hero_image) {
+    return `${import.meta.env.VITE_POCKETBASE_URL}/api/files/platform_settings/${settings.id}/${settings.home_hero_image}`
+  }
+  return null
+}
+
+export function getLogoUrl(settings: { id: string; logo?: string }): string | null {
+  if (settings.logo) {
+    return `${import.meta.env.VITE_POCKETBASE_URL}/api/files/platform_settings/${settings.id}/${settings.logo}`
+  }
+  return null
+}
