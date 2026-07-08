@@ -100,12 +100,10 @@ export function AppSidebar() {
               <SidebarMenu>
                 {adminNavItems.map((item) => (
                   <SidebarMenuItem key={item.href}>
-                    <SidebarMenuButton asChild isActive={checkActive(item.href)}>
-                      <Link to={item.href}>
-                        <item.icon className="h-4 w-4" />
-                        <span>{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={checkActive(item.href)}
+                    ></SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
               </SidebarMenu>
