@@ -19,7 +19,6 @@ import {
   ShoppingBag,
   Trophy,
   HelpCircle,
-  ShieldCheck,
   LogOut,
   GraduationCap,
   Settings,
@@ -33,10 +32,7 @@ const studentNavItems = [
   { title: 'FAQ', href: '/dashboard/faq', icon: HelpCircle },
 ]
 
-const adminNavItems = [
-  { title: 'Configurações', href: '/admin/configuracoes', icon: Settings },
-  { title: 'Agenda', href: '/admin/agenda', icon: ShieldCheck },
-]
+const adminNavItems = [{ title: 'Configurações', href: '/admin/configuracoes', icon: Settings }]
 
 export function AppSidebar() {
   const { user, signOut } = useAuth()
@@ -95,15 +91,17 @@ export function AppSidebar() {
         </SidebarGroup>
         {isAdmin && (
           <SidebarGroup>
-            <SidebarGroupLabel>Configurações</SidebarGroupLabel>
+            <SidebarGroupLabel>Administração</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {adminNavItems.map((item) => (
                   <SidebarMenuItem key={item.href}>
-                    <SidebarMenuButton
-                      asChild
-                      isActive={checkActive(item.href)}
-                    ></SidebarMenuButton>
+                    <SidebarMenuButton asChild isActive={checkActive(item.href)}>
+                      <Link to={item.href}>
+                        <item.icon className="h-4 w-4" />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
               </SidebarMenu>

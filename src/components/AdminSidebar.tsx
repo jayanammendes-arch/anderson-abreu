@@ -12,9 +12,24 @@ import {
   SidebarMenuButton,
   SidebarFooter,
 } from '@/components/ui/sidebar'
-import { Brain, Settings, ArrowLeft, LogOut } from 'lucide-react'
+import {
+  Brain,
+  Settings,
+  ArrowLeft,
+  LogOut,
+  BookOpen,
+  Users,
+  Calendar,
+  Palette,
+} from 'lucide-react'
 
-const adminNavItems = [{ title: 'Configurações', href: '/admin/configuracoes', icon: Settings }]
+const adminNavItems = [
+  { title: 'Central', href: '/admin/configuracoes', icon: Settings },
+  { title: 'Cursos', href: '/admin/cursos', icon: BookOpen },
+  { title: 'Alunos', href: '/admin/alunos', icon: Users },
+  { title: 'Agenda', href: '/admin/agenda', icon: Calendar },
+  { title: 'Plataforma', href: '/admin/plataforma', icon: Palette },
+]
 
 export function AdminSidebar() {
   const { signOut } = useAuth()
@@ -36,7 +51,7 @@ export function AdminSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="text-white/40">Configurações</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-white/40">Gerenciamento</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {adminNavItems.map((item) => (
