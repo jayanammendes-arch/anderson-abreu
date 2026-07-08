@@ -8,6 +8,7 @@ import Index from '@/pages/Index'
 import Login from '@/pages/Login'
 import Landing from '@/pages/Landing'
 import AdminAgenda from '@/pages/admin/AdminAgenda'
+import { AdminGuard } from '@/components/AdminGuard'
 import Products from '@/pages/Products'
 import Purchases from '@/pages/Purchases'
 import Ranking from '@/pages/Ranking'
@@ -24,7 +25,14 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/admin/agenda" element={<AdminAgenda />} />
+          <Route
+            path="/admin/agenda"
+            element={
+              <AdminGuard>
+                <AdminAgenda />
+              </AdminGuard>
+            }
+          />
           <Route path="/dashboard" element={<DashboardLayout />}>
             <Route index element={<Index />} />
             <Route path="produtos" element={<Products />} />
