@@ -33,9 +33,9 @@ export default function AdminConfigHub() {
   return (
     <div className="space-y-8 animate-fade-in">
       <div>
-        <h1 className="text-3xl font-bold">Configurações</h1>
+        <h1 className="text-3xl font-bold">Central de Gerenciamento da Plataforma</h1>
         <p className="text-muted-foreground mt-2">
-          Central de gerenciamento da plataforma Anderson Abreu
+          Gerencie cursos, alunos, configurações e agenda da plataforma Anderson Abreu
         </p>
       </div>
       <div className="grid gap-4 sm:grid-cols-2">

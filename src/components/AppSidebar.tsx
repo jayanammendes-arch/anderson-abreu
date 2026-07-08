@@ -22,6 +22,7 @@ import {
   ShieldCheck,
   LogOut,
   GraduationCap,
+  Settings,
 } from 'lucide-react'
 
 const studentNavItems = [
@@ -32,7 +33,10 @@ const studentNavItems = [
   { title: 'FAQ', href: '/dashboard/faq', icon: HelpCircle },
 ]
 
-const adminNavItems = [{ title: 'Agenda', href: '/admin/agenda', icon: ShieldCheck }]
+const adminNavItems = [
+  { title: 'Configurações', href: '/admin/configuracoes', icon: Settings },
+  { title: 'Agenda', href: '/admin/agenda', icon: ShieldCheck },
+]
 
 export function AppSidebar() {
   const { user, signOut } = useAuth()
@@ -91,7 +95,7 @@ export function AppSidebar() {
         </SidebarGroup>
         {isAdmin && (
           <SidebarGroup>
-            <SidebarGroupLabel>Gerenciamento</SidebarGroupLabel>
+            <SidebarGroupLabel>Configurações</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {adminNavItems.map((item) => (

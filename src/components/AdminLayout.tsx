@@ -6,7 +6,7 @@ import { Separator } from '@/components/ui/separator'
 import { Loader2 } from 'lucide-react'
 
 const adminPageTitles: Record<string, string> = {
-  '/admin/configuracoes': 'Configurações',
+  '/admin/configuracoes': 'Central de Gerenciamento da Plataforma',
   '/admin/plataforma': 'Configurações da Plataforma',
   '/admin/cursos': 'Gerenciar Cursos',
   '/admin/cursos/novo': 'Novo Curso',

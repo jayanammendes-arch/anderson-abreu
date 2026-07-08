@@ -36,7 +36,7 @@ export function AdminSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="text-white/40">Gerenciamento</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-white/40">Configurações</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {adminNavItems.map((item) => (
