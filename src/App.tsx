@@ -12,6 +12,7 @@ import AdminCourses from '@/pages/admin/AdminCourses'
 import AdminCourseForm from '@/pages/admin/AdminCourseForm'
 import AdminStudents from '@/pages/admin/AdminStudents'
 import AdminSettings from '@/pages/admin/AdminSettings'
+import AdminConfigHub from '@/pages/admin/AdminConfigHub'
 import AdminAgenda from '@/pages/admin/AdminAgenda'
 import Products from '@/pages/Products'
 import Purchases from '@/pages/Purchases'
@@ -34,7 +35,8 @@ const App = () => (
             <Route path="cursos/novo" element={<AdminCourseForm />} />
             <Route path="cursos/:courseId" element={<AdminCourseForm />} />
             <Route path="alunos" element={<AdminStudents />} />
-            <Route path="configuracoes" element={<AdminSettings />} />
+            <Route path="configuracoes" element={<AdminConfigHub />} />
+            <Route path="plataforma" element={<AdminSettings />} />
             <Route path="agenda" element={<AdminAgenda />} />
           </Route>
           <Route path="/dashboard" element={<DashboardLayout />}>

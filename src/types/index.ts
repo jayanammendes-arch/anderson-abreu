@@ -23,6 +23,7 @@ export interface Event {
   description: string
   location: string
   type: 'presencial' | 'online'
+  image?: string
   created: string
   updated: string
 }

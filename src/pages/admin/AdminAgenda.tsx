@@ -1,5 +1,11 @@
 import { useState, useEffect } from 'react'
-import { getEvents, createEvent, updateEvent, deleteEvent } from '@/services/landing'
+import {
+  getEvents,
+  createEvent,
+  updateEvent,
+  deleteEvent,
+  getEventImageUrl,
+} from '@/services/landing'
 import type { Event } from '@/types'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -14,7 +20,7 @@ import {
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { toast } from 'sonner'
-import { Pencil, Trash2, Plus, Loader2, Save, X } from 'lucide-react'
+import { Pencil, Trash2, Plus, Loader2, Save, X, Image as ImageIcon } from 'lucide-react'
 
 const emptyEvent: Partial<Event> = {
   title: '',
@@ -30,6 +36,7 @@ export default function AdminAgenda() {
   const [isEditing, setIsEditing] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [formData, setFormData] = useState<Partial<Event>>(emptyEvent)
+  const [imageFile, setImageFile] = useState<File | null>(null)
 
   const loadEvents = async () => {
     setIsLoading(true)
@@ -50,14 +57,23 @@ export default function AdminAgenda() {
     e.preventDefault()
     setIsSaving(true)
     try {
+      const fd = new FormData()
+      fd.append('title', formData.title || '')
+      fd.append('date', formData.date || '')
+      fd.append('description', formData.description || '')
+      fd.append('location', formData.location || '')
+      fd.append('type', formData.type || 'presencial')
+      if (imageFile) fd.append('image', imageFile)
+
       if (formData.id) {
-        await updateEvent(formData.id, formData)
+        await updateEvent(formData.id, fd)
         toast.success('Evento atualizado!')
       } else {
-        await createEvent(formData)
+        await createEvent(fd)
         toast.success('Evento criado!')
       }
       setIsEditing(false)
+      setImageFile(null)
       loadEvents()
     } catch {
       toast.error('Erro ao salvar')
@@ -79,13 +95,26 @@ export default function AdminAgenda() {
 
   const handleEdit = (event: Event) => {
     setFormData({ ...event, date: new Date(event.date).toISOString().slice(0, 16) })
+    setImageFile(null)
     setIsEditing(true)
   }
 
   const handleNew = () => {
     setFormData(emptyEvent)
+    setImageFile(null)
     setIsEditing(true)
   }
+
+  const handleCancel = () => {
+    setIsEditing(false)
+    setImageFile(null)
+  }
+
+  const previewUrl = imageFile
+    ? URL.createObjectURL(imageFile)
+    : formData.id && formData.image
+      ? getEventImageUrl({ id: formData.id, image: formData.image })
+      : null
 
   if (isEditing) {
     return (
@@ -141,6 +170,20 @@ export default function AdminAgenda() {
                 />
               </div>
               <div className="space-y-2">
+                <Label>Imagem do Evento</Label>
+                {previewUrl && (
+                  <div className="mb-2 overflow-hidden rounded-lg border border-border/50">
+                    <img src={previewUrl} alt="Preview" className="h-40 w-full object-cover" />
+                  </div>
+                )}
+                <Input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+                />
+                <p className="text-xs text-muted-foreground">JPG, PNG ou WebP. Máximo 5MB.</p>
+              </div>
+              <div className="space-y-2">
                 <Label>Descrição</Label>
                 <Textarea
                   value={formData.description}
@@ -149,7 +192,7 @@ export default function AdminAgenda() {
                 />
               </div>
               <div className="flex justify-end gap-3 pt-4">
-                <Button type="button" variant="outline" onClick={() => setIsEditing(false)}>
+                <Button type="button" variant="outline" onClick={handleCancel}>
                   <X className="mr-2 h-4 w-4" /> Cancelar
                 </Button>
                 <Button type="submit" disabled={isSaving}>
@@ -188,36 +231,50 @@ export default function AdminAgenda() {
         </Card>
       ) : (
         <div className="grid gap-3">
-          {events.map((event) => (
-            <Card
-              key={event.id}
-              className="flex items-center justify-between p-4 bg-card/50 border-border/50"
-            >
-              <div>
-                <h3 className="font-semibold">{event.title}</h3>
-                <div className="text-sm text-muted-foreground flex gap-3 mt-1">
-                  <span>{new Date(event.date).toLocaleString('pt-BR')}</span>
-                  <span>•</span>
-                  <span className="capitalize">{event.type}</span>
-                  <span>•</span>
-                  <span className="truncate max-w-[200px]">{event.location}</span>
+          {events.map((event) => {
+            const imageUrl = getEventImageUrl(event)
+            return (
+              <Card
+                key={event.id}
+                className="flex items-center gap-4 p-4 bg-card/50 border-border/50"
+              >
+                {imageUrl ? (
+                  <img
+                    src={imageUrl}
+                    alt={event.title}
+                    className="h-16 w-24 shrink-0 rounded-lg object-cover"
+                  />
+                ) : (
+                  <div className="flex h-16 w-24 shrink-0 items-center justify-center rounded-lg bg-muted">
+                    <ImageIcon className="h-6 w-6 text-muted-foreground" />
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold">{event.title}</h3>
+                  <div className="text-sm text-muted-foreground flex gap-3 mt-1">
+                    <span>{new Date(event.date).toLocaleString('pt-BR')}</span>
+                    <span>•</span>
+                    <span className="capitalize">{event.type}</span>
+                    <span>•</span>
+                    <span className="truncate max-w-[200px]">{event.location}</span>
+                  </div>
                 </div>
-              </div>
-              <div className="flex gap-2">
-                <Button variant="ghost" size="icon" onClick={() => handleEdit(event)}>
-                  <Pencil className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => handleDelete(event.id)}
-                  className="text-red-500"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            </Card>
-          ))}
+                <div className="flex gap-2">
+                  <Button variant="ghost" size="icon" onClick={() => handleEdit(event)}>
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleDelete(event.id)}
+                    className="text-red-500"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </Card>
+            )
+          })}
         </div>
       )}
     </div>
