@@ -9,6 +9,8 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<{ error: any }>
   signOut: () => void
   requestPasswordReset: (email: string) => Promise<{ error: any }>
+  updateProfile: (data: { name?: string; avatar?: File }) => Promise<{ error: any }>
+  updatePassword: (currentPassword: string, newPassword: string) => Promise<{ error: any }>
   loading: boolean
 }
 
@@ -78,6 +80,46 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     pb.authStore.clear()
   }
 
+  const updateProfile = async (data: { name?: string; avatar?: File }) => {
+    try {
+      const userId = pb.authStore.record?.id
+      if (!userId) return { error: new Error('Não autenticado') }
+      if (data.avatar) {
+        const formData = new FormData()
+        if (data.name) formData.append('name', data.name)
+        formData.append('avatar', data.avatar)
+        await pb.collection('users').update(userId, formData)
+      } else if (data.name) {
+        await pb.collection('users').update(userId, { name: data.name })
+      }
+      try {
+        await pb.collection('users').authRefresh()
+      } catch {
+        // ignore refresh errors — the update itself succeeded
+      }
+      return { error: null }
+    } catch (error) {
+      return { error }
+    }
+  }
+
+  const updatePassword = async (currentPassword: string, newPassword: string) => {
+    try {
+      const email = pb.authStore.record?.email
+      if (!email) return { error: new Error('Não autenticado') }
+      await pb.collection('users').authWithPassword(email, currentPassword)
+      const userId = pb.authStore.record?.id
+      if (!userId) return { error: new Error('Não autenticado') }
+      await pb.collection('users').update(userId, {
+        password: newPassword,
+        passwordConfirm: newPassword,
+      })
+      return { error: null }
+    } catch (error) {
+      return { error }
+    }
+  }
+
   const isAdmin = !!user?.is_admin
 
   return (
@@ -90,6 +132,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         signIn,
         signOut,
         requestPasswordReset,
+        updateProfile,
+        updatePassword,
         loading,
       }}
     >
