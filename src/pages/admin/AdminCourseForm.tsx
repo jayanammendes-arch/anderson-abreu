@@ -1,0 +1,261 @@
+import { useState, useEffect, useCallback } from 'react'
+import { useParams, useNavigate, Link } from 'react-router-dom'
+import { adminGetCourse, adminCreateCourse, adminUpdateCourse } from '@/services/admin-courses'
+import { ModuleManager } from '@/components/admin/ModuleManager'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { ArrowLeft, Save, Loader2 } from 'lucide-react'
+import { toast } from 'sonner'
+import type { Course } from '@/types'
+
+const emptyForm = {
+  title: '',
+  short_description: '',
+  description: '',
+  external_buy_url: '',
+  price: 0,
+  discount_price: 0,
+  discount_percentage: 0,
+  visibility: 'home',
+  is_available: true,
+  category: '',
+  order: 0,
+}
+
+export default function AdminCourseForm() {
+  const { courseId } = useParams<{ courseId: string }>()
+  const navigate = useNavigate()
+  const isEdit = !!courseId
+  const [loading, setLoading] = useState(isEdit)
+  const [saving, setSaving] = useState(false)
+  const [thumbnail, setThumbnail] = useState<File | null>(null)
+  const [form, setForm] = useState(emptyForm)
+
+  const loadCourse = useCallback(async () => {
+    if (!courseId) return
+    try {
+      const c = (await adminGetCourse(courseId)) as Course
+      setForm({
+        title: c.title || '',
+        short_description: c.short_description || '',
+        description: c.description || '',
+        external_buy_url: c.external_buy_url || '',
+        price: c.price || 0,
+        discount_price: c.discount_price || 0,
+        discount_percentage: c.discount_percentage || 0,
+        visibility: c.visibility || 'home',
+        is_available: c.is_available,
+        category: c.category || '',
+        order: c.order || 0,
+      })
+    } catch {
+      toast.error('Curso não encontrado')
+      navigate('/admin/cursos')
+    } finally {
+      setLoading(false)
+    }
+  }, [courseId, navigate])
+
+  useEffect(() => {
+    if (isEdit) loadCourse()
+  }, [isEdit, loadCourse])
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setSaving(true)
+    try {
+      const fd = new FormData()
+      Object.entries(form).forEach(([k, v]) => fd.append(k, String(v)))
+      if (thumbnail) fd.append('thumbnail', thumbnail)
+      if (courseId) {
+        await adminUpdateCourse(courseId, fd)
+        toast.success('Curso atualizado!')
+      } else {
+        await adminCreateCourse(fd)
+        toast.success('Curso criado!')
+        navigate('/admin/cursos')
+      }
+    } catch {
+      toast.error('Erro ao salvar curso')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  if (loading)
+    return (
+      <div className="flex justify-center py-20">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
+
+  return (
+    <div className="space-y-6 animate-fade-in max-w-4xl">
+      <div className="flex items-center gap-4">
+        <Button variant="ghost" size="sm" asChild>
+          <Link to="/admin/cursos">
+            <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
+          </Link>
+        </Button>
+        <h1 className="text-2xl font-bold">{isEdit ? 'Editar Curso' : 'Novo Curso'}</h1>
+      </div>
+      <form onSubmit={handleSave} className="space-y-6">
+        <Card className="bg-card/50 border-border/50">
+          <CardHeader>
+            <CardTitle>Informações</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label>Título *</Label>
+              <Input
+                required
+                value={form.title}
+                onChange={(e) => setForm({ ...form, title: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Descrição Curta</Label>
+              <Input
+                value={form.short_description}
+                onChange={(e) => setForm({ ...form, short_description: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Descrição Completa</Label>
+              <Textarea
+                value={form.description}
+                onChange={(e) => setForm({ ...form, description: e.target.value })}
+                className="min-h-[100px]"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Categoria</Label>
+                <Input
+                  value={form.category}
+                  onChange={(e) => setForm({ ...form, category: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Ordem</Label>
+                <Input
+                  type="number"
+                  value={form.order}
+                  onChange={(e) => setForm({ ...form, order: Number(e.target.value) })}
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="bg-card/50 border-border/50">
+          <CardHeader>
+            <CardTitle>Preços e Disponibilidade</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label>Preço (R$)</Label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={form.price}
+                  onChange={(e) => setForm({ ...form, price: Number(e.target.value) })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Preço c/ Desconto</Label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={form.discount_price}
+                  onChange={(e) => setForm({ ...form, discount_price: Number(e.target.value) })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>% Desconto</Label>
+                <Input
+                  type="number"
+                  value={form.discount_percentage}
+                  onChange={(e) =>
+                    setForm({ ...form, discount_percentage: Number(e.target.value) })
+                  }
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>URL de Compra Externa</Label>
+              <Input
+                type="url"
+                value={form.external_buy_url}
+                onChange={(e) => setForm({ ...form, external_buy_url: e.target.value })}
+                placeholder="https://..."
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Visibilidade</Label>
+                <Select
+                  value={form.visibility}
+                  onValueChange={(v) => setForm({ ...form, visibility: v })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="home">Home</SelectItem>
+                    <SelectItem value="templates">Templates</SelectItem>
+                    <SelectItem value="both">Ambos</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex items-center gap-3 pt-6">
+                <Switch
+                  checked={form.is_available}
+                  onCheckedChange={(c) => setForm({ ...form, is_available: c })}
+                />
+                <Label>Disponível</Label>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="bg-card/50 border-border/50">
+          <CardHeader>
+            <CardTitle>Thumbnail</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Input
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              onChange={(e) => setThumbnail(e.target.files?.[0] || null)}
+            />
+          </CardContent>
+        </Card>
+        <div className="flex justify-end gap-3">
+          <Button variant="outline" asChild>
+            <Link to="/admin/cursos">Cancelar</Link>
+          </Button>
+          <Button type="submit" disabled={saving}>
+            {saving ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Save className="mr-2 h-4 w-4" />
+            )}{' '}
+            Salvar
+          </Button>
+        </div>
+      </form>
+      {isEdit && courseId && <ModuleManager courseId={courseId} />}
+    </div>
+  )
+}

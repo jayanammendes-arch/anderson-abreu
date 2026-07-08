@@ -132,6 +132,9 @@ export default function AdminCourses() {
                   {course.is_available ? 'Ativo' : 'Inativo'}
                 </Badge>
                 <span>{accessCounts[course.id] || 0} alunos</span>
+                <Badge variant="outline" className="capitalize">
+                  {course.visibility || 'home'}
+                </Badge>
               </div>
             </div>
             <div className="flex gap-2">

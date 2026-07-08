@@ -40,6 +40,7 @@ export function ModuleManager({ courseId }: { courseId: string }) {
     edit: null,
   })
   const [moduleTitle, setModuleTitle] = useState('')
+  const [moduleOrder, setModuleOrder] = useState(0)
   const [lessonDialog, setLessonDialog] = useState<{
     open: boolean
     moduleId: string
@@ -74,9 +75,9 @@ export function ModuleManager({ courseId }: { courseId: string }) {
   const saveModule = async () => {
     try {
       if (moduleDialog.edit) {
-        await adminUpdateModule(moduleDialog.edit.id, { title: moduleTitle })
+        await adminUpdateModule(moduleDialog.edit.id, { title: moduleTitle, order: moduleOrder })
       } else {
-        await adminCreateModule({ course: courseId, title: moduleTitle, order: modules.length })
+        await adminCreateModule({ course: courseId, title: moduleTitle, order: moduleOrder })
       }
       toast.success('Modulo salvo')
       setModuleDialog({ open: false, edit: null })
@@ -139,6 +140,7 @@ export function ModuleManager({ courseId }: { courseId: string }) {
           size="sm"
           onClick={() => {
             setModuleTitle('')
+            setModuleOrder(modules.length)
             setModuleDialog({ open: true, edit: null })
           }}
         >
@@ -221,6 +223,7 @@ export function ModuleManager({ courseId }: { courseId: string }) {
                       size="sm"
                       onClick={() => {
                         setModuleTitle(mod.title)
+                        setModuleOrder(mod.order || 0)
                         setModuleDialog({ open: true, edit: mod })
                       }}
                     >
@@ -247,6 +250,7 @@ export function ModuleManager({ courseId }: { courseId: string }) {
           if (!o) {
             setModuleDialog({ open: false, edit: null })
             setModuleTitle('')
+            setModuleOrder(0)
           }
         }}
       >
@@ -260,6 +264,14 @@ export function ModuleManager({ courseId }: { courseId: string }) {
               value={moduleTitle}
               onChange={(e) => setModuleTitle(e.target.value)}
               placeholder="Ex: Modulo 1 - Fundamentos"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>Ordem</Label>
+            <Input
+              type="number"
+              value={moduleOrder}
+              onChange={(e) => setModuleOrder(Number(e.target.value))}
             />
           </div>
           <DialogFooter>
@@ -309,6 +321,14 @@ export function ModuleManager({ courseId }: { courseId: string }) {
                 value={lessonForm.content}
                 onChange={(e) => setLessonForm({ ...lessonForm, content: e.target.value })}
                 className="h-24"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Ordem</Label>
+              <Input
+                type="number"
+                value={lessonForm.order}
+                onChange={(e) => setLessonForm({ ...lessonForm, order: Number(e.target.value) })}
               />
             </div>
           </div>

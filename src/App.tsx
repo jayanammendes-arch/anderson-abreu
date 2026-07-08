@@ -7,8 +7,12 @@ import { DashboardLayout } from '@/components/DashboardLayout'
 import Index from '@/pages/Index'
 import Login from '@/pages/Login'
 import Landing from '@/pages/Landing'
+import { AdminLayout } from '@/components/AdminLayout'
+import AdminCourses from '@/pages/admin/AdminCourses'
+import AdminCourseForm from '@/pages/admin/AdminCourseForm'
+import AdminStudents from '@/pages/admin/AdminStudents'
+import AdminSettings from '@/pages/admin/AdminSettings'
 import AdminAgenda from '@/pages/admin/AdminAgenda'
-import { AdminGuard } from '@/components/AdminGuard'
 import Products from '@/pages/Products'
 import Purchases from '@/pages/Purchases'
 import Ranking from '@/pages/Ranking'
@@ -25,14 +29,14 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
-          <Route
-            path="/admin/agenda"
-            element={
-              <AdminGuard>
-                <AdminAgenda />
-              </AdminGuard>
-            }
-          />
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route path="cursos" element={<AdminCourses />} />
+            <Route path="cursos/novo" element={<AdminCourseForm />} />
+            <Route path="cursos/:courseId" element={<AdminCourseForm />} />
+            <Route path="alunos" element={<AdminStudents />} />
+            <Route path="configuracoes" element={<AdminSettings />} />
+            <Route path="agenda" element={<AdminAgenda />} />
+          </Route>
           <Route path="/dashboard" element={<DashboardLayout />}>
             <Route index element={<Index />} />
             <Route path="produtos" element={<Products />} />

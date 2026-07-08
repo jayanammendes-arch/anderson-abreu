@@ -8,8 +8,10 @@ export interface Course {
   order: number
   price?: number
   discount_price?: number
+  discount_percentage?: number
   external_buy_url?: string
   short_description?: string
+  visibility?: 'home' | 'templates' | 'both'
   created: string
   updated: string
 }
@@ -78,4 +80,26 @@ export interface CourseDetailData {
   modules: Module[]
   lessons: Lesson[]
   progress: UserProgress[]
+}
+
+export interface UserAccess {
+  id: string
+  user: string
+  course: string
+  created: string
+  updated: string
+  expand?: { course?: Course }
+}
+
+export interface PlatformSettings {
+  id: string
+  company_name: string
+  logo: string
+  primary_color: string
+  landing_page_json: any
+  login_image: string
+  login_text: string
+  login_gradient: string
+  created: string
+  updated: string
 }

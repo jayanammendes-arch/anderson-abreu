@@ -7,8 +7,10 @@ import { Loader2 } from 'lucide-react'
 
 const adminPageTitles: Record<string, string> = {
   '/admin/cursos': 'Gerenciar Cursos',
+  '/admin/cursos/novo': 'Novo Curso',
   '/admin/alunos': 'Gerenciar Alunos',
-  '/admin/configuracoes': 'Configuracoes da Plataforma',
+  '/admin/configuracoes': 'Configurações da Plataforma',
+  '/admin/agenda': 'Agenda de Eventos',
 }
 
 export function AdminLayout() {
@@ -28,11 +30,7 @@ export function AdminLayout() {
 
   const pageTitle =
     adminPageTitles[location.pathname] ||
-    (location.pathname === '/admin/cursos/novo'
-      ? 'Novo Curso'
-      : location.pathname.match(/^\/admin\/cursos\/[^/]+$/)
-        ? 'Editar Curso'
-        : 'Admin')
+    (location.pathname.match(/^\/admin\/cursos\/[^/]+$/) ? 'Editar Curso' : 'Admin')
 
   return (
     <SidebarProvider>

@@ -1,6 +1,4 @@
 import { useState, useEffect } from 'react'
-import { Navigate, Link } from 'react-router-dom'
-import { useAuth } from '@/hooks/use-auth'
 import { getEvents, createEvent, updateEvent, deleteEvent } from '@/services/landing'
 import type { Event } from '@/types'
 import { Button } from '@/components/ui/button'
@@ -14,51 +12,39 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { toast } from 'sonner'
-import { Pencil, Trash2, Plus, ArrowLeft, Loader2, Save, X } from 'lucide-react'
+import { Pencil, Trash2, Plus, Loader2, Save, X } from 'lucide-react'
+
+const emptyEvent: Partial<Event> = {
+  title: '',
+  date: new Date().toISOString().slice(0, 16),
+  description: '',
+  location: '',
+  type: 'presencial',
+}
 
 export default function AdminAgenda() {
-  const { isAuthenticated, loading } = useAuth()
   const [events, setEvents] = useState<Event[]>([])
-  const [isLoadingEvents, setIsLoadingEvents] = useState(true)
-
+  const [isLoading, setIsLoading] = useState(true)
   const [isEditing, setIsEditing] = useState(false)
-  const [formData, setFormData] = useState<Partial<Event>>({
-    title: '',
-    date: new Date().toISOString().slice(0, 16),
-    description: '',
-    location: '',
-    type: 'presencial',
-  })
   const [isSaving, setIsSaving] = useState(false)
+  const [formData, setFormData] = useState<Partial<Event>>(emptyEvent)
 
   const loadEvents = async () => {
-    setIsLoadingEvents(true)
+    setIsLoading(true)
     try {
-      const data = await getEvents()
-      setEvents(data)
-    } catch (err) {
+      setEvents(await getEvents())
+    } catch {
       toast.error('Erro ao carregar eventos')
     } finally {
-      setIsLoadingEvents(false)
+      setIsLoading(false)
     }
   }
 
   useEffect(() => {
-    if (!loading && isAuthenticated) {
-      loadEvents()
-    }
-  }, [isAuthenticated, loading])
-
-  if (loading) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-black">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    )
-  }
-
-  if (!isAuthenticated) return <Navigate to="/login" replace />
+    loadEvents()
+  }, [])
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -66,78 +52,49 @@ export default function AdminAgenda() {
     try {
       if (formData.id) {
         await updateEvent(formData.id, formData)
-        toast.success('Evento atualizado com sucesso!')
+        toast.success('Evento atualizado!')
       } else {
         await createEvent(formData)
-        toast.success('Evento criado com sucesso!')
+        toast.success('Evento criado!')
       }
       setIsEditing(false)
       loadEvents()
-    } catch (err) {
-      toast.error('Erro ao salvar evento')
+    } catch {
+      toast.error('Erro ao salvar')
     } finally {
       setIsSaving(false)
     }
   }
 
   const handleDelete = async (id: string) => {
-    if (!window.confirm('Tem certeza que deseja excluir este evento?')) return
+    if (!window.confirm('Excluir este evento?')) return
     try {
       await deleteEvent(id)
       toast.success('Evento excluído!')
       loadEvents()
-    } catch (err) {
-      toast.error('Erro ao excluir evento')
+    } catch {
+      toast.error('Erro ao excluir')
     }
   }
 
   const handleEdit = (event: Event) => {
-    // Format date string for the datetime-local input (YYYY-MM-DDThh:mm)
-    const d = new Date(event.date)
-    const formattedDate = d.toISOString().slice(0, 16)
-
-    setFormData({ ...event, date: formattedDate })
+    setFormData({ ...event, date: new Date(event.date).toISOString().slice(0, 16) })
     setIsEditing(true)
   }
 
   const handleNew = () => {
-    setFormData({
-      title: '',
-      date: new Date().toISOString().slice(0, 16),
-      description: '',
-      location: '',
-      type: 'presencial',
-    })
+    setFormData(emptyEvent)
     setIsEditing(true)
   }
 
-  return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b bg-card px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" asChild>
-            <Link to="/dashboard">
-              <ArrowLeft className="h-4 w-4" />
-            </Link>
-          </Button>
-          <div>
-            <h1 className="text-xl font-bold">Admin: Agenda</h1>
-            <p className="text-sm text-muted-foreground">Gerenciamento de eventos</p>
-          </div>
-        </div>
-        {!isEditing && (
-          <Button onClick={handleNew}>
-            <Plus className="mr-2 h-4 w-4" /> Novo Evento
-          </Button>
-        )}
-      </header>
-
-      <main className="container mx-auto px-6 py-8">
-        {isEditing ? (
-          <div className="max-w-2xl mx-auto bg-card border rounded-lg p-6">
-            <h2 className="text-lg font-semibold mb-6">
-              {formData.id ? 'Editar Evento' : 'Novo Evento'}
-            </h2>
+  if (isEditing) {
+    return (
+      <div className="max-w-2xl mx-auto animate-fade-in">
+        <Card className="bg-card/50 border-border/50">
+          <CardHeader>
+            <CardTitle>{formData.id ? 'Editar Evento' : 'Novo Evento'}</CardTitle>
+          </CardHeader>
+          <CardContent>
             <form onSubmit={handleSave} className="space-y-4">
               <div className="space-y-2">
                 <Label>Título</Label>
@@ -147,7 +104,6 @@ export default function AdminAgenda() {
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 />
               </div>
-
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Data e Hora</Label>
@@ -176,26 +132,22 @@ export default function AdminAgenda() {
                   </Select>
                 </div>
               </div>
-
               <div className="space-y-2">
                 <Label>Local / Link</Label>
                 <Input
                   required
                   value={formData.location}
                   onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                  placeholder="Ex: Av Paulista, 1000 ou link do Zoom"
                 />
               </div>
-
               <div className="space-y-2">
-                <Label>Descrição Curta</Label>
+                <Label>Descrição</Label>
                 <Textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   className="h-24"
                 />
               </div>
-
               <div className="flex justify-end gap-3 pt-4">
                 <Button type="button" variant="outline" onClick={() => setIsEditing(false)}>
                   <X className="mr-2 h-4 w-4" /> Cancelar
@@ -205,59 +157,69 @@ export default function AdminAgenda() {
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   ) : (
                     <Save className="mr-2 h-4 w-4" />
-                  )}
+                  )}{' '}
                   Salvar
                 </Button>
               </div>
             </form>
-          </div>
-        ) : (
-          <div className="bg-card border rounded-lg overflow-hidden">
-            {isLoadingEvents ? (
-              <div className="p-12 flex justify-center">
-                <Loader2 className="h-6 w-6 animate-spin text-primary" />
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-6 animate-fade-in">
+      <div className="flex justify-between items-center">
+        <p className="text-sm text-muted-foreground">Gerenciamento de eventos</p>
+        <Button onClick={handleNew}>
+          <Plus className="mr-2 h-4 w-4" /> Novo Evento
+        </Button>
+      </div>
+      {isLoading ? (
+        <div className="flex justify-center py-12">
+          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+        </div>
+      ) : events.length === 0 ? (
+        <Card className="bg-card/50 border-border/50">
+          <CardContent className="py-12 text-center text-muted-foreground">
+            Nenhum evento cadastrado.
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="grid gap-3">
+          {events.map((event) => (
+            <Card
+              key={event.id}
+              className="flex items-center justify-between p-4 bg-card/50 border-border/50"
+            >
+              <div>
+                <h3 className="font-semibold">{event.title}</h3>
+                <div className="text-sm text-muted-foreground flex gap-3 mt-1">
+                  <span>{new Date(event.date).toLocaleString('pt-BR')}</span>
+                  <span>•</span>
+                  <span className="capitalize">{event.type}</span>
+                  <span>•</span>
+                  <span className="truncate max-w-[200px]">{event.location}</span>
+                </div>
               </div>
-            ) : events.length === 0 ? (
-              <div className="p-12 text-center text-muted-foreground">
-                Nenhum evento cadastrado.
+              <div className="flex gap-2">
+                <Button variant="ghost" size="icon" onClick={() => handleEdit(event)}>
+                  <Pencil className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => handleDelete(event.id)}
+                  className="text-red-500"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
               </div>
-            ) : (
-              <div className="divide-y">
-                {events.map((event) => (
-                  <div
-                    key={event.id}
-                    className="p-4 flex items-center justify-between hover:bg-muted/50 transition-colors"
-                  >
-                    <div>
-                      <h3 className="font-semibold">{event.title}</h3>
-                      <div className="text-sm text-muted-foreground flex gap-3 mt-1">
-                        <span>{new Date(event.date).toLocaleString('pt-BR')}</span>
-                        <span>•</span>
-                        <span className="capitalize">{event.type}</span>
-                        <span>•</span>
-                        <span className="truncate max-w-[200px]">{event.location}</span>
-                      </div>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button variant="ghost" size="icon" onClick={() => handleEdit(event)}>
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleDelete(event.id)}
-                        className="text-red-500 hover:text-red-600 hover:bg-red-500/10"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-      </main>
+            </Card>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

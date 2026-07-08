@@ -12,12 +12,13 @@ import {
   SidebarMenuButton,
   SidebarFooter,
 } from '@/components/ui/sidebar'
-import { Brain, BookOpen, Users, Settings, ArrowLeft, LogOut } from 'lucide-react'
+import { Brain, BookOpen, Users, Settings, ArrowLeft, LogOut, Calendar } from 'lucide-react'
 
 const adminNavItems = [
   { title: 'Cursos', href: '/admin/cursos', icon: BookOpen },
   { title: 'Alunos', href: '/admin/alunos', icon: Users },
-  { title: 'Configuracoes', href: '/admin/configuracoes', icon: Settings },
+  { title: 'Configurações', href: '/admin/configuracoes', icon: Settings },
+  { title: 'Eventos', href: '/admin/agenda', icon: Calendar },
 ]
 
 export function AdminSidebar() {
