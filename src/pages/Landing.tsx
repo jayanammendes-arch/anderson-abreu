@@ -85,13 +85,13 @@ export default function Landing() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white font-sans selection:bg-gold selection:text-black">
+    <div className="min-h-screen bg-white text-slate-900 font-sans selection:bg-accent selection:text-white">
       {/* Header */}
       <header
         className={cn(
           'fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b',
           isScrolled
-            ? 'bg-black/90 backdrop-blur-md border-white/10 py-3'
+            ? 'bg-gradient-to-r from-[#0047AB]/95 to-black/95 backdrop-blur-md border-white/10 py-3'
             : 'bg-transparent border-transparent py-5',
         )}
       >
@@ -101,10 +101,12 @@ export default function Landing() {
             onClick={(e) => scrollToSection(e, '#home')}
             className="flex items-center gap-2"
           >
-            <div className="h-8 w-8 bg-gradient-to-br from-blue-600 to-[#0047AB] rounded-lg flex items-center justify-center">
+            <div className="h-8 w-8 bg-gradient-to-br from-accent to-accent/70 rounded-lg flex items-center justify-center">
               <span className="font-bold text-white leading-none">AA</span>
             </div>
-            <span className="font-bold text-lg tracking-tight hidden sm:block">Anderson Abreu</span>
+            <span className="font-bold text-lg tracking-tight hidden sm:block text-white">
+              Anderson Abreu
+            </span>
           </Link>
 
           <nav className="hidden md:flex items-center gap-8">
@@ -113,7 +115,7 @@ export default function Landing() {
                 key={link.name}
                 href={link.href}
                 onClick={(e) => scrollToSection(e, link.href)}
-                className="text-sm font-medium text-white/80 hover:text-gold transition-colors"
+                className="text-sm font-medium text-white/80 hover:text-accent transition-colors"
               >
                 {link.name}
               </a>
@@ -124,7 +126,7 @@ export default function Landing() {
             <Button
               asChild
               variant="outline"
-              className="border-gold text-gold hover:bg-gold hover:text-black rounded-full transition-colors"
+              className="border-accent text-accent hover:bg-accent hover:text-black rounded-full transition-colors"
             >
               <Link to="/login">Área do Aluno</Link>
             </Button>
@@ -139,7 +141,7 @@ export default function Landing() {
       {/* Mobile Menu */}
       <div
         className={cn(
-          'fixed inset-0 z-40 bg-black/95 backdrop-blur-xl transition-transform duration-300 md:hidden flex flex-col pt-24 px-6',
+          'fixed inset-0 z-40 bg-gradient-to-r from-[#0047AB]/95 to-black/95 backdrop-blur-xl transition-transform duration-300 md:hidden flex flex-col pt-24 px-6',
           isMenuOpen ? 'translate-x-0' : 'translate-x-full',
         )}
       >
@@ -149,13 +151,13 @@ export default function Landing() {
               key={link.name}
               href={link.href}
               onClick={(e) => scrollToSection(e, link.href)}
-              className="text-white hover:text-gold transition-colors"
+              className="text-white hover:text-accent transition-colors"
             >
               {link.name}
             </a>
           ))}
           <div className="h-px bg-white/10 w-full my-4" />
-          <Button asChild className="w-full bg-gold text-black hover:bg-gold/90 h-12 text-lg">
+          <Button asChild className="w-full bg-accent text-black hover:bg-accent/90 h-12 text-lg">
             <Link to="/login">Área do Aluno</Link>
           </Button>
         </nav>
@@ -164,24 +166,22 @@ export default function Landing() {
       {/* Hero */}
       <section
         id="home"
-        className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-gradient-to-br from-[#0047AB]/20 via-black to-black"
+        className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-gradient-to-r from-[#0047AB] via-[#003a6e] to-black"
       >
-        <div className="absolute top-1/4 -right-1/4 w-[800px] h-[800px] bg-[#0047AB]/20 rounded-full blur-[120px] mix-blend-screen pointer-events-none" />
-        <div className="absolute -bottom-1/4 -left-1/4 w-[600px] h-[600px] bg-gold/10 rounded-full blur-[100px] mix-blend-screen pointer-events-none" />
+        <div className="absolute top-1/4 -right-1/4 w-[800px] h-[800px] bg-[#0047AB]/30 rounded-full blur-[120px] mix-blend-screen pointer-events-none" />
+        <div className="absolute -bottom-1/4 -left-1/4 w-[600px] h-[600px] bg-accent/10 rounded-full blur-[100px] mix-blend-screen pointer-events-none" />
 
         <div className="container mx-auto px-6 relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="max-w-2xl">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-gold text-sm font-medium mb-6">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-accent/30 text-accent text-sm font-medium mb-6">
                 <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
                 Inscrições abertas para a nova turma
               </div>
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 leading-tight">
+              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 leading-tight text-white">
                 Transforme sua mente.
                 <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-gold to-yellow-200">
-                  Alcance alta performance.
-                </span>
+                <span className="text-accent">Alcance alta performance.</span>
               </h1>
               <p className="text-lg text-white/70 mb-8 leading-relaxed max-w-xl">
                 Hipnose clínica, inteligência emocional e mentoria de alta performance para quem
@@ -191,7 +191,7 @@ export default function Landing() {
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button
                   size="lg"
-                  className="bg-gold text-black hover:bg-gold/90 font-bold px-8"
+                  className="bg-accent text-black hover:bg-accent/90 font-bold px-8"
                   asChild
                 >
                   <a href="#courses" onClick={(e) => scrollToSection(e, '#courses')}>
@@ -250,8 +250,11 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* Transition strip */}
+      <div className="h-24 bg-gradient-to-b from-black via-[#0047AB]/10 to-white" />
+
       {/* About */}
-      <section id="about" className="py-24 bg-white text-slate-900">
+      <section id="about" className="py-24 bg-white">
         <div className="container mx-auto px-6">
           <div className="grid md:grid-cols-2 gap-16 items-center">
             <div className="relative">
@@ -260,8 +263,8 @@ export default function Landing() {
                 alt="Instituto Anderson Abreu"
                 className="rounded-2xl shadow-xl object-cover w-full h-[500px]"
               />
-              <div className="absolute -bottom-8 -right-8 bg-black text-white p-8 rounded-2xl shadow-2xl max-w-xs hidden sm:block">
-                <h4 className="font-bold text-xl mb-2 text-gold">Localização</h4>
+              <div className="absolute -bottom-8 -right-8 bg-gradient-to-r from-[#0047AB] to-[#003380] text-white p-8 rounded-2xl shadow-2xl max-w-xs hidden sm:block">
+                <h4 className="font-bold text-xl mb-2 text-accent">Localização</h4>
                 <p className="text-white/80">
                   Sede presencial em Tucuruvi, São Paulo. Uma estrutura completa para seu
                   desenvolvimento.
@@ -270,7 +273,7 @@ export default function Landing() {
             </div>
 
             <div>
-              <h2 className="text-sm font-bold tracking-wider uppercase text-[#0047AB] mb-3">
+              <h2 className="text-sm font-bold tracking-wider uppercase text-accent mb-3">
                 Nossa Metodologia
               </h2>
               <h3 className="text-4xl font-bold mb-6 text-slate-900 leading-tight">
@@ -308,14 +311,14 @@ export default function Landing() {
       </section>
 
       {/* Agenda */}
-      <section id="agenda" className="py-24 bg-gradient-to-b from-black to-[#001122]">
+      <section id="agenda" className="py-24 bg-slate-50">
         <div className="container mx-auto px-6">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-sm font-bold tracking-wider uppercase text-gold mb-3">
+            <h2 className="text-sm font-bold tracking-wider uppercase text-accent mb-3">
               Eventos e Turmas
             </h2>
-            <h3 className="text-4xl font-bold text-white mb-6">Agenda de Treinamentos</h3>
-            <p className="text-white/60 text-lg">
+            <h3 className="text-4xl font-bold text-slate-900 mb-6">Agenda de Treinamentos</h3>
+            <p className="text-slate-600 text-lg">
               Participe de nossos eventos presenciais e online. Garanta sua vaga com antecedência.
             </p>
           </div>
@@ -325,21 +328,21 @@ export default function Landing() {
               events.map((event) => (
                 <div
                   key={event.id}
-                  className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-colors group"
+                  className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-lg hover:border-accent/30 transition-all duration-300 group"
                 >
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="h-12 w-12 rounded-xl bg-[#0047AB]/30 flex items-center justify-center text-[#0047AB]">
-                      <Calendar className="h-6 w-6 text-blue-400" />
+                    <div className="h-12 w-12 rounded-xl bg-accent/10 flex items-center justify-center">
+                      <Calendar className="h-6 w-6 text-accent" />
                     </div>
                     <div>
-                      <div className="text-sm text-gold font-medium">
+                      <div className="text-sm text-accent font-medium">
                         {new Date(event.date).toLocaleDateString('pt-BR', {
                           day: '2-digit',
                           month: 'long',
                           year: 'numeric',
                         })}
                       </div>
-                      <div className="text-xs text-white/50 uppercase tracking-wider">
+                      <div className="text-xs text-slate-400 uppercase tracking-wider">
                         {new Date(event.date).toLocaleTimeString('pt-BR', {
                           hour: '2-digit',
                           minute: '2-digit',
@@ -348,26 +351,26 @@ export default function Landing() {
                     </div>
                   </div>
 
-                  <h4 className="text-xl font-bold text-white mb-2">{event.title}</h4>
-                  <p className="text-white/60 text-sm mb-6 line-clamp-2">{event.description}</p>
+                  <h4 className="text-xl font-bold text-slate-900 mb-2">{event.title}</h4>
+                  <p className="text-slate-600 text-sm mb-6 line-clamp-2">{event.description}</p>
 
-                  <div className="flex items-center gap-4 text-sm text-white/80 mb-6">
+                  <div className="flex items-center gap-4 text-sm text-slate-700 mb-6">
                     <div className="flex items-center gap-1.5">
                       {event.type === 'presencial' ? (
                         <MapPin className="h-4 w-4 text-accent" />
                       ) : (
-                        <Video className="h-4 w-4 text-blue-400" />
+                        <Video className="h-4 w-4 text-accent" />
                       )}
                       <span className="capitalize">{event.type}</span>
                     </div>
                     <div className="flex items-center gap-1.5 truncate">
-                      <span className="text-white/40">•</span>
+                      <span className="text-slate-400">•</span>
                       <span className="truncate">{event.location}</span>
                     </div>
                   </div>
 
                   <Button
-                    className="w-full bg-white/10 text-white hover:bg-gold hover:text-black transition-colors"
+                    className="w-full bg-accent text-black hover:bg-accent/90 transition-colors"
                     asChild
                   >
                     <a href="#contact">Garantir Vaga</a>
@@ -375,7 +378,7 @@ export default function Landing() {
                 </div>
               ))
             ) : (
-              <div className="col-span-full text-center py-12 text-white/50">
+              <div className="col-span-full text-center py-12 text-slate-500">
                 Nenhum evento agendado no momento.
               </div>
             )}
@@ -384,10 +387,10 @@ export default function Landing() {
       </section>
 
       {/* Courses */}
-      <section id="courses" className="py-24 bg-white text-slate-900">
+      <section id="courses" className="py-24 bg-white">
         <div className="container mx-auto px-6">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-sm font-bold tracking-wider uppercase text-[#0047AB] mb-3">
+            <h2 className="text-sm font-bold tracking-wider uppercase text-accent mb-3">
               Ensino a Distância
             </h2>
             <h3 className="text-4xl font-bold text-slate-900 mb-6">Cursos Online</h3>
@@ -401,7 +404,7 @@ export default function Landing() {
               courses.map((course) => (
                 <div
                   key={course.id}
-                  className="group bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 flex flex-col"
+                  className="group bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 hover:border-accent/30 flex flex-col"
                 >
                   <div className="aspect-video relative overflow-hidden bg-slate-200">
                     <img
@@ -435,12 +438,12 @@ export default function Landing() {
                             <div className="text-sm text-slate-400 line-through">
                               R$ {course.price?.toFixed(2)}
                             </div>
-                            <div className="text-2xl font-bold text-[#0047AB]">
+                            <div className="text-2xl font-bold text-accent">
                               R$ {course.discount_price?.toFixed(2)}
                             </div>
                           </>
                         ) : (
-                          <div className="text-2xl font-bold text-[#0047AB]">
+                          <div className="text-2xl font-bold text-accent">
                             R$ {course.price?.toFixed(2) || 'Consulte'}
                           </div>
                         )}
@@ -448,7 +451,7 @@ export default function Landing() {
                     </div>
 
                     <Button
-                      className="w-full bg-[#0047AB] hover:bg-[#003380] text-white group-hover:bg-gold group-hover:text-black transition-colors"
+                      className="w-full bg-accent hover:bg-accent/90 text-black transition-colors"
                       asChild
                     >
                       {course.external_buy_url ? (
@@ -472,49 +475,49 @@ export default function Landing() {
       </section>
 
       {/* Contact */}
-      <section id="contact" className="py-24 bg-black border-t border-white/10">
+      <section id="contact" className="py-24 bg-slate-50 border-t border-slate-200">
         <div className="container mx-auto px-6">
           <div className="grid lg:grid-cols-2 gap-16">
             <div>
-              <h2 className="text-sm font-bold tracking-wider uppercase text-gold mb-3">
+              <h2 className="text-sm font-bold tracking-wider uppercase text-accent mb-3">
                 Fale Conosco
               </h2>
-              <h3 className="text-4xl font-bold text-white mb-6">Dê o primeiro passo.</h3>
-              <p className="text-white/60 text-lg mb-10">
+              <h3 className="text-4xl font-bold text-slate-900 mb-6">Dê o primeiro passo.</h3>
+              <p className="text-slate-600 text-lg mb-10">
                 Estamos prontos para tirar suas dúvidas e orientar você na melhor escolha para sua
                 carreira e desenvolvimento pessoal.
               </p>
 
               <div className="space-y-6">
                 <div className="flex items-center gap-4">
-                  <div className="h-12 w-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white">
+                  <div className="h-12 w-12 rounded-full bg-accent/10 border border-accent/20 flex items-center justify-center text-accent">
                     <Phone className="h-5 w-5" />
                   </div>
                   <div>
-                    <div className="text-sm text-white/50">WhatsApp / Telefone</div>
-                    <div className="text-lg font-medium text-white">+55 (11) 99999-9999</div>
+                    <div className="text-sm text-slate-500">WhatsApp / Telefone</div>
+                    <div className="text-lg font-medium text-slate-900">+55 (11) 99999-9999</div>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-4">
-                  <div className="h-12 w-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white">
+                  <div className="h-12 w-12 rounded-full bg-accent/10 border border-accent/20 flex items-center justify-center text-accent">
                     <Mail className="h-5 w-5" />
                   </div>
                   <div>
-                    <div className="text-sm text-white/50">E-mail</div>
-                    <div className="text-lg font-medium text-white">
+                    <div className="text-sm text-slate-500">E-mail</div>
+                    <div className="text-lg font-medium text-slate-900">
                       contato@andersonabreu.com.br
                     </div>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-4">
-                  <div className="h-12 w-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white">
+                  <div className="h-12 w-12 rounded-full bg-accent/10 border border-accent/20 flex items-center justify-center text-accent">
                     <MapPin className="h-5 w-5" />
                   </div>
                   <div>
-                    <div className="text-sm text-white/50">Endereço</div>
-                    <div className="text-lg font-medium text-white">
+                    <div className="text-sm text-slate-500">Endereço</div>
+                    <div className="text-lg font-medium text-slate-900">
                       Av. Tucuruvi, 123 - São Paulo, SP
                     </div>
                   </div>
@@ -524,26 +527,26 @@ export default function Landing() {
               <div className="mt-12 flex gap-4">
                 <a
                   href="#"
-                  className="h-10 w-10 rounded-full bg-white/10 hover:bg-gold hover:text-black flex items-center justify-center transition-colors"
+                  className="h-10 w-10 rounded-full bg-accent/10 hover:bg-accent hover:text-white flex items-center justify-center transition-colors text-accent"
                 >
                   <Instagram className="h-5 w-5" />
                 </a>
                 <a
                   href="#"
-                  className="h-10 w-10 rounded-full bg-white/10 hover:bg-gold hover:text-black flex items-center justify-center transition-colors"
+                  className="h-10 w-10 rounded-full bg-accent/10 hover:bg-accent hover:text-white flex items-center justify-center transition-colors text-accent"
                 >
                   <Facebook className="h-5 w-5" />
                 </a>
               </div>
             </div>
 
-            <div className="bg-white/5 border border-white/10 p-8 rounded-3xl backdrop-blur-sm">
-              <h4 className="text-2xl font-bold text-white mb-6">Envie sua mensagem</h4>
+            <div className="bg-white border border-slate-200 p-8 rounded-3xl shadow-sm">
+              <h4 className="text-2xl font-bold text-slate-900 mb-6">Envie sua mensagem</h4>
               <form onSubmit={handleContactSubmit} className="space-y-4">
                 <div>
                   <Input
                     placeholder="Seu nome completo"
-                    className="bg-black/50 border-white/10 text-white placeholder:text-white/30 h-12"
+                    className="bg-slate-50 border-slate-200 text-slate-900 placeholder:text-slate-400 h-12"
                     value={formData.name}
                     onChange={(e) => setFormData((p) => ({ ...p, name: e.target.value }))}
                     required
@@ -553,14 +556,14 @@ export default function Landing() {
                   <Input
                     type="email"
                     placeholder="Seu e-mail"
-                    className="bg-black/50 border-white/10 text-white placeholder:text-white/30 h-12"
+                    className="bg-slate-50 border-slate-200 text-slate-900 placeholder:text-slate-400 h-12"
                     value={formData.email}
                     onChange={(e) => setFormData((p) => ({ ...p, email: e.target.value }))}
                     required
                   />
                   <Input
                     placeholder="Telefone / WhatsApp"
-                    className="bg-black/50 border-white/10 text-white placeholder:text-white/30 h-12"
+                    className="bg-slate-50 border-slate-200 text-slate-900 placeholder:text-slate-400 h-12"
                     value={formData.phone}
                     onChange={(e) => setFormData((p) => ({ ...p, phone: e.target.value }))}
                   />
@@ -568,7 +571,7 @@ export default function Landing() {
                 <div>
                   <Textarea
                     placeholder="Como podemos ajudar?"
-                    className="bg-black/50 border-white/10 text-white placeholder:text-white/30 min-h-[120px]"
+                    className="bg-slate-50 border-slate-200 text-slate-900 placeholder:text-slate-400 min-h-[120px]"
                     value={formData.message}
                     onChange={(e) => setFormData((p) => ({ ...p, message: e.target.value }))}
                     required
@@ -577,7 +580,7 @@ export default function Landing() {
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-gold text-black hover:bg-gold/90 h-12 font-bold text-lg"
+                  className="w-full bg-accent text-black hover:bg-accent/90 h-12 font-bold text-lg"
                 >
                   {isSubmitting ? 'Enviando...' : 'Enviar Mensagem'}
                 </Button>
@@ -588,9 +591,9 @@ export default function Landing() {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 bg-black border-t border-white/5 text-center">
+      <footer className="py-8 bg-gradient-to-r from-[#0047AB] to-black text-center">
         <div className="container mx-auto px-6">
-          <p className="text-white/40 text-sm">
+          <p className="text-white/80 text-sm">
             © {new Date().getFullYear()} Anderson Abreu. Todos os direitos reservados.
           </p>
         </div>
