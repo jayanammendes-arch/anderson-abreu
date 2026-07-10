@@ -21,6 +21,7 @@ import {
   Users,
   Calendar,
   Palette,
+  HelpCircle,
 } from 'lucide-react'
 
 const adminNavItems = [
@@ -28,6 +29,7 @@ const adminNavItems = [
   { title: 'Cursos', href: '/admin/cursos', icon: BookOpen },
   { title: 'Alunos', href: '/admin/alunos', icon: Users },
   { title: 'Agenda', href: '/admin/agenda', icon: Calendar },
+  { title: 'FAQs', href: '/admin/faqs', icon: HelpCircle },
   { title: 'Plataforma', href: '/admin/plataforma', icon: Palette },
 ]
 

@@ -1,30 +1,35 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { adminGetFaqs, adminCreateFaq, adminUpdateFaq, adminDeleteFaq } from '@/services/faqs'
 import type { FAQ } from '@/types'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog'
+import { RichTextEditor } from '@/components/admin/RichTextEditor'
+import { useRealtime } from '@/hooks/use-realtime'
+import { extractFieldErrors, type FieldErrors } from '@/lib/pocketbase/errors'
 import { toast } from 'sonner'
-import { Pencil, Trash2, Plus, Loader2, Save, X, HelpCircle } from 'lucide-react'
+import { Pencil, Trash2, Plus, Loader2, Save, HelpCircle } from 'lucide-react'
 
-const emptyFaq: Partial<FAQ> = {
-  question: '',
-  answer: '',
-  category: '',
-  order: 0,
-}
+const emptyFaq: Partial<FAQ> = { question: '', answer: '', category: '', order: 0 }
 
 export default function AdminFaqs() {
   const [faqs, setFaqs] = useState<FAQ[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [isEditing, setIsEditing] = useState(false)
+  const [dialogOpen, setDialogOpen] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [formData, setFormData] = useState<Partial<FAQ>>(emptyFaq)
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
 
-  const loadFaqs = async () => {
+  const loadFaqs = useCallback(async () => {
     setIsLoading(true)
     try {
       setFaqs(await adminGetFaqs())
@@ -33,15 +38,31 @@ export default function AdminFaqs() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [])
 
   useEffect(() => {
     loadFaqs()
-  }, [])
+  }, [loadFaqs])
+  useRealtime('faqs', () => {
+    loadFaqs()
+  })
+
+  const handleNew = () => {
+    setFormData({ ...emptyFaq, order: faqs.length })
+    setFieldErrors({})
+    setDialogOpen(true)
+  }
+
+  const handleEdit = (faq: FAQ) => {
+    setFormData({ ...faq })
+    setFieldErrors({})
+    setDialogOpen(true)
+  }
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSaving(true)
+    setFieldErrors({})
     try {
       const data = {
         question: formData.question || '',
@@ -56,10 +77,12 @@ export default function AdminFaqs() {
         await adminCreateFaq(data)
         toast.success('FAQ criada!')
       }
-      setIsEditing(false)
+      setDialogOpen(false)
       loadFaqs()
-    } catch {
-      toast.error('Erro ao salvar')
+    } catch (err) {
+      const errors = extractFieldErrors(err)
+      setFieldErrors(errors)
+      if (Object.keys(errors).length === 0) toast.error('Erro ao salvar')
     } finally {
       setIsSaving(false)
     }
@@ -76,87 +99,10 @@ export default function AdminFaqs() {
     }
   }
 
-  const handleEdit = (faq: FAQ) => {
-    setFormData({ ...faq })
-    setIsEditing(true)
-  }
-
-  const handleNew = () => {
-    setFormData({ ...emptyFaq, order: faqs.length })
-    setIsEditing(true)
-  }
-
-  const handleCancel = () => {
-    setIsEditing(false)
-  }
-
-  if (isEditing) {
-    return (
-      <div className="max-w-2xl mx-auto animate-fade-in">
-        <Card className="bg-card/50 border-border/50">
-          <CardHeader>
-            <CardTitle>{formData.id ? 'Editar FAQ' : 'Nova FAQ'}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSave} className="space-y-4">
-              <div className="space-y-2">
-                <Label>Pergunta</Label>
-                <Input
-                  required
-                  value={formData.question}
-                  onChange={(e) => setFormData({ ...formData, question: e.target.value })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Resposta</Label>
-                <Textarea
-                  required
-                  value={formData.answer}
-                  onChange={(e) => setFormData({ ...formData, answer: e.target.value })}
-                  className="h-32"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Categoria</Label>
-                  <Input
-                    value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Ordem</Label>
-                  <Input
-                    type="number"
-                    value={formData.order}
-                    onChange={(e) => setFormData({ ...formData, order: Number(e.target.value) })}
-                  />
-                </div>
-              </div>
-              <div className="flex justify-end gap-3 pt-4">
-                <Button type="button" variant="outline" onClick={handleCancel}>
-                  <X className="mr-2 h-4 w-4" /> Cancelar
-                </Button>
-                <Button type="submit" disabled={isSaving}>
-                  {isSaving ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  ) : (
-                    <Save className="mr-2 h-4 w-4" />
-                  )}{' '}
-                  Salvar
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
-    )
-  }
-
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="flex justify-between items-center">
-        <p className="text-sm text-muted-foreground">Gerenciamento de perguntas frequentes</p>
+        <h1 className="text-2xl font-bold">FAQs</h1>
         <Button onClick={handleNew}>
           <Plus className="mr-2 h-4 w-4" /> Nova FAQ
         </Button>
@@ -166,10 +112,8 @@ export default function AdminFaqs() {
           <Loader2 className="h-6 w-6 animate-spin text-primary" />
         </div>
       ) : faqs.length === 0 ? (
-        <Card className="bg-card/50 border-border/50">
-          <CardContent className="py-12 text-center text-muted-foreground">
-            Nenhuma FAQ cadastrada.
-          </CardContent>
+        <Card className="bg-card/50 border-border/50 p-12 text-center text-muted-foreground">
+          Nenhuma FAQ cadastrada.
         </Card>
       ) : (
         <div className="grid gap-3">
@@ -186,8 +130,14 @@ export default function AdminFaqs() {
                       {faq.category}
                     </Badge>
                   )}
+                  <Badge variant="outline" className="text-xs">
+                    #{faq.order}
+                  </Badge>
                 </div>
-                <p className="text-sm text-muted-foreground line-clamp-2">{faq.answer}</p>
+                <div
+                  className="text-sm text-muted-foreground line-clamp-2 prose prose-sm max-w-none"
+                  dangerouslySetInnerHTML={{ __html: faq.answer }}
+                />
               </div>
               <div className="flex gap-2 shrink-0">
                 <Button variant="ghost" size="icon" onClick={() => handleEdit(faq)}>
@@ -206,6 +156,65 @@ export default function AdminFaqs() {
           ))}
         </div>
       )}
+
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>{formData.id ? 'Editar FAQ' : 'Nova FAQ'}</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleSave} className="space-y-4">
+            <div className="space-y-2">
+              <Label>Pergunta *</Label>
+              <Input
+                required
+                value={formData.question || ''}
+                onChange={(e) => setFormData({ ...formData, question: e.target.value })}
+              />
+              {fieldErrors.question && (
+                <p className="text-sm text-red-500">{fieldErrors.question}</p>
+              )}
+            </div>
+            <div className="space-y-2">
+              <Label>Resposta *</Label>
+              <RichTextEditor
+                value={formData.answer || ''}
+                onChange={(html) => setFormData({ ...formData, answer: html })}
+              />
+              {fieldErrors.answer && <p className="text-sm text-red-500">{fieldErrors.answer}</p>}
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Categoria</Label>
+                <Input
+                  value={formData.category || ''}
+                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Ordem</Label>
+                <Input
+                  type="number"
+                  value={formData.order || 0}
+                  onChange={(e) => setFormData({ ...formData, order: Number(e.target.value) })}
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
+                Cancelar
+              </Button>
+              <Button type="submit" disabled={isSaving}>
+                {isSaving ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Save className="mr-2 h-4 w-4" />
+                )}{' '}
+                Salvar
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
