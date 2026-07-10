@@ -459,7 +459,7 @@ export default function Landing() {
                           Comprar <ExternalLink className="ml-2 h-4 w-4" />
                         </a>
                       ) : (
-                        <a href="#contact">Tenho Interesse</a>
+                        <Link to="/login">Tenho Interesse</Link>
                       )}
                     </Button>
                   </div>

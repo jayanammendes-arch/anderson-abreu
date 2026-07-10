@@ -27,7 +27,10 @@ export const submitContact = (data: {
 }) => pb.collection('contact_submissions').create(data)
 
 export const getPublicCourses = (): Promise<Course[]> =>
-  pb.collection('courses').getFullList({ sort: 'order' })
+  pb.collection('courses').getFullList({
+    filter: 'is_available = true && (visibility = "home" || visibility = "both")',
+    sort: 'order',
+  })
 
 export const getFaqs = (): Promise<FAQ[]> => pb.collection('faqs').getFullList({ sort: 'order' })
 

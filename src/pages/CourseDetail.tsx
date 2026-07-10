@@ -101,7 +101,7 @@ export default function CourseDetail() {
     <div className="space-y-6 animate-fade-in pb-10">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="sm" asChild>
-          <Link to="/">
+          <Link to="/dashboard">
             <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
           </Link>
         </Button>

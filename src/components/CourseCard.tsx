@@ -42,7 +42,7 @@ export function CourseCard({ course, locked = false }: CourseCardProps) {
 
   return (
     <Card className="group overflow-hidden border-border/50 bg-card hover:border-primary/50 transition-all duration-300 hover:shadow-glow">
-      <Link to={`/curso/${course.id}`}>
+      <Link to={`/dashboard/curso/${course.id}`}>
         <div className="aspect-video overflow-hidden relative">
           <img
             src={thumb}
@@ -86,7 +86,7 @@ export function CourseCard({ course, locked = false }: CourseCardProps) {
           variant={course.progress === 100 ? 'secondary' : 'default'}
           asChild
         >
-          <Link to={`/curso/${course.id}`}>
+          <Link to={`/dashboard/curso/${course.id}`}>
             <PlayCircle className="mr-2 h-4 w-4" />
             {course.progress === 100
               ? 'Revisar Conteúdo'

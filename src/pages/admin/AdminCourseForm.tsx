@@ -75,17 +75,47 @@ export default function AdminCourseForm() {
     e.preventDefault()
     setSaving(true)
     try {
-      const fd = new FormData()
-      Object.entries(form).forEach(([k, v]) => fd.append(k, String(v)))
-      if (thumbnail) fd.append('thumbnail', thumbnail)
-      if (courseId) {
-        await adminUpdateCourse(courseId, fd)
-        toast.success('Curso atualizado!')
+      if (thumbnail) {
+        const fd = new FormData()
+        fd.append('title', form.title)
+        fd.append('short_description', form.short_description)
+        fd.append('description', form.description)
+        fd.append('external_buy_url', form.external_buy_url)
+        fd.append('price', String(form.price))
+        fd.append('discount_price', String(form.discount_price))
+        fd.append('discount_percentage', String(form.discount_percentage))
+        fd.append('order', String(form.order))
+        fd.append('visibility', form.visibility)
+        fd.append('is_available', String(form.is_available))
+        fd.append('category', form.category)
+        fd.append('thumbnail', thumbnail)
+        if (courseId) {
+          await adminUpdateCourse(courseId, fd)
+        } else {
+          await adminCreateCourse(fd)
+        }
       } else {
-        await adminCreateCourse(fd)
-        toast.success('Curso criado!')
-        navigate('/admin/cursos')
+        const payload = {
+          title: form.title,
+          short_description: form.short_description,
+          description: form.description,
+          external_buy_url: form.external_buy_url || undefined,
+          price: Number(form.price),
+          discount_price: Number(form.discount_price),
+          discount_percentage: Number(form.discount_percentage),
+          order: Number(form.order),
+          visibility: form.visibility,
+          is_available: Boolean(form.is_available),
+          category: form.category,
+        }
+        if (courseId) {
+          await adminUpdateCourse(courseId, payload)
+        } else {
+          await adminCreateCourse(payload)
+        }
       }
+      toast.success(courseId ? 'Curso atualizado!' : 'Curso criado!')
+      if (!courseId) navigate('/admin/cursos')
     } catch {
       toast.error('Erro ao salvar curso')
     } finally {
