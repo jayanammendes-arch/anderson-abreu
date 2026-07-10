@@ -17,7 +17,16 @@ import { ModuleSidebar } from '@/components/course/ModuleSidebar'
 import { MaterialsList } from '@/components/course/MaterialsList'
 import { CommentsSection } from '@/components/course/CommentsSection'
 import { QuizPanel } from '@/components/course/QuizPanel'
-import { ArrowLeft, CheckCircle2, Circle, Loader2, ChevronLeft, ChevronRight } from 'lucide-react'
+import {
+  ArrowLeft,
+  CheckCircle2,
+  Circle,
+  Loader2,
+  ChevronLeft,
+  ChevronRight,
+  Maximize2,
+  Minimize2,
+} from 'lucide-react'
 import type { CourseDetailData } from '@/types'
 import { cn } from '@/lib/utils'
 
@@ -29,6 +38,7 @@ export default function CourseDetail() {
   const [selectedLessonId, setSelectedLessonId] = useState('')
   const [quizModuleId, setQuizModuleId] = useState<string | null>(null)
   const [toggling, setToggling] = useState(false)
+  const [cinemaMode, setCinemaMode] = useState(false)
 
   const loadData = useCallback(async () => {
     if (!courseId || !user) return
@@ -142,8 +152,18 @@ export default function CourseDetail() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        <div className="lg:col-span-3 space-y-6">
+      <div
+        className={cn(
+          'grid grid-cols-1 gap-6 transition-all duration-300',
+          cinemaMode ? 'lg:grid-cols-1' : 'lg:grid-cols-4',
+        )}
+      >
+        <div
+          className={cn(
+            'space-y-6 transition-all duration-300',
+            cinemaMode ? 'lg:col-span-1' : 'lg:col-span-3',
+          )}
+        >
           {quizModuleId ? (
             <QuizPanel
               moduleId={quizModuleId}
@@ -154,7 +174,7 @@ export default function CourseDetail() {
             />
           ) : selectedLesson ? (
             <>
-              <div className="aspect-video w-full overflow-hidden rounded-xl bg-black shadow-lg border border-border/50">
+              <div className="aspect-video w-full overflow-hidden rounded-xl bg-black shadow-lg border border-border/50 ring-1 ring-border/30">
                 <VideoPlayer
                   key={selectedLesson.id}
                   videoUrl={selectedLesson.video_url}
@@ -170,25 +190,40 @@ export default function CourseDetail() {
                   <h2 className="text-xl font-semibold">{selectedLesson.title}</h2>
                   <p className="text-sm text-muted-foreground mt-1">{selectedLesson.duration}</p>
                 </div>
-                <Button
-                  onClick={handleToggleComplete}
-                  disabled={toggling}
-                  className={cn(
-                    'shrink-0',
-                    isCompleted
-                      ? 'bg-green-500/15 text-green-400 border border-green-500/30 hover:bg-green-500/25'
-                      : 'bg-green-600 text-white hover:bg-green-700',
-                  )}
-                >
-                  {toggling ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  ) : isCompleted ? (
-                    <CheckCircle2 className="mr-2 h-4 w-4" />
-                  ) : (
-                    <Circle className="mr-2 h-4 w-4" />
-                  )}
-                  {isCompleted ? 'Concluído' : 'Marcar como Concluído'}
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setCinemaMode(!cinemaMode)}
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    {cinemaMode ? (
+                      <Minimize2 className="mr-2 h-4 w-4" />
+                    ) : (
+                      <Maximize2 className="mr-2 h-4 w-4" />
+                    )}
+                    {cinemaMode ? 'Sair' : 'Cinema'}
+                  </Button>
+                  <Button
+                    onClick={handleToggleComplete}
+                    disabled={toggling}
+                    className={cn(
+                      'shrink-0',
+                      isCompleted
+                        ? 'bg-green-500/15 text-green-400 border border-green-500/30 hover:bg-green-500/25'
+                        : 'bg-green-600 text-white hover:bg-green-700',
+                    )}
+                  >
+                    {toggling ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : isCompleted ? (
+                      <CheckCircle2 className="mr-2 h-4 w-4" />
+                    ) : (
+                      <Circle className="mr-2 h-4 w-4" />
+                    )}
+                    {isCompleted ? 'Concluído' : 'Marcar como Concluído'}
+                  </Button>
+                </div>
               </div>
 
               {selectedLesson.content && (
@@ -232,25 +267,27 @@ export default function CourseDetail() {
           )}
         </div>
 
-        <div className="lg:col-span-1">
-          <Card className="bg-card/50 border-border/50 sticky top-6">
-            <CardContent className="p-4">
-              <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
-                Conteúdo do curso
-              </h2>
-              <ModuleSidebar
-                modules={modules}
-                lessons={lessons}
-                progress={progress}
-                quizzes={quizzes}
-                quizResults={quizResults}
-                selectedLessonId={selectedLessonId}
-                onSelectLesson={handleSelectLesson}
-                onTakeQuiz={setQuizModuleId}
-              />
-            </CardContent>
-          </Card>
-        </div>
+        {!cinemaMode && (
+          <div className="lg:col-span-1">
+            <Card className="bg-card/50 border-border/50 sticky top-6">
+              <CardContent className="p-4">
+                <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
+                  Conteúdo do curso
+                </h2>
+                <ModuleSidebar
+                  modules={modules}
+                  lessons={lessons}
+                  progress={progress}
+                  quizzes={quizzes}
+                  quizResults={quizResults}
+                  selectedLessonId={selectedLessonId}
+                  onSelectLesson={handleSelectLesson}
+                  onTakeQuiz={setQuizModuleId}
+                />
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </div>
     </div>
   )

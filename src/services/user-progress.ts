@@ -43,13 +43,11 @@ export async function saveVideoPosition(
       .collection('user_progress')
       .update(existing.id, { video_position: Math.floor(position) })
   } catch {
-    await pb
-      .collection('user_progress')
-      .create({
-        user: userId,
-        lesson: lessonId,
-        completed: false,
-        video_position: Math.floor(position),
-      })
+    await pb.collection('user_progress').create({
+      user: userId,
+      lesson: lessonId,
+      completed: false,
+      video_position: Math.floor(position),
+    })
   }
 }
