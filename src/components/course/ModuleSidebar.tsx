@@ -31,6 +31,15 @@ export function ModuleSidebar({
   onSelectLesson,
   onTakeQuiz,
 }: ModuleSidebarProps) {
+  const selectedModule = modules.find((m) =>
+    lessons.some((l) => l.id === selectedLessonId && l.module === m.id),
+  )
+  const defaultExpanded = selectedModule
+    ? [selectedModule.id]
+    : modules.length > 0
+      ? [modules[0].id]
+      : []
+
   const moduleLessons = (modId: string) => lessons.filter((l) => l.module === modId)
 
   const isModuleUnlocked = (index: number): boolean => {
@@ -46,11 +55,7 @@ export function ModuleSidebar({
   }
 
   return (
-    <Accordion
-      type="multiple"
-      defaultValue={modules.length > 0 ? [modules[0].id] : []}
-      className="space-y-2"
-    >
+    <Accordion type="multiple" defaultValue={defaultExpanded} className="space-y-2">
       {modules.map((mod, idx) => {
         const unlocked = isModuleUnlocked(idx)
         const modLessons = moduleLessons(mod.id)

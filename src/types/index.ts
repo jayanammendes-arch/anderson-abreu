@@ -86,6 +86,7 @@ export interface UserProgress {
   user: string
   lesson: string
   completed: boolean
+  video_position?: number
   created: string
   updated: string
 }

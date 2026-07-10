@@ -4,6 +4,8 @@ import { PlayCircle } from 'lucide-react'
 interface VideoPlayerProps {
   videoUrl: string
   title: string
+  initialPosition?: number
+  onProgressSave?: (currentTime: number) => void
   onNearComplete: () => void
 }
 
@@ -35,22 +37,34 @@ function loadScript(src: string): Promise<void> {
   })
 }
 
-export function VideoPlayer({ videoUrl, title, onNearComplete }: VideoPlayerProps) {
+export function VideoPlayer({
+  videoUrl,
+  title,
+  initialPosition = 0,
+  onProgressSave,
+  onNearComplete,
+}: VideoPlayerProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const playerRef = useRef<any>(null)
   const intervalRef = useRef<ReturnType<typeof setInterval>>()
+  const tickCountRef = useRef(0)
   const completedRef = useRef(false)
-  const callbackRef = useRef(onNearComplete)
-  callbackRef.current = onNearComplete
+  const lastPositionRef = useRef(0)
+  const nearCompleteRef = useRef(onNearComplete)
+  const progressRef = useRef(onProgressSave)
+  nearCompleteRef.current = onNearComplete
+  progressRef.current = onProgressSave
   const [hasVideo, setHasVideo] = useState(false)
 
   useEffect(() => {
     completedRef.current = false
+    tickCountRef.current = 0
+    lastPositionRef.current = 0
     if (playerRef.current) {
       try {
         playerRef.current.destroy?.()
       } catch {
-        /* intentionally ignored */
+        /* ignored */
       }
       playerRef.current = null
     }
@@ -68,6 +82,7 @@ export function VideoPlayer({ videoUrl, title, onNearComplete }: VideoPlayerProp
 
     const ytId = getYouTubeId(videoUrl)
     const vimeoId = getVimeoId(videoUrl)
+    const startPos = initialPosition
 
     if (ytId) {
       loadScript('https://www.youtube.com/iframe_api').then(() => {
@@ -86,20 +101,34 @@ export function VideoPlayer({ videoUrl, title, onNearComplete }: VideoPlayerProp
           containerRef.current!.appendChild(iframe)
           playerRef.current = new YT.Player(iframe, {
             events: {
+              onReady: (e: any) => {
+                if (startPos > 5) e.target.seekTo(startPos, true)
+              },
               onStateChange: (e: any) => {
                 if (e.data === 1) {
                   if (intervalRef.current) clearInterval(intervalRef.current)
                   intervalRef.current = setInterval(() => {
                     const p = playerRef.current
-                    if (!completedRef.current && p?.getDuration) {
-                      const dur = p.getDuration()
-                      if (dur > 0 && p.getCurrentTime() >= dur - 20) {
-                        completedRef.current = true
-                        callbackRef.current()
-                        if (intervalRef.current) clearInterval(intervalRef.current)
-                      }
+                    if (!p?.getDuration) return
+                    const dur = p.getDuration()
+                    const cur = p.getCurrentTime()
+                    lastPositionRef.current = cur
+                    tickCountRef.current++
+                    if (!completedRef.current && dur > 0 && cur >= dur - 20) {
+                      completedRef.current = true
+                      nearCompleteRef.current()
+                    }
+                    if (tickCountRef.current % 15 === 0 && progressRef.current) {
+                      progressRef.current(cur)
                     }
                   }, 1000)
+                } else if (e.data === 2 || e.data === 0) {
+                  if (intervalRef.current) {
+                    clearInterval(intervalRef.current)
+                    intervalRef.current = undefined
+                  }
+                  if (progressRef.current && lastPositionRef.current > 0)
+                    progressRef.current(lastPositionRef.current)
                 }
               },
             },
@@ -119,11 +148,20 @@ export function VideoPlayer({ videoUrl, title, onNearComplete }: VideoPlayerProp
         containerRef.current!.innerHTML = ''
         containerRef.current!.appendChild(iframe)
         playerRef.current = new Vimeo.Player(iframe)
+        if (startPos > 5) playerRef.current.setCurrentTime(startPos).catch(() => {})
+        let vimeoTick = 0
         playerRef.current.on('timeupdate', (data: any) => {
+          lastPositionRef.current = data.seconds
+          vimeoTick++
           if (!completedRef.current && data.duration > 0 && data.seconds >= data.duration - 20) {
             completedRef.current = true
-            callbackRef.current()
+            nearCompleteRef.current()
           }
+          if (vimeoTick % 15 === 0 && progressRef.current) progressRef.current(data.seconds)
+        })
+        playerRef.current.on('ended', () => {
+          if (progressRef.current && lastPositionRef.current > 0)
+            progressRef.current(lastPositionRef.current)
         })
       })
     } else {
@@ -139,11 +177,13 @@ export function VideoPlayer({ videoUrl, title, onNearComplete }: VideoPlayerProp
     }
 
     return () => {
+      if (progressRef.current && lastPositionRef.current > 0)
+        progressRef.current(lastPositionRef.current)
       if (playerRef.current) {
         try {
           playerRef.current.destroy?.()
         } catch {
-          /* intentionally ignored */
+          /* ignored */
         }
         playerRef.current = null
       }
@@ -152,7 +192,7 @@ export function VideoPlayer({ videoUrl, title, onNearComplete }: VideoPlayerProp
         intervalRef.current = undefined
       }
     }
-  }, [videoUrl, title])
+  }, [videoUrl, title]) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!hasVideo) {
     return (
