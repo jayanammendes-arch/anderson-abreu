@@ -4,6 +4,7 @@ import {
   adminGetStudentAccess,
   adminGrantAccess,
   adminRevokeAccess,
+  adminToggleHypnosis,
 } from '@/services/admin-students'
 import { getCourses } from '@/services/courses'
 import { Button } from '@/components/ui/button'
@@ -11,8 +12,9 @@ import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { Search, ArrowLeft, Lock, Unlock, Loader2 } from 'lucide-react'
+import { Search, ArrowLeft, Lock, Unlock, Loader2, Sparkles } from 'lucide-react'
 import { toast } from 'sonner'
+import { Switch } from '@/components/ui/switch'
 import type { Course, UserAccess } from '@/types'
 
 export default function AdminStudents() {
@@ -88,10 +90,41 @@ export default function AdminStudents() {
             <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
           </Button>
           <div>
-            <h1 className="text-2xl font-bold">{selected.name || 'Aluno'}</h1>
+            <h1 className="text-2xl font-bold flex items-center gap-2">
+              {selected.name || 'Aluno'}
+              {selected.is_hypnosis && (
+                <Badge className="bg-purple-500/90 text-white">
+                  <Sparkles className="mr-1 h-3 w-3" /> Hipnose
+                </Badge>
+              )}
+            </h1>
             <p className="text-sm text-muted-foreground">{selected.email}</p>
           </div>
         </div>
+        <Card className="bg-card/50 border-border/50 p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="font-semibold flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-purple-500" /> Tag Hipnose
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                Permite acesso a cursos Exclusivo Hipnose
+              </p>
+            </div>
+            <Switch
+              checked={!!selected.is_hypnosis}
+              onCheckedChange={async (checked) => {
+                try {
+                  await adminToggleHypnosis(selected.id, checked)
+                  setSelected({ ...selected, is_hypnosis: checked })
+                  toast.success(checked ? 'Tag Hipnose ativada' : 'Tag Hipnose desativada')
+                } catch {
+                  toast.error('Erro ao atualizar tag')
+                }
+              }}
+            />
+          </div>
+        </Card>
         {accessLoading ? (
           <div className="flex justify-center py-8">
             <Loader2 className="h-6 w-6 animate-spin text-primary" />
@@ -181,7 +214,14 @@ export default function AdminStudents() {
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1">
-                <h3 className="font-semibold">{s.name || 'Sem nome'}</h3>
+                <h3 className="font-semibold flex items-center gap-2">
+                  {s.name || 'Sem nome'}
+                  {s.is_hypnosis && (
+                    <Badge className="bg-purple-500/90 text-white text-xs">
+                      <Sparkles className="mr-1 h-3 w-3" /> Hipnose
+                    </Badge>
+                  )}
+                </h3>
                 <p className="text-sm text-muted-foreground">{s.email}</p>
               </div>
             </Card>

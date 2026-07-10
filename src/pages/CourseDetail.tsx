@@ -9,6 +9,7 @@ import {
   saveVideoPosition,
   getVideoPosition,
 } from '@/services/user-progress'
+import { hasCourseAccess as checkUserAccess } from '@/services/user-access'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Card, CardContent } from '@/components/ui/card'
@@ -27,6 +28,7 @@ import {
   Maximize2,
   Minimize2,
   Radio,
+  Lock,
 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import type { CourseDetailData } from '@/types'
@@ -42,11 +44,16 @@ export default function CourseDetail() {
   const [quizModuleId, setQuizModuleId] = useState<string | null>(null)
   const [toggling, setToggling] = useState(false)
   const [cinemaMode, setCinemaMode] = useState(false)
+  const [hasAccess, setHasAccess] = useState(false)
 
   const loadData = useCallback(async () => {
     if (!courseId || !user) return
     try {
-      setData(await getCourseDetailData(courseId, user.id))
+      const detail = await getCourseDetailData(courseId, user.id)
+      setData(detail)
+      const access =
+        detail.course.access_type === 'free' || (await checkUserAccess(user.id, courseId))
+      setHasAccess(access)
     } catch {
       setData(null)
     } finally {
@@ -107,6 +114,21 @@ export default function CourseDetail() {
     return (
       <div className="text-center py-20">
         <p className="text-muted-foreground mb-4">Curso não encontrado.</p>
+        <Button asChild>
+          <Link to="/dashboard">
+            <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
+          </Link>
+        </Button>
+      </div>
+    )
+  }
+
+  if (!hasAccess) {
+    return (
+      <div className="text-center py-20 space-y-4">
+        <Lock className="h-12 w-12 mx-auto text-muted-foreground" />
+        <p className="text-lg font-semibold">Acesso Restrito</p>
+        <p className="text-muted-foreground">Você não tem acesso a este curso.</p>
         <Button asChild>
           <Link to="/dashboard">
             <ArrowLeft className="mr-2 h-4 w-4" /> Voltar

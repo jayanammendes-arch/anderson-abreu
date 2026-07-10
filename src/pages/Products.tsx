@@ -17,6 +17,7 @@ import {
   ExternalLink,
   PlayCircle,
   Package,
+  Lock,
 } from 'lucide-react'
 import type { Course } from '@/types'
 
@@ -31,10 +32,7 @@ export default function Products() {
     if (!user) return
     try {
       const [allCourses, accessRecords] = await Promise.all([getCourses(), getUserAccess(user.id)])
-      const userIsPatient = !!user?.is_patient
-      setCourses(
-        allCourses.filter((c) => c.is_available && (c.access_type !== 'patient' || userIsPatient)),
-      )
+      setCourses(allCourses.filter((c) => c.is_available))
       setAccessCourseIds(new Set(accessRecords.map((a) => a.course)))
     } catch {
       setCourses([])
@@ -142,6 +140,8 @@ export default function Products() {
 }
 
 function ProductCard({ course, hasAccess }: { course: Course; hasAccess: boolean }) {
+  const isHypnosis = course.access_type === 'hypnosis'
+  const isFree = course.access_type === 'free'
   const hasDiscount =
     course.discount_price != null && course.price != null && course.discount_price < course.price
 
@@ -151,7 +151,10 @@ function ProductCard({ course, hasAccess }: { course: Course; hasAccess: boolean
         <img
           src={getThumbnailUrl(course)}
           alt={course.title}
-          className="h-full w-full object-cover transition-all duration-700 group-hover:scale-110 opacity-70 group-hover:opacity-100"
+          className={cn(
+            'h-full w-full object-cover transition-all duration-700 group-hover:scale-110 opacity-70 group-hover:opacity-100',
+            isHypnosis && !hasAccess && 'grayscale',
+          )}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
 
@@ -160,22 +163,42 @@ function ProductCard({ course, hasAccess }: { course: Course; hasAccess: boolean
             <CheckCircle2 className="h-3 w-3" /> Adquirido
           </Badge>
         )}
-        {hasDiscount && !hasAccess && (
+        {isHypnosis && !hasAccess && (
+          <Badge className="absolute top-3 right-3 bg-purple-500/90 text-white shadow-lg flex items-center gap-1">
+            <Lock className="h-3 w-3" /> Exclusivo
+          </Badge>
+        )}
+        {hasDiscount && !hasAccess && !isHypnosis && (
           <Badge className="absolute top-3 right-3 bg-primary text-primary-foreground shadow-lg flex items-center gap-1">
             <Sparkles className="h-3 w-3" />{' '}
             {course.discount_percentage ? `-${course.discount_percentage}%` : 'Oferta'}
           </Badge>
         )}
+        {isHypnosis && !hasAccess && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="h-14 w-14 rounded-full bg-background/80 backdrop-blur-md flex items-center justify-center border border-white/10">
+              <Lock className="h-6 w-6 text-muted-foreground" />
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="p-5 flex flex-col flex-1 relative z-10 bg-card">
-        <CardTitle className="text-lg mb-2 leading-tight">{course.title}</CardTitle>
+        <CardTitle className="text-lg mb-2 leading-tight flex items-center gap-2">
+          {isHypnosis && <Lock className="h-4 w-4 text-muted-foreground shrink-0" />}
+          {course.title}
+        </CardTitle>
         <p className="text-sm text-muted-foreground mb-6 line-clamp-2 flex-1">
           {course.short_description || course.description}
         </p>
 
         <div className="mt-auto space-y-4">
-          {!hasAccess && (
+          {isHypnosis && !hasAccess && (
+            <p className="text-xs text-purple-400 font-medium">
+              Acesso exclusivo — liberação mediante análise
+            </p>
+          )}
+          {!isHypnosis && !hasAccess && !isFree && (
             <div className="flex flex-col">
               {hasDiscount ? (
                 <>
@@ -193,10 +216,20 @@ function ProductCard({ course, hasAccess }: { course: Course; hasAccess: boolean
               )}
             </div>
           )}
-          {hasAccess ? (
+          {isHypnosis && !hasAccess ? (
+            <Button className="w-full" variant="secondary" asChild>
+              <Link to={`/courses/${course.id}`}>Ver Detalhes</Link>
+            </Button>
+          ) : hasAccess ? (
             <Button className="w-full" asChild>
               <Link to={`/dashboard/curso/${course.id}`}>
                 <PlayCircle className="mr-2 h-4 w-4" /> Acessar Curso
+              </Link>
+            </Button>
+          ) : isFree ? (
+            <Button className="w-full" asChild>
+              <Link to={`/dashboard/curso/${course.id}`}>
+                <PlayCircle className="mr-2 h-4 w-4" /> Acessar
               </Link>
             </Button>
           ) : course.external_buy_url ? (

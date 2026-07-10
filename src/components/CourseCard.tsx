@@ -30,11 +30,19 @@ export function CourseCard({ course, locked = false }: CourseCardProps) {
               <Lock className="h-6 w-6 text-muted-foreground" />
             </div>
           </div>
-          <Badge className="absolute top-3 right-3 bg-red-500/90 backdrop-blur-md">Em Breve</Badge>
+          <Badge className="absolute top-3 right-3 bg-purple-500/90 backdrop-blur-md">
+            Exclusivo
+          </Badge>
         </div>
         <CardContent className="p-5">
-          <CardTitle className="line-clamp-2 text-lg mb-2">{course.title}</CardTitle>
+          <CardTitle className="line-clamp-2 text-lg mb-2 flex items-center gap-2">
+            <Lock className="h-4 w-4 text-muted-foreground shrink-0" />
+            {course.title}
+          </CardTitle>
           <p className="text-sm text-muted-foreground line-clamp-2">{course.description}</p>
+          <p className="text-xs text-purple-400 mt-3">
+            Acesso exclusivo — liberação mediante análise
+          </p>
         </CardContent>
       </Card>
     )

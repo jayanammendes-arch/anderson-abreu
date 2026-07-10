@@ -51,6 +51,22 @@ export async function getCoursesWithProgress(userId: string): Promise<CourseWith
   })
 }
 
+export async function getPublicCourseDetail(courseId: string) {
+  const course = (await pb.collection('courses').getOne(courseId)) as Course
+  const modules = (await pb
+    .collection('modules')
+    .getFullList({ filter: `course = "${courseId}"`, sort: 'order' })) as Module[]
+  const moduleIds = modules.map((m) => m.id)
+  const lessons =
+    moduleIds.length > 0
+      ? ((await pb.collection('lessons').getFullList({
+          filter: moduleIds.map((id) => `module = "${id}"`).join(' || '),
+          sort: 'order',
+        })) as Lesson[])
+      : []
+  return { course, modules, lessons }
+}
+
 export async function getCourseDetailData(
   courseId: string,
   userId: string,

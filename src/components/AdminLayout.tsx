@@ -12,6 +12,7 @@ const adminPageTitles: Record<string, string> = {
   '/admin/cursos': 'Gerenciar Cursos',
   '/admin/cursos/novo': 'Novo Curso',
   '/admin/alunos': 'Gerenciar Alunos',
+  '/admin/liberacoes': 'Liberações de Acesso',
   '/admin/agenda': 'Agenda de Eventos',
   '/admin/faqs': 'Gerenciar FAQs',
 }

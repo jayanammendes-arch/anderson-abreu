@@ -12,7 +12,7 @@ export interface Course {
   external_buy_url?: string
   short_description?: string
   visibility?: 'home' | 'templates' | 'both'
-  access_type?: 'free' | 'paid' | 'patient'
+  access_type?: 'free' | 'paid' | 'patient' | 'hypnosis'
   created: string
   updated: string
 }
@@ -194,6 +194,7 @@ export interface CommunityUser {
   bio?: string
   email?: string
   is_patient?: boolean
+  is_hypnosis?: boolean
 }
 
 export interface CommunityPost {

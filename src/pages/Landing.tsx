@@ -32,6 +32,7 @@ import {
   X,
   ArrowRight,
   CheckCircle2,
+  Lock,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { TestimonialsSection } from '@/components/TestimonialsSection'
@@ -82,10 +83,7 @@ export default function Landing() {
       getPlatformSettingsPublic().catch(() => null),
     ])
     setEvents(eventsData as Event[])
-    const filteredCourses = (coursesData as Course[]).filter(
-      (c) => c.access_type !== 'patient' || !!user?.is_patient,
-    )
-    setCourses(filteredCourses)
+    setCourses(coursesData as Course[])
     setSettings(settingsData as PlatformSettings | null)
   }
 
@@ -513,38 +511,50 @@ export default function Landing() {
                         'Aprenda os conceitos fundamentais com especialistas.'}
                     </p>
 
-                    <div className="flex items-end justify-between mb-6">
-                      <div>
-                        {course.discount_price ? (
-                          <>
-                            <div className="text-sm text-slate-400 line-through">
-                              R$ {course.price?.toFixed(2)}
-                            </div>
-                            <div className="text-2xl font-bold text-accent">
-                              R$ {course.discount_price?.toFixed(2)}
-                            </div>
-                          </>
-                        ) : (
-                          <div className="text-2xl font-bold text-accent">
-                            R$ {course.price?.toFixed(2) || 'Consulte'}
-                          </div>
-                        )}
+                    {course.access_type === 'hypnosis' ? (
+                      <div className="mb-6 flex items-center gap-2 text-slate-500">
+                        <Lock className="h-5 w-5 shrink-0" />
+                        <span className="text-sm font-medium">
+                          Acesso exclusivo — liberação mediante análise
+                        </span>
                       </div>
-                    </div>
+                    ) : course.access_type === 'free' ? (
+                      <div className="mb-6">
+                        <span className="text-2xl font-bold text-accent">Gratuito</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-end justify-between mb-6">
+                        <div>
+                          {course.discount_price ? (
+                            <>
+                              <div className="text-sm text-slate-400 line-through">
+                                R$ {course.price?.toFixed(2)}
+                              </div>
+                              <div className="text-2xl font-bold text-accent">
+                                R$ {course.discount_price?.toFixed(2)}
+                              </div>
+                            </>
+                          ) : (
+                            <div className="text-2xl font-bold text-accent">
+                              R$ {course.price?.toFixed(2) || 'Consulte'}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
 
                     <Button
                       className="w-full bg-accent hover:bg-accent/90 text-black transition-colors"
                       asChild
                     >
-                      {course.external_buy_url ? (
-                        <a href={course.external_buy_url} target="_blank" rel="noopener noreferrer">
-                          Comprar <ExternalLink className="ml-2 h-4 w-4" />
-                        </a>
-                      ) : (
-                        <a href="#contact" onClick={(e) => scrollToSection(e, '#contact')}>
-                          Comprar <ExternalLink className="ml-2 h-4 w-4" />
-                        </a>
-                      )}
+                      <Link to={`/courses/${course.id}`}>
+                        {course.access_type === 'hypnosis'
+                          ? 'Ver Detalhes'
+                          : course.access_type === 'free'
+                            ? 'Inscrever-se'
+                            : 'Comprar'}
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </Link>
                     </Button>
                   </div>
                 </div>

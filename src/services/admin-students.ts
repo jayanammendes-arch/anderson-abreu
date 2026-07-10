@@ -16,3 +16,9 @@ export const adminGrantAccess = (userId: string, courseId: string) =>
   pb.collection('user_access').create({ user: userId, course: courseId })
 
 export const adminRevokeAccess = (accessId: string) => pb.collection('user_access').delete(accessId)
+
+export const adminGetHypnosisUsers = () =>
+  pb.collection('users').getFullList({ filter: 'is_hypnosis = true', sort: '-created' })
+
+export const adminToggleHypnosis = (userId: string, value: boolean) =>
+  pb.collection('users').update(userId, { is_hypnosis: value })

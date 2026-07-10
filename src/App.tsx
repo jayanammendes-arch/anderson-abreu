@@ -12,6 +12,7 @@ import { AdminLayout } from '@/components/AdminLayout'
 import AdminCourses from '@/pages/admin/AdminCourses'
 import AdminCourseForm from '@/pages/admin/AdminCourseForm'
 import AdminStudents from '@/pages/admin/AdminStudents'
+import AdminAccessReleases from '@/pages/admin/AdminAccessReleases'
 import AdminSettings from '@/pages/admin/AdminSettings'
 import AdminConfigHub from '@/pages/admin/AdminConfigHub'
 import AdminPageConfig from '@/pages/admin/AdminPageConfig'
@@ -23,6 +24,7 @@ import Faq from '@/pages/Faq'
 import AdminFaqs from '@/pages/admin/AdminFaqs'
 import AdminTestimonials from '@/pages/admin/AdminTestimonials'
 import CourseDetail from '@/pages/CourseDetail'
+import CourseDetailsPage from '@/pages/CourseDetailsPage'
 import Profile from '@/pages/Profile'
 import Certificates from '@/pages/Certificates'
 import NotFound from '@/pages/NotFound'
@@ -37,11 +39,13 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/courses/:courseId" element={<CourseDetailsPage />} />
             <Route path="/admin" element={<AdminLayout />}>
               <Route path="cursos" element={<AdminCourses />} />
               <Route path="cursos/novo" element={<AdminCourseForm />} />
               <Route path="cursos/:courseId" element={<AdminCourseForm />} />
               <Route path="alunos" element={<AdminStudents />} />
+              <Route path="liberacoes" element={<AdminAccessReleases />} />
               <Route path="configuracoes" element={<AdminConfigHub />} />
               <Route path="paginas" element={<AdminPageConfig />} />
               <Route path="plataforma" element={<AdminSettings />} />

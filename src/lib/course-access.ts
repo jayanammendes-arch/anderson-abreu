@@ -1,9 +1,9 @@
 export function filterByAccessType<T extends { access_type?: string }>(
   courses: T[],
-  isPatient: boolean,
+  hasHypnosisTag: boolean,
 ): T[] {
   return courses.filter((c) => {
-    if (c.access_type === 'patient' && !isPatient) return false
+    if (c.access_type === 'hypnosis' && !hasHypnosisTag) return false
     return true
   })
 }
