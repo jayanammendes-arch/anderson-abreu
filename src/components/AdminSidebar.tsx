@@ -22,12 +22,14 @@ import {
   Calendar,
   Palette,
   HelpCircle,
+  MessageSquareQuote,
 } from 'lucide-react'
 
 const adminNavItems = [
   { title: 'Central', href: '/admin/configuracoes', icon: Settings },
   { title: 'Cursos', href: '/admin/cursos', icon: BookOpen },
   { title: 'Alunos', href: '/admin/alunos', icon: Users },
+  { title: 'Depoimentos', href: '/admin/depoimentos', icon: MessageSquareQuote },
   { title: 'Agenda', href: '/admin/agenda', icon: Calendar },
   { title: 'FAQs', href: '/admin/faqs', icon: HelpCircle },
   { title: 'Plataforma', href: '/admin/plataforma', icon: Palette },

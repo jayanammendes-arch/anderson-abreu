@@ -19,6 +19,7 @@ import Products from '@/pages/Products'
 import Purchases from '@/pages/Purchases'
 import Faq from '@/pages/Faq'
 import AdminFaqs from '@/pages/admin/AdminFaqs'
+import AdminTestimonials from '@/pages/admin/AdminTestimonials'
 import CourseDetail from '@/pages/CourseDetail'
 import Profile from '@/pages/Profile'
 import Certificates from '@/pages/Certificates'
@@ -41,6 +42,7 @@ const App = () => (
               <Route path="alunos" element={<AdminStudents />} />
               <Route path="configuracoes" element={<AdminConfigHub />} />
               <Route path="plataforma" element={<AdminSettings />} />
+              <Route path="depoimentos" element={<AdminTestimonials />} />
               <Route path="agenda" element={<AdminAgenda />} />
               <Route path="faqs" element={<AdminFaqs />} />
             </Route>

@@ -23,6 +23,7 @@ import {
   CheckCircle2,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { TestimonialsSection } from '@/components/TestimonialsSection'
 
 const navLinks = [
   { name: 'Home', href: '#home' },
@@ -309,6 +310,8 @@ export default function Landing() {
           </div>
         </div>
       </section>
+
+      <TestimonialsSection />
 
       {/* Agenda */}
       <section id="agenda" className="py-24 bg-slate-50">

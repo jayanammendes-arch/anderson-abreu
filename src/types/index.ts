@@ -170,6 +170,20 @@ export interface LessonComment {
   expand?: { user?: { id: string; name: string; avatar: string } }
 }
 
+export interface Testimonial {
+  id: string
+  student_name: string
+  type: 'text' | 'video'
+  content: string
+  student_image: string
+  course: string
+  is_active: boolean
+  order: number
+  created: string
+  updated: string
+  expand?: { course?: Course }
+}
+
 export interface PlatformSettings {
   id: string
   company_name: string
