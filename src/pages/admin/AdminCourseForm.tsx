@@ -33,6 +33,7 @@ const emptyForm = {
   is_available: true,
   category: '',
   order: 0,
+  access_type: 'paid',
 }
 
 function Section({
@@ -89,6 +90,7 @@ export default function AdminCourseForm() {
         is_available: c.is_available,
         category: c.category || '',
         order: c.order || 0,
+        access_type: c.access_type || 'paid',
       })
     } catch {
       toast.error('Curso não encontrado')
@@ -119,6 +121,7 @@ export default function AdminCourseForm() {
         fd.append('visibility', form.visibility)
         fd.append('is_available', String(form.is_available))
         fd.append('category', form.category)
+        fd.append('access_type', form.access_type)
         fd.append('thumbnail', thumbnail)
         if (courseId) {
           await adminUpdateCourse(courseId, fd)
@@ -138,6 +141,7 @@ export default function AdminCourseForm() {
           visibility: form.visibility,
           is_available: Boolean(form.is_available),
           category: form.category,
+          access_type: form.access_type,
         }
         if (courseId) {
           await adminUpdateCourse(courseId, payload)
@@ -196,7 +200,7 @@ export default function AdminCourseForm() {
               className="min-h-[100px]"
             />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label>Categoria</Label>
               <Input
@@ -211,6 +215,22 @@ export default function AdminCourseForm() {
                 value={form.order}
                 onChange={(e) => setForm({ ...form, order: Number(e.target.value) })}
               />
+            </div>
+            <div className="space-y-2">
+              <Label>Tipo de Acesso</Label>
+              <Select
+                value={form.access_type}
+                onValueChange={(v) => setForm({ ...form, access_type: v })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="free">Livre</SelectItem>
+                  <SelectItem value="paid">Pago</SelectItem>
+                  <SelectItem value="patient">Exclusivo para pacientes</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </Section>

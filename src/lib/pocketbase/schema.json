@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-10T18:57:39.325Z",
+  "generatedAt": "2026-07-10T19:16:02.557Z",
   "collections": [
     {
       "name": "users",
@@ -47,6 +47,12 @@
         {
           "name": "bio",
           "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "is_patient",
+          "type": "bool",
           "required": false,
           "system": false
         }
@@ -153,6 +159,13 @@
           "required": false,
           "system": false,
           "selectValues": ["home", "templates", "both"]
+        },
+        {
+          "name": "access_type",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": ["free", "paid", "patient"]
         }
       ],
       "indexes": [
@@ -271,6 +284,12 @@
           "required": false,
           "system": false,
           "autodateTriggers": ["onCreate", "onUpdate"]
+        },
+        {
+          "name": "is_live",
+          "type": "bool",
+          "required": false,
+          "system": false
         }
       ],
       "indexes": [

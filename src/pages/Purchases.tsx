@@ -24,7 +24,13 @@ export default function Purchases() {
         getUserAccess(user.id),
       ])
       const accessCourseIds = new Set(accessRecords.map((a) => a.course))
-      setCourses(allCourses.filter((c) => accessCourseIds.has(c.id)))
+      const userIsPatient = !!user?.is_patient
+      setCourses(
+        allCourses.filter((c) => {
+          if (c.access_type === 'patient' && !userIsPatient) return false
+          return accessCourseIds.has(c.id) || c.access_type === 'free'
+        }),
+      )
     } catch {
       setCourses([])
     } finally {

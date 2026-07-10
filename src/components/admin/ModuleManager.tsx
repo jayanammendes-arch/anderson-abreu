@@ -16,6 +16,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
+import { Switch } from '@/components/ui/switch'
 import {
   Accordion,
   AccordionContent,
@@ -29,7 +30,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog'
-import { Plus, Trash2, Pencil, Loader2, FileText, FileQuestion } from 'lucide-react'
+import { Plus, Trash2, Pencil, Loader2, FileText, FileQuestion, Radio } from 'lucide-react'
 import { toast } from 'sonner'
 import type { Module, Lesson } from '@/types'
 
@@ -48,7 +49,14 @@ export function ModuleManager({ courseId }: { courseId: string }) {
     moduleId: string
     edit: Lesson | null
   }>({ open: false, moduleId: '', edit: null })
-  const [lf, setLf] = useState({ title: '', video_url: '', duration: '', order: 0, content: '' })
+  const [lf, setLf] = useState({
+    title: '',
+    video_url: '',
+    duration: '',
+    order: 0,
+    content: '',
+    is_live: false,
+  })
 
   const loadData = useCallback(async () => {
     try {
@@ -133,8 +141,9 @@ export function ModuleManager({ courseId }: { courseId: string }) {
             duration: lesson.duration || '',
             order: lesson.order,
             content: lesson.content || '',
+            is_live: lesson.is_live || false,
           }
-        : { title: '', video_url: '', duration: '', order: 0, content: '' },
+        : { title: '', video_url: '', duration: '', order: 0, content: '', is_live: false },
     )
     setLessonDialog({ open: true, moduleId, edit: lesson })
   }
@@ -184,7 +193,14 @@ export function ModuleManager({ courseId }: { courseId: string }) {
                       className="flex items-center gap-3 rounded-lg border border-border/30 p-3"
                     >
                       <div className="flex-1">
-                        <p className="text-sm font-medium">{lesson.title}</p>
+                        <p className="text-sm font-medium flex items-center gap-2">
+                          {lesson.title}
+                          {lesson.is_live && (
+                            <Badge className="bg-red-500 text-white text-[10px] px-1.5 py-0">
+                              AO VIVO
+                            </Badge>
+                          )}
+                        </p>
                         <p className="text-xs text-muted-foreground">
                           {lesson.duration || 'Sem duração'}
                         </p>
@@ -322,6 +338,12 @@ export function ModuleManager({ courseId }: { courseId: string }) {
                   placeholder="Ex: 15:30"
                 />
               </div>
+            </div>
+            <div className="flex items-center gap-3 pt-2">
+              <Switch checked={lf.is_live} onCheckedChange={(c) => setLf({ ...lf, is_live: c })} />
+              <Label className="flex items-center gap-1 cursor-pointer">
+                <Radio className="h-4 w-4 text-red-500" /> Aula ao vivo (Live)
+              </Label>
             </div>
             <div className="space-y-2">
               <Label>Conteúdo (opcional)</Label>

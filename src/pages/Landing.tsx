@@ -56,7 +56,7 @@ const formatStatValue = (num: number) => {
 }
 
 export default function Landing() {
-  const { isAuthenticated, loading } = useAuth()
+  const { isAuthenticated, loading, user } = useAuth()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
 
@@ -82,7 +82,10 @@ export default function Landing() {
       getPlatformSettingsPublic().catch(() => null),
     ])
     setEvents(eventsData as Event[])
-    setCourses(coursesData as Course[])
+    const filteredCourses = (coursesData as Course[]).filter(
+      (c) => c.access_type !== 'patient' || !!user?.is_patient,
+    )
+    setCourses(filteredCourses)
     setSettings(settingsData as PlatformSettings | null)
   }
 
@@ -487,13 +490,17 @@ export default function Landing() {
                       alt={course.title}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
-                    {course.discount_price &&
+                    {course.discount_percentage && course.discount_percentage > 0 ? (
+                      <div className="absolute top-4 right-4 bg-accent text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                        -{course.discount_percentage}%
+                      </div>
+                    ) : course.discount_price &&
                       course.price &&
-                      course.discount_price < course.price && (
-                        <div className="absolute top-4 right-4 bg-accent text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
-                          Oferta Especial
-                        </div>
-                      )}
+                      course.discount_price < course.price ? (
+                      <div className="absolute top-4 right-4 bg-accent text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                        Oferta
+                      </div>
+                    ) : null}
                   </div>
 
                   <div className="p-6 flex-1 flex flex-col">
@@ -534,7 +541,9 @@ export default function Landing() {
                           Comprar <ExternalLink className="ml-2 h-4 w-4" />
                         </a>
                       ) : (
-                        <Link to="/login">Tenho Interesse</Link>
+                        <a href="#contact" onClick={(e) => scrollToSection(e, '#contact')}>
+                          Comprar <ExternalLink className="ml-2 h-4 w-4" />
+                        </a>
                       )}
                     </Button>
                   </div>

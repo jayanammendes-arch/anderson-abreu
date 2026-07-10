@@ -12,6 +12,7 @@ export interface Course {
   external_buy_url?: string
   short_description?: string
   visibility?: 'home' | 'templates' | 'both'
+  access_type?: 'free' | 'paid' | 'patient'
   created: string
   updated: string
 }
@@ -77,6 +78,7 @@ export interface Lesson {
   content: string
   duration: string
   order: number
+  is_live?: boolean
   created: string
   updated: string
 }
@@ -191,6 +193,7 @@ export interface CommunityUser {
   is_admin: boolean
   bio?: string
   email?: string
+  is_patient?: boolean
 }
 
 export interface CommunityPost {

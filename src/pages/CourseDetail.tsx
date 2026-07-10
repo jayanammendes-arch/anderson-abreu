@@ -26,7 +26,9 @@ import {
   ChevronRight,
   Maximize2,
   Minimize2,
+  Radio,
 } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
 import type { CourseDetailData } from '@/types'
 import { cn } from '@/lib/utils'
 
@@ -190,7 +192,14 @@ export default function CourseDetail() {
 
               <div className="flex items-center justify-between gap-4">
                 <div>
-                  <h2 className="text-xl font-semibold">{selectedLesson.title}</h2>
+                  <h2 className="text-xl font-semibold flex items-center gap-2">
+                    {selectedLesson.title}
+                    {selectedLesson.is_live && (
+                      <Badge className="bg-red-500 text-white gap-1">
+                        <Radio className="h-3 w-3" /> AO VIVO
+                      </Badge>
+                    )}
+                  </h2>
                   <p className="text-sm text-muted-foreground mt-1">{selectedLesson.duration}</p>
                 </div>
                 <div className="flex items-center gap-2">

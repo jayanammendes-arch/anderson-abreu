@@ -16,14 +16,20 @@ export default function Index() {
   const [loading, setLoading] = useState(true)
   const [resumeUrl, setResumeUrl] = useState<string | null>(null)
   const [hasProgress, setHasProgress] = useState(false)
+  const [accessCourseIds, setAccessCourseIds] = useState<Set<string>>(new Set())
 
   const loadData = useCallback(async () => {
     if (!user) return
     try {
-      const data = await getCoursesWithProgress(user.id)
+      const [data, accessRecords] = await Promise.all([
+        getCoursesWithProgress(user.id),
+        getUserAccess(user.id),
+      ])
       setCourses(data)
+      setAccessCourseIds(new Set(accessRecords.map((a) => a.course)))
     } catch {
       setCourses([])
+      setAccessCourseIds(new Set())
     } finally {
       setLoading(false)
     }
@@ -51,7 +57,10 @@ export default function Index() {
           const courseWithLesson = courses.find((c) =>
             c.lessons.some((l) => l.id === lastProgress.lesson),
           )
-          if (courseWithLesson) {
+          if (
+            courseWithLesson &&
+            (courseWithLesson.access_type === 'free' || accessCourseIds.has(courseWithLesson.id))
+          ) {
             setResumeUrl(`/dashboard/curso/${courseWithLesson.id}?lesson=${lastProgress.lesson}`)
             setHasProgress(true)
             return
@@ -61,25 +70,18 @@ export default function Index() {
         /* ignore */
       }
       setHasProgress(false)
-      try {
-        const access = await getUserAccess(user.id)
-        if (access.length > 0) {
-          const firstAccessCourse = courses.find((c) => c.id === access[0].course && c.is_available)
-          if (firstAccessCourse) {
-            setResumeUrl(`/dashboard/curso/${firstAccessCourse.id}`)
-            return
-          }
-        }
-      } catch {
-        /* ignore */
+      const firstAccessCourse = courses.find((c) => c.is_available && accessCourseIds.has(c.id))
+      if (firstAccessCourse) {
+        setResumeUrl(`/dashboard/curso/${firstAccessCourse.id}`)
+        return
       }
-      const fallback = courses.find((c) => c.is_available)
-      if (fallback) {
-        setResumeUrl(`/dashboard/curso/${fallback.id}`)
+      const freeCourse = courses.find((c) => c.is_available && c.access_type === 'free')
+      if (freeCourse) {
+        setResumeUrl(`/dashboard/curso/${freeCourse.id}`)
       }
     }
     determineResume()
-  }, [user, loading, courses])
+  }, [user, loading, courses, accessCourseIds])
 
   if (loading) {
     return (
@@ -90,8 +92,12 @@ export default function Index() {
   }
 
   const userName = user?.name?.split(' ')[0] || 'Aluno'
-  const availableCourses = courses.filter((c) => c.is_available)
-  const lockedCourses = courses.filter((c) => !c.is_available)
+  const userIsPatient = !!user?.is_patient
+  const visibleCourses = courses.filter((c) => c.access_type !== 'patient' || userIsPatient)
+  const availableCourses = visibleCourses.filter(
+    (c) => c.is_available && (c.access_type === 'free' || accessCourseIds.has(c.id)),
+  )
+  const lockedCourses = visibleCourses.filter((c) => !c.is_available)
   const pendingLessons = availableCourses.reduce(
     (acc, c) => acc + (c.totalLessons - c.completedCount),
     0,

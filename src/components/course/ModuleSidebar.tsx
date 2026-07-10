@@ -1,4 +1,4 @@
-import { CheckCircle2, Circle, Lock, PlayCircle, FileQuestion } from 'lucide-react'
+import { CheckCircle2, Circle, Lock, PlayCircle, FileQuestion, Radio } from 'lucide-react'
 import {
   Accordion,
   AccordionItem,
@@ -110,7 +110,14 @@ export function ModuleSidebar({
                       ) : (
                         <Circle className="h-4 w-4 shrink-0" />
                       )}
-                      <span className="flex-1 line-clamp-1">{lesson.title}</span>
+                      <span className="flex-1 line-clamp-1">
+                        {lesson.is_live && (
+                          <span className="inline-flex items-center gap-0.5 mr-1 text-[10px] font-bold text-red-500 bg-red-500/10 px-1 py-0.5 rounded">
+                            <Radio className="h-2.5 w-2.5" /> AO VIVO
+                          </span>
+                        )}
+                        {lesson.title}
+                      </span>
                       <span
                         className={cn(
                           'text-xs',

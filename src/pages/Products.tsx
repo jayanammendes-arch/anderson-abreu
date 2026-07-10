@@ -31,7 +31,10 @@ export default function Products() {
     if (!user) return
     try {
       const [allCourses, accessRecords] = await Promise.all([getCourses(), getUserAccess(user.id)])
-      setCourses(allCourses.filter((c) => c.is_available))
+      const userIsPatient = !!user?.is_patient
+      setCourses(
+        allCourses.filter((c) => c.is_available && (c.access_type !== 'patient' || userIsPatient)),
+      )
       setAccessCourseIds(new Set(accessRecords.map((a) => a.course)))
     } catch {
       setCourses([])
@@ -47,7 +50,9 @@ export default function Products() {
   useRealtime('courses', () => loadData())
   useRealtime('user_access', () => loadData())
 
-  const filtered = courses.filter((c) => c.title.toLowerCase().includes(search.toLowerCase()))
+  const filtered = courses.filter((c) =>
+    c.title.toLowerCase().includes(search.toLowerCase().trim()),
+  )
   const categories = Array.from(new Set(courses.map((c) => c.category).filter(Boolean))) as string[]
 
   if (loading) {
@@ -157,7 +162,8 @@ function ProductCard({ course, hasAccess }: { course: Course; hasAccess: boolean
         )}
         {hasDiscount && !hasAccess && (
           <Badge className="absolute top-3 right-3 bg-primary text-primary-foreground shadow-lg flex items-center gap-1">
-            <Sparkles className="h-3 w-3" /> Oferta
+            <Sparkles className="h-3 w-3" />{' '}
+            {course.discount_percentage ? `-${course.discount_percentage}%` : 'Oferta'}
           </Badge>
         )}
       </div>
@@ -199,15 +205,12 @@ function ProductCard({ course, hasAccess }: { course: Course; hasAccess: boolean
               asChild
             >
               <a href={course.external_buy_url} target="_blank" rel="noopener noreferrer">
-                Comprar Agora <ExternalLink className="ml-2 h-4 w-4" />
+                Comprar <ExternalLink className="ml-2 h-4 w-4" />
               </a>
             </Button>
           ) : (
-            <Button
-              className="w-full bg-white text-black hover:bg-primary hover:text-primary-foreground transition-colors"
-              asChild
-            >
-              <Link to="/dashboard/faq">Tenho Interesse</Link>
+            <Button className="w-full" disabled>
+              Comprar
             </Button>
           )}
         </div>
