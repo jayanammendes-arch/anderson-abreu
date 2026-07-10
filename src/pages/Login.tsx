@@ -7,32 +7,13 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Brain, Eye, EyeOff, ArrowLeft, CheckCircle2, Loader2 } from 'lucide-react'
 import { extractFieldErrors, getErrorMessage, type FieldErrors } from '@/lib/pocketbase/errors'
+import { GoogleIcon, AppleIcon } from '@/components/SocialIcons'
 
 type AuthMode = 'login' | 'signup' | 'recovery'
 
-function SocialAuthButtons() {
-  return (
-    <div className="grid grid-cols-2 gap-3">
-      <Button
-        variant="outline"
-        type="button"
-        className="border-white/15 bg-white/5 text-white hover:bg-white/10 hover:text-white"
-      >
-        Google
-      </Button>
-      <Button
-        variant="outline"
-        type="button"
-        className="border-white/15 bg-white/5 text-white hover:bg-white/10 hover:text-white"
-      >
-        Apple
-      </Button>
-    </div>
-  )
-}
-
 export default function Login() {
-  const { signIn, signUp, requestPasswordReset, isAuthenticated, loading } = useAuth()
+  const { signIn, signUp, signInWithOAuth, requestPasswordReset, isAuthenticated, loading } =
+    useAuth()
   const navigate = useNavigate()
 
   const [mode, setMode] = useState<AuthMode>('login')
@@ -44,6 +25,7 @@ export default function Login() {
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [submitting, setSubmitting] = useState(false)
   const [recoverySent, setRecoverySent] = useState(false)
+  const [oauthLoading, setOauthLoading] = useState<string | null>(null)
 
   if (loading) {
     return (
@@ -53,6 +35,18 @@ export default function Login() {
     )
   }
   if (isAuthenticated) return <Navigate to="/dashboard" replace />
+
+  const handleOAuth = async (provider: 'google' | 'apple') => {
+    setOauthLoading(provider)
+    setFieldErrors({})
+    const { error } = await signInWithOAuth(provider)
+    if (error) {
+      toast.error(getErrorMessage(error))
+    } else {
+      navigate('/dashboard')
+    }
+    setOauthLoading(null)
+  }
 
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault()
@@ -300,7 +294,36 @@ export default function Login() {
                   <span className="bg-black px-2 text-muted-foreground">ou</span>
                 </div>
               </div>
-              <SocialAuthButtons />
+              <div className="grid grid-cols-2 gap-3">
+                <Button
+                  variant="outline"
+                  type="button"
+                  onClick={() => handleOAuth('google')}
+                  disabled={oauthLoading !== null}
+                  className="border-white/15 bg-white/5 text-white hover:bg-white/10 hover:text-white"
+                >
+                  {oauthLoading === 'google' ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <GoogleIcon className="mr-2" />
+                  )}
+                  Entrar com Google
+                </Button>
+                <Button
+                  variant="outline"
+                  type="button"
+                  onClick={() => handleOAuth('apple')}
+                  disabled={oauthLoading !== null}
+                  className="border-white/15 bg-white/5 text-white hover:bg-white/10 hover:text-white"
+                >
+                  {oauthLoading === 'apple' ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <AppleIcon className="mr-2" />
+                  )}
+                  Entrar com Apple
+                </Button>
+              </div>
               <p className="text-center text-sm text-muted-foreground">
                 {mode === 'login' ? 'Não tem conta? ' : 'Já tem conta? '}
                 <button
