@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Brain, Eye, EyeOff, ArrowLeft, CheckCircle2, Loader2 } from 'lucide-react'
 import { extractFieldErrors, getErrorMessage, type FieldErrors } from '@/lib/pocketbase/errors'
-import { GoogleIcon, AppleIcon } from '@/components/SocialIcons'
+import { GoogleIcon } from '@/components/SocialIcons'
 
 type AuthMode = 'login' | 'signup' | 'recovery'
 
@@ -36,7 +36,7 @@ export default function Login() {
   }
   if (isAuthenticated) return <Navigate to="/dashboard" replace />
 
-  const handleOAuth = async (provider: 'google' | 'apple') => {
+  const handleOAuth = async (provider: 'google') => {
     setOauthLoading(provider)
     setFieldErrors({})
     const { error } = await signInWithOAuth(provider)
@@ -294,36 +294,20 @@ export default function Login() {
                   <span className="bg-black px-2 text-muted-foreground">ou</span>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <Button
-                  variant="outline"
-                  type="button"
-                  onClick={() => handleOAuth('google')}
-                  disabled={oauthLoading !== null}
-                  className="border-white/15 bg-white/5 text-white hover:bg-white/10 hover:text-white"
-                >
-                  {oauthLoading === 'google' ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  ) : (
-                    <GoogleIcon className="mr-2" />
-                  )}
-                  Entrar com Google
-                </Button>
-                <Button
-                  variant="outline"
-                  type="button"
-                  onClick={() => handleOAuth('apple')}
-                  disabled={oauthLoading !== null}
-                  className="border-white/15 bg-white/5 text-white hover:bg-white/10 hover:text-white"
-                >
-                  {oauthLoading === 'apple' ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  ) : (
-                    <AppleIcon className="mr-2" />
-                  )}
-                  Entrar com Apple
-                </Button>
-              </div>
+              <Button
+                variant="outline"
+                type="button"
+                onClick={() => handleOAuth('google')}
+                disabled={oauthLoading !== null}
+                className="w-full border-white/15 bg-white/5 text-white hover:bg-white/10 hover:text-white"
+              >
+                {oauthLoading === 'google' ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <GoogleIcon className="mr-2" />
+                )}
+                Entrar com Google
+              </Button>
               <p className="text-center text-sm text-muted-foreground">
                 {mode === 'login' ? 'Não tem conta? ' : 'Já tem conta? '}
                 <button

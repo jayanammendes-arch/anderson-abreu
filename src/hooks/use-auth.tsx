@@ -7,7 +7,7 @@ interface AuthContextType {
   isAdmin: boolean
   signUp: (name: string, email: string, password: string) => Promise<{ error: any }>
   signIn: (email: string, password: string) => Promise<{ error: any }>
-  signInWithOAuth: (provider: 'google' | 'apple') => Promise<{ error: any }>
+  signInWithOAuth: (provider: 'google') => Promise<{ error: any }>
   signOut: () => void
   requestPasswordReset: (email: string) => Promise<{ error: any }>
   updateProfile: (data: { name?: string; avatar?: File }) => Promise<{ error: any }>
@@ -77,7 +77,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }
 
-  const signInWithOAuth = async (provider: 'google' | 'apple') => {
+  const signInWithOAuth = async (provider: 'google') => {
     try {
       const result = await pb.collection('users').authWithOAuth2({ provider })
       const meta = result.meta as { name?: string; avatarUrl?: string } | undefined
