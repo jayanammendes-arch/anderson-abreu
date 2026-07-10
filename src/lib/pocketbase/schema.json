@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-10T20:38:26.047Z",
+  "generatedAt": "2026-07-10T20:47:20.204Z",
   "collections": [
     {
       "name": "users",
@@ -55,11 +55,18 @@
           "type": "bool",
           "required": false,
           "system": false
+        },
+        {
+          "name": "is_hypnosis",
+          "type": "bool",
+          "required": false,
+          "system": false
         }
       ],
       "indexes": [
         "CREATE UNIQUE INDEX `idx_tokenKey__pb_users_auth_` ON `users` (`tokenKey`)",
-        "CREATE UNIQUE INDEX `idx_email__pb_users_auth_` ON `users` (`email`) WHERE `email` != ''"
+        "CREATE UNIQUE INDEX `idx_email__pb_users_auth_` ON `users` (`email`) WHERE `email` != ''",
+        "CREATE INDEX `idx_users_is_hypnosis` ON `users` (is_hypnosis)"
       ]
     },
     {
@@ -165,12 +172,13 @@
           "type": "select",
           "required": false,
           "system": false,
-          "selectValues": ["free", "paid", "patient"]
+          "selectValues": ["free", "paid", "hypnosis"]
         }
       ],
       "indexes": [
         "CREATE INDEX idx_courses_order ON courses (order)",
-        "CREATE INDEX idx_courses_category ON courses (category)"
+        "CREATE INDEX idx_courses_category ON courses (category)",
+        "CREATE INDEX `idx_courses_access_type` ON `courses` (access_type)"
       ]
     },
     {

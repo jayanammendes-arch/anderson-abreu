@@ -15,7 +15,7 @@ migrate(
 
     var coursesCol = app.findCollectionByNameOrId('courses')
     if (coursesCol.fields.getByName('access_type')) {
-      coursesCol.fields.remove('access_type')
+      coursesCol.fields.removeByName('access_type')
     }
     coursesCol.fields.add(
       new SelectField({
@@ -35,7 +35,7 @@ migrate(
   (app) => {
     var usersCol = app.findCollectionByNameOrId('_pb_users_auth_')
     if (usersCol.fields.getByName('is_hypnosis')) {
-      usersCol.fields.remove('is_hypnosis')
+      usersCol.fields.removeByName('is_hypnosis')
     }
     usersCol.removeIndex('idx_users_is_hypnosis')
     app.save(usersCol)
@@ -47,7 +47,7 @@ migrate(
 
     var coursesCol = app.findCollectionByNameOrId('courses')
     if (coursesCol.fields.getByName('access_type')) {
-      coursesCol.fields.remove('access_type')
+      coursesCol.fields.removeByName('access_type')
     }
     coursesCol.fields.add(
       new SelectField({
