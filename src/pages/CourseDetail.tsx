@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useSearchParams } from 'react-router-dom'
 import { useAuth } from '@/hooks/use-auth'
 import { useRealtime } from '@/hooks/use-realtime'
 import { getCourseDetailData } from '@/services/courses'
@@ -32,6 +32,7 @@ import { cn } from '@/lib/utils'
 
 export default function CourseDetail() {
   const { courseId } = useParams<{ courseId: string }>()
+  const [searchParams] = useSearchParams()
   const { user } = useAuth()
   const [data, setData] = useState<CourseDetailData | null>(null)
   const [loading, setLoading] = useState(true)
@@ -60,10 +61,12 @@ export default function CourseDetail() {
 
   useEffect(() => {
     if (data && data.lessons.length > 0 && !selectedLessonId) {
+      const lessonParam = searchParams.get('lesson')
+      const lessonFromParam = lessonParam ? data.lessons.find((l) => l.id === lessonParam) : null
       const firstIncomplete = data.lessons.find((l) => !isLessonCompleted(data.progress, l.id))
-      setSelectedLessonId(firstIncomplete?.id || data.lessons[0].id)
+      setSelectedLessonId(lessonFromParam?.id || firstIncomplete?.id || data.lessons[0].id)
     }
-  }, [data, selectedLessonId])
+  }, [data, selectedLessonId, searchParams])
 
   const handleToggleComplete = async () => {
     if (!user || !selectedLessonId) return

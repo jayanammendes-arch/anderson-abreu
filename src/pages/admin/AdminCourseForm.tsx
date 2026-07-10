@@ -243,15 +243,6 @@ export default function AdminCourseForm() {
               />
             </div>
           </div>
-          <div className="space-y-2">
-            <Label>URL de Compra Externa</Label>
-            <Input
-              type="url"
-              value={form.external_buy_url}
-              onChange={(e) => setForm({ ...form, external_buy_url: e.target.value })}
-              placeholder="https://..."
-            />
-          </div>
         </Section>
         <Section title="Mídia">
           <div className="space-y-2">
@@ -260,6 +251,17 @@ export default function AdminCourseForm() {
               type="file"
               accept="image/jpeg,image/png,image/webp"
               onChange={(e) => setThumbnail(e.target.files?.[0] || null)}
+            />
+          </div>
+        </Section>
+        <Section title="Link de Pagamento">
+          <div className="space-y-2">
+            <Label>URL de Compra Externa</Label>
+            <Input
+              type="url"
+              value={form.external_buy_url}
+              onChange={(e) => setForm({ ...form, external_buy_url: e.target.value })}
+              placeholder="https://..."
             />
           </div>
         </Section>

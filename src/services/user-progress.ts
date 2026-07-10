@@ -51,3 +51,15 @@ export async function saveVideoPosition(
     })
   }
 }
+
+export async function getLastUpdatedProgress(userId: string): Promise<UserProgress | null> {
+  try {
+    const result = await pb.collection('user_progress').getList(1, 1, {
+      filter: `user = "${userId}"`,
+      sort: '-updated',
+    })
+    return (result.items[0] as UserProgress) || null
+  } catch {
+    return null
+  }
+}

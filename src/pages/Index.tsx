@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '@/hooks/use-auth'
 import { useRealtime } from '@/hooks/use-realtime'
 import { getCoursesWithProgress } from '@/services/courses'
+import { getLastUpdatedProgress } from '@/services/user-progress'
+import { getUserAccess } from '@/services/user-access'
 import { CourseCard } from '@/components/CourseCard'
 import { Button } from '@/components/ui/button'
 import { PlayCircle, Star, Loader2, Sparkles } from 'lucide-react'
@@ -12,6 +14,8 @@ export default function Index() {
   const { user } = useAuth()
   const [courses, setCourses] = useState<CourseWithProgress[]>([])
   const [loading, setLoading] = useState(true)
+  const [resumeUrl, setResumeUrl] = useState<string | null>(null)
+  const [hasProgress, setHasProgress] = useState(false)
 
   const loadData = useCallback(async () => {
     if (!user) return
@@ -38,6 +42,45 @@ export default function Index() {
     loadData()
   })
 
+  useEffect(() => {
+    if (!user || loading || courses.length === 0) return
+    const determineResume = async () => {
+      try {
+        const lastProgress = await getLastUpdatedProgress(user.id)
+        if (lastProgress) {
+          const courseWithLesson = courses.find((c) =>
+            c.lessons.some((l) => l.id === lastProgress.lesson),
+          )
+          if (courseWithLesson) {
+            setResumeUrl(`/dashboard/curso/${courseWithLesson.id}?lesson=${lastProgress.lesson}`)
+            setHasProgress(true)
+            return
+          }
+        }
+      } catch {
+        /* ignore */
+      }
+      setHasProgress(false)
+      try {
+        const access = await getUserAccess(user.id)
+        if (access.length > 0) {
+          const firstAccessCourse = courses.find((c) => c.id === access[0].course && c.is_available)
+          if (firstAccessCourse) {
+            setResumeUrl(`/dashboard/curso/${firstAccessCourse.id}`)
+            return
+          }
+        }
+      } catch {
+        /* ignore */
+      }
+      const fallback = courses.find((c) => c.is_available)
+      if (fallback) {
+        setResumeUrl(`/dashboard/curso/${fallback.id}`)
+      }
+    }
+    determineResume()
+  }, [user, loading, courses])
+
   if (loading) {
     return (
       <div className="flex h-96 items-center justify-center">
@@ -53,9 +96,6 @@ export default function Index() {
     (acc, c) => acc + (c.totalLessons - c.completedCount),
     0,
   )
-  const inProgressCourse =
-    availableCourses.find((c) => c.progress > 0 && c.progress < 100) || availableCourses[0]
-
   return (
     <div className="space-y-10 animate-fade-in pb-10">
       <section className="relative overflow-hidden rounded-3xl bg-gradient-brand p-8 sm:p-12 border border-white/5 shadow-elevation">
@@ -72,11 +112,11 @@ export default function Index() {
               : 'Parabéns! Você concluiu todas as aulas disponíveis. Confira novos cursos abaixo.'}
           </p>
           <div className="flex flex-wrap gap-4">
-            {inProgressCourse && (
+            {resumeUrl && (
               <Button size="lg" className="shadow-glow group" asChild>
-                <Link to={`/curso/${inProgressCourse.id}`}>
+                <Link to={resumeUrl}>
                   <PlayCircle className="mr-2 h-5 w-5 transition-transform group-hover:scale-110" />
-                  {inProgressCourse.progress > 0 ? 'Retomar Aula Atual' : 'Começar Agora'}
+                  {hasProgress ? 'Retomar Aula Atual' : 'Começar Agora'}
                 </Link>
               </Button>
             )}
@@ -86,7 +126,7 @@ export default function Index() {
               className="bg-white/5 border-white/10 hover:bg-white/10"
               asChild
             >
-              <Link to="/produtos">Ver Produtos</Link>
+              <Link to="/dashboard/produtos">Ver Produtos</Link>
             </Button>
           </div>
         </div>
