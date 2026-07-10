@@ -9,17 +9,9 @@ import { Card, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Input } from '@/components/ui/input'
-import {
-  Search,
-  Sparkles,
-  CheckCircle2,
-  Loader2,
-  ExternalLink,
-  PlayCircle,
-  Package,
-  Lock,
-} from 'lucide-react'
+import { Search, Sparkles, CheckCircle2, Loader2, PlayCircle, Package, Lock } from 'lucide-react'
 import type { Course } from '@/types'
+import { cn } from '@/lib/utils'
 
 export default function Products() {
   const { user } = useAuth()
@@ -216,11 +208,7 @@ function ProductCard({ course, hasAccess }: { course: Course; hasAccess: boolean
               )}
             </div>
           )}
-          {isHypnosis && !hasAccess ? (
-            <Button className="w-full" variant="secondary" asChild>
-              <Link to={`/courses/${course.id}`}>Ver Detalhes</Link>
-            </Button>
-          ) : hasAccess ? (
+          {hasAccess ? (
             <Button className="w-full" asChild>
               <Link to={`/dashboard/curso/${course.id}`}>
                 <PlayCircle className="mr-2 h-4 w-4" /> Acessar Curso
@@ -232,18 +220,9 @@ function ProductCard({ course, hasAccess }: { course: Course; hasAccess: boolean
                 <PlayCircle className="mr-2 h-4 w-4" /> Acessar
               </Link>
             </Button>
-          ) : course.external_buy_url ? (
-            <Button
-              className="w-full bg-white text-black hover:bg-primary hover:text-primary-foreground transition-colors"
-              asChild
-            >
-              <a href={course.external_buy_url} target="_blank" rel="noopener noreferrer">
-                Comprar <ExternalLink className="ml-2 h-4 w-4" />
-              </a>
-            </Button>
           ) : (
-            <Button className="w-full" disabled>
-              Comprar
+            <Button className="w-full" variant={isHypnosis ? 'secondary' : 'default'} asChild>
+              <Link to={`/cursos/${course.id}`}>Ver Detalhes</Link>
             </Button>
           )}
         </div>

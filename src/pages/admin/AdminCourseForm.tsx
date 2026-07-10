@@ -228,7 +228,7 @@ export default function AdminCourseForm() {
                 <SelectContent>
                   <SelectItem value="free">Livre</SelectItem>
                   <SelectItem value="paid">Pago</SelectItem>
-                  <SelectItem value="patient">Exclusivo para pacientes</SelectItem>
+                  <SelectItem value="hypnosis">Exclusivo hipnose</SelectItem>
                 </SelectContent>
               </Select>
             </div>

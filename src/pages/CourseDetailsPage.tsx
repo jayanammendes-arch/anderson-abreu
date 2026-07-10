@@ -7,8 +7,33 @@ import { getActiveTestimonials } from '@/services/testimonials'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
-import { Lock, ExternalLink, ArrowLeft, BookOpen, ChevronRight, PlayCircle } from 'lucide-react'
+import {
+  Lock,
+  ExternalLink,
+  ArrowLeft,
+  BookOpen,
+  ChevronRight,
+  PlayCircle,
+  Clock,
+} from 'lucide-react'
 import type { Course, Module, Lesson, Testimonial } from '@/types'
+
+function parseDurationToSeconds(duration: string): number {
+  if (!duration) return 0
+  const parts = duration.split(':').map(Number)
+  if (parts.some(isNaN)) return 0
+  if (parts.length === 2) return parts[0] * 60 + parts[1]
+  if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2]
+  return 0
+}
+
+function formatTotalDuration(seconds: number): string {
+  const h = Math.floor(seconds / 3600)
+  const m = Math.floor((seconds % 3600) / 60)
+  if (h > 0) return `${h}h ${m}min`
+  if (m > 0) return `${m}min`
+  return '—'
+}
 
 export default function CourseDetailsPage() {
   const { courseId } = useParams<{ courseId: string }>()
@@ -73,6 +98,9 @@ export default function CourseDetailsPage() {
   const hasDiscount =
     course.discount_price != null && course.price != null && course.discount_price < course.price
   const totalLessons = lessons.length
+  const totalDuration = formatTotalDuration(
+    lessons.reduce((acc, l) => acc + parseDurationToSeconds(l.duration || ''), 0),
+  )
 
   const toggleModule = (id: string) => {
     setExpanded((prev) => {
@@ -282,6 +310,11 @@ export default function CourseDetailsPage() {
                     {totalLessons > 0 && (
                       <div className="flex items-center gap-2">
                         <BookOpen className="h-4 w-4" /> {totalLessons} aulas
+                      </div>
+                    )}
+                    {totalLessons > 0 && (
+                      <div className="flex items-center gap-2">
+                        <Clock className="h-4 w-4" /> {totalDuration}
                       </div>
                     )}
                     {modules.length > 0 && (

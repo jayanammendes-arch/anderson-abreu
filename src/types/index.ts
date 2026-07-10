@@ -12,7 +12,7 @@ export interface Course {
   external_buy_url?: string
   short_description?: string
   visibility?: 'home' | 'templates' | 'both'
-  access_type?: 'free' | 'paid' | 'patient' | 'hypnosis'
+  access_type?: 'free' | 'paid' | 'hypnosis'
   created: string
   updated: string
 }
