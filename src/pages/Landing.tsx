@@ -24,6 +24,8 @@ import {
   ExternalLink,
   Instagram,
   Facebook,
+  Linkedin,
+  Youtube,
   Phone,
   Mail,
   Menu,
@@ -142,6 +144,13 @@ export default function Landing() {
   const contactPhone = settings?.contact_phone || '+55 (11) 99999-9999'
   const contactEmail = settings?.support_email || 'contato@andersonabreu.com.br'
   const contactWhatsapp = settings?.whatsapp_number || contactPhone
+
+  const socialLinks = [
+    { url: settings?.instagram_handle || '', icon: Instagram, label: 'Instagram' },
+    { url: settings?.facebook_url || '', icon: Facebook, label: 'Facebook' },
+    { url: settings?.linkedin_url || '', icon: Linkedin, label: 'LinkedIn' },
+    { url: settings?.youtube_url || '', icon: Youtube, label: 'YouTube' },
+  ].filter((s) => s.url.trim() !== '')
 
   return (
     <div className="min-h-screen bg-white text-slate-900 font-sans selection:bg-accent selection:text-white">
@@ -591,18 +600,21 @@ export default function Landing() {
               </div>
 
               <div className="mt-12 flex gap-4">
-                <a
-                  href="#"
-                  className="h-10 w-10 rounded-full bg-accent/10 hover:bg-accent hover:text-white flex items-center justify-center transition-colors text-accent"
-                >
-                  <Instagram className="h-5 w-5" />
-                </a>
-                <a
-                  href="#"
-                  className="h-10 w-10 rounded-full bg-accent/10 hover:bg-accent hover:text-white flex items-center justify-center transition-colors text-accent"
-                >
-                  <Facebook className="h-5 w-5" />
-                </a>
+                {socialLinks.map((social) => {
+                  const Icon = social.icon
+                  return (
+                    <a
+                      key={social.label}
+                      href={social.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={social.label}
+                      className="h-10 w-10 rounded-full bg-accent/10 hover:bg-accent hover:text-white flex items-center justify-center transition-colors text-accent"
+                    >
+                      <Icon className="h-5 w-5" />
+                    </a>
+                  )
+                })}
               </div>
             </div>
 

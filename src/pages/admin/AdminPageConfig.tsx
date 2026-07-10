@@ -36,6 +36,10 @@ interface FormState {
   support_email: string
   whatsapp_number: string
   contact_phone: string
+  instagram_handle: string
+  facebook_url: string
+  linkedin_url: string
+  youtube_url: string
 }
 
 const emptyForm: FormState = {
@@ -58,6 +62,10 @@ const emptyForm: FormState = {
   support_email: '',
   whatsapp_number: '',
   contact_phone: '',
+  instagram_handle: '',
+  facebook_url: '',
+  linkedin_url: '',
+  youtube_url: '',
 }
 
 function LabeledInput({
@@ -154,6 +162,10 @@ export default function AdminPageConfig() {
             support_email: data.support_email || '',
             whatsapp_number: data.whatsapp_number || '',
             contact_phone: data.contact_phone || '',
+            instagram_handle: data.instagram_handle || '',
+            facebook_url: data.facebook_url || '',
+            linkedin_url: data.linkedin_url || '',
+            youtube_url: data.youtube_url || '',
           })
         }
       } catch {
@@ -189,6 +201,10 @@ export default function AdminPageConfig() {
       fd.append('support_email', form.support_email)
       fd.append('whatsapp_number', form.whatsapp_number)
       fd.append('contact_phone', form.contact_phone)
+      fd.append('instagram_handle', form.instagram_handle)
+      fd.append('facebook_url', form.facebook_url)
+      fd.append('linkedin_url', form.linkedin_url)
+      fd.append('youtube_url', form.youtube_url)
       if (heroImage) fd.append('home_hero_image', heroImage)
       if (aboutImage) fd.append('about_image', aboutImage)
       if (agendaImage) fd.append('agenda_image', agendaImage)
@@ -358,17 +374,53 @@ export default function AdminPageConfig() {
                   label="Email de Suporte"
                   value={form.support_email}
                   onChange={(v) => set('support_email', v)}
+                  placeholder="contato@andersonabreu.com.br"
                 />
                 <LabeledInput
                   label="WhatsApp"
                   value={form.whatsapp_number}
                   onChange={(v) => set('whatsapp_number', v)}
+                  placeholder="+55 (11) 99999-9999"
                 />
                 <LabeledInput
                   label="Telefone"
                   value={form.contact_phone}
                   onChange={(v) => set('contact_phone', v)}
+                  placeholder="+55 (11) 99999-9999"
                 />
+              </div>
+              <div className="pt-4 border-t border-border/50">
+                <Label className="text-base font-semibold">Redes Sociais</Label>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Adicione os links das suas redes sociais. Deixe em branco para ocultar o ícone na
+                  página inicial.
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <LabeledInput
+                    label="Link do Instagram"
+                    value={form.instagram_handle}
+                    onChange={(v) => set('instagram_handle', v)}
+                    placeholder="https://instagram.com/andersonabreu"
+                  />
+                  <LabeledInput
+                    label="Link do Facebook"
+                    value={form.facebook_url}
+                    onChange={(v) => set('facebook_url', v)}
+                    placeholder="https://facebook.com/andersonabreu"
+                  />
+                  <LabeledInput
+                    label="Link do LinkedIn"
+                    value={form.linkedin_url}
+                    onChange={(v) => set('linkedin_url', v)}
+                    placeholder="https://linkedin.com/in/andersonabreu"
+                  />
+                  <LabeledInput
+                    label="Link do YouTube"
+                    value={form.youtube_url}
+                    onChange={(v) => set('youtube_url', v)}
+                    placeholder="https://youtube.com/@andersonabreu"
+                  />
+                </div>
               </div>
             </CardContent>
           </Card>

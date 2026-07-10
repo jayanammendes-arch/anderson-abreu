@@ -195,6 +195,9 @@ export interface PlatformSettings {
   login_gradient: string
   whatsapp_number: string
   instagram_handle: string
+  facebook_url: string
+  linkedin_url: string
+  youtube_url: string
   support_email: string
   agenda_highlight_title: string
   about_content: string
