@@ -18,6 +18,7 @@ import AdminPageConfig from '@/pages/admin/AdminPageConfig'
 import AdminAgenda from '@/pages/admin/AdminAgenda'
 import Products from '@/pages/Products'
 import Purchases from '@/pages/Purchases'
+import Community from '@/pages/Community'
 import Faq from '@/pages/Faq'
 import AdminFaqs from '@/pages/admin/AdminFaqs'
 import AdminTestimonials from '@/pages/admin/AdminTestimonials'
@@ -52,6 +53,7 @@ const App = () => (
               <Route index element={<Index />} />
               <Route path="produtos" element={<Products />} />
               <Route path="compras" element={<Purchases />} />
+              <Route path="comunidade" element={<Community />} />
               <Route path="faq" element={<Faq />} />
               <Route path="profile" element={<Profile />} />
               <Route path="certificates" element={<Certificates />} />

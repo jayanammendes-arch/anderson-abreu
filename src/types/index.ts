@@ -184,6 +184,63 @@ export interface Testimonial {
   expand?: { course?: Course }
 }
 
+export interface CommunityUser {
+  id: string
+  name: string
+  avatar: string
+  is_admin: boolean
+  bio?: string
+  email?: string
+}
+
+export interface CommunityPost {
+  id: string
+  user: string
+  type: 'text' | 'image' | 'video' | 'achievement' | 'testimony'
+  content: string
+  image: string
+  video_url: string
+  related_course: string
+  is_hidden: boolean
+  created: string
+  updated: string
+  expand?: {
+    user?: CommunityUser
+    related_course?: Course
+  }
+}
+
+export interface CommunityInteraction {
+  id: string
+  post: string
+  user: string
+  type: 'like' | 'comment'
+  comment_text: string
+  created: string
+  updated: string
+  expand?: {
+    user?: CommunityUser
+  }
+}
+
+export interface CommunityFollow {
+  id: string
+  follower: string
+  followed: string
+  created: string
+  updated: string
+}
+
+export interface AppNotification {
+  id: string
+  user: string
+  message: string
+  type: string
+  read: boolean
+  created: string
+  updated: string
+}
+
 export interface PlatformSettings {
   id: string
   company_name: string

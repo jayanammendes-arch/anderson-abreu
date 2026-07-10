@@ -14,12 +14,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { LogOut, Loader2, Bell, User, Award, ShoppingBag, LifeBuoy, Moon } from 'lucide-react'
+import { LogOut, Loader2, User, Award, ShoppingBag, LifeBuoy, Moon } from 'lucide-react'
+import { NotificationBell } from '@/components/community/NotificationBell'
 
 const pageTitles: Record<string, string> = {
   '/dashboard': 'Dashboard',
   '/dashboard/produtos': 'Produtos',
   '/dashboard/compras': 'Compras',
+  '/dashboard/comunidade': 'Comunidade',
   '/dashboard/ranking': 'Ranking',
   '/dashboard/faq': 'FAQ',
   '/dashboard/profile': 'Perfil',
@@ -63,9 +65,7 @@ export function DashboardLayout() {
           <Separator orientation="vertical" className="h-5 bg-border" />
           <h1 className="text-lg font-semibold text-foreground">{pageTitle}</h1>
           <div className="ml-auto flex items-center gap-4">
-            <button className="text-muted-foreground transition-colors hover:text-foreground">
-              <Bell className="h-5 w-5" />
-            </button>
+            <NotificationBell />
             <DropdownMenu>
               <DropdownMenuTrigger className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1 hover:bg-muted">
                 <Avatar className="h-8 w-8">

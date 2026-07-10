@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-10T18:13:37.970Z",
+  "generatedAt": "2026-07-10T18:25:19.949Z",
   "collections": [
     {
       "name": "users",
@@ -41,6 +41,12 @@
         {
           "name": "is_admin",
           "type": "bool",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "bio",
+          "type": "text",
           "required": false,
           "system": false
         }
@@ -1122,6 +1128,241 @@
         "CREATE INDEX idx_testimonials_is_active ON testimonials (is_active)",
         "CREATE INDEX idx_testimonials_student_name ON testimonials (student_name)",
         "CREATE INDEX idx_testimonials_order ON testimonials (order)"
+      ]
+    },
+    {
+      "name": "community_posts",
+      "type": "base",
+      "apiRules": {
+        "list": "@request.auth.id != '' && (is_hidden = false || user = @request.auth.id)",
+        "view": "@request.auth.id != '' && (is_hidden = false || user = @request.auth.id)",
+        "create": "@request.auth.id != '' && user = @request.auth.id",
+        "update": "@request.auth.is_admin = true || user = @request.auth.id",
+        "delete": "@request.auth.is_admin = true || user = @request.auth.id"
+      },
+      "fields": [
+        {
+          "name": "user",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "users"
+        },
+        {
+          "name": "type",
+          "type": "select",
+          "required": true,
+          "system": false,
+          "selectValues": ["text", "image", "video", "achievement", "testimony"]
+        },
+        {
+          "name": "content",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "image",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "video_url",
+          "type": "url",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "related_course",
+          "type": "relation",
+          "required": false,
+          "system": false,
+          "collectionRef": "courses"
+        },
+        {
+          "name": "is_hidden",
+          "type": "bool",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": [
+        "CREATE INDEX idx_community_posts_user ON community_posts (user)",
+        "CREATE INDEX idx_community_posts_created ON community_posts (created DESC)"
+      ]
+    },
+    {
+      "name": "community_interactions",
+      "type": "base",
+      "apiRules": {
+        "list": "@request.auth.id != ''",
+        "view": "@request.auth.id != ''",
+        "create": "@request.auth.id != '' && user = @request.auth.id",
+        "update": "@request.auth.id != '' && user = @request.auth.id",
+        "delete": "@request.auth.is_admin = true || user = @request.auth.id"
+      },
+      "fields": [
+        {
+          "name": "post",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "community_posts"
+        },
+        {
+          "name": "user",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "users"
+        },
+        {
+          "name": "type",
+          "type": "select",
+          "required": true,
+          "system": false,
+          "selectValues": ["like", "comment"]
+        },
+        {
+          "name": "comment_text",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": [
+        "CREATE INDEX idx_community_interactions_post ON community_interactions (post)",
+        "CREATE INDEX idx_community_interactions_user ON community_interactions (user)",
+        "CREATE UNIQUE INDEX idx_community_likes_unique ON community_interactions (post, user) WHERE type = 'like'"
+      ]
+    },
+    {
+      "name": "community_follows",
+      "type": "base",
+      "apiRules": {
+        "list": "@request.auth.id != ''",
+        "view": "@request.auth.id != ''",
+        "create": "@request.auth.id != '' && follower = @request.auth.id",
+        "update": "@request.auth.id != '' && follower = @request.auth.id",
+        "delete": "@request.auth.id != '' && follower = @request.auth.id"
+      },
+      "fields": [
+        {
+          "name": "follower",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "users"
+        },
+        {
+          "name": "followed",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "users"
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": [
+        "CREATE UNIQUE INDEX idx_community_follows_pair ON community_follows (follower, followed)"
+      ]
+    },
+    {
+      "name": "notifications",
+      "type": "base",
+      "apiRules": {
+        "list": "@request.auth.id != '' && user = @request.auth.id",
+        "view": "@request.auth.id != '' && user = @request.auth.id",
+        "create": "@request.auth.id != ''",
+        "update": "@request.auth.id != '' && user = @request.auth.id",
+        "delete": "@request.auth.is_admin = true || user = @request.auth.id"
+      },
+      "fields": [
+        {
+          "name": "user",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "users"
+        },
+        {
+          "name": "message",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "type",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "read",
+          "type": "bool",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": [
+        "CREATE INDEX idx_notifications_user ON notifications (user)",
+        "CREATE INDEX idx_notifications_read ON notifications (read)"
       ]
     }
   ]
