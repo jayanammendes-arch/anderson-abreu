@@ -6,6 +6,11 @@ export const getMaterialsByLesson = (lessonId: string): Promise<LessonMaterial[]
     .collection('lesson_materials')
     .getFullList({ filter: `lesson = "${lessonId}"`, sort: 'created' }) as Promise<LessonMaterial[]>
 
+export const getMaterialsByModule = (moduleId: string): Promise<LessonMaterial[]> =>
+  pb
+    .collection('lesson_materials')
+    .getFullList({ filter: `module = "${moduleId}"`, sort: 'created' }) as Promise<LessonMaterial[]>
+
 export function getMaterialFileUrl(material: LessonMaterial): string {
   return `${import.meta.env.VITE_POCKETBASE_URL}/api/files/lesson_materials/${material.id}/${material.file}`
 }
@@ -14,6 +19,11 @@ export const adminGetMaterialsByLesson = (lessonId: string): Promise<LessonMater
   pb
     .collection('lesson_materials')
     .getFullList({ filter: `lesson = "${lessonId}"`, sort: 'created' }) as Promise<LessonMaterial[]>
+
+export const adminGetMaterialsByModule = (moduleId: string): Promise<LessonMaterial[]> =>
+  pb
+    .collection('lesson_materials')
+    .getFullList({ filter: `module = "${moduleId}"`, sort: 'created' }) as Promise<LessonMaterial[]>
 
 export const adminCreateMaterial = (data: FormData) =>
   pb.collection('lesson_materials').create(data)

@@ -9,6 +9,8 @@ import {
   adminUpdateLesson,
   adminDeleteLesson,
 } from '@/services/admin-courses'
+import { MaterialsManager } from '@/components/admin/MaterialsManager'
+import { QuizManager } from '@/components/admin/QuizManager'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -27,7 +29,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog'
-import { Plus, Trash2, Pencil, Loader2 } from 'lucide-react'
+import { Plus, Trash2, Pencil, Loader2, FileText, FileQuestion } from 'lucide-react'
 import { toast } from 'sonner'
 import type { Module, Lesson } from '@/types'
 
@@ -35,24 +37,18 @@ export function ModuleManager({ courseId }: { courseId: string }) {
   const [modules, setModules] = useState<Module[]>([])
   const [lessonsMap, setLessonsMap] = useState<Record<string, Lesson[]>>({})
   const [loading, setLoading] = useState(true)
-  const [moduleDialog, setModuleDialog] = useState<{ open: boolean; edit: Module | null }>({
+  const [modDialog, setModDialog] = useState<{ open: boolean; edit: Module | null }>({
     open: false,
     edit: null,
   })
-  const [moduleTitle, setModuleTitle] = useState('')
-  const [moduleOrder, setModuleOrder] = useState(0)
+  const [modTitle, setModTitle] = useState('')
+  const [modOrder, setModOrder] = useState(0)
   const [lessonDialog, setLessonDialog] = useState<{
     open: boolean
     moduleId: string
     edit: Lesson | null
   }>({ open: false, moduleId: '', edit: null })
-  const [lessonForm, setLessonForm] = useState({
-    title: '',
-    video_url: '',
-    duration: '',
-    order: 0,
-    content: '',
-  })
+  const [lf, setLf] = useState({ title: '', video_url: '', duration: '', order: 0, content: '' })
 
   const loadData = useCallback(async () => {
     try {
@@ -62,7 +58,7 @@ export function ModuleManager({ courseId }: { courseId: string }) {
       for (const m of mods) lMap[m.id] = await adminGetLessons(m.id)
       setLessonsMap(lMap)
     } catch {
-      toast.error('Erro ao carregar modulos')
+      toast.error('Erro ao carregar módulos')
     } finally {
       setLoading(false)
     }
@@ -74,24 +70,24 @@ export function ModuleManager({ courseId }: { courseId: string }) {
 
   const saveModule = async () => {
     try {
-      if (moduleDialog.edit) {
-        await adminUpdateModule(moduleDialog.edit.id, { title: moduleTitle, order: moduleOrder })
+      if (modDialog.edit) {
+        await adminUpdateModule(modDialog.edit.id, { title: modTitle, order: modOrder })
       } else {
-        await adminCreateModule({ course: courseId, title: moduleTitle, order: moduleOrder })
+        await adminCreateModule({ course: courseId, title: modTitle, order: modOrder })
       }
-      toast.success('Modulo salvo')
-      setModuleDialog({ open: false, edit: null })
+      toast.success('Módulo salvo')
+      setModDialog({ open: false, edit: null })
       loadData()
     } catch {
-      toast.error('Erro ao salvar modulo')
+      toast.error('Erro ao salvar módulo')
     }
   }
 
-  const deleteModule = async (id: string) => {
-    if (!confirm('Excluir modulo e todas as suas aulas?')) return
+  const delModule = async (id: string) => {
+    if (!confirm('Excluir módulo e todas as suas aulas?')) return
     try {
       await adminDeleteModule(id)
-      toast.success('Modulo excluido')
+      toast.success('Módulo excluído')
       loadData()
     } catch {
       toast.error('Erro ao excluir')
@@ -102,10 +98,13 @@ export function ModuleManager({ courseId }: { courseId: string }) {
     try {
       const { moduleId, edit } = lessonDialog
       if (edit) {
-        await adminUpdateLesson(edit.id, lessonForm)
+        await adminUpdateLesson(edit.id, lf)
       } else {
-        const existing = lessonsMap[moduleId] || []
-        await adminCreateLesson({ ...lessonForm, module: moduleId, order: existing.length })
+        await adminCreateLesson({
+          ...lf,
+          module: moduleId,
+          order: lessonsMap[moduleId]?.length || 0,
+        })
       }
       toast.success('Aula salva')
       setLessonDialog({ open: false, moduleId: '', edit: null })
@@ -115,14 +114,29 @@ export function ModuleManager({ courseId }: { courseId: string }) {
     }
   }
 
-  const deleteLesson = async (id: string) => {
+  const delLesson = async (id: string) => {
     try {
       await adminDeleteLesson(id)
-      toast.success('Aula excluida')
+      toast.success('Aula excluída')
       loadData()
     } catch {
       toast.error('Erro ao excluir')
     }
+  }
+
+  const openLesson = (moduleId: string, lesson: Lesson | null) => {
+    setLf(
+      lesson
+        ? {
+            title: lesson.title,
+            video_url: lesson.video_url || '',
+            duration: lesson.duration || '',
+            order: lesson.order,
+            content: lesson.content || '',
+          }
+        : { title: '', video_url: '', duration: '', order: 0, content: '' },
+    )
+    setLessonDialog({ open: true, moduleId, edit: lesson })
   }
 
   if (loading)
@@ -135,20 +149,21 @@ export function ModuleManager({ courseId }: { courseId: string }) {
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">Modulos e Aulas</h3>
+        <h3 className="text-lg font-semibold">Módulos e Aulas</h3>
         <Button
           size="sm"
           onClick={() => {
-            setModuleTitle('')
-            setModuleOrder(modules.length)
-            setModuleDialog({ open: true, edit: null })
+            setModTitle('')
+            setModOrder(modules.length)
+            setModDialog({ open: true, edit: null })
           }}
+          className="bg-green-600 hover:bg-green-700 text-white"
         >
-          <Plus className="mr-2 h-4 w-4" /> Novo Modulo
+          <Plus className="mr-2 h-4 w-4" /> Novo Módulo
         </Button>
       </div>
       {modules.length === 0 ? (
-        <p className="text-sm text-muted-foreground py-8 text-center">Nenhum modulo cadastrado.</p>
+        <p className="text-sm text-muted-foreground py-8 text-center">Nenhum módulo cadastrado.</p>
       ) : (
         <Accordion type="single" collapsible className="space-y-2">
           {modules.map((mod) => (
@@ -162,7 +177,7 @@ export function ModuleManager({ courseId }: { courseId: string }) {
                 </div>
               </AccordionTrigger>
               <AccordionContent>
-                <div className="space-y-2 pt-2">
+                <div className="space-y-4 pt-2">
                   {(lessonsMap[mod.id] || []).map((lesson) => (
                     <div
                       key={lesson.id}
@@ -171,29 +186,20 @@ export function ModuleManager({ courseId }: { courseId: string }) {
                       <div className="flex-1">
                         <p className="text-sm font-medium">{lesson.title}</p>
                         <p className="text-xs text-muted-foreground">
-                          {lesson.duration || 'Sem duracao'}
+                          {lesson.duration || 'Sem duração'}
                         </p>
                       </div>
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => {
-                          setLessonForm({
-                            title: lesson.title,
-                            video_url: lesson.video_url || '',
-                            duration: lesson.duration || '',
-                            order: lesson.order,
-                            content: lesson.content || '',
-                          })
-                          setLessonDialog({ open: true, moduleId: mod.id, edit: lesson })
-                        }}
+                        onClick={() => openLesson(mod.id, lesson)}
                       >
                         <Pencil className="h-4 w-4" />
                       </Button>
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => deleteLesson(lesson.id)}
+                        onClick={() => delLesson(lesson.id)}
                         className="text-red-500"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -204,27 +210,30 @@ export function ModuleManager({ courseId }: { courseId: string }) {
                     variant="outline"
                     size="sm"
                     className="w-full"
-                    onClick={() => {
-                      setLessonForm({
-                        title: '',
-                        video_url: '',
-                        duration: '',
-                        order: 0,
-                        content: '',
-                      })
-                      setLessonDialog({ open: true, moduleId: mod.id, edit: null })
-                    }}
+                    onClick={() => openLesson(mod.id, null)}
                   >
                     <Plus className="mr-2 h-4 w-4" /> Adicionar Aula
                   </Button>
+                  <div className="rounded-lg border border-border/30 p-3 space-y-2">
+                    <p className="text-sm font-semibold flex items-center gap-2">
+                      <FileText className="h-4 w-4 text-primary" /> Materiais Didáticos
+                    </p>
+                    <MaterialsManager ownerType="module" ownerId={mod.id} />
+                  </div>
+                  <div className="rounded-lg border border-border/30 p-3 space-y-2">
+                    <p className="text-sm font-semibold flex items-center gap-2">
+                      <FileQuestion className="h-4 w-4 text-primary" /> Prova do Módulo
+                    </p>
+                    <QuizManager moduleId={mod.id} />
+                  </div>
                   <div className="flex gap-2 pt-2 border-t border-border/30">
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => {
-                        setModuleTitle(mod.title)
-                        setModuleOrder(mod.order || 0)
-                        setModuleDialog({ open: true, edit: mod })
+                        setModTitle(mod.title)
+                        setModOrder(mod.order || 0)
+                        setModDialog({ open: true, edit: mod })
                       }}
                     >
                       <Pencil className="mr-2 h-4 w-4" /> Renomear
@@ -232,10 +241,10 @@ export function ModuleManager({ courseId }: { courseId: string }) {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => deleteModule(mod.id)}
+                      onClick={() => delModule(mod.id)}
                       className="text-red-500"
                     >
-                      <Trash2 className="mr-2 h-4 w-4" /> Excluir Modulo
+                      <Trash2 className="mr-2 h-4 w-4" /> Excluir Módulo
                     </Button>
                   </div>
                 </div>
@@ -245,37 +254,39 @@ export function ModuleManager({ courseId }: { courseId: string }) {
         </Accordion>
       )}
       <Dialog
-        open={moduleDialog.open}
+        open={modDialog.open}
         onOpenChange={(o) => {
           if (!o) {
-            setModuleDialog({ open: false, edit: null })
-            setModuleTitle('')
-            setModuleOrder(0)
+            setModDialog({ open: false, edit: null })
+            setModTitle('')
+            setModOrder(0)
           }
         }}
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{moduleDialog.edit ? 'Renomear Modulo' : 'Novo Modulo'}</DialogTitle>
+            <DialogTitle>{modDialog.edit ? 'Renomear Módulo' : 'Novo Módulo'}</DialogTitle>
           </DialogHeader>
           <div className="space-y-2">
-            <Label>Titulo do Modulo</Label>
+            <Label>Título do Módulo</Label>
             <Input
-              value={moduleTitle}
-              onChange={(e) => setModuleTitle(e.target.value)}
-              placeholder="Ex: Modulo 1 - Fundamentos"
+              value={modTitle}
+              onChange={(e) => setModTitle(e.target.value)}
+              placeholder="Ex: Módulo 1 - Fundamentos"
             />
           </div>
           <div className="space-y-2">
             <Label>Ordem</Label>
             <Input
               type="number"
-              value={moduleOrder}
-              onChange={(e) => setModuleOrder(Number(e.target.value))}
+              value={modOrder}
+              onChange={(e) => setModOrder(Number(e.target.value))}
             />
           </div>
           <DialogFooter>
-            <Button onClick={saveModule}>Salvar</Button>
+            <Button onClick={saveModule} className="bg-green-600 hover:bg-green-700 text-white">
+              Salvar
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -291,35 +302,32 @@ export function ModuleManager({ courseId }: { courseId: string }) {
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Titulo</Label>
-              <Input
-                value={lessonForm.title}
-                onChange={(e) => setLessonForm({ ...lessonForm, title: e.target.value })}
-              />
+              <Label>Título</Label>
+              <Input value={lf.title} onChange={(e) => setLf({ ...lf, title: e.target.value })} />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Link do Video</Label>
+                <Label>Link do Vídeo</Label>
                 <Input
-                  value={lessonForm.video_url}
-                  onChange={(e) => setLessonForm({ ...lessonForm, video_url: e.target.value })}
+                  value={lf.video_url}
+                  onChange={(e) => setLf({ ...lf, video_url: e.target.value })}
                   placeholder="YouTube/Vimeo URL"
                 />
               </div>
               <div className="space-y-2">
-                <Label>Duracao</Label>
+                <Label>Duração</Label>
                 <Input
-                  value={lessonForm.duration}
-                  onChange={(e) => setLessonForm({ ...lessonForm, duration: e.target.value })}
+                  value={lf.duration}
+                  onChange={(e) => setLf({ ...lf, duration: e.target.value })}
                   placeholder="Ex: 15:30"
                 />
               </div>
             </div>
             <div className="space-y-2">
-              <Label>Conteudo (opcional)</Label>
+              <Label>Conteúdo (opcional)</Label>
               <Textarea
-                value={lessonForm.content}
-                onChange={(e) => setLessonForm({ ...lessonForm, content: e.target.value })}
+                value={lf.content}
+                onChange={(e) => setLf({ ...lf, content: e.target.value })}
                 className="h-24"
               />
             </div>
@@ -327,13 +335,21 @@ export function ModuleManager({ courseId }: { courseId: string }) {
               <Label>Ordem</Label>
               <Input
                 type="number"
-                value={lessonForm.order}
-                onChange={(e) => setLessonForm({ ...lessonForm, order: Number(e.target.value) })}
+                value={lf.order}
+                onChange={(e) => setLf({ ...lf, order: Number(e.target.value) })}
               />
             </div>
+            {lessonDialog.edit && (
+              <div className="rounded-lg border border-border/30 p-3 space-y-2">
+                <p className="text-sm font-semibold">Materiais Didáticos</p>
+                <MaterialsManager ownerType="lesson" ownerId={lessonDialog.edit.id} />
+              </div>
+            )}
           </div>
           <DialogFooter>
-            <Button onClick={saveLesson}>Salvar Aula</Button>
+            <Button onClick={saveLesson} className="bg-green-600 hover:bg-green-700 text-white">
+              Salvar Aula
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

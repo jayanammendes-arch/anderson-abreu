@@ -14,9 +14,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrowLeft, Save, Loader2 } from 'lucide-react'
+import { ArrowLeft, Save, Loader2, ChevronDown } from 'lucide-react'
 import { toast } from 'sonner'
+import { cn } from '@/lib/utils'
 import type { Course } from '@/types'
 
 const emptyForm = {
@@ -31,6 +33,35 @@ const emptyForm = {
   is_available: true,
   category: '',
   order: 0,
+}
+
+function Section({
+  title,
+  children,
+  defaultOpen = false,
+}: {
+  title: string
+  children: React.ReactNode
+  defaultOpen?: boolean
+}) {
+  const [open, setOpen] = useState(defaultOpen)
+  return (
+    <Card className="bg-card/50 border-border/50 overflow-hidden">
+      <Collapsible open={open} onOpenChange={setOpen}>
+        <CollapsibleTrigger asChild>
+          <CardHeader className="cursor-pointer hover:bg-muted/30 transition-colors py-3">
+            <CardTitle className="flex items-center justify-between text-base">
+              {title}
+              <ChevronDown className={cn('h-4 w-4 transition-transform', open && 'rotate-180')} />
+            </CardTitle>
+          </CardHeader>
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <CardContent className="space-y-4 pt-0">{children}</CardContent>
+        </CollapsibleContent>
+      </Collapsible>
+    </Card>
+  )
 }
 
 export default function AdminCourseForm() {
@@ -131,151 +162,143 @@ export default function AdminCourseForm() {
     )
 
   return (
-    <div className="space-y-6 animate-fade-in max-w-4xl">
+    <div className="space-y-6 animate-fade-in max-w-2xl mx-auto">
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="sm" asChild>
+        <Button variant="secondary" size="sm" asChild>
           <Link to="/admin/cursos">
             <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
           </Link>
         </Button>
         <h1 className="text-2xl font-bold">{isEdit ? 'Editar Curso' : 'Novo Curso'}</h1>
       </div>
-      <form onSubmit={handleSave} className="space-y-6">
-        <Card className="bg-card/50 border-border/50">
-          <CardHeader>
-            <CardTitle>Informações</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+      <form onSubmit={handleSave} className="space-y-4">
+        <Section title="Informações Gerais" defaultOpen>
+          <div className="space-y-2">
+            <Label>Título *</Label>
+            <Input
+              required
+              value={form.title}
+              onChange={(e) => setForm({ ...form, title: e.target.value })}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>Descrição Curta</Label>
+            <Input
+              value={form.short_description}
+              onChange={(e) => setForm({ ...form, short_description: e.target.value })}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>Descrição Completa</Label>
+            <Textarea
+              value={form.description}
+              onChange={(e) => setForm({ ...form, description: e.target.value })}
+              className="min-h-[100px]"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Título *</Label>
+              <Label>Categoria</Label>
               <Input
-                required
-                value={form.title}
-                onChange={(e) => setForm({ ...form, title: e.target.value })}
+                value={form.category}
+                onChange={(e) => setForm({ ...form, category: e.target.value })}
               />
             </div>
             <div className="space-y-2">
-              <Label>Descrição Curta</Label>
+              <Label>Ordem</Label>
               <Input
-                value={form.short_description}
-                onChange={(e) => setForm({ ...form, short_description: e.target.value })}
+                type="number"
+                value={form.order}
+                onChange={(e) => setForm({ ...form, order: Number(e.target.value) })}
               />
             </div>
+          </div>
+        </Section>
+        <Section title="Preços">
+          <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
-              <Label>Descrição Completa</Label>
-              <Textarea
-                value={form.description}
-                onChange={(e) => setForm({ ...form, description: e.target.value })}
-                className="min-h-[100px]"
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Categoria</Label>
-                <Input
-                  value={form.category}
-                  onChange={(e) => setForm({ ...form, category: e.target.value })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Ordem</Label>
-                <Input
-                  type="number"
-                  value={form.order}
-                  onChange={(e) => setForm({ ...form, order: Number(e.target.value) })}
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="bg-card/50 border-border/50">
-          <CardHeader>
-            <CardTitle>Preços e Disponibilidade</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <Label>Preço (R$)</Label>
-                <Input
-                  type="number"
-                  step="0.01"
-                  value={form.price}
-                  onChange={(e) => setForm({ ...form, price: Number(e.target.value) })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Preço c/ Desconto</Label>
-                <Input
-                  type="number"
-                  step="0.01"
-                  value={form.discount_price}
-                  onChange={(e) => setForm({ ...form, discount_price: Number(e.target.value) })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>% Desconto</Label>
-                <Input
-                  type="number"
-                  value={form.discount_percentage}
-                  onChange={(e) =>
-                    setForm({ ...form, discount_percentage: Number(e.target.value) })
-                  }
-                />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label>URL de Compra Externa</Label>
+              <Label>Preço (R$)</Label>
               <Input
-                type="url"
-                value={form.external_buy_url}
-                onChange={(e) => setForm({ ...form, external_buy_url: e.target.value })}
-                placeholder="https://..."
+                type="number"
+                step="0.01"
+                value={form.price}
+                onChange={(e) => setForm({ ...form, price: Number(e.target.value) })}
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Visibilidade</Label>
-                <Select
-                  value={form.visibility}
-                  onValueChange={(v) => setForm({ ...form, visibility: v })}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="home">Home</SelectItem>
-                    <SelectItem value="templates">Templates</SelectItem>
-                    <SelectItem value="both">Ambos</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex items-center gap-3 pt-6">
-                <Switch
-                  checked={form.is_available}
-                  onCheckedChange={(c) => setForm({ ...form, is_available: c })}
-                />
-                <Label>Disponível</Label>
-              </div>
+            <div className="space-y-2">
+              <Label>Preço c/ Desconto</Label>
+              <Input
+                type="number"
+                step="0.01"
+                value={form.discount_price}
+                onChange={(e) => setForm({ ...form, discount_price: Number(e.target.value) })}
+              />
             </div>
-          </CardContent>
-        </Card>
-        <Card className="bg-card/50 border-border/50">
-          <CardHeader>
-            <CardTitle>Thumbnail</CardTitle>
-          </CardHeader>
-          <CardContent>
+            <div className="space-y-2">
+              <Label>% Desconto</Label>
+              <Input
+                type="number"
+                value={form.discount_percentage}
+                onChange={(e) => setForm({ ...form, discount_percentage: Number(e.target.value) })}
+              />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label>URL de Compra Externa</Label>
+            <Input
+              type="url"
+              value={form.external_buy_url}
+              onChange={(e) => setForm({ ...form, external_buy_url: e.target.value })}
+              placeholder="https://..."
+            />
+          </div>
+        </Section>
+        <Section title="Mídia">
+          <div className="space-y-2">
+            <Label>Thumbnail</Label>
             <Input
               type="file"
               accept="image/jpeg,image/png,image/webp"
               onChange={(e) => setThumbnail(e.target.files?.[0] || null)}
             />
-          </CardContent>
-        </Card>
+          </div>
+        </Section>
+        <Section title="Visibilidade">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Visibilidade</Label>
+              <Select
+                value={form.visibility}
+                onValueChange={(v) => setForm({ ...form, visibility: v })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="home">Home</SelectItem>
+                  <SelectItem value="templates">Templates</SelectItem>
+                  <SelectItem value="both">Ambos</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex items-center gap-3 pt-6">
+              <Switch
+                checked={form.is_available}
+                onCheckedChange={(c) => setForm({ ...form, is_available: c })}
+              />
+              <Label>Disponível</Label>
+            </div>
+          </div>
+        </Section>
         <div className="flex justify-end gap-3">
-          <Button variant="outline" asChild>
+          <Button variant="secondary" asChild>
             <Link to="/admin/cursos">Cancelar</Link>
           </Button>
-          <Button type="submit" disabled={saving}>
+          <Button
+            type="submit"
+            disabled={saving}
+            className="bg-green-600 hover:bg-green-700 text-white"
+          >
             {saving ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (

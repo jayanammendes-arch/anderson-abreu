@@ -122,6 +122,7 @@ export interface Quiz {
   module: string
   title: string
   min_score: number
+  is_active?: boolean
   created: string
   updated: string
 }
@@ -150,8 +151,10 @@ export interface QuizResult {
 export interface LessonMaterial {
   id: string
   lesson: string
+  module?: string
   file: string
   label: string
+  file_size?: number
   created: string
   updated: string
 }

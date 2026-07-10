@@ -238,7 +238,7 @@ export default function CourseDetail() {
                 </div>
               )}
 
-              <MaterialsList lessonId={selectedLesson.id} />
+              <MaterialsList lessonId={selectedLesson.id} moduleId={selectedLesson.module} />
               <CommentsSection lessonId={selectedLesson.id} />
 
               <div className="flex items-center justify-between pt-4 border-t border-border/50">

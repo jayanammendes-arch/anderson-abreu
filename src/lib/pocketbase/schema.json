@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-10T14:53:46.752Z",
+  "generatedAt": "2026-07-10T15:22:56.701Z",
   "collections": [
     {
       "name": "users",
@@ -694,6 +694,12 @@
           "required": false,
           "system": false,
           "autodateTriggers": ["onCreate", "onUpdate"]
+        },
+        {
+          "name": "is_active",
+          "type": "bool",
+          "required": false,
+          "system": false
         }
       ],
       "indexes": ["CREATE INDEX idx_quizzes_module ON quizzes (module)"]
@@ -857,6 +863,19 @@
           "required": false,
           "system": false,
           "autodateTriggers": ["onCreate", "onUpdate"]
+        },
+        {
+          "name": "module",
+          "type": "relation",
+          "required": false,
+          "system": false,
+          "collectionRef": "modules"
+        },
+        {
+          "name": "file_size",
+          "type": "number",
+          "required": false,
+          "system": false
         }
       ],
       "indexes": ["CREATE INDEX idx_lesson_materials_lesson ON lesson_materials (lesson)"]

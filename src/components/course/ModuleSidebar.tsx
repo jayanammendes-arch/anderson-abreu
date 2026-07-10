@@ -49,7 +49,7 @@ export function ModuleSidebar({
     const allCompleted =
       prevLessons.length > 0 && prevLessons.every((l) => isLessonCompleted(progress, l.id))
     if (!allCompleted) return false
-    const quiz = quizzes.find((q) => q.module === prevMod.id)
+    const quiz = quizzes.find((q) => q.module === prevMod.id && q.is_active)
     if (quiz) return quizResults.some((r) => r.quiz === quiz.id && r.passed)
     return true
   }
@@ -61,7 +61,7 @@ export function ModuleSidebar({
         const modLessons = moduleLessons(mod.id)
         const completedCount = modLessons.filter((l) => isLessonCompleted(progress, l.id)).length
         const allDone = completedCount === modLessons.length && modLessons.length > 0
-        const quiz = quizzes.find((q) => q.module === mod.id)
+        const quiz = quizzes.find((q) => q.module === mod.id && q.is_active)
         const quizPassed = quiz ? quizResults.some((r) => r.quiz === quiz.id && r.passed) : false
         const showQuizBtn = allDone && quiz && !quizPassed
 

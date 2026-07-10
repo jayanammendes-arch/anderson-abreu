@@ -43,7 +43,7 @@ export function QuizPanel({ moduleId, onQuizComplete }: QuizPanelProps) {
         <Loader2 className="h-6 w-6 animate-spin text-primary" />
       </div>
     )
-  if (!quiz || questions.length === 0) return null
+  if (!quiz || questions.length === 0 || !quiz.is_active) return null
 
   const handleSubmit = async () => {
     let correct = 0
