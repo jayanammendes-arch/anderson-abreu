@@ -7,6 +7,7 @@ import { Loader2 } from 'lucide-react'
 
 const adminPageTitles: Record<string, string> = {
   '/admin/configuracoes': 'Central de Gerenciamento da Plataforma',
+  '/admin/paginas': 'Configuração de Páginas Principais',
   '/admin/plataforma': 'Configurações da Plataforma',
   '/admin/cursos': 'Gerenciar Cursos',
   '/admin/cursos/novo': 'Novo Curso',

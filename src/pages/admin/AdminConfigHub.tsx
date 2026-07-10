@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { BookOpen, Users, Palette, Calendar, HelpCircle } from 'lucide-react'
+import { BookOpen, Users, Palette, Calendar, HelpCircle, FileText } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 
 const modules = [
@@ -14,6 +14,12 @@ const modules = [
     description: 'Gerenciar alunos e acessos aos cursos',
     href: '/admin/alunos',
     icon: Users,
+  },
+  {
+    title: 'Páginas Principais',
+    description: 'Editar textos, imagens e visibilidade da landing page',
+    href: '/admin/paginas',
+    icon: FileText,
   },
   {
     title: 'Configurações da Plataforma',

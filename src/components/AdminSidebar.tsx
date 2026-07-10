@@ -23,10 +23,12 @@ import {
   Palette,
   HelpCircle,
   MessageSquareQuote,
+  FileText,
 } from 'lucide-react'
 
 const adminNavItems = [
   { title: 'Central', href: '/admin/configuracoes', icon: Settings },
+  { title: 'Páginas Principais', href: '/admin/paginas', icon: FileText },
   { title: 'Cursos', href: '/admin/cursos', icon: BookOpen },
   { title: 'Alunos', href: '/admin/alunos', icon: Users },
   { title: 'Depoimentos', href: '/admin/depoimentos', icon: MessageSquareQuote },

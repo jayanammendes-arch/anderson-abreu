@@ -200,6 +200,22 @@ export interface PlatformSettings {
   about_content: string
   about_image: string
   home_hero_image: string
+  hero_title: string
+  hero_subtitle: string
+  hero_cta_text: string
+  about_title: string
+  stats_students: number
+  stats_years: number
+  stats_courses: number
+  stats_countries: number
+  testimonials_active: boolean
+  agenda_intro: string
+  agenda_image: string
+  courses_title: string
+  courses_intro: string
+  contact_title: string
+  contact_intro: string
+  contact_phone: string
   created: string
   updated: string
 }

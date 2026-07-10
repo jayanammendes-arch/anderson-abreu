@@ -10,8 +10,8 @@ export async function getPlatformSettings(): Promise<PlatformSettings | null> {
   }
 }
 
-export const updatePlatformSettings = (id: string, data: Record<string, any>) =>
-  pb.collection('platform_settings').update(id, data)
+export const updatePlatformSettings = (id: string, data: Record<string, any> | FormData) =>
+  pb.collection('platform_settings').update(id, data as any)
 
-export const createPlatformSettings = (data: Record<string, any>) =>
-  pb.collection('platform_settings').create(data)
+export const createPlatformSettings = (data: Record<string, any> | FormData) =>
+  pb.collection('platform_settings').create(data as any)

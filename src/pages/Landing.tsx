@@ -1,9 +1,18 @@
 import { useEffect, useState } from 'react'
 import { Link, Navigate } from 'react-router-dom'
 import { useAuth } from '@/hooks/use-auth'
-import { getEvents, getPublicCourses, submitContact } from '@/services/landing'
+import { useRealtime } from '@/hooks/use-realtime'
+import {
+  getEvents,
+  getPublicCourses,
+  submitContact,
+  getPlatformSettingsPublic,
+  getHomeHeroImageUrl,
+  getAboutImageUrl,
+  getAgendaImageUrl,
+} from '@/services/landing'
 import { getThumbnailUrl } from '@/services/courses'
-import type { Event, Course } from '@/types'
+import type { Event, Course, PlatformSettings } from '@/types'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -33,6 +42,17 @@ const navLinks = [
   { name: 'Fale Conosco', href: '#contact' },
 ]
 
+const DEFAULT_ABOUT_ITEMS = [
+  'Mentoria ao vivo e orientações direto com especialistas',
+  'A única instituição com estrutura para estágio virtual',
+  'Certificações reconhecidas para atuação profissional',
+]
+
+const formatStatValue = (num: number) => {
+  if (num >= 1000) return `+${Math.floor(num / 1000)}k`
+  return `+${num}`
+}
+
 export default function Landing() {
   const { isAuthenticated, loading } = useAuth()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -40,6 +60,7 @@ export default function Landing() {
 
   const [events, setEvents] = useState<Event[]>([])
   const [courses, setCourses] = useState<Course[]>([])
+  const [settings, setSettings] = useState<PlatformSettings | null>(null)
 
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' })
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -52,10 +73,24 @@ export default function Landing() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  const loadData = async () => {
+    const [eventsData, coursesData, settingsData] = await Promise.all([
+      getEvents().catch(() => []),
+      getPublicCourses().catch(() => []),
+      getPlatformSettingsPublic().catch(() => null),
+    ])
+    setEvents(eventsData as Event[])
+    setCourses(coursesData as Course[])
+    setSettings(settingsData as PlatformSettings | null)
+  }
+
   useEffect(() => {
-    getEvents().then(setEvents).catch(console.error)
-    getPublicCourses().then(setCourses).catch(console.error)
+    loadData()
   }, [])
+
+  useRealtime('platform_settings', () => {
+    loadData()
+  })
 
   if (!loading && isAuthenticated) {
     return <Navigate to="/dashboard" replace />
@@ -84,6 +119,29 @@ export default function Landing() {
       window.scrollTo({ top, behavior: 'smooth' })
     }
   }
+
+  const heroImageUrl =
+    (settings?.home_hero_image && getHomeHeroImageUrl(settings)) ||
+    'https://img.usecurling.com/p/800/800?q=confident%20professional%20speaker&dpr=2'
+
+  const aboutImageUrl =
+    (settings?.about_image && getAboutImageUrl(settings)) ||
+    'https://img.usecurling.com/p/600/700?q=modern%20therapy%20office&color=gray'
+
+  const agendaImageUrl = (settings?.agenda_image && getAgendaImageUrl(settings)) || null
+
+  const stats = [
+    { value: formatStatValue(settings?.stats_students || 5000), label: 'Alunos Formados' },
+    { value: formatStatValue(settings?.stats_years || 10), label: 'Anos de História' },
+    { value: formatStatValue(settings?.stats_courses || 7), label: 'Cursos' },
+    { value: formatStatValue(settings?.stats_countries || 7), label: 'Países Alcançados' },
+  ]
+
+  const showTestimonials = settings?.testimonials_active !== false
+
+  const contactPhone = settings?.contact_phone || '+55 (11) 99999-9999'
+  const contactEmail = settings?.support_email || 'contato@andersonabreu.com.br'
+  const contactWhatsapp = settings?.whatsapp_number || contactPhone
 
   return (
     <div className="min-h-screen bg-white text-slate-900 font-sans selection:bg-accent selection:text-white">
@@ -180,14 +238,13 @@ export default function Landing() {
                 Inscrições abertas para a nova turma
               </div>
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 leading-tight text-white">
-                Transforme sua mente.
+                {settings?.hero_title || 'Transforme sua mente.'}
                 <br />
                 <span className="text-accent">Alcance alta performance.</span>
               </h1>
               <p className="text-lg text-white/70 mb-8 leading-relaxed max-w-xl">
-                Hipnose clínica, inteligência emocional e mentoria de alta performance para quem
-                deseja romper limites, superar bloqueios e alcançar resultados extraordinários na
-                vida pessoal e profissional.
+                {settings?.hero_subtitle ||
+                  'Hipnose clínica, inteligência emocional e mentoria de alta performance para quem deseja romper limites, superar bloqueios e alcançar resultados extraordinários na vida pessoal e profissional.'}
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button
@@ -196,7 +253,8 @@ export default function Landing() {
                   asChild
                 >
                   <a href="#courses" onClick={(e) => scrollToSection(e, '#courses')}>
-                    Conheça nossos cursos <ArrowRight className="ml-2 h-4 w-4" />
+                    {settings?.hero_cta_text || 'Conheça nossos cursos'}{' '}
+                    <ArrowRight className="ml-2 h-4 w-4" />
                   </a>
                 </Button>
                 <Button
@@ -212,37 +270,21 @@ export default function Landing() {
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mt-16 pt-8 border-t border-white/10">
-                <div>
-                  <div className="text-3xl font-bold text-white mb-1">+5k</div>
-                  <div className="text-xs text-white/50 uppercase tracking-wider font-semibold">
-                    Alunos Formados
+                {stats.map((stat, i) => (
+                  <div key={i}>
+                    <div className="text-3xl font-bold text-white mb-1">{stat.value}</div>
+                    <div className="text-xs text-white/50 uppercase tracking-wider font-semibold">
+                      {stat.label}
+                    </div>
                   </div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-white mb-1">+10</div>
-                  <div className="text-xs text-white/50 uppercase tracking-wider font-semibold">
-                    Anos de História
-                  </div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-white mb-1">+7</div>
-                  <div className="text-xs text-white/50 uppercase tracking-wider font-semibold">
-                    Países Alcançados
-                  </div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-white mb-1">Sim</div>
-                  <div className="text-xs text-white/50 uppercase tracking-wider font-semibold">
-                    Certificação Int.
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
 
             <div className="relative hidden lg:block">
               <div className="absolute inset-0 bg-gradient-to-tr from-[#0047AB]/30 to-transparent rounded-3xl transform rotate-3 scale-105" />
               <img
-                src="https://img.usecurling.com/p/800/800?q=confident%20professional%20speaker&dpr=2"
+                src={heroImageUrl}
                 alt="Anderson Abreu Mentoria"
                 className="relative rounded-3xl object-cover shadow-2xl grayscale border border-white/10"
               />
@@ -260,7 +302,7 @@ export default function Landing() {
           <div className="grid md:grid-cols-2 gap-16 items-center">
             <div className="relative">
               <img
-                src="https://img.usecurling.com/p/600/700?q=modern%20therapy%20office&color=gray"
+                src={aboutImageUrl}
                 alt="Instituto Anderson Abreu"
                 className="rounded-2xl shadow-xl object-cover w-full h-[500px]"
               />
@@ -278,51 +320,69 @@ export default function Landing() {
                 Nossa Metodologia
               </h2>
               <h3 className="text-4xl font-bold mb-6 text-slate-900 leading-tight">
-                Muito além da teoria. <br />
-                Uma imersão na prática.
+                {settings?.about_title || 'Muito além da teoria. Uma imersão na prática.'}
               </h3>
-              <div className="space-y-6 text-slate-600 text-lg">
-                <p>
-                  Fundado pelo especialista Anderson Abreu, o instituto tem a missão de formar
-                  profissionais e indivíduos capacitados com o melhor ensino e prática da
-                  hipnoterapia e desenvolvimento humano.
-                </p>
-                <p>
-                  Nossa metodologia desenvolve o processo de aprendizado de uma maneira fácil e
-                  direta, com laboratório de práticas ao vivo e acompanhamento próximo. Somos
-                  pioneiros em utilizar tecnologia imersiva nos treinamentos para garantir que você
-                  absorva 100% do conteúdo.
-                </p>
-                <ul className="space-y-3 mt-8">
-                  {[
-                    'Mentoria ao vivo e orientações direto com especialistas',
-                    'A única instituição com estrutura para estágio virtual',
-                    'Certificações reconhecidas para atuação profissional',
-                  ].map((item, i) => (
-                    <li key={i} className="flex items-start gap-3 text-slate-800 font-medium">
-                      <CheckCircle2 className="h-6 w-6 text-accent shrink-0" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              {settings?.about_content ? (
+                <div
+                  className="prose prose-lg max-w-none text-slate-600"
+                  dangerouslySetInnerHTML={{ __html: settings.about_content }}
+                />
+              ) : (
+                <div className="space-y-6 text-slate-600 text-lg">
+                  <p>
+                    Fundado pelo especialista Anderson Abreu, o instituto tem a missão de formar
+                    profissionais e indivíduos capacitados com o melhor ensino e prática da
+                    hipnoterapia e desenvolvimento humano.
+                  </p>
+                  <p>
+                    Nossa metodologia desenvolve o processo de aprendizado de uma maneira fácil e
+                    direta, com laboratório de práticas ao vivo e acompanhamento próximo. Somos
+                    pioneiros em utilizar tecnologia imersiva nos treinamentos para garantir que
+                    você absorva 100% do conteúdo.
+                  </p>
+                  <ul className="space-y-3 mt-8">
+                    {DEFAULT_ABOUT_ITEMS.map((item, i) => (
+                      <li key={i} className="flex items-start gap-3 text-slate-800 font-medium">
+                        <CheckCircle2 className="h-6 w-6 text-accent shrink-0" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           </div>
         </div>
       </section>
 
-      <TestimonialsSection />
+      {showTestimonials && <TestimonialsSection />}
 
       {/* Agenda */}
-      <section id="agenda" className="py-24 bg-slate-50">
-        <div className="container mx-auto px-6">
+      <section
+        id="agenda"
+        className="py-24 bg-slate-50 relative overflow-hidden"
+        style={
+          agendaImageUrl
+            ? {
+                backgroundImage: `url(${agendaImageUrl})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }
+            : undefined
+        }
+      >
+        {agendaImageUrl && <div className="absolute inset-0 bg-white/85" />}
+        <div className="container mx-auto px-6 relative z-10">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-sm font-bold tracking-wider uppercase text-accent mb-3">
               Eventos e Turmas
             </h2>
-            <h3 className="text-4xl font-bold text-slate-900 mb-6">Agenda de Treinamentos</h3>
+            <h3 className="text-4xl font-bold text-slate-900 mb-6">
+              {settings?.agenda_highlight_title || 'Agenda de Treinamentos'}
+            </h3>
             <p className="text-slate-600 text-lg">
-              Participe de nossos eventos presenciais e online. Garanta sua vaga com antecedência.
+              {settings?.agenda_intro ||
+                'Participe de nossos eventos presenciais e online. Garanta sua vaga com antecedência.'}
             </p>
           </div>
 
@@ -396,9 +456,12 @@ export default function Landing() {
             <h2 className="text-sm font-bold tracking-wider uppercase text-accent mb-3">
               Ensino a Distância
             </h2>
-            <h3 className="text-4xl font-bold text-slate-900 mb-6">Cursos Online</h3>
+            <h3 className="text-4xl font-bold text-slate-900 mb-6">
+              {settings?.courses_title || 'Cursos Online'}
+            </h3>
             <p className="text-slate-600 text-lg">
-              Aprenda no seu ritmo, com metodologia comprovada e acesso imediato.
+              {settings?.courses_intro ||
+                'Aprenda no seu ritmo, com metodologia comprovada e acesso imediato.'}
             </p>
           </div>
 
@@ -485,10 +548,12 @@ export default function Landing() {
               <h2 className="text-sm font-bold tracking-wider uppercase text-accent mb-3">
                 Fale Conosco
               </h2>
-              <h3 className="text-4xl font-bold text-slate-900 mb-6">Dê o primeiro passo.</h3>
+              <h3 className="text-4xl font-bold text-slate-900 mb-6">
+                {settings?.contact_title || 'Dê o primeiro passo.'}
+              </h3>
               <p className="text-slate-600 text-lg mb-10">
-                Estamos prontos para tirar suas dúvidas e orientar você na melhor escolha para sua
-                carreira e desenvolvimento pessoal.
+                {settings?.contact_intro ||
+                  'Estamos prontos para tirar suas dúvidas e orientar você na melhor escolha para sua carreira e desenvolvimento pessoal.'}
               </p>
 
               <div className="space-y-6">
@@ -498,7 +563,7 @@ export default function Landing() {
                   </div>
                   <div>
                     <div className="text-sm text-slate-500">WhatsApp / Telefone</div>
-                    <div className="text-lg font-medium text-slate-900">+55 (11) 99999-9999</div>
+                    <div className="text-lg font-medium text-slate-900">{contactWhatsapp}</div>
                   </div>
                 </div>
 
@@ -508,9 +573,7 @@ export default function Landing() {
                   </div>
                   <div>
                     <div className="text-sm text-slate-500">E-mail</div>
-                    <div className="text-lg font-medium text-slate-900">
-                      contato@andersonabreu.com.br
-                    </div>
+                    <div className="text-lg font-medium text-slate-900">{contactEmail}</div>
                   </div>
                 </div>
 

@@ -66,3 +66,10 @@ export function getLogoUrl(settings: { id: string; logo?: string }): string | nu
   }
   return null
 }
+
+export function getAgendaImageUrl(settings: { id: string; agenda_image?: string }): string | null {
+  if (settings.agenda_image) {
+    return `${import.meta.env.VITE_POCKETBASE_URL}/api/files/platform_settings/${settings.id}/${settings.agenda_image}`
+  }
+  return null
+}
