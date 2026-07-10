@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { BookOpen, Users, Palette, Calendar } from 'lucide-react'
+import { BookOpen, Users, Palette, Calendar, HelpCircle } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 
 const modules = [
@@ -26,6 +26,12 @@ const modules = [
     description: 'Gerenciar eventos e agenda da plataforma',
     href: '/admin/agenda',
     icon: Calendar,
+  },
+  {
+    title: 'FAQs',
+    description: 'Gerenciar perguntas frequentes e canais de suporte',
+    href: '/admin/faqs',
+    icon: HelpCircle,
   },
 ]
 

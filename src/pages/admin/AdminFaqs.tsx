@@ -13,7 +13,18 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { RichTextEditor } from '@/components/admin/RichTextEditor'
+import { SupportSettings } from '@/components/admin/SupportSettings'
 import { useRealtime } from '@/hooks/use-realtime'
 import { extractFieldErrors, type FieldErrors } from '@/lib/pocketbase/errors'
 import { toast } from 'sonner'
@@ -25,7 +36,9 @@ export default function AdminFaqs() {
   const [faqs, setFaqs] = useState<FAQ[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [dialogOpen, setDialogOpen] = useState(false)
+  const [deleteId, setDeleteId] = useState<string | null>(null)
   const [isSaving, setIsSaving] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
   const [formData, setFormData] = useState<Partial<FAQ>>(emptyFaq)
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
 
@@ -88,14 +101,18 @@ export default function AdminFaqs() {
     }
   }
 
-  const handleDelete = async (id: string) => {
-    if (!window.confirm('Excluir esta FAQ?')) return
+  const handleDelete = async () => {
+    if (!deleteId) return
+    setIsDeleting(true)
     try {
-      await adminDeleteFaq(id)
+      await adminDeleteFaq(deleteId)
       toast.success('FAQ excluída!')
       loadFaqs()
     } catch {
       toast.error('Erro ao excluir')
+    } finally {
+      setIsDeleting(false)
+      setDeleteId(null)
     }
   }
 
@@ -107,6 +124,9 @@ export default function AdminFaqs() {
           <Plus className="mr-2 h-4 w-4" /> Nova FAQ
         </Button>
       </div>
+
+      <SupportSettings />
+
       {isLoading ? (
         <div className="flex justify-center py-12">
           <Loader2 className="h-6 w-6 animate-spin text-primary" />
@@ -146,7 +166,7 @@ export default function AdminFaqs() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => handleDelete(faq.id)}
+                  onClick={() => setDeleteId(faq.id)}
                   className="text-red-500"
                 >
                   <Trash2 className="h-4 w-4" />
@@ -215,6 +235,27 @@ export default function AdminFaqs() {
           </form>
         </DialogContent>
       </Dialog>
+
+      <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir FAQ</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir esta FAQ? Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="bg-red-500 hover:bg-red-600"
+            >
+              {isDeleting ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Excluir'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

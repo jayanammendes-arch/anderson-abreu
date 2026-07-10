@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { getFaqs } from '@/services/faqs'
+import { getPlatformSettings } from '@/services/admin-settings'
 import { useRealtime } from '@/hooks/use-realtime'
-import type { FAQ } from '@/types'
+import type { FAQ, PlatformSettings } from '@/types'
 import {
   Accordion,
   AccordionContent,
@@ -14,11 +15,14 @@ import { LifeBuoy, Mail, MessageCircle, Loader2 } from 'lucide-react'
 
 export default function Faq() {
   const [faqs, setFaqs] = useState<FAQ[]>([])
+  const [settings, setSettings] = useState<PlatformSettings | null>(null)
   const [loading, setLoading] = useState(true)
 
-  const loadFaqs = async () => {
+  const loadData = async () => {
     try {
-      setFaqs(await getFaqs())
+      const [faqData, settingsData] = await Promise.all([getFaqs(), getPlatformSettings()])
+      setFaqs(faqData)
+      setSettings(settingsData)
     } catch {
       // silent
     } finally {
@@ -27,11 +31,19 @@ export default function Faq() {
   }
 
   useEffect(() => {
-    loadFaqs()
+    loadData()
   }, [])
   useRealtime('faqs', () => {
-    loadFaqs()
+    loadData()
   })
+  useRealtime('platform_settings', () => {
+    loadData()
+  })
+
+  const whatsappLink = settings?.whatsapp_number
+    ? `https://wa.me/${settings.whatsapp_number.replace(/\D/g, '')}`
+    : '#'
+  const supportEmail = settings?.support_email || 'suporte@andersonabreu.com'
 
   return (
     <div className="space-y-8 animate-fade-in pb-10 max-w-4xl mx-auto">
@@ -81,6 +93,13 @@ export default function Faq() {
         </Card>
       )}
 
+      {settings?.about_content && (
+        <div
+          className="prose prose-sm max-w-none prose-headings:text-white prose-p:text-muted-foreground prose-li:text-muted-foreground"
+          dangerouslySetInnerHTML={{ __html: settings.about_content }}
+        />
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card className="border-border/50 bg-card text-center hover:border-primary/50 transition-colors">
           <CardHeader>
@@ -91,8 +110,10 @@ export default function Faq() {
             <CardDescription>Atendimento de Segunda a Sexta, das 9h às 18h.</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button className="w-full" variant="outline">
-              Chamar no WhatsApp
+            <Button className="w-full" variant="outline" asChild>
+              <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
+                Chamar no WhatsApp
+              </a>
             </Button>
           </CardContent>
         </Card>
@@ -106,8 +127,8 @@ export default function Faq() {
             <CardDescription>Respondemos em até 24 horas úteis.</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button className="w-full" variant="outline">
-              suporte@andersonabreu.com
+            <Button className="w-full" variant="outline" asChild>
+              <a href={`mailto:${supportEmail}`}>{supportEmail}</a>
             </Button>
           </CardContent>
         </Card>
