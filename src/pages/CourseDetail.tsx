@@ -151,7 +151,7 @@ export default function CourseDetail() {
   const resumePosition = isCompleted ? 0 : videoPosition
 
   return (
-    <div className="mx-auto w-full max-w-[1600px] space-y-6 animate-fade-in px-4 pb-10 sm:px-6">
+    <div className="mx-auto w-full max-w-[1920px] space-y-6 animate-fade-in px-4 pb-10 sm:px-6 lg:px-8">
       <Button variant="ghost" size="sm" asChild>
         <Link to="/dashboard">
           <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
@@ -182,13 +182,13 @@ export default function CourseDetail() {
       <div
         className={cn(
           'grid grid-cols-1 gap-6 transition-all duration-300',
-          cinemaMode ? 'lg:grid-cols-1' : 'lg:grid-cols-5',
+          cinemaMode ? 'lg:grid-cols-1' : 'lg:grid-cols-4',
         )}
       >
         <div
           className={cn(
             'space-y-6 transition-all duration-300',
-            cinemaMode ? 'lg:col-span-1' : 'lg:col-span-4',
+            cinemaMode ? 'lg:col-span-1' : 'lg:col-span-3',
           )}
         >
           {quizModuleId ? (
@@ -201,7 +201,10 @@ export default function CourseDetail() {
             />
           ) : selectedLesson ? (
             <>
-              <div className="aspect-video w-full min-h-[280px] overflow-hidden rounded-xl bg-black shadow-lg border border-border/50 ring-1 ring-border/30 sm:min-h-[400px] lg:min-h-[520px] xl:min-h-[600px]">
+              <div
+                className="relative w-full min-h-[300px] overflow-hidden rounded-xl bg-black shadow-lg border border-border/50 ring-1 ring-border/30 sm:min-h-[480px] lg:min-h-[640px] xl:min-h-[760px] 2xl:min-h-[820px]"
+                style={{ aspectRatio: '16 / 9' }}
+              >
                 <VideoPlayer
                   key={selectedLesson.id}
                   videoUrl={selectedLesson.video_url}
@@ -304,7 +307,6 @@ export default function CourseDetail() {
         {!cinemaMode && (
           <div className="lg:col-span-1">
             <Card className="bg-card/50 border-border/50 sticky top-6 max-h-[calc(100vh-3rem)] overflow-y-auto">
-              {' '}
               <CardContent className="p-4">
                 <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
                   Conteúdo do curso

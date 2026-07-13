@@ -94,7 +94,8 @@ export function VideoPlayer({
           }
           const iframe = document.createElement('iframe')
           iframe.src = `https://www.youtube.com/embed/${ytId}?enablejsapi=1&rel=0`
-          iframe.className = 'h-full w-full'
+          iframe.className = 'absolute inset-0 h-full w-full'
+          iframe.style.border = 'none'
           iframe.allowFullscreen = true
           iframe.allow = 'autoplay; encrypted-media; picture-in-picture'
           containerRef.current!.innerHTML = ''
@@ -142,7 +143,8 @@ export function VideoPlayer({
         if (!Vimeo?.Player || !containerRef.current) return
         const iframe = document.createElement('iframe')
         iframe.src = `https://player.vimeo.com/video/${vimeoId}`
-        iframe.className = 'h-full w-full'
+        iframe.className = 'absolute inset-0 h-full w-full'
+        iframe.style.border = 'none'
         iframe.allowFullscreen = true
         iframe.allow = 'autoplay; encrypted-media; picture-in-picture'
         containerRef.current!.innerHTML = ''
@@ -168,7 +170,8 @@ export function VideoPlayer({
       if (!containerRef.current) return
       const iframe = document.createElement('iframe')
       iframe.src = videoUrl
-      iframe.className = 'h-full w-full'
+      iframe.className = 'absolute inset-0 h-full w-full'
+      iframe.style.border = 'none'
       iframe.allowFullscreen = true
       iframe.allow = 'autoplay; encrypted-media; picture-in-picture'
       iframe.title = title
@@ -196,16 +199,13 @@ export function VideoPlayer({
 
   if (!hasVideo) {
     return (
-      <div className="flex h-full items-center justify-center rounded-xl bg-black shadow-lg">
+      <div className="absolute inset-0 flex h-full w-full items-center justify-center bg-black">
         <PlayCircle className="h-12 w-12 text-muted-foreground" />
       </div>
     )
   }
 
   return (
-    <div
-      ref={containerRef}
-      className="h-full w-full overflow-hidden rounded-xl bg-black shadow-lg"
-    />
+    <div ref={containerRef} className="absolute inset-0 h-full w-full overflow-hidden bg-black" />
   )
 }
