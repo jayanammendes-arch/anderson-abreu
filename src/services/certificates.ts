@@ -25,3 +25,15 @@ export async function downloadCertificatePdf(id: string): Promise<void> {
   document.body.removeChild(a)
   window.URL.revokeObjectURL(url)
 }
+
+export async function previewTestCertificate(): Promise<void> {
+  const response = await fetch(
+    `${import.meta.env.VITE_POCKETBASE_URL}/backend/v1/certificates/preview/test`,
+    { headers: { Authorization: pb.authStore.token || '' } },
+  )
+  if (!response.ok) throw new Error('Failed to preview test certificate')
+  const blob = await response.blob()
+  const url = window.URL.createObjectURL(blob)
+  window.open(url, '_blank')
+  window.URL.revokeObjectURL(url)
+}
