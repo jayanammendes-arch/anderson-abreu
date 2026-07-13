@@ -22,6 +22,11 @@ export function getThumbnailUrl(course: Course): string {
   return `https://img.usecurling.com/p/600/400?q=${encodeURIComponent(course.title)}&color=blue`
 }
 
+export function getFooterBannerUrl(course: Course): string | null {
+  if (!course.footer_banner) return null
+  return `${import.meta.env.VITE_POCKETBASE_URL}/api/files/courses/${course.id}/${course.footer_banner}`
+}
+
 export async function getCoursesWithProgress(userId: string): Promise<CourseWithProgress[]> {
   const courses = (await pb.collection('courses').getFullList({ sort: 'order' })) as Course[]
   const modules = (await pb.collection('modules').getFullList({ sort: 'order' })) as Module[]

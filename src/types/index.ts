@@ -13,6 +13,10 @@ export interface Course {
   short_description?: string
   visibility?: 'home' | 'templates' | 'both'
   access_type?: 'free' | 'paid' | 'hypnosis'
+  footer_banner?: string
+  catchy_title?: string
+  public_description?: string
+  buy_button_text?: string
   created: string
   updated: string
 }
@@ -65,6 +69,8 @@ export interface Module {
   id: string
   course: string
   title: string
+  description?: string
+  materials?: string[]
   order: number
   created: string
   updated: string
@@ -74,6 +80,8 @@ export interface Lesson {
   id: string
   module: string
   title: string
+  description?: string
+  materials?: string[]
   video_url: string
   content: string
   duration: string

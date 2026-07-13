@@ -1,39 +1,20 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useAuth } from '@/hooks/use-auth'
-import { getPublicCourseDetail, getThumbnailUrl } from '@/services/courses'
+import { getPublicCourseDetail, getThumbnailUrl, getFooterBannerUrl } from '@/services/courses'
 import { getUserAccess } from '@/services/user-access'
-import { getActiveTestimonials } from '@/services/testimonials'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Card, CardContent } from '@/components/ui/card'
 import {
   Lock,
   ExternalLink,
   ArrowLeft,
-  BookOpen,
   ChevronRight,
   PlayCircle,
+  BookOpen,
   Clock,
 } from 'lucide-react'
-import type { Course, Module, Lesson, Testimonial } from '@/types'
-
-function parseDurationToSeconds(duration: string): number {
-  if (!duration) return 0
-  const parts = duration.split(':').map(Number)
-  if (parts.some(isNaN)) return 0
-  if (parts.length === 2) return parts[0] * 60 + parts[1]
-  if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2]
-  return 0
-}
-
-function formatTotalDuration(seconds: number): string {
-  const h = Math.floor(seconds / 3600)
-  const m = Math.floor((seconds % 3600) / 60)
-  if (h > 0) return `${h}h ${m}min`
-  if (m > 0) return `${m}min`
-  return '—'
-}
+import type { Course, Module, Lesson } from '@/types'
 
 export default function CourseDetailsPage() {
   const { courseId } = useParams<{ courseId: string }>()
@@ -41,7 +22,6 @@ export default function CourseDetailsPage() {
   const [course, setCourse] = useState<Course | null>(null)
   const [modules, setModules] = useState<Module[]>([])
   const [lessons, setLessons] = useState<Lesson[]>([])
-  const [testimonials, setTestimonials] = useState<Testimonial[]>([])
   const [hasAccess, setHasAccess] = useState(false)
   const [loading, setLoading] = useState(true)
   const [expanded, setExpanded] = useState<Set<string>>(new Set())
@@ -53,8 +33,6 @@ export default function CourseDetailsPage() {
       setCourse(data.course)
       setModules(data.modules)
       setLessons(data.lessons)
-      const t = await getActiveTestimonials()
-      setTestimonials((t as Testimonial[]).filter((x) => x.course === courseId))
       if (user) {
         const access = await getUserAccess(user.id)
         setHasAccess(access.some((a) => a.course === courseId))
@@ -75,15 +53,15 @@ export default function CourseDetailsPage() {
 
   if (loading) {
     return (
-      <div className="flex h-96 items-center justify-center">
+      <div className="flex h-96 items-center justify-center bg-white">
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
       </div>
     )
   }
   if (!course) {
     return (
-      <div className="text-center py-20">
-        <p className="text-muted-foreground mb-4">Curso não encontrado.</p>
+      <div className="text-center py-20 bg-white min-h-screen">
+        <p className="text-gray-600 mb-4">Curso não encontrado.</p>
         <Button asChild>
           <Link to="/">
             <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
@@ -95,12 +73,12 @@ export default function CourseDetailsPage() {
 
   const isHypnosis = course.access_type === 'hypnosis'
   const isFree = course.access_type === 'free'
-  const hasDiscount =
-    course.discount_price != null && course.price != null && course.discount_price < course.price
+  const coverImage = getThumbnailUrl(course)
+  const footerBanner = getFooterBannerUrl(course)
+  const catchyTitle = course.catchy_title || course.title
+  const publicDescription = course.public_description || course.description || ''
   const totalLessons = lessons.length
-  const totalDuration = formatTotalDuration(
-    lessons.reduce((acc, l) => acc + parseDurationToSeconds(l.duration || ''), 0),
-  )
+  const totalDuration = lessons.reduce((acc, l) => acc + (l.duration ? 1 : 0), 0)
 
   const toggleModule = (id: string) => {
     setExpanded((prev) => {
@@ -114,221 +92,197 @@ export default function CourseDetailsPage() {
   const renderCTA = () => {
     if (isAuthenticated && hasAccess) {
       return (
-        <Button className="w-full" size="lg" asChild>
+        <Button size="lg" className="px-10 py-6 text-lg" asChild>
           <Link to={`/dashboard/curso/${course.id}`}>
-            <PlayCircle className="mr-2 h-4 w-4" /> Acessar
+            <PlayCircle className="mr-2 h-5 w-5" /> Acessar Curso
           </Link>
         </Button>
       )
     }
     if (isHypnosis) {
       return (
-        <div className="flex items-center gap-2 text-muted-foreground">
-          <Lock className="h-5 w-5 shrink-0" />
-          <span className="text-sm font-medium">Acesso exclusivo — liberação mediante análise</span>
+        <div className="flex items-center gap-3 text-gray-700 bg-gray-100 rounded-lg px-6 py-4">
+          <Lock className="h-6 w-6 shrink-0 text-purple-600" />
+          <span className="font-medium">Acesso Exclusivo — Liberação mediante análise</span>
         </div>
       )
     }
     if (isFree) {
       if (isAuthenticated) {
         return (
-          <Button className="w-full" size="lg" asChild>
+          <Button size="lg" className="px-10 py-6 text-lg" asChild>
             <Link to={`/dashboard/curso/${course.id}`}>
-              <PlayCircle className="mr-2 h-4 w-4" /> Acessar
+              <PlayCircle className="mr-2 h-5 w-5" /> Acessar
             </Link>
           </Button>
         )
       }
       return (
-        <Button className="w-full" size="lg" asChild>
+        <Button size="lg" className="px-10 py-6 text-lg" asChild>
           <Link to="/login">
-            <PlayCircle className="mr-2 h-4 w-4" /> Inscrever-se
+            <PlayCircle className="mr-2 h-5 w-5" /> Inscrever-se
           </Link>
         </Button>
       )
     }
+    const ctaText = course.buy_button_text || 'Comprar Agora'
+    if (course.external_buy_url) {
+      return (
+        <Button size="lg" className="px-10 py-6 text-lg" asChild>
+          <a href={course.external_buy_url} target="_blank" rel="noopener noreferrer">
+            {ctaText} <ExternalLink className="ml-2 h-5 w-5" />
+          </a>
+        </Button>
+      )
+    }
     return (
-      <div className="space-y-3">
-        {hasDiscount && (
-          <div className="flex items-baseline gap-2">
-            <span className="text-sm text-muted-foreground line-through">
-              R$ {course.price?.toFixed(2)}
-            </span>
-            <span className="text-3xl font-bold text-primary">
-              R$ {course.discount_price?.toFixed(2)}
-            </span>
-          </div>
-        )}
-        {!hasDiscount && (
-          <span className="text-3xl font-bold text-primary">
-            {course.price ? `R$ ${course.price.toFixed(2)}` : 'Consulte'}
-          </span>
-        )}
-        {course.external_buy_url ? (
-          <Button className="w-full" size="lg" asChild>
-            <a href={course.external_buy_url} target="_blank" rel="noopener noreferrer">
-              Comprar Agora <ExternalLink className="ml-2 h-4 w-4" />
-            </a>
-          </Button>
-        ) : (
-          <Button className="w-full" size="lg" disabled>
-            Comprar Agora
-          </Button>
-        )}
-      </div>
+      <Button size="lg" className="px-10 py-6 text-lg" disabled>
+        {ctaText}
+      </Button>
     )
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="border-b border-border/50 bg-card/30">
-        <div className="container mx-auto px-4 py-4">
-          <Button variant="ghost" size="sm" asChild>
+    <div className="min-h-screen bg-white">
+      <header className="bg-gradient-to-r from-primary to-black">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <Link to="/" className="text-white font-bold text-lg">
+            Anderson Abreu
+          </Link>
+          <Button
+            variant="ghost"
+            size="sm"
+            asChild
+            className="text-white hover:text-white hover:bg-white/10"
+          >
             <Link to="/">
               <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
             </Link>
           </Button>
         </div>
-      </div>
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
-        <div className="grid lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-8">
-            <div>
-              <div className="aspect-video overflow-hidden rounded-xl mb-6 border border-border/50">
-                <img
-                  src={getThumbnailUrl(course)}
-                  alt={course.title}
-                  className="h-full w-full object-cover"
-                />
-              </div>
-              <div className="flex items-center gap-3 mb-3 flex-wrap">
-                {course.category && (
-                  <Badge variant="secondary" className="capitalize">
-                    {course.category}
-                  </Badge>
-                )}
-                {isHypnosis && (
-                  <Badge className="bg-purple-500/90 text-white">
-                    <Lock className="mr-1 h-3 w-3" /> Exclusivo Hipnose
-                  </Badge>
-                )}
-                {isFree && <Badge className="bg-green-500/90 text-white">Livre</Badge>}
-                {totalLessons > 0 && (
-                  <Badge variant="outline">
-                    <BookOpen className="mr-1 h-3 w-3" /> {totalLessons} aulas
-                  </Badge>
-                )}
-              </div>
-              <h1 className="text-3xl font-bold tracking-tight mb-4">{course.title}</h1>
-              {course.short_description && (
-                <p className="text-lg text-muted-foreground mb-6">{course.short_description}</p>
-              )}
-              {course.description && (
-                <p className="text-muted-foreground leading-relaxed">{course.description}</p>
+      </header>
+
+      <section className="relative h-[420px] md:h-[560px] overflow-hidden">
+        <img
+          src={coverImage}
+          alt={course.title}
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/30" />
+        <div className="relative h-full flex items-end pb-12 md:pb-16">
+          <div className="container mx-auto px-4">
+            <div className="flex items-center gap-2 mb-4 flex-wrap">
+              {course.category && <Badge className="bg-accent text-white">{course.category}</Badge>}
+              {isFree && <Badge className="bg-green-600 text-white">Gratuito</Badge>}
+              {totalLessons > 0 && (
+                <Badge variant="outline" className="text-white border-white/40">
+                  <BookOpen className="mr-1 h-3 w-3" /> {totalLessons} aulas
+                </Badge>
               )}
             </div>
-
-            {modules.length > 0 && (
-              <div>
-                <h2 className="text-2xl font-bold mb-4">Conteúdo do Curso</h2>
-                <div className="space-y-2">
-                  {modules.map((m) => {
-                    const moduleLessons = lessons.filter((l) => l.module === m.id)
-                    const isExpanded = expanded.has(m.id)
-                    return (
-                      <Card key={m.id} className="overflow-hidden border-border/50">
-                        <button
-                          className="w-full flex items-center justify-between p-4 hover:bg-muted/30 transition-colors"
-                          onClick={() => toggleModule(m.id)}
-                        >
-                          <span className="font-semibold text-left">{m.title}</span>
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <span>{moduleLessons.length} aulas</span>
-                            <ChevronRight
-                              className={`h-4 w-4 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
-                            />
-                          </div>
-                        </button>
-                        {isExpanded && moduleLessons.length > 0 && (
-                          <div className="border-t border-border/50">
-                            {moduleLessons.map((l) => (
-                              <div
-                                key={l.id}
-                                className="flex items-center gap-3 px-4 py-3 text-sm border-b border-border/30 last:border-0"
-                              >
-                                {isHypnosis || (!isFree && !hasAccess) ? (
-                                  <Lock className="h-4 w-4 text-muted-foreground shrink-0" />
-                                ) : (
-                                  <PlayCircle className="h-4 w-4 text-primary shrink-0" />
-                                )}
-                                <span className="flex-1">{l.title}</span>
-                                {l.duration && (
-                                  <span className="text-muted-foreground text-xs">
-                                    {l.duration}
-                                  </span>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </Card>
-                    )
-                  })}
-                </div>
-              </div>
-            )}
-
-            {testimonials.length > 0 && (
-              <div>
-                <h2 className="text-2xl font-bold mb-4">Depoimentos</h2>
-                <div className="grid gap-4">
-                  {testimonials.map((t) => (
-                    <Card key={t.id} className="border-border/50">
-                      <CardContent className="p-5">
-                        <div className="flex items-start gap-4">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-2">
-                              <span className="font-semibold">{t.student_name}</span>
-                            </div>
-                            <p className="text-sm text-muted-foreground">"{t.content}"</p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </div>
-            )}
+            <h1 className="text-3xl md:text-5xl font-bold text-white max-w-3xl leading-tight">
+              {catchyTitle}
+            </h1>
           </div>
+        </div>
+      </section>
 
-          <div className="lg:col-span-1">
-            <Card className="sticky top-6 border-border/50">
-              <CardContent className="p-6 space-y-4">
-                {renderCTA()}
-                {!isHypnosis && (
-                  <div className="pt-4 border-t border-border/50 space-y-2 text-sm text-muted-foreground">
-                    {totalLessons > 0 && (
-                      <div className="flex items-center gap-2">
-                        <BookOpen className="h-4 w-4" /> {totalLessons} aulas
+      <section className="py-12 md:py-16 bg-white">
+        <div className="container mx-auto px-4 max-w-4xl">
+          {publicDescription ? (
+            <div
+              className="prose prose-lg max-w-none text-gray-700
+                [&_h1]:text-black [&_h2]:text-black [&_h3]:text-black [&_h3]:font-bold
+                [&_strong]:text-accent [&_a]:text-accent"
+              dangerouslySetInnerHTML={{ __html: publicDescription }}
+            />
+          ) : (
+            course.short_description && (
+              <p className="text-lg text-gray-600 leading-relaxed">{course.short_description}</p>
+            )
+          )}
+          <div className="mt-8">{renderCTA()}</div>
+        </div>
+      </section>
+
+      {modules.length > 0 && (
+        <section className="py-12 md:py-16 bg-gray-50">
+          <div className="container mx-auto px-4 max-w-4xl">
+            <h2 className="text-2xl md:text-3xl font-bold text-black mb-8">Conteúdo do Curso</h2>
+            <div className="space-y-3">
+              {modules.map((m) => {
+                const moduleLessons = lessons.filter((l) => l.module === m.id)
+                const isExpanded = expanded.has(m.id)
+                return (
+                  <div
+                    key={m.id}
+                    className="bg-white rounded-xl border border-gray-200 overflow-hidden"
+                  >
+                    <button
+                      className="w-full flex items-center justify-between p-5 hover:bg-gray-50 transition-colors"
+                      onClick={() => toggleModule(m.id)}
+                    >
+                      <div className="text-left">
+                        <span className="font-bold text-black text-lg block">{m.title}</span>
+                        {m.description && (
+                          <span className="text-sm text-gray-500 mt-1 block">{m.description}</span>
+                        )}
                       </div>
-                    )}
-                    {totalLessons > 0 && (
-                      <div className="flex items-center gap-2">
-                        <Clock className="h-4 w-4" /> {totalDuration}
+                      <div className="flex items-center gap-2 text-sm text-gray-400">
+                        <span>{moduleLessons.length} aulas</span>
+                        <ChevronRight
+                          className={`h-5 w-5 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
+                        />
                       </div>
-                    )}
-                    {modules.length > 0 && (
-                      <div className="flex items-center gap-2">
-                        <ChevronRight className="h-4 w-4" /> {modules.length} módulos
+                    </button>
+                    {isExpanded && moduleLessons.length > 0 && (
+                      <div className="border-t border-gray-100">
+                        {moduleLessons.map((l) => (
+                          <div
+                            key={l.id}
+                            className="flex items-center gap-3 px-5 py-3 text-sm border-b border-gray-50 last:border-0"
+                          >
+                            <PlayCircle className="h-4 w-4 text-gray-300 shrink-0" />
+                            <div className="flex-1">
+                              <span className="text-gray-700 font-medium">{l.title}</span>
+                              {l.description && (
+                                <span className="text-xs text-gray-400 block mt-0.5">
+                                  {l.description}
+                                </span>
+                              )}
+                            </div>
+                            {l.duration && (
+                              <span className="text-gray-400 text-xs flex items-center gap-1">
+                                <Clock className="h-3 w-3" /> {l.duration}
+                              </span>
+                            )}
+                          </div>
+                        ))}
                       </div>
                     )}
                   </div>
-                )}
-              </CardContent>
-            </Card>
+                )
+              })}
+            </div>
           </div>
+        </section>
+      )}
+
+      {footerBanner && (
+        <section className="bg-white">
+          <img src={footerBanner} alt="" className="w-full max-h-72 object-cover" />
+        </section>
+      )}
+
+      <section className="py-12 bg-white">
+        <div className="container mx-auto px-4 max-w-4xl text-center">{renderCTA()}</div>
+      </section>
+
+      <footer className="bg-gradient-to-r from-primary to-black py-8">
+        <div className="container mx-auto px-4 text-center text-white/70 text-sm">
+          © {new Date().getFullYear()} Anderson Abreu. Todos os direitos reservados.
         </div>
-      </div>
+      </footer>
     </div>
   )
 }

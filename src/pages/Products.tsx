@@ -40,9 +40,16 @@ export default function Products() {
   useRealtime('courses', () => loadData())
   useRealtime('user_access', () => loadData())
 
-  const filtered = courses.filter((c) =>
-    c.title.toLowerCase().includes(search.toLowerCase().trim()),
-  )
+  const filtered = courses.filter((c) => {
+    const q = search.toLowerCase().trim()
+    if (!q) return true
+    return (
+      c.title.toLowerCase().includes(q) ||
+      (c.short_description || '').toLowerCase().includes(q) ||
+      (c.description || '').toLowerCase().includes(q) ||
+      (c.category || '').toLowerCase().includes(q)
+    )
+  })
   const categories = Array.from(new Set(courses.map((c) => c.category).filter(Boolean))) as string[]
 
   if (loading) {

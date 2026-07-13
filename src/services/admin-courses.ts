@@ -15,11 +15,17 @@ export const adminDeleteCourse = (id: string) => pb.collection('courses').delete
 export const adminGetModules = (courseId: string) =>
   pb.collection('modules').getFullList({ filter: `course = "${courseId}"`, sort: 'order' })
 
-export const adminCreateModule = (data: { course: string; title: string; order: number }) =>
-  pb.collection('modules').create(data)
+export const adminCreateModule = (data: {
+  course: string
+  title: string
+  order: number
+  description?: string
+}) => pb.collection('modules').create(data)
 
-export const adminUpdateModule = (id: string, data: { title?: string; order?: number }) =>
-  pb.collection('modules').update(id, data)
+export const adminUpdateModule = (
+  id: string,
+  data: { title?: string; order?: number; description?: string },
+) => pb.collection('modules').update(id, data)
 
 export const adminDeleteModule = (id: string) => pb.collection('modules').delete(id)
 

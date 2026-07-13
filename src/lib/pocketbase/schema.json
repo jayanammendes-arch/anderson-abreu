@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-13T13:46:48.180Z",
+  "generatedAt": "2026-07-13T14:07:48.638Z",
   "collections": [
     {
       "name": "users",
@@ -173,6 +173,30 @@
           "required": false,
           "system": false,
           "selectValues": ["free", "paid", "hypnosis"]
+        },
+        {
+          "name": "footer_banner",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "catchy_title",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "public_description",
+          "type": "editor",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "buy_button_text",
+          "type": "text",
+          "required": false,
+          "system": false
         }
       ],
       "indexes": [
@@ -224,6 +248,18 @@
           "required": false,
           "system": false,
           "autodateTriggers": ["onCreate", "onUpdate"]
+        },
+        {
+          "name": "description",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "materials",
+          "type": "file",
+          "required": false,
+          "system": false
         }
       ],
       "indexes": [
@@ -296,6 +332,18 @@
         {
           "name": "is_live",
           "type": "bool",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "description",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "materials",
+          "type": "file",
           "required": false,
           "system": false
         }
