@@ -10,6 +10,8 @@ import {
   getHomeHeroImageUrl,
   getAboutImageUrl,
   getAgendaImageUrl,
+  getLogoUrl,
+  applyBrandColor,
 } from '@/services/landing'
 import { getThumbnailUrl } from '@/services/courses'
 import type { Event, Course, PlatformSettings } from '@/types'
@@ -91,6 +93,10 @@ export default function Landing() {
     loadData()
   }, [])
 
+  useEffect(() => {
+    if (settings?.primary_color) applyBrandColor(settings.primary_color)
+  }, [settings?.primary_color])
+
   useRealtime('platform_settings', () => {
     loadData()
   })
@@ -170,11 +176,15 @@ export default function Landing() {
             onClick={(e) => scrollToSection(e, '#home')}
             className="flex items-center gap-2"
           >
-            <div className="h-8 w-8 bg-gradient-to-br from-accent to-accent/70 rounded-lg flex items-center justify-center">
-              <span className="font-bold text-white leading-none">AA</span>
-            </div>
+            {settings && getLogoUrl(settings) ? (
+              <img src={getLogoUrl(settings)!} alt="Logo" className="h-8 w-auto object-contain" />
+            ) : (
+              <div className="h-8 w-8 bg-gradient-to-br from-accent to-accent/70 rounded-lg flex items-center justify-center">
+                <span className="font-bold text-white leading-none">AA</span>
+              </div>
+            )}
             <span className="font-bold text-lg tracking-tight hidden sm:block text-white">
-              Anderson Abreu
+              {settings?.company_name || 'Anderson Abreu'}
             </span>
           </Link>
 
@@ -691,7 +701,8 @@ export default function Landing() {
       <footer className="py-8 bg-gradient-to-r from-[#0047AB] to-black text-center">
         <div className="container mx-auto px-6">
           <p className="text-white/80 text-sm">
-            © {new Date().getFullYear()} Anderson Abreu. Todos os direitos reservados.
+            © {new Date().getFullYear()} {settings?.company_name || 'Anderson Abreu'}. Todos os
+            direitos reservados.
           </p>
         </div>
       </footer>

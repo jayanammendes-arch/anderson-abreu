@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react'
+import { useState, useEffect, type FormEvent } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { useAuth } from '@/hooks/use-auth'
@@ -8,6 +8,14 @@ import { Label } from '@/components/ui/label'
 import { Brain, Eye, EyeOff, ArrowLeft, CheckCircle2, Loader2 } from 'lucide-react'
 import { extractFieldErrors, getErrorMessage, type FieldErrors } from '@/lib/pocketbase/errors'
 import { GoogleIcon } from '@/components/SocialIcons'
+import {
+  getPlatformSettingsPublic,
+  getLogoUrl,
+  getLoginImageUrl,
+  applyBrandColor,
+} from '@/services/landing'
+import type { PlatformSettings } from '@/types'
+import { cn } from '@/lib/utils'
 
 type AuthMode = 'login' | 'signup' | 'recovery'
 
@@ -26,6 +34,17 @@ export default function Login() {
   const [submitting, setSubmitting] = useState(false)
   const [recoverySent, setRecoverySent] = useState(false)
   const [oauthLoading, setOauthLoading] = useState<string | null>(null)
+  const [loginSettings, setLoginSettings] = useState<PlatformSettings | null>(null)
+
+  useEffect(() => {
+    getPlatformSettingsPublic()
+      .then(setLoginSettings)
+      .catch(() => {})
+  }, [])
+
+  useEffect(() => {
+    if (loginSettings?.primary_color) applyBrandColor(loginSettings.primary_color)
+  }, [loginSettings?.primary_color])
 
   if (loading) {
     return (
@@ -321,19 +340,46 @@ export default function Login() {
           )}
         </div>
       </div>
-      <div className="relative hidden items-center justify-center overflow-hidden lg:flex lg:flex-1 bg-gradient-to-b from-blue-900 via-blue-950 to-black">
+      <div
+        className={cn(
+          'relative hidden items-center justify-center overflow-hidden lg:flex lg:flex-1',
+          !loginSettings?.login_gradient && 'bg-gradient-to-b from-blue-900 via-blue-950 to-black',
+        )}
+        style={
+          loginSettings?.login_gradient
+            ? { backgroundImage: loginSettings.login_gradient }
+            : loginSettings && getLoginImageUrl(loginSettings)
+              ? {
+                  backgroundImage: `url(${getLoginImageUrl(loginSettings)})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                }
+              : undefined
+        }
+      >
         <div className="absolute inset-0 bg-gradient-to-br from-blue-900/40 via-transparent to-black/60" />
         <div className="relative z-10 flex flex-col items-center gap-8 px-12 text-center">
           <Link
             to="/"
             className="flex h-24 w-24 items-center justify-center rounded-3xl border border-white/10 bg-white/5 backdrop-blur-sm transition-opacity hover:opacity-80"
           >
-            <Brain className="h-12 w-12 text-white" />
+            {loginSettings && getLogoUrl(loginSettings) ? (
+              <img
+                src={getLogoUrl(loginSettings)!}
+                alt="Logo"
+                className="h-16 w-16 object-contain"
+              />
+            ) : (
+              <Brain className="h-12 w-12 text-white" />
+            )}
           </Link>
           <Link to="/" className="space-y-3 transition-opacity hover:opacity-80">
-            <h2 className="text-3xl font-bold text-white">Anderson Abreu</h2>
+            <h2 className="text-3xl font-bold text-white">
+              {loginSettings?.company_name || 'Anderson Abreu'}
+            </h2>
             <p className="max-w-md text-lg text-white/60">
-              Hipnose, inteligência emocional e mentoria de alta performance
+              {loginSettings?.login_text ||
+                'Hipnose, inteligência emocional e mentoria de alta performance'}
             </p>
           </Link>
           <div className="flex gap-8 pt-4">

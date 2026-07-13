@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { BookOpen, Users, Palette, Calendar, HelpCircle, FileText } from 'lucide-react'
+import { BookOpen, Users, Calendar, HelpCircle, FileText } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 
 const modules = [
@@ -21,12 +21,7 @@ const modules = [
     href: '/admin/paginas',
     icon: FileText,
   },
-  {
-    title: 'Configurações da Plataforma',
-    description: 'Branding, logo, cores e textos de login',
-    href: '/admin/plataforma',
-    icon: Palette,
-  },
+
   {
     title: 'Agenda',
     description: 'Gerenciar eventos e agenda da plataforma',

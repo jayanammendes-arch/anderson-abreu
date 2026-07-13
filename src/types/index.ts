@@ -250,7 +250,6 @@ export interface PlatformSettings {
   company_name: string
   logo: string
   primary_color: string
-  landing_page_json: LandingPageJson | null
   login_image: string
   login_text: string
   login_gradient: string

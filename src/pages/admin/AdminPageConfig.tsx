@@ -40,6 +40,10 @@ interface FormState {
   facebook_url: string
   linkedin_url: string
   youtube_url: string
+  company_name: string
+  primary_color: string
+  login_text: string
+  login_gradient: string
 }
 
 const emptyForm: FormState = {
@@ -66,22 +70,37 @@ const emptyForm: FormState = {
   facebook_url: '',
   linkedin_url: '',
   youtube_url: '',
+  company_name: '',
+  primary_color: '',
+  login_text: '',
+  login_gradient: '',
+}
+
+function FieldLabel({ label, description }: { label: string; description?: string }) {
+  return (
+    <div>
+      <Label>{label}</Label>
+      {description && <p className="text-sm text-muted-foreground mt-0.5">{description}</p>}
+    </div>
+  )
 }
 
 function LabeledInput({
   label,
+  description,
   value,
   onChange,
   placeholder,
 }: {
   label: string
+  description?: string
   value: string
   onChange: (v: string) => void
   placeholder?: string
 }) {
   return (
     <div className="space-y-2">
-      <Label>{label}</Label>
+      <FieldLabel label={label} description={description} />
       <Input value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} />
     </div>
   )
@@ -89,18 +108,20 @@ function LabeledInput({
 
 function LabeledTextarea({
   label,
+  description,
   value,
   onChange,
   placeholder,
 }: {
   label: string
+  description?: string
   value: string
   onChange: (v: string) => void
   placeholder?: string
 }) {
   return (
     <div className="space-y-2">
-      <Label>{label}</Label>
+      <FieldLabel label={label} description={description} />
       <Textarea
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -111,15 +132,50 @@ function LabeledTextarea({
   )
 }
 
-function ImageUpload({ label, onFile }: { label: string; onFile: (f: File | null) => void }) {
+function ImageUpload({
+  label,
+  description,
+  onFile,
+}: {
+  label: string
+  description?: string
+  onFile: (f: File | null) => void
+}) {
   return (
     <div className="space-y-2">
-      <Label>{label}</Label>
+      <FieldLabel label={label} description={description} />
       <Input
         type="file"
         accept="image/jpeg,image/png,image/webp"
         onChange={(e) => onFile(e.target.files?.[0] || null)}
       />
+    </div>
+  )
+}
+
+function ColorInput({
+  label,
+  description,
+  value,
+  onChange,
+}: {
+  label: string
+  description?: string
+  value: string
+  onChange: (v: string) => void
+}) {
+  return (
+    <div className="space-y-2">
+      <FieldLabel label={label} description={description} />
+      <div className="flex gap-2 items-center">
+        <input
+          type="color"
+          value={value || '#0047AB'}
+          onChange={(e) => onChange(e.target.value)}
+          className="h-10 w-12 rounded border border-border cursor-pointer bg-transparent"
+        />
+        <Input value={value} onChange={(e) => onChange(e.target.value)} placeholder="#0047AB" />
+      </div>
     </div>
   )
 }
@@ -132,6 +188,8 @@ export default function AdminPageConfig() {
   const [heroImage, setHeroImage] = useState<File | null>(null)
   const [aboutImage, setAboutImage] = useState<File | null>(null)
   const [agendaImage, setAgendaImage] = useState<File | null>(null)
+  const [logoFile, setLogoFile] = useState<File | null>(null)
+  const [loginImageFile, setLoginImageFile] = useState<File | null>(null)
 
   const set = (key: keyof FormState, value: string | boolean) =>
     setForm((p) => ({ ...p, [key]: value }))
@@ -166,6 +224,10 @@ export default function AdminPageConfig() {
             facebook_url: data.facebook_url || '',
             linkedin_url: data.linkedin_url || '',
             youtube_url: data.youtube_url || '',
+            company_name: data.company_name || '',
+            primary_color: data.primary_color || '',
+            login_text: data.login_text || '',
+            login_gradient: data.login_gradient || '',
           })
         }
       } catch {
@@ -205,12 +267,18 @@ export default function AdminPageConfig() {
       fd.append('facebook_url', form.facebook_url)
       fd.append('linkedin_url', form.linkedin_url)
       fd.append('youtube_url', form.youtube_url)
+      fd.append('company_name', form.company_name)
+      fd.append('primary_color', form.primary_color)
+      fd.append('login_text', form.login_text)
+      fd.append('login_gradient', form.login_gradient)
       if (heroImage) fd.append('home_hero_image', heroImage)
       if (aboutImage) fd.append('about_image', aboutImage)
       if (agendaImage) fd.append('agenda_image', agendaImage)
+      if (logoFile) fd.append('logo', logoFile)
+      if (loginImageFile) fd.append('login_image', loginImageFile)
       if (settings) await updatePlatformSettings(settings.id, fd)
       else await createPlatformSettings(fd)
-      toast.success('Configurações de páginas salvas!')
+      toast.success('Configurações salvas com sucesso!')
     } catch {
       toast.error('Erro ao salvar')
     } finally {
@@ -229,13 +297,60 @@ export default function AdminPageConfig() {
     <form onSubmit={handleSave} className="space-y-6 animate-fade-in max-w-4xl">
       <h1 className="text-2xl font-bold">Configuração de Páginas Principais</h1>
       <Tabs defaultValue="home">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-5">
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-6">
+          <TabsTrigger value="plataforma">Plataforma</TabsTrigger>
           <TabsTrigger value="home">Home</TabsTrigger>
           <TabsTrigger value="sobre">Sobre</TabsTrigger>
           <TabsTrigger value="agenda">Agenda</TabsTrigger>
           <TabsTrigger value="cursos">Cursos</TabsTrigger>
           <TabsTrigger value="contato">Fale Conosco</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="plataforma">
+          <Card className="bg-card/50 border-border/50">
+            <CardContent className="space-y-4 pt-6">
+              <LabeledInput
+                label="Nome da Empresa"
+                description="Define o nome que aparece no título da aba do navegador e no rodapé."
+                value={form.company_name}
+                onChange={(v) => set('company_name', v)}
+                placeholder="Anderson Abreu"
+              />
+              <ImageUpload
+                label="Logo da Plataforma"
+                description="Sua logomarca principal. Recomendado: PNG com fundo transparente."
+                onFile={setLogoFile}
+              />
+              <ColorInput
+                label="Cor Principal"
+                description="Esta cor será aplicada automaticamente em botões, ícones e destaques em todo o site."
+                value={form.primary_color}
+                onChange={(v) => set('primary_color', v)}
+              />
+              <div className="pt-4 border-t border-border/50 space-y-4">
+                <ImageUpload
+                  label="Imagem de Fundo (Login)"
+                  description="Imagem que aparece ao lado do formulário de acesso para seus alunos."
+                  onFile={setLoginImageFile}
+                />
+                <LabeledInput
+                  label="Texto de Boas-vindas (Login)"
+                  description="Mensagem personalizada que aparece na tela de login."
+                  value={form.login_text}
+                  onChange={(v) => set('login_text', v)}
+                  placeholder="Hipnose, inteligência emocional e mentoria de alta performance"
+                />
+                <LabeledInput
+                  label="Gradiente Visual (Login)"
+                  description="Configuração de cores para o efeito visual da tela de login (CSS Gradient)."
+                  value={form.login_gradient}
+                  onChange={(v) => set('login_gradient', v)}
+                  placeholder="linear-gradient(to bottom, #1e3a8a, #172554, #000000)"
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         <TabsContent value="home">
           <Card className="bg-card/50 border-border/50">

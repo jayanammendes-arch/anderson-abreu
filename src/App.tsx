@@ -13,7 +13,7 @@ import AdminCourses from '@/pages/admin/AdminCourses'
 import AdminCourseForm from '@/pages/admin/AdminCourseForm'
 import AdminStudents from '@/pages/admin/AdminStudents'
 import AdminAccessReleases from '@/pages/admin/AdminAccessReleases'
-import AdminSettings from '@/pages/admin/AdminSettings'
+
 import AdminConfigHub from '@/pages/admin/AdminConfigHub'
 import AdminPageConfig from '@/pages/admin/AdminPageConfig'
 import AdminAgenda from '@/pages/admin/AdminAgenda'
@@ -49,7 +49,7 @@ const App = () => (
               <Route path="liberacoes" element={<AdminAccessReleases />} />
               <Route path="configuracoes" element={<AdminConfigHub />} />
               <Route path="paginas" element={<AdminPageConfig />} />
-              <Route path="plataforma" element={<AdminSettings />} />
+
               <Route path="depoimentos" element={<AdminTestimonials />} />
               <Route path="agenda" element={<AdminAgenda />} />
               <Route path="faqs" element={<AdminFaqs />} />

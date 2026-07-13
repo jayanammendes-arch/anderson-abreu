@@ -20,7 +20,6 @@ import {
   BookOpen,
   Users,
   Calendar,
-  Palette,
   HelpCircle,
   MessageSquareQuote,
   FileText,
@@ -36,7 +35,6 @@ const adminNavItems = [
   { title: 'Depoimentos', href: '/admin/depoimentos', icon: MessageSquareQuote },
   { title: 'Agenda', href: '/admin/agenda', icon: Calendar },
   { title: 'FAQs', href: '/admin/faqs', icon: HelpCircle },
-  { title: 'Plataforma', href: '/admin/plataforma', icon: Palette },
 ]
 
 export function AdminSidebar() {
