@@ -25,25 +25,3 @@ export async function downloadCertificatePdf(id: string): Promise<void> {
   document.body.removeChild(a)
   window.URL.revokeObjectURL(url)
 }
-
-export async function previewTestCertificate(): Promise<void> {
-  const popup = window.open('about:blank', '_blank')
-  try {
-    const response = await fetch(
-      `${import.meta.env.VITE_POCKETBASE_URL}/backend/v1/certificates/preview/pdf`,
-      { headers: { Authorization: pb.authStore.token || '' } },
-    )
-    if (!response.ok) throw new Error('Failed to generate preview')
-    const blob = await response.blob()
-    const url = window.URL.createObjectURL(blob)
-    if (popup) {
-      popup.location.href = url
-    } else {
-      window.open(url, '_blank')
-    }
-    setTimeout(() => window.URL.revokeObjectURL(url), 60000)
-  } catch (err) {
-    if (popup) popup.close()
-    throw err
-  }
-}

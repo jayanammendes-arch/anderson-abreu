@@ -84,6 +84,7 @@ export default function AdminCourseForm() {
   const [saving, setSaving] = useState(false)
   const [thumbnail, setThumbnail] = useState<File | null>(null)
   const [footerBanner, setFooterBanner] = useState<File | null>(null)
+  const [certificateTemplate, setCertificateTemplate] = useState<File | null>(null)
   const [form, setForm] = useState(emptyForm)
   const [calculatedWorkload, setCalculatedWorkload] = useState(0)
 
@@ -154,6 +155,7 @@ export default function AdminCourseForm() {
       fd.append('manual_workload', form.manual_workload || '0')
       if (thumbnail) fd.append('thumbnail', thumbnail)
       if (footerBanner) fd.append('footer_banner', footerBanner)
+      if (certificateTemplate) fd.append('certificate_template', certificateTemplate)
 
       if (courseId) {
         await adminUpdateCourse(courseId, fd)
@@ -327,6 +329,18 @@ export default function AdminCourseForm() {
         </Section>
 
         <Section title="Certificado">
+          <div className="space-y-2">
+            <Label>Modelo de Certificado</Label>
+            <Input
+              type="file"
+              accept="application/pdf,image/jpeg,image/png,image/webp"
+              onChange={(e) => setCertificateTemplate(e.target.files?.[0] || null)}
+            />
+            <p className="text-sm text-muted-foreground">
+              Envie uma imagem JPEG (recomendado) para o fundo do certificado. Resolução
+              recomendada: 842x595px.
+            </p>
+          </div>
           <div className="space-y-2">
             <Label>Instrutor</Label>
             <Input

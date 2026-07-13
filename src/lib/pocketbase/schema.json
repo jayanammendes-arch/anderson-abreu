@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-13T14:58:43.617Z",
+  "generatedAt": "2026-07-13T15:18:45.763Z",
   "collections": [
     {
       "name": "users",
@@ -207,6 +207,12 @@
         {
           "name": "manual_workload",
           "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "certificate_template",
+          "type": "file",
           "required": false,
           "system": false
         }

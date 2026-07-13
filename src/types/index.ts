@@ -19,6 +19,7 @@ export interface Course {
   buy_button_text?: string
   instructor_name?: string
   manual_workload?: number
+  certificate_template?: string
   created: string
   updated: string
 }
