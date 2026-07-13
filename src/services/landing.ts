@@ -73,3 +73,14 @@ export function getAgendaImageUrl(settings: { id: string; agenda_image?: string 
   }
   return null
 }
+
+export function getLoginImageUrl(settings: { id: string; login_image?: string }): string | null {
+  if (settings.login_image) {
+    return `${import.meta.env.VITE_POCKETBASE_URL}/api/files/platform_settings/${settings.id}/${settings.login_image}`
+  }
+  return null
+}
+
+export function applyBrandColor(color: string): void {
+  document.documentElement.style.setProperty('--primary', color)
+}
