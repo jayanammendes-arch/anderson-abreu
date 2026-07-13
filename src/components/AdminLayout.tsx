@@ -8,13 +8,16 @@ import { Loader2 } from 'lucide-react'
 const adminPageTitles: Record<string, string> = {
   '/admin/configuracoes': 'Central de Gerenciamento da Plataforma',
   '/admin/paginas': 'Configuração de Páginas Principais',
-
   '/admin/cursos': 'Gerenciar Cursos',
   '/admin/cursos/novo': 'Novo Curso',
   '/admin/alunos': 'Gerenciar Alunos',
   '/admin/liberacoes': 'Liberações de Acesso',
+  '/admin/depoimentos': 'Gerenciar Depoimentos',
   '/admin/agenda': 'Agenda de Eventos',
   '/admin/faqs': 'Gerenciar FAQs',
+  '/admin/comunidade': 'Gerenciar Comunidade',
+  '/admin/certificados': 'Gerenciar Certificados',
+  '/admin/contatos': 'Mensagens de Contato',
 }
 
 export function AdminLayout() {

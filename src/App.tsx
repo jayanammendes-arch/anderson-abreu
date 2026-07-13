@@ -23,6 +23,9 @@ import Community from '@/pages/Community'
 import Faq from '@/pages/Faq'
 import AdminFaqs from '@/pages/admin/AdminFaqs'
 import AdminTestimonials from '@/pages/admin/AdminTestimonials'
+import AdminCommunity from '@/pages/admin/AdminCommunity'
+import AdminCertificates from '@/pages/admin/AdminCertificates'
+import AdminContacts from '@/pages/admin/AdminContacts'
 import CourseDetail from '@/pages/CourseDetail'
 import CourseDetailsPage from '@/pages/CourseDetailsPage'
 import Profile from '@/pages/Profile'
@@ -53,6 +56,9 @@ const App = () => (
               <Route path="depoimentos" element={<AdminTestimonials />} />
               <Route path="agenda" element={<AdminAgenda />} />
               <Route path="faqs" element={<AdminFaqs />} />
+              <Route path="comunidade" element={<AdminCommunity />} />
+              <Route path="certificados" element={<AdminCertificates />} />
+              <Route path="contatos" element={<AdminContacts />} />
             </Route>
             <Route path="/dashboard" element={<DashboardLayout />}>
               <Route index element={<Index />} />
