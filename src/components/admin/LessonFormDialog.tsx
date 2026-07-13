@@ -43,6 +43,7 @@ export function LessonFormDialog({
     order: 0,
     content: '',
     is_live: false,
+    duration_minutes: '' as string,
   })
   const prevOpen = useRef(false)
 
@@ -58,6 +59,7 @@ export function LessonFormDialog({
               order: lesson.order,
               content: lesson.content || '',
               is_live: lesson.is_live || false,
+              duration_minutes: lesson.duration_minutes ? String(lesson.duration_minutes) : '',
             }
           : {
               title: '',
@@ -67,6 +69,7 @@ export function LessonFormDialog({
               order: lessonCount,
               content: '',
               is_live: false,
+              duration_minutes: '',
             },
       )
     }
@@ -78,9 +81,16 @@ export function LessonFormDialog({
     setSaving(true)
     try {
       if (lesson) {
-        await adminUpdateLesson(lesson.id, form)
+        await adminUpdateLesson(lesson.id, {
+          ...form,
+          duration_minutes: Number(form.duration_minutes) || 0,
+        })
       } else {
-        await adminCreateLesson({ ...form, module: moduleId })
+        await adminCreateLesson({
+          ...form,
+          module: moduleId,
+          duration_minutes: Number(form.duration_minutes) || 0,
+        })
       }
       toast.success('Aula salva')
       onClose()
@@ -131,6 +141,15 @@ export function LessonFormDialog({
                 placeholder="Ex: 15:30"
               />
             </div>
+          </div>
+          <div className="space-y-2">
+            <Label>Duração em minutos</Label>
+            <Input
+              type="number"
+              value={form.duration_minutes}
+              onChange={(e) => setForm({ ...form, duration_minutes: e.target.value })}
+              placeholder="Ex: 45"
+            />
           </div>
           <div className="flex items-center gap-3 pt-2">
             <Switch

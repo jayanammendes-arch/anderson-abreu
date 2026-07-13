@@ -6,7 +6,7 @@ routerAdd(
     const userId = e.auth ? e.auth.id : ''
     if (!userId) return e.unauthorizedError('auth required')
 
-    let studentName, courseName, workload, instructorName, issueDate, verifyUrl
+    let studentName, courseName, workload, instructorName, issueDate, verifyUrl, hasActiveQuiz
 
     if (id === 'preview') {
       studentName = 'Nome do Aluno Exemplo'
@@ -15,6 +15,7 @@ routerAdd(
       instructorName = 'Nome do Instrutor Exemplo'
       issueDate = new Date().toISOString().split('T')[0]
       verifyUrl = 'https://anderson-abreu-aluno-fe857.goskip.app/verify/preview'
+      hasActiveQuiz = true
     } else {
       const cert = $app.findRecordById('certificates', id)
       const certUserId = cert.getString('user')
@@ -32,6 +33,34 @@ routerAdd(
         cert.getString('instructor_at_issue') || course.getString('instructor_name') || ''
       issueDate = cert.getString('issue_date') || new Date().toISOString().split('T')[0]
       verifyUrl = 'https://anderson-abreu-aluno-fe857.goskip.app/verify/' + id
+      hasActiveQuiz = false
+      try {
+        var courseMods = $app.findRecordsByFilter(
+          'modules',
+          'course = "' + cert.getString('course') + '"',
+          '',
+          0,
+          0,
+        )
+        for (var mi = 0; mi < courseMods.length; mi++) {
+          try {
+            var courseQuizzes = $app.findRecordsByFilter(
+              'quizzes',
+              'module = "' + courseMods[mi].id + '"',
+              '',
+              0,
+              0,
+            )
+            for (var qi = 0; qi < courseQuizzes.length; qi++) {
+              if (courseQuizzes[qi].getBool('is_active')) {
+                hasActiveQuiz = true
+                break
+              }
+            }
+          } catch (_) {}
+          if (hasActiveQuiz) break
+        }
+      } catch (_) {}
     }
 
     const months = [
@@ -168,17 +197,19 @@ routerAdd(
       wlY,
       instructorName,
     )
-    wlY -= 20
-    cs += textBlock(
-      'F1',
-      11,
-      0.667,
-      0.706,
-      0.745,
-      center('e passou na prova de avaliação final.', 0.5, 11),
-      wlY,
-      'e passou na prova de avaliação final.',
-    )
+    if (hasActiveQuiz) {
+      wlY -= 20
+      cs += textBlock(
+        'F1',
+        11,
+        0.667,
+        0.706,
+        0.745,
+        center('e passou na prova de avaliação final.', 0.5, 11),
+        wlY,
+        'e passou na prova de avaliação final.',
+      )
+    }
 
     cs += '0.392 0.471 0.510 RG\n0.3 w\n100 145 m 220 145 l S\n'
     const dateX = 160 - tw(formattedDate, 0.5, 10) / 2

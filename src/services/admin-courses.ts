@@ -85,3 +85,15 @@ export const adminUpdateQuizQuestion = (
 ) => pb.collection('quiz_questions').update(id, data)
 
 export const adminDeleteQuizQuestion = (id: string) => pb.collection('quiz_questions').delete(id)
+
+export async function adminGetCourseWorkload(courseId: string): Promise<number> {
+  const modules = (await adminGetModules(courseId)) as Array<{ id: string }>
+  if (modules.length === 0) return 0
+  const moduleIds = modules.map((m) => m.id)
+  const filter = moduleIds.map((id: string) => `module = "${id}"`).join(' || ')
+  const lessons = (await pb.collection('lessons').getFullList({ filter })) as Array<{
+    duration_minutes?: number
+  }>
+  const totalMinutes = lessons.reduce((sum, l) => sum + (l.duration_minutes || 0), 0)
+  return Math.round((totalMinutes / 60) * 10) / 10
+}

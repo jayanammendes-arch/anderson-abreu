@@ -1,6 +1,11 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
-import { adminGetCourse, adminCreateCourse, adminUpdateCourse } from '@/services/admin-courses'
+import {
+  adminGetCourse,
+  adminCreateCourse,
+  adminUpdateCourse,
+  adminGetCourseWorkload,
+} from '@/services/admin-courses'
 import { ModuleManager } from '@/components/admin/ModuleManager'
 import { RichTextEditor } from '@/components/admin/RichTextEditor'
 import { Button } from '@/components/ui/button'
@@ -38,6 +43,8 @@ const emptyForm = {
   catchy_title: '',
   public_description: '',
   buy_button_text: '',
+  instructor_name: '',
+  manual_workload: '' as string,
 }
 
 function Section({
@@ -78,6 +85,7 @@ export default function AdminCourseForm() {
   const [thumbnail, setThumbnail] = useState<File | null>(null)
   const [footerBanner, setFooterBanner] = useState<File | null>(null)
   const [form, setForm] = useState(emptyForm)
+  const [calculatedWorkload, setCalculatedWorkload] = useState(0)
 
   const loadCourse = useCallback(async () => {
     if (!courseId) return
@@ -99,6 +107,8 @@ export default function AdminCourseForm() {
         catchy_title: c.catchy_title || '',
         public_description: c.public_description || '',
         buy_button_text: c.buy_button_text || '',
+        instructor_name: c.instructor_name || '',
+        manual_workload: c.manual_workload ? String(c.manual_workload) : '',
       })
     } catch {
       toast.error('Curso não encontrado')
@@ -111,6 +121,14 @@ export default function AdminCourseForm() {
   useEffect(() => {
     if (isEdit) loadCourse()
   }, [isEdit, loadCourse])
+
+  useEffect(() => {
+    if (courseId) {
+      adminGetCourseWorkload(courseId)
+        .then(setCalculatedWorkload)
+        .catch(() => {})
+    }
+  }, [courseId])
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -132,6 +150,8 @@ export default function AdminCourseForm() {
       fd.append('catchy_title', form.catchy_title)
       fd.append('public_description', form.public_description)
       fd.append('buy_button_text', form.buy_button_text)
+      fd.append('instructor_name', form.instructor_name)
+      fd.append('manual_workload', form.manual_workload || '0')
       if (thumbnail) fd.append('thumbnail', thumbnail)
       if (footerBanner) fd.append('footer_banner', footerBanner)
 
@@ -303,6 +323,29 @@ export default function AdminCourseForm() {
               onChange={(e) => setForm({ ...form, external_buy_url: e.target.value })}
               placeholder="https://..."
             />
+          </div>
+        </Section>
+
+        <Section title="Certificado">
+          <div className="space-y-2">
+            <Label>Instrutor</Label>
+            <Input
+              value={form.instructor_name}
+              onChange={(e) => setForm({ ...form, instructor_name: e.target.value })}
+              placeholder="Nome que aparecerá na assinatura do certificado"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>Carga horária em horas</Label>
+            <Input
+              type="number"
+              value={form.manual_workload}
+              onChange={(e) => setForm({ ...form, manual_workload: e.target.value })}
+              placeholder="Deixe em branco para usar o calculado"
+            />
+            <p className="text-sm text-muted-foreground">
+              Carga horária calculada: {calculatedWorkload}h baseado na soma das aulas
+            </p>
           </div>
         </Section>
 

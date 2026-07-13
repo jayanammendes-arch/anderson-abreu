@@ -17,6 +17,8 @@ export interface Course {
   catchy_title?: string
   public_description?: string
   buy_button_text?: string
+  instructor_name?: string
+  manual_workload?: number
   created: string
   updated: string
 }
@@ -87,6 +89,7 @@ export interface Lesson {
   duration: string
   order: number
   is_live?: boolean
+  duration_minutes?: number
   created: string
   updated: string
 }
@@ -289,4 +292,17 @@ export interface PlatformSettings {
   contact_phone: string
   created: string
   updated: string
+}
+
+export interface Certificate {
+  id: string
+  user: string
+  course: string
+  issue_date: string
+  workload_at_issue: number
+  instructor_at_issue: string
+  certificate_file: string
+  created: string
+  updated: string
+  expand?: { course?: Course }
 }

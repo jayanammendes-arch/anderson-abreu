@@ -112,7 +112,7 @@ onRecordAfterCreateSuccess((e) => {
     notif.set('user', userId)
     notif.set(
       'message',
-      'Parabéns! Seu certificado do curso ' + course.getString('title') + ' já está disponível.',
+      'Seu certificado do curso ' + course.getString('title') + ' já está disponível!',
     )
     notif.set('type', 'certificate')
     notif.set('read', false)

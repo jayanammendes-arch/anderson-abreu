@@ -18,8 +18,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Plus, Pencil, Trash2, Search, Loader2, Eye, EyeOff } from 'lucide-react'
+import { Plus, Pencil, Trash2, Search, Loader2, Eye, EyeOff, Award } from 'lucide-react'
 import { toast } from 'sonner'
+import { previewTestCertificate } from '@/services/certificates'
 import type { Course } from '@/types'
 
 export default function AdminCourses() {
@@ -28,6 +29,7 @@ export default function AdminCourses() {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [accessCounts, setAccessCounts] = useState<Record<string, number>>({})
+  const [previewing, setPreviewing] = useState(false)
 
   const loadCourses = useCallback(async () => {
     setLoading(true)
@@ -68,6 +70,17 @@ export default function AdminCourses() {
     }
   }
 
+  const handlePreviewCertificate = async () => {
+    setPreviewing(true)
+    try {
+      await previewTestCertificate()
+    } catch {
+      toast.error('Erro ao gerar preview do certificado')
+    } finally {
+      setPreviewing(false)
+    }
+  }
+
   const filtered = courses.filter((c) => {
     const matchesSearch = c.title.toLowerCase().includes(search.toLowerCase())
     const matchesStatus =
@@ -89,12 +102,25 @@ export default function AdminCourses() {
     <div className="space-y-6 animate-fade-in">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Cursos</h1>
-        <Button asChild>
-          <Link to="/admin/cursos/novo">
-            <Plus className="mr-2 h-4 w-4" /> Novo Curso
-          </Link>
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button variant="outline" onClick={handlePreviewCertificate} disabled={previewing}>
+            {previewing ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Award className="mr-2 h-4 w-4" />
+            )}
+            Visualizar certificado de teste
+          </Button>
+          <Button asChild>
+            <Link to="/admin/cursos/novo">
+              <Plus className="mr-2 h-4 w-4" /> Novo Curso
+            </Link>
+          </Button>
+        </div>
       </div>
+      <p className="text-xs text-muted-foreground">
+        Este é apenas um certificado de teste e visualização, não é um certificado real.
+      </p>
       <div className="flex gap-4">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
