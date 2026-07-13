@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-13T15:23:39.553Z",
+  "generatedAt": "2026-07-13T15:32:12.461Z",
   "collections": [
     {
       "name": "users",
@@ -1502,12 +1502,6 @@
           "system": false
         },
         {
-          "name": "certificate_file",
-          "type": "file",
-          "required": false,
-          "system": false
-        },
-        {
           "name": "created",
           "type": "autodate",
           "required": false,
@@ -1520,6 +1514,12 @@
           "required": false,
           "system": false,
           "autodateTriggers": ["onCreate", "onUpdate"]
+        },
+        {
+          "name": "certificate_file",
+          "type": "file",
+          "required": false,
+          "system": false
         }
       ],
       "indexes": [
