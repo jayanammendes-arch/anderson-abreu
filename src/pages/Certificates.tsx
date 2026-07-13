@@ -96,19 +96,26 @@ export default function Certificates() {
                           </span>
                         </div>
                       </div>
-                      <Button
-                        size="sm"
-                        onClick={() => handleDownload(cert.id)}
-                        disabled={downloading === cert.id}
-                        className="bg-green-600 hover:bg-green-700 text-white"
-                      >
-                        {downloading === cert.id ? (
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        ) : (
-                          <Download className="mr-2 h-4 w-4" />
-                        )}
-                        Baixar PDF
-                      </Button>
+                      {cert.certificate_file ? (
+                        <Button
+                          size="sm"
+                          onClick={() => handleDownload(cert.id)}
+                          disabled={downloading === cert.id}
+                          className="bg-green-600 hover:bg-green-700 text-white"
+                        >
+                          {downloading === cert.id ? (
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          ) : (
+                            <Download className="mr-2 h-4 w-4" />
+                          )}
+                          Baixar PDF
+                        </Button>
+                      ) : (
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          Gerando certificado...
+                        </div>
+                      )}
                     </div>
                   </div>
                 </CardContent>

@@ -12,7 +12,8 @@ routerAdd(
     try {
       isAdmin = e.auth.getBool('is_admin')
     } catch (_) {}
-    if (certUserId !== userId && !isAdmin) return e.forbiddenError('Access denied')
+    if (certUserId !== userId && !isAdmin && !e.hasSuperuserAuth())
+      return e.forbiddenError('Access denied')
 
     const user = $app.findRecordById('users', certUserId)
     const course = $app.findRecordById('courses', cert.getString('course'))
@@ -127,6 +128,8 @@ routerAdd(
     var imgData = null
     var imgW = 0,
       imgH = 0
+    var imgType = ''
+    var pngColors = 3
 
     if (templateFile) {
       var baseUrl = $secrets.get('PB_INSTANCE_URL') || ''
@@ -170,6 +173,64 @@ routerAdd(
               if (imgW > 0 && imgH > 0) {
                 useTemplate = true
                 imgData = imgRes.body
+                imgType = 'jpeg'
+              }
+            } else if (b0 === 0x89 && b1 === 0x50 && bodyLen > 24) {
+              var pngD = 8
+              var pngIhdrLen =
+                ((imgRes.body.charCodeAt(pngD) & 0xff) << 24) |
+                ((imgRes.body.charCodeAt(pngD + 1) & 0xff) << 16) |
+                ((imgRes.body.charCodeAt(pngD + 2) & 0xff) << 8) |
+                (imgRes.body.charCodeAt(pngD + 3) & 0xff)
+              var pngIhdrType = String.fromCharCode(
+                imgRes.body.charCodeAt(pngD + 4),
+                imgRes.body.charCodeAt(pngD + 5),
+                imgRes.body.charCodeAt(pngD + 6),
+                imgRes.body.charCodeAt(pngD + 7),
+              )
+              if (pngIhdrType === 'IHDR' && pngIhdrLen >= 13) {
+                var pngD2 = pngD + 8
+                imgW =
+                  ((imgRes.body.charCodeAt(pngD2) & 0xff) << 24) |
+                  ((imgRes.body.charCodeAt(pngD2 + 1) & 0xff) << 16) |
+                  ((imgRes.body.charCodeAt(pngD2 + 2) & 0xff) << 8) |
+                  (imgRes.body.charCodeAt(pngD2 + 3) & 0xff)
+                imgH =
+                  ((imgRes.body.charCodeAt(pngD2 + 4) & 0xff) << 24) |
+                  ((imgRes.body.charCodeAt(pngD2 + 5) & 0xff) << 16) |
+                  ((imgRes.body.charCodeAt(pngD2 + 6) & 0xff) << 8) |
+                  (imgRes.body.charCodeAt(pngD2 + 7) & 0xff)
+                var pngBitDepth = imgRes.body.charCodeAt(pngD2 + 8) & 0xff
+                var pngColorType = imgRes.body.charCodeAt(pngD2 + 9) & 0xff
+                if (pngBitDepth === 8 && (pngColorType === 2 || pngColorType === 0)) {
+                  var pngNumColors = pngColorType === 2 ? 3 : 1
+                  var pngIdat = ''
+                  var pngOff = pngD + 12 + pngIhdrLen + 4
+                  while (pngOff < bodyLen - 8) {
+                    var cLen =
+                      ((imgRes.body.charCodeAt(pngOff) & 0xff) << 24) |
+                      ((imgRes.body.charCodeAt(pngOff + 1) & 0xff) << 16) |
+                      ((imgRes.body.charCodeAt(pngOff + 2) & 0xff) << 8) |
+                      (imgRes.body.charCodeAt(pngOff + 3) & 0xff)
+                    var cType = String.fromCharCode(
+                      imgRes.body.charCodeAt(pngOff + 4),
+                      imgRes.body.charCodeAt(pngOff + 5),
+                      imgRes.body.charCodeAt(pngOff + 6),
+                      imgRes.body.charCodeAt(pngOff + 7),
+                    )
+                    if (cType === 'IDAT') {
+                      pngIdat += imgRes.body.substring(pngOff + 8, pngOff + 8 + cLen)
+                    }
+                    pngOff += 12 + cLen
+                    if (cType === 'IEND') break
+                  }
+                  if (imgW > 0 && imgH > 0 && pngIdat.length > 0) {
+                    useTemplate = true
+                    imgData = pngIdat
+                    imgType = 'png'
+                    pngColors = pngNumColors
+                  }
+                }
               }
             }
           }
@@ -258,6 +319,33 @@ routerAdd(
         'Verifique a autenticidade deste certificado',
       )
 
+      var imgObj =
+        imgType === 'png'
+          ? '<< /Type /XObject /Subtype /Image /Width ' +
+            imgW +
+            ' /Height ' +
+            imgH +
+            ' /ColorSpace ' +
+            (pngColors === 1 ? '/DeviceGray' : '/DeviceRGB') +
+            ' /BitsPerComponent 8 /Filter /FlateDecode /DecodeParms << /Predictor 15 /Colors ' +
+            pngColors +
+            ' /BitsPerComponent 8 /Columns ' +
+            imgW +
+            ' >> /Length ' +
+            imgData.length +
+            ' >>\nstream\n' +
+            imgData +
+            '\nendstream'
+          : '<< /Type /XObject /Subtype /Image /Width ' +
+            imgW +
+            ' /Height ' +
+            imgH +
+            ' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ' +
+            imgData.length +
+            ' >>\nstream\n' +
+            imgData +
+            '\nendstream'
+
       objs = [
         '<< /Type /Catalog /Pages 2 0 R >>',
         '<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
@@ -272,15 +360,7 @@ routerAdd(
         '<< /Type /Font /Subtype /Type1 /BaseFont /Times-Roman /Encoding /WinAnsiEncoding >>',
         '<< /Type /Font /Subtype /Type1 /BaseFont /Times-Bold /Encoding /WinAnsiEncoding >>',
         '<< /Type /Font /Subtype /Type1 /BaseFont /Times-Italic /Encoding /WinAnsiEncoding >>',
-        '<< /Type /XObject /Subtype /Image /Width ' +
-          imgW +
-          ' /Height ' +
-          imgH +
-          ' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ' +
-          imgData.length +
-          ' >>\nstream\n' +
-          imgData +
-          '\nendstream',
+        imgObj,
       ]
     } else {
       cs += '0.043 0.059 0.102 rg\n0 0 ' + W + ' ' + H + ' re f\n'

@@ -117,6 +117,31 @@ onRecordAfterUpdateSuccess((e) => {
     notif.set('type', 'certificate')
     notif.set('read', false)
     $app.save(notif)
+
+    try {
+      var pbUrl = $secrets.get('PB_INSTANCE_URL') || ''
+      var superToken = $secrets.get('PB_SUPERUSER_TOKEN') || ''
+      if (pbUrl && superToken) {
+        var pdfRes = $http.send({
+          url: pbUrl + '/backend/v1/certificates/' + cert.id + '/pdf',
+          method: 'GET',
+          headers: { Authorization: superToken },
+          timeout: 60,
+        })
+        if (pdfRes.statusCode === 200 && pdfRes.body && pdfRes.body.length > 0) {
+          var pdfBytes = new Uint8Array(pdfRes.body.length)
+          for (var bi = 0; bi < pdfRes.body.length; bi++) {
+            pdfBytes[bi] = pdfRes.body.charCodeAt(bi) & 0xff
+          }
+          var pdfFile = $filesystem.fileFromBytes(pdfBytes, 'certificado.pdf')
+          var savedCert = $app.findRecordById('certificates', cert.id)
+          savedCert.set('certificate_file', pdfFile)
+          $app.saveNoValidate(savedCert)
+        }
+      }
+    } catch (pdfErr) {
+      console.log('Certificate PDF generation failed for ' + cert.id + ': ' + String(pdfErr))
+    }
   } catch (_) {}
 
   return e.next()
