@@ -1,12 +1,13 @@
 import { useState, useEffect, type ReactNode } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
-import { Menu, X, Calendar, ChevronDown } from 'lucide-react'
+import { Menu, X, Calendar, ChevronDown, GraduationCap } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { PlatformSettings, Treatment } from '@/types'
 import { getLogoUrl, applyBrandColor } from '@/services/landing'
 import { getAllTreatments } from '@/services/treatments'
 import { TreatmentsDropdown } from '@/components/TreatmentsDropdown'
+import { useAuth } from '@/hooks/use-auth'
 
 const navLinks = [
   { name: 'Home', href: '/', type: 'route' as const },
@@ -35,11 +36,14 @@ export function LandingLayout({
 }) {
   const location = useLocation()
   const navigate = useNavigate()
+  const { isAuthenticated } = useAuth()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [mobileTreatmentsOpen, setMobileTreatmentsOpen] = useState(false)
   const [treatments, setTreatments] = useState<Treatment[]>([])
   const isLanding = location.pathname === '/'
+  const isCursosPage = location.pathname === '/cursos'
+  const areaAlunoHref = isAuthenticated ? '/dashboard' : '/login'
 
   useEffect(() => {
     getAllTreatments()
@@ -86,6 +90,7 @@ export function LandingLayout({
 
   const logoUrl = settings ? getLogoUrl(settings) : null
   const agendarText = settings?.agendar_sessao_text || 'Agendar Sessão'
+  const handleAreaAlunoClick = () => navigate(areaAlunoHref)
 
   return (
     <div className="min-h-screen bg-white text-slate-900 font-sans selection:bg-primary selection:text-white">
@@ -126,14 +131,25 @@ export function LandingLayout({
             )}
           </nav>
           <div className="hidden lg:flex items-center">
-            <Button
-              size="sm"
-              className="bg-slate-900 text-white hover:bg-slate-800 rounded-full px-6 shadow-sm"
-              onClick={() => navigate('/agendar')}
-            >
-              <Calendar className="mr-1.5 h-4 w-4" />
-              {agendarText}
-            </Button>
+            {isCursosPage ? (
+              <Button
+                size="sm"
+                className="bg-slate-900 text-white hover:bg-slate-800 rounded-full px-6 shadow-sm"
+                onClick={handleAreaAlunoClick}
+              >
+                <GraduationCap className="mr-1.5 h-4 w-4" />
+                Área do Aluno
+              </Button>
+            ) : (
+              <Button
+                size="sm"
+                className="bg-slate-900 text-white hover:bg-slate-800 rounded-full px-6 shadow-sm"
+                onClick={() => navigate('/agendar')}
+              >
+                <Calendar className="mr-1.5 h-4 w-4" />
+                {agendarText}
+              </Button>
+            )}
           </div>
           <button
             className="lg:hidden p-2 text-slate-900"
@@ -194,16 +210,29 @@ export function LandingLayout({
               </button>
             )
           })}
-          <Button
-            className="mt-6 bg-slate-900 text-white hover:bg-slate-800 rounded-full h-12 text-base"
-            onClick={() => {
-              setIsMenuOpen(false)
-              navigate('/agendar')
-            }}
-          >
-            <Calendar className="mr-2 h-5 w-5" />
-            {agendarText}
-          </Button>
+          {isCursosPage ? (
+            <Button
+              className="mt-6 bg-slate-900 text-white hover:bg-slate-800 rounded-full h-12 text-base"
+              onClick={() => {
+                setIsMenuOpen(false)
+                navigate(areaAlunoHref)
+              }}
+            >
+              <GraduationCap className="mr-2 h-5 w-5" />
+              Área do Aluno
+            </Button>
+          ) : (
+            <Button
+              className="mt-6 bg-slate-900 text-white hover:bg-slate-800 rounded-full h-12 text-base"
+              onClick={() => {
+                setIsMenuOpen(false)
+                navigate('/agendar')
+              }}
+            >
+              <Calendar className="mr-2 h-5 w-5" />
+              {agendarText}
+            </Button>
+          )}
         </nav>
       </div>
 
