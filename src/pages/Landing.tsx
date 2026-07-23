@@ -156,27 +156,26 @@ export default function Landing() {
       </section>
 
       {/* Treatments */}
-      <section id="tratamentos" className="py-24 bg-slate-50">
-        <div className="max-w-5xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
-              {settings?.treatments_section_title || 'O que podemos tratar'}
-            </h2>
-            <p className="text-slate-500 text-lg max-w-2xl mx-auto">
-              {settings?.treatments_section_intro ||
-                'Tratamentos especializados para diversos quadros emocionais e comportamentais.'}
-            </p>
+      {treatments.length > 0 && (
+        <section id="tratamentos" className="py-24 bg-slate-50">
+          <div className="max-w-5xl mx-auto px-6">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+                {settings?.treatments_section_title || 'O que podemos tratar'}
+              </h2>
+              <p className="text-slate-500 text-lg max-w-2xl mx-auto">
+                {settings?.treatments_section_intro ||
+                  'Tratamentos especializados para diversos quadros emocionais e comportamentais.'}
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {treatments.map((treatment) => (
+                <TreatmentCard key={treatment.id} treatment={treatment} />
+              ))}
+            </div>
           </div>
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 px-6 md:px-10">
-            {treatments.map((treatment) => (
-              <TreatmentCard key={treatment.id} treatment={treatment} />
-            ))}
-            {treatments.length === 0 && (
-              <p className="text-center text-slate-400 py-12">Nenhum tratamento cadastrado.</p>
-            )}
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Courses */}
       {courses.length > 0 && (

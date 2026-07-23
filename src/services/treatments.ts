@@ -2,7 +2,7 @@ import pb from '@/lib/pocketbase/client'
 import type { Treatment } from '@/types'
 
 export const getAllTreatments = (): Promise<Treatment[]> =>
-  pb.collection('treatments').getFullList({ sort: 'name' })
+  pb.collection('treatments').getFullList({ sort: 'order,name' })
 
 export const getTreatmentBySlug = (slug: string): Promise<Treatment> =>
   pb.collection('treatments').getFirstListItem(`slug = "${slug}"`)
@@ -13,7 +13,7 @@ export function getTreatmentImageUrl(treatment: Treatment): string | null {
 }
 
 export const adminGetTreatments = (): Promise<Treatment[]> =>
-  pb.collection('treatments').getFullList({ sort: 'name' })
+  pb.collection('treatments').getFullList({ sort: 'order,name' })
 
 export const adminCreateTreatment = (data: Record<string, unknown> | FormData) =>
   pb.collection('treatments').create(data)

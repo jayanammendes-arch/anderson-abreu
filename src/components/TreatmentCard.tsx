@@ -6,17 +6,17 @@ export function TreatmentCard({ treatment }: { treatment: Treatment }) {
   return (
     <Link
       to={`/tratamentos/${treatment.slug}`}
-      className="group relative flex items-center justify-between border-b border-slate-200 py-5 px-2 hover:bg-slate-50 transition-all duration-300"
+      className="group block p-6 bg-white rounded-xl shadow-sm border border-slate-100 hover:border-slate-200 hover:shadow-md transition-all duration-300"
     >
-      <div className="flex-1">
-        <h3 className="text-lg font-medium text-slate-900 group-hover:text-primary transition-colors">
+      <div className="flex items-start justify-between gap-4">
+        <h3 className="text-lg font-semibold text-slate-900 group-hover:text-primary transition-colors">
           {treatment.name}
         </h3>
-        {treatment.short_description && (
-          <p className="text-sm text-slate-500 mt-1 line-clamp-1">{treatment.short_description}</p>
-        )}
+        <ArrowUpRight className="h-5 w-5 shrink-0 text-slate-300 group-hover:text-primary group-hover:translate-x-1 group-hover:-translate-y-1 transition-all duration-300" />
       </div>
-      <ArrowUpRight className="h-5 w-5 text-slate-300 group-hover:text-primary group-hover:translate-x-1 group-hover:-translate-y-1 transition-all duration-300" />
+      {treatment.short_description && (
+        <p className="text-sm text-slate-500 mt-2 line-clamp-2">{treatment.short_description}</p>
+      )}
     </Link>
   )
 }
