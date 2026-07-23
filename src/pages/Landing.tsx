@@ -132,17 +132,17 @@ export default function Landing() {
       {/* Treatments */}
       {treatments.length > 0 && (
         <section id="tratamentos" className="py-24 bg-white">
-          <div className="max-w-5xl mx-auto px-6">
+          <div className="max-w-7xl mx-auto px-6">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
-                {settings?.treatments_section_title || 'O que podemos tratar'}
+                {settings?.treatments_section_title || 'O que podemos tratar com Hipnose'}
               </h2>
               <p className="text-slate-500 text-lg max-w-2xl mx-auto">
                 {settings?.treatments_section_intro ||
                   'Tratamentos especializados para diversos quadros emocionais e comportamentais.'}
               </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
               {treatments.map((treatment) => (
                 <TreatmentCard key={treatment.id} treatment={treatment} />
               ))}

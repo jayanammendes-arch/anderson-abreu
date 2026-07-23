@@ -1,17 +1,21 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
-import { TREATMENT_ICONS, TREATMENT_ICON_NAMES } from '@/lib/treatment-icons'
+import { TREATMENT_ICONS, getIconsForCategory } from '@/lib/treatment-icons'
 import { Check } from 'lucide-react'
 
 export function IconPicker({
   value,
   onChange,
+  category,
 }: {
   value: string
   onChange: (icon: string) => void
+  category?: string
 }) {
   const [selected, setSelected] = useState(value || '')
+
+  const iconNames = useMemo(() => getIconsForCategory(category), [category])
 
   const handleSelect = (iconName: string) => {
     setSelected(iconName)
@@ -20,8 +24,9 @@ export function IconPicker({
 
   return (
     <div className="grid grid-cols-4 sm:grid-cols-6 gap-3">
-      {TREATMENT_ICON_NAMES.map((iconName) => {
+      {iconNames.map((iconName) => {
         const Icon = TREATMENT_ICONS[iconName]
+        if (!Icon) return null
         const isSelected = selected === iconName
         return (
           <Tooltip key={iconName}>
@@ -32,19 +37,19 @@ export function IconPicker({
                 className={cn(
                   'relative flex h-14 w-14 items-center justify-center rounded-lg border-2 transition-all duration-200',
                   isSelected
-                    ? 'border-sky-500 bg-sky-50'
+                    ? 'border-blue-500 bg-blue-50'
                     : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50',
                 )}
               >
                 <Icon
                   className={cn(
                     'h-6 w-6 transition-colors',
-                    isSelected ? 'text-sky-600' : 'text-slate-500',
+                    isSelected ? 'text-blue-600' : 'text-slate-500',
                   )}
-                  strokeWidth={1.75}
+                  strokeWidth={2}
                 />
                 {isSelected && (
-                  <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-sky-500 text-white">
+                  <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-blue-500 text-white">
                     <Check className="h-3 w-3" />
                   </span>
                 )}

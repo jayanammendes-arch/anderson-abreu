@@ -339,6 +339,7 @@ export interface Treatment {
   image?: string
   order?: number
   icon?: string
+  category?: 'Doenças Mentais' | 'Doenças Emocionais' | 'Doenças Corporais'
   created: string
   updated: string
 }
