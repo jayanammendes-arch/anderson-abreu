@@ -1,0 +1,178 @@
+import { useEffect, useState, useCallback } from 'react'
+import { Link } from 'react-router-dom'
+import { useAuth } from '@/hooks/use-auth'
+import { getAllAvailableCourses, getThumbnailUrl } from '@/services/courses'
+import { getUserAccess } from '@/services/user-access'
+import { getPlatformSettingsPublic } from '@/services/landing'
+import { LandingLayout } from '@/components/LandingLayout'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { ExternalLink, PlayCircle, Lock, Loader2 } from 'lucide-react'
+import type { Course, PlatformSettings } from '@/types'
+
+export default function CursosPage() {
+  const { user, isAuthenticated } = useAuth()
+  const [courses, setCourses] = useState<Course[]>([])
+  const [settings, setSettings] = useState<PlatformSettings | null>(null)
+  const [accessIds, setAccessIds] = useState<Set<string>>(new Set())
+  const [loading, setLoading] = useState(true)
+
+  const loadData = useCallback(async () => {
+    try {
+      const [coursesData, settingsData] = await Promise.all([
+        getAllAvailableCourses(),
+        getPlatformSettingsPublic().catch(() => null),
+      ])
+      setCourses(coursesData)
+      setSettings(settingsData as PlatformSettings | null)
+      if (user) {
+        const access = await getUserAccess(user.id)
+        setAccessIds(new Set(access.map((a) => a.course)))
+      }
+    } catch {
+      setCourses([])
+    } finally {
+      setLoading(false)
+    }
+  }, [user])
+
+  useEffect(() => {
+    loadData()
+  }, [loadData])
+
+  if (loading) {
+    return (
+      <LandingLayout settings={settings}>
+        <div className="flex h-96 items-center justify-center pt-20">
+          <Loader2 className="h-8 w-8 animate-spin text-accent" />
+        </div>
+      </LandingLayout>
+    )
+  }
+
+  return (
+    <LandingLayout settings={settings}>
+      <div className="pt-32 pb-24 bg-gradient-to-b from-slate-50 to-white min-h-screen">
+        <div className="container mx-auto px-6">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
+              {settings?.courses_section_title || 'Cursos Disponíveis'}
+            </h1>
+            <p className="text-slate-600 text-lg">
+              {settings?.courses_section_text ||
+                'Conheça nossos cursos e formações em hipnoterapia e desenvolvimento humano.'}
+            </p>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {courses.length > 0 ? (
+              courses.map((course) => {
+                const hasAccess = accessIds.has(course.id)
+                const isHypnosis = course.access_type === 'hypnosis'
+                const isFree = course.access_type === 'free'
+                const hasDiscount =
+                  course.discount_price != null &&
+                  course.price != null &&
+                  course.discount_price < course.price
+                const ctaText = course.buy_button_text || 'Comprar'
+                return (
+                  <div
+                    key={course.id}
+                    className="group bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 hover:border-accent/30 flex flex-col"
+                  >
+                    <div className="aspect-video relative overflow-hidden bg-slate-200">
+                      <img
+                        src={getThumbnailUrl(course)}
+                        alt={course.title}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                      {hasDiscount && !hasAccess && (
+                        <Badge className="absolute top-4 right-4 bg-accent text-white">
+                          -
+                          {course.discount_percentage ||
+                            Math.round((1 - course.discount_price! / course.price!) * 100)}
+                          %
+                        </Badge>
+                      )}
+                      {hasAccess && (
+                        <Badge className="absolute top-4 right-4 bg-green-500 text-white">
+                          Adquirido
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="p-6 flex-1 flex flex-col">
+                      <h3 className="text-xl font-bold text-slate-900 mb-2 line-clamp-2">
+                        {course.title}
+                      </h3>
+                      <p className="text-slate-600 text-sm mb-6 flex-1">
+                        {course.short_description || course.description}
+                      </p>
+                      <div className="mb-6">
+                        {isFree ? (
+                          <span className="text-2xl font-bold text-accent">Gratuito</span>
+                        ) : isHypnosis ? (
+                          <div className="flex items-center gap-2 text-slate-500">
+                            <Lock className="h-5 w-5" />
+                            <span className="text-sm">Acesso exclusivo</span>
+                          </div>
+                        ) : hasDiscount ? (
+                          <div>
+                            <span className="text-sm text-slate-400 line-through">
+                              R$ {course.price?.toFixed(2)}
+                            </span>
+                            <span className="text-2xl font-bold text-accent ml-2">
+                              R$ {course.discount_price?.toFixed(2)}
+                            </span>
+                          </div>
+                        ) : (
+                          <span className="text-2xl font-bold text-accent">
+                            {course.price ? `R$ ${course.price.toFixed(2)}` : 'Consulte'}
+                          </span>
+                        )}
+                      </div>
+                      {hasAccess ? (
+                        <Button className="w-full bg-accent text-black hover:bg-accent/90" asChild>
+                          <Link to={`/dashboard/curso/${course.id}`}>
+                            <PlayCircle className="mr-2 h-4 w-4" /> Acessar Curso
+                          </Link>
+                        </Button>
+                      ) : course.external_buy_url ? (
+                        <Button className="w-full bg-accent text-black hover:bg-accent/90" asChild>
+                          <a
+                            href={course.external_buy_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {ctaText} <ExternalLink className="ml-2 h-4 w-4" />
+                          </a>
+                        </Button>
+                      ) : (
+                        <Button className="w-full bg-accent text-black hover:bg-accent/90" asChild>
+                          <Link to={`/cursos/${course.id}`}>Ver Detalhes</Link>
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                )
+              })
+            ) : (
+              <div className="col-span-full text-center py-20 text-slate-500">
+                Nenhum curso disponível no momento.
+              </div>
+            )}
+          </div>
+          {isAuthenticated && (
+            <div className="text-center mt-16">
+              <Button
+                variant="outline"
+                className="border-accent text-accent hover:bg-accent hover:text-black rounded-full"
+                asChild
+              >
+                <Link to="/dashboard">Ir para Área do Aluno</Link>
+              </Button>
+            </div>
+          )}
+        </div>
+      </div>
+    </LandingLayout>
+  )
+}

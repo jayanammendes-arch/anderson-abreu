@@ -12,6 +12,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Switch } from '@/components/ui/switch'
 import { RichTextEditor } from '@/components/admin/RichTextEditor'
+import { ServicesItemsEditor } from '@/components/admin/ServicesItemsEditor'
 import { Save, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import type { PlatformSettings } from '@/types'
@@ -44,6 +45,12 @@ interface FormState {
   primary_color: string
   login_text: string
   login_gradient: string
+  services_title: string
+  services_subtitle: string
+  services_items: string
+  courses_section_title: string
+  courses_section_text: string
+  courses_section_button: string
 }
 
 const emptyForm: FormState = {
@@ -74,6 +81,12 @@ const emptyForm: FormState = {
   primary_color: '',
   login_text: '',
   login_gradient: '',
+  services_title: '',
+  services_subtitle: '',
+  services_items: '[]',
+  courses_section_title: '',
+  courses_section_text: '',
+  courses_section_button: '',
 }
 
 function FieldLabel({ label, description }: { label: string; description?: string }) {
@@ -228,6 +241,15 @@ export default function AdminPageConfig() {
             primary_color: data.primary_color || '',
             login_text: data.login_text || '',
             login_gradient: data.login_gradient || '',
+            services_title: data.services_title || '',
+            services_subtitle: data.services_subtitle || '',
+            services_items:
+              typeof data.services_items === 'string'
+                ? data.services_items
+                : JSON.stringify(data.services_items || []),
+            courses_section_title: data.courses_section_title || '',
+            courses_section_text: data.courses_section_text || '',
+            courses_section_button: data.courses_section_button || '',
           })
         }
       } catch {
@@ -271,6 +293,12 @@ export default function AdminPageConfig() {
       fd.append('primary_color', form.primary_color)
       fd.append('login_text', form.login_text)
       fd.append('login_gradient', form.login_gradient)
+      fd.append('services_title', form.services_title)
+      fd.append('services_subtitle', form.services_subtitle)
+      fd.append('services_items', form.services_items)
+      fd.append('courses_section_title', form.courses_section_title)
+      fd.append('courses_section_text', form.courses_section_text)
+      fd.append('courses_section_button', form.courses_section_button)
       if (heroImage) fd.append('home_hero_image', heroImage)
       if (aboutImage) fd.append('about_image', aboutImage)
       if (agendaImage) fd.append('agenda_image', agendaImage)
@@ -297,10 +325,11 @@ export default function AdminPageConfig() {
     <form onSubmit={handleSave} className="space-y-6 animate-fade-in max-w-4xl">
       <h1 className="text-2xl font-bold">Configuração de Páginas Principais</h1>
       <Tabs defaultValue="home">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-6">
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-7">
           <TabsTrigger value="plataforma">Plataforma</TabsTrigger>
           <TabsTrigger value="home">Home</TabsTrigger>
           <TabsTrigger value="sobre">Sobre</TabsTrigger>
+          <TabsTrigger value="servicos">Serviços</TabsTrigger>
           <TabsTrigger value="agenda">Agenda</TabsTrigger>
           <TabsTrigger value="cursos">Cursos</TabsTrigger>
           <TabsTrigger value="contato">Fale Conosco</TabsTrigger>
@@ -436,6 +465,35 @@ export default function AdminPageConfig() {
           </Card>
         </TabsContent>
 
+        <TabsContent value="servicos">
+          <Card className="bg-card/50 border-border/50">
+            <CardContent className="space-y-4 pt-6">
+              <LabeledInput
+                label="Título da seção"
+                value={form.services_title}
+                onChange={(v) => set('services_title', v)}
+                placeholder="Soluções em Hipnoterapia"
+              />
+              <LabeledTextarea
+                label="Subtítulo da seção"
+                value={form.services_subtitle}
+                onChange={(v) => set('services_subtitle', v)}
+                placeholder="Transforme sua vida com nossos serviços especializados"
+              />
+              <div className="space-y-2">
+                <FieldLabel
+                  label="Itens de Serviços"
+                  description="Adicione, edite ou remova itens exibidos na seção de serviços da landing page."
+                />
+                <ServicesItemsEditor
+                  value={form.services_items}
+                  onChange={(v) => set('services_items', v)}
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
         <TabsContent value="agenda">
           <Card className="bg-card/50 border-border/50">
             <CardContent className="space-y-4 pt-6">
@@ -458,15 +516,38 @@ export default function AdminPageConfig() {
           <Card className="bg-card/50 border-border/50">
             <CardContent className="space-y-4 pt-6">
               <LabeledInput
-                label="Título da seção"
+                label="Título da seção (Landing)"
+                description="Título exibido na seção de cursos da página inicial."
                 value={form.courses_title}
                 onChange={(v) => set('courses_title', v)}
               />
               <LabeledTextarea
-                label="Texto introdutório"
+                label="Texto introdutório (Landing)"
                 value={form.courses_intro}
                 onChange={(v) => set('courses_intro', v)}
               />
+              <div className="pt-4 border-t border-border/50 space-y-4">
+                <LabeledInput
+                  label="Título da página /cursos"
+                  description="Título principal da página dedicada aos cursos."
+                  value={form.courses_section_title}
+                  onChange={(v) => set('courses_section_title', v)}
+                  placeholder="Cursos Disponíveis"
+                />
+                <LabeledTextarea
+                  label="Texto da página /cursos"
+                  value={form.courses_section_text}
+                  onChange={(v) => set('courses_section_text', v)}
+                  placeholder="Conheça nossos cursos e formações em hipnoterapia."
+                />
+                <LabeledInput
+                  label="Texto do botão"
+                  description="Texto do botão que leva à página de cursos na landing."
+                  value={form.courses_section_button}
+                  onChange={(v) => set('courses_section_button', v)}
+                  placeholder="Ver Cursos"
+                />
+              </div>
             </CardContent>
           </Card>
         </TabsContent>

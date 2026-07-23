@@ -291,6 +291,12 @@ export interface PlatformSettings {
   contact_title: string
   contact_intro: string
   contact_phone: string
+  services_title?: string
+  services_subtitle?: string
+  services_items?: string
+  courses_section_title?: string
+  courses_section_text?: string
+  courses_section_button?: string
   created: string
   updated: string
 }

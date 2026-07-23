@@ -13,6 +13,12 @@ import type {
 export const getCourses = (): Promise<Course[]> =>
   pb.collection('courses').getFullList({ sort: 'order' })
 
+export const getAllAvailableCourses = (): Promise<Course[]> =>
+  pb.collection('courses').getFullList({
+    filter: 'is_available = true',
+    sort: 'order',
+  })
+
 export const getCourse = (id: string): Promise<Course> => pb.collection('courses').getOne(id)
 
 export function getThumbnailUrl(course: Course): string {

@@ -28,6 +28,7 @@ import AdminCertificates from '@/pages/admin/AdminCertificates'
 import AdminContacts from '@/pages/admin/AdminContacts'
 import CourseDetail from '@/pages/CourseDetail'
 import CourseDetailsPage from '@/pages/CourseDetailsPage'
+import CursosPage from '@/pages/CursosPage'
 import Profile from '@/pages/Profile'
 import Certificates from '@/pages/Certificates'
 import NotFound from '@/pages/NotFound'
@@ -42,6 +43,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/cursos" element={<CursosPage />} />
             <Route path="/cursos/:courseId" element={<CourseDetailsPage />} />
             <Route path="/courses/:courseId" element={<CourseDetailsPage />} />
             <Route path="/admin" element={<AdminLayout />}>

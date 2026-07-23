@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-13T15:53:31.621Z",
+  "generatedAt": "2026-07-23T17:31:59.125Z",
   "collections": [
     {
       "name": "users",
@@ -805,6 +805,42 @@
         },
         {
           "name": "youtube_url",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "services_title",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "services_subtitle",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "services_items",
+          "type": "json",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "courses_section_title",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "courses_section_text",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "courses_section_button",
           "type": "text",
           "required": false,
           "system": false
