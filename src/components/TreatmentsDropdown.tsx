@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { getTreatmentCategories } from '@/services/treatment-categories'
+import { getTreatmentIcon } from '@/lib/treatment-icons'
 import type { TreatmentCategory } from '@/types'
 
 export function TreatmentsDropdown({ children }: { children: ReactNode }) {
@@ -48,16 +49,20 @@ export function TreatmentsDropdown({ children }: { children: ReactNode }) {
         >
           <div className="bg-white rounded-xl shadow-lg border border-slate-100 p-4 min-w-[420px] animate-fade-in">
             <div className="grid grid-cols-2 gap-x-6 gap-y-1">
-              {treatments.map((treatment) => (
-                <Link
-                  key={treatment.id}
-                  to={`/tratamentos/${treatment.slug}`}
-                  className="block text-sm text-slate-600 hover:text-primary px-3 py-2 rounded-md hover:bg-slate-50 transition-colors"
-                  onClick={() => setIsOpen(false)}
-                >
-                  {treatment.name}
-                </Link>
-              ))}
+              {treatments.map((treatment) => {
+                const Icon = getTreatmentIcon(treatment.icon)
+                return (
+                  <Link
+                    key={treatment.id}
+                    to={`/tratamentos/${treatment.slug}`}
+                    className="flex items-center gap-2.5 text-sm text-slate-600 hover:text-primary px-3 py-2 rounded-md hover:bg-slate-50 transition-colors"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <Icon className="h-4 w-4 text-blue-500 shrink-0" strokeWidth={2} />
+                    <span className="truncate">{treatment.name}</span>
+                  </Link>
+                )
+              })}
             </div>
           </div>
         </div>
