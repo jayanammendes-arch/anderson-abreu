@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/hooks/use-auth'
 import {
@@ -10,15 +11,30 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
+  SidebarMenuSub,
+  SidebarMenuSubItem,
+  SidebarMenuSubButton,
   SidebarFooter,
 } from '@/components/ui/sidebar'
-import { Brain, ArrowLeft, LogOut } from 'lucide-react'
-import { adminNavItems } from '@/lib/admin-nav'
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/components/ui/collapsible'
+import { Brain, ArrowLeft, LogOut, ChevronRight } from 'lucide-react'
+import { adminCentralItem, adminNavGroups } from '@/lib/admin-nav'
+import { cn } from '@/lib/utils'
 
 export function AdminSidebar() {
   const { signOut } = useAuth()
   const location = useLocation()
   const navigate = useNavigate()
+
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
+    'Área de Alunos': true,
+    Site: true,
+  })
+
+  const toggleGroup = (label: string) =>
+    setOpenGroups((prev) => ({ ...prev, [label]: !prev[label] }))
+
+  const isItemActive = (href: string) => location.pathname.startsWith(href)
 
   return (
     <Sidebar className="border-r border-white/10">
@@ -35,23 +51,90 @@ export function AdminSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="text-white/40">Gerenciamento</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {adminNavItems.map((item) => (
-                <SidebarMenuItem key={item.href}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={location.pathname.startsWith(item.href)}
-                    className="text-white/70 hover:bg-white/5 hover:text-white"
-                  >
-                    <Link to={item.href}>
-                      <item.icon className="h-4 w-4" />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  isActive={isItemActive(adminCentralItem.href)}
+                  className="text-white/70 hover:bg-white/5 hover:text-white"
+                >
+                  <Link to={adminCentralItem.href}>
+                    <adminCentralItem.icon className="h-4 w-4" />
+                    <span>{adminCentralItem.title}</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {adminNavGroups.map((group) => {
+          const isOpen = openGroups[group.label] ?? true
+          const hasActiveChild = group.items.some((item) => isItemActive(item.href))
+          return (
+            <Collapsible
+              key={group.label}
+              open={isOpen}
+              onOpenChange={() => toggleGroup(group.label)}
+            >
+              <SidebarGroup>
+                <CollapsibleTrigger asChild>
+                  <SidebarGroupLabel className="flex cursor-pointer items-center justify-between text-white/40 hover:text-white/70">
+                    <span>{group.label}</span>
+                    <ChevronRight
+                      className={cn(
+                        'h-3.5 w-3.5 transition-transform duration-200',
+                        isOpen && 'rotate-90',
+                      )}
+                    />
+                  </SidebarGroupLabel>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <SidebarGroupContent>
+                    <SidebarMenu>
+                      {group.items.map((item) => (
+                        <SidebarMenuItem key={item.href}>
+                          {group.collapsible ? (
+                            <SidebarMenuSub>
+                              <SidebarMenuSubItem>
+                                <SidebarMenuSubButton
+                                  asChild
+                                  isActive={isItemActive(item.href)}
+                                  className="text-white/70 hover:bg-white/5 hover:text-white"
+                                >
+                                  <Link to={item.href}>
+                                    <item.icon className="h-4 w-4" />
+                                    <span>{item.title}</span>
+                                  </Link>
+                                </SidebarMenuSubButton>
+                              </SidebarMenuSubItem>
+                            </SidebarMenuSub>
+                          ) : (
+                            <SidebarMenuButton
+                              asChild
+                              isActive={isItemActive(item.href)}
+                              className="text-white/70 hover:bg-white/5 hover:text-white"
+                            >
+                              <Link to={item.href}>
+                                <item.icon className="h-4 w-4" />
+                                <span>{item.title}</span>
+                              </Link>
+                            </SidebarMenuButton>
+                          )}
+                        </SidebarMenuItem>
+                      ))}
+                    </SidebarMenu>
+                  </SidebarGroupContent>
+                </CollapsibleContent>
+              </SidebarGroup>
+            </Collapsible>
+          )
+        })}
+
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton
                   asChild
