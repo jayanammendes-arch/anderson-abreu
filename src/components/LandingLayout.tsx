@@ -1,17 +1,19 @@
 import { useState, useEffect, type ReactNode } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
-import { Menu, X, Instagram, Facebook, Linkedin, Youtube, type LucideIcon } from 'lucide-react'
+import { Menu, X, Calendar } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { PlatformSettings } from '@/types'
 import { getLogoUrl, applyBrandColor } from '@/services/landing'
 
 const navLinks = [
-  { name: 'Início', href: '#home' },
-  { name: 'Sobre', href: '#about' },
-  { name: 'Serviços', href: '#services' },
-  { name: 'Depoimentos', href: '#testimonials' },
-  { name: 'Contato', href: '#contact' },
+  { name: 'Home', href: '/', type: 'route' as const },
+  { name: 'Sobre', href: '/sobre', type: 'route' as const },
+  { name: 'Tratamentos', href: '/#tratamentos', type: 'scroll' as const },
+  { name: 'Hipnoterapia', href: '/agendar', type: 'route' as const },
+  { name: 'Depoimentos', href: '/#depoimentos', type: 'scroll' as const },
+  { name: 'Blog', href: '/blog', type: 'route' as const },
+  { name: 'Cursos', href: '/cursos', type: 'route' as const },
 ]
 
 function scrollToSection(href: string) {
@@ -30,12 +32,13 @@ export function LandingLayout({
   children: ReactNode
 }) {
   const location = useLocation()
+  const navigate = useNavigate()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const isLanding = location.pathname === '/'
 
   useEffect(() => {
-    const handler = () => setIsScrolled(window.scrollY > 50)
+    const handler = () => setIsScrolled(window.scrollY > 30)
     window.addEventListener('scroll', handler)
     return () => window.removeEventListener('scroll', handler)
   }, [])
@@ -50,74 +53,70 @@ export function LandingLayout({
     }
   }, [isLanding])
 
-  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    if (isLanding) {
-      e.preventDefault()
-      setIsMenuOpen(false)
-      scrollToSection(href)
-    } else {
-      setIsMenuOpen(false)
+  const handleNavClick = (link: (typeof navLinks)[0]) => {
+    setIsMenuOpen(false)
+    if (link.type === 'route') {
+      navigate(link.href)
+    } else if (link.type === 'scroll') {
+      if (isLanding) {
+        scrollToSection(link.href.replace('/', ''))
+      } else {
+        navigate(link.href)
+      }
     }
   }
 
   const logoUrl = settings ? getLogoUrl(settings) : null
-  const socialLinks: Array<{ url: string; icon: LucideIcon }> = [
-    { url: settings?.instagram_handle || '', icon: Instagram },
-    { url: settings?.facebook_url || '', icon: Facebook },
-    { url: settings?.linkedin_url || '', icon: Linkedin },
-    { url: settings?.youtube_url || '', icon: Youtube },
-  ].filter((s) => s.url.trim() !== '')
+  const agendarText = settings?.agendar_sessao_text || 'Agendar Sessão'
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 font-sans selection:bg-accent selection:text-white">
+    <div className="min-h-screen bg-white text-slate-900 font-sans selection:bg-primary selection:text-white">
       <header
         className={cn(
-          'fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b',
+          'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
           isScrolled
-            ? 'bg-gradient-to-r from-[#0047AB]/95 to-black/95 backdrop-blur-md border-white/10 py-3'
-            : 'bg-transparent border-transparent py-5',
+            ? 'bg-white/95 backdrop-blur-md shadow-sm border-b border-slate-100 py-3'
+            : 'bg-white/80 backdrop-blur-sm py-5',
         )}
       >
-        <div className="container mx-auto px-6 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
             {logoUrl ? (
-              <img src={logoUrl} alt="Logo" className="h-8 w-auto object-contain" />
+              <img src={logoUrl} alt="Logo" className="h-9 w-auto object-contain" />
             ) : (
-              <div className="h-8 w-8 bg-gradient-to-br from-accent to-accent/70 rounded-lg flex items-center justify-center">
-                <span className="font-bold text-white leading-none">AA</span>
-              </div>
+              <span className="text-xl font-bold tracking-tight text-slate-900">
+                {settings?.company_name || 'Anderson Abreu'}
+              </span>
             )}
-            <span className="font-bold text-lg tracking-tight hidden sm:block text-white">
-              {settings?.company_name || 'Anderson Abreu'}
-            </span>
           </Link>
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden lg:flex items-center gap-1">
             {navLinks.map((link) => (
-              <a
+              <button
                 key={link.name}
-                href={isLanding ? link.href : `/${link.href}`}
-                onClick={(e) => handleNavClick(e, link.href)}
-                className="text-sm font-medium text-white/80 hover:text-accent transition-colors"
+                onClick={() => handleNavClick(link)}
+                className={cn(
+                  'text-sm font-medium px-3 py-2 rounded-md transition-colors',
+                  'text-slate-600 hover:text-slate-900 hover:bg-slate-100',
+                )}
               >
                 {link.name}
-              </a>
+              </button>
             ))}
           </nav>
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden lg:flex items-center">
             <Button
-              variant="outline"
-              className="border-accent text-accent hover:bg-accent hover:text-black rounded-full transition-colors"
-              asChild
+              size="sm"
+              className="bg-slate-900 text-white hover:bg-slate-800 rounded-full px-6 shadow-sm"
+              onClick={() => navigate('/agendar')}
             >
-              <a
-                href={isLanding ? '#contact' : '/#contact'}
-                onClick={(e) => handleNavClick(e, '#contact')}
-              >
-                Contato
-              </a>
+              <Calendar className="mr-1.5 h-4 w-4" />
+              {agendarText}
             </Button>
           </div>
-          <button className="md:hidden text-white p-2" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+          <button
+            className="lg:hidden p-2 text-slate-900"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
             {isMenuOpen ? <X /> : <Menu />}
           </button>
         </div>
@@ -125,101 +124,80 @@ export function LandingLayout({
 
       <div
         className={cn(
-          'fixed inset-0 z-40 bg-gradient-to-r from-[#0047AB]/95 to-black/95 backdrop-blur-xl transition-transform duration-300 md:hidden flex flex-col pt-24 px-6',
+          'fixed inset-0 z-40 bg-white transition-transform duration-300 lg:hidden flex flex-col pt-24 px-6',
           isMenuOpen ? 'translate-x-0' : 'translate-x-full',
         )}
       >
-        <nav className="flex flex-col gap-6 text-xl font-medium">
+        <nav className="flex flex-col gap-2 text-lg font-medium">
           {navLinks.map((link) => (
-            <a
+            <button
               key={link.name}
-              href={isLanding ? link.href : `/${link.href}`}
-              onClick={(e) => handleNavClick(e, link.href)}
-              className="text-white hover:text-accent transition-colors"
+              onClick={() => handleNavClick(link)}
+              className="text-slate-700 hover:text-primary text-left py-3 border-b border-slate-100 transition-colors"
             >
               {link.name}
-            </a>
+            </button>
           ))}
-          <div className="h-px bg-white/10 w-full my-4" />
-          <Button asChild className="w-full bg-accent text-black hover:bg-accent/90 h-12 text-lg">
-            <Link to="/login">Área do Aluno</Link>
+          <Button
+            className="mt-6 bg-slate-900 text-white hover:bg-slate-800 rounded-full h-12 text-base"
+            onClick={() => {
+              setIsMenuOpen(false)
+              navigate('/agendar')
+            }}
+          >
+            <Calendar className="mr-2 h-5 w-5" />
+            {agendarText}
           </Button>
         </nav>
       </div>
 
       {children}
 
-      <footer className="bg-gradient-to-r from-[#0047AB] to-black pt-16 pb-8">
-        <div className="container mx-auto px-6">
+      <footer className="bg-slate-900 text-white pt-16 pb-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex flex-col md:flex-row justify-between items-start gap-8 mb-12">
             <div className="max-w-sm">
-              {logoUrl ? (
-                <img src={logoUrl} alt="Logo" className="h-10 w-auto object-contain mb-4" />
-              ) : (
-                <div className="text-2xl font-bold text-white mb-4">
-                  {settings?.company_name || 'Anderson Abreu'}
-                </div>
-              )}
-              <p className="text-white/60 text-sm leading-relaxed">
+              <span className="text-2xl font-bold text-white">
+                {settings?.company_name || 'Anderson Abreu'}
+              </span>
+              <p className="text-white/50 text-sm leading-relaxed mt-3">
                 {settings?.hero_subtitle ||
-                  'Hipnoterapia, inteligência emocional e mentoria de alta performance.'}
+                  'Hipnoterapia clínica, inteligência emocional e mentoria de alta performance.'}
               </p>
             </div>
             <div className="flex flex-col gap-3">
               <h4 className="text-white font-semibold mb-2">Navegação</h4>
               {navLinks.map((link) => (
-                <a
+                <button
                   key={link.name}
-                  href={isLanding ? link.href : `/${link.href}`}
-                  onClick={(e) => handleNavClick(e, link.href)}
-                  className="text-white/60 hover:text-accent text-sm transition-colors"
+                  onClick={() => handleNavClick(link)}
+                  className="text-white/50 hover:text-white text-sm text-left transition-colors"
                 >
                   {link.name}
-                </a>
+                </button>
               ))}
-              <Link
-                to="/cursos"
-                className="text-white/60 hover:text-accent text-sm transition-colors"
-              >
-                Cursos
-              </Link>
             </div>
             <div className="flex flex-col gap-3">
-              <h4 className="text-white font-semibold mb-2">Acesso</h4>
+              <h4 className="text-white font-semibold mb-2">Contato</h4>
+              <a
+                href={`mailto:${settings?.support_email || 'contato@andersonabreu.com.br'}`}
+                className="text-white/50 hover:text-white text-sm transition-colors"
+              >
+                {settings?.support_email || 'contato@andersonabreu.com.br'}
+              </a>
+              <span className="text-white/50 text-sm">
+                {settings?.whatsapp_number || settings?.contact_phone || ''}
+              </span>
               <Link
                 to="/login"
-                className="text-white/60 hover:text-accent text-sm transition-colors"
+                className="text-white/50 hover:text-white text-sm transition-colors mt-2"
               >
                 Área do Aluno
               </Link>
-              <Link
-                to="/cursos"
-                className="text-white/60 hover:text-accent text-sm transition-colors"
-              >
-                Cursos Disponíveis
-              </Link>
-              {socialLinks.length > 0 && (
-                <div className="flex gap-3 mt-2">
-                  {socialLinks.map((social, i) => {
-                    const Icon = social.icon
-                    return (
-                      <a
-                        key={i}
-                        href={social.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="h-9 w-9 rounded-full bg-white/10 hover:bg-accent flex items-center justify-center transition-colors text-white"
-                      >
-                        <Icon className="h-4 w-4" />
-                      </a>
-                    )
-                  })}
-                </div>
-              )}
             </div>
           </div>
           <div className="border-t border-white/10 pt-8 text-center">
-            <p className="text-white/50 text-sm">
+            <p className="text-white/40 text-sm">
               © {new Date().getFullYear()} {settings?.company_name || 'Anderson Abreu'}. Todos os
               direitos reservados.
             </p>

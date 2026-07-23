@@ -27,7 +27,7 @@ export default function CursosPage() {
       setSettings(settingsData as PlatformSettings | null)
       if (user) {
         const access = await getUserAccess(user.id)
-        setAccessIds(new Set(access.map((a) => a.course)))
+        setAccessIds(new Set(access.map((a: any) => a.course)))
       }
     } catch {
       setCourses([])
@@ -44,7 +44,7 @@ export default function CursosPage() {
     return (
       <LandingLayout settings={settings}>
         <div className="flex h-96 items-center justify-center pt-20">
-          <Loader2 className="h-8 w-8 animate-spin text-accent" />
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       </LandingLayout>
     )
@@ -52,13 +52,13 @@ export default function CursosPage() {
 
   return (
     <LandingLayout settings={settings}>
-      <div className="pt-32 pb-24 bg-gradient-to-b from-slate-50 to-white min-h-screen">
-        <div className="container mx-auto px-6">
+      <div className="pt-32 pb-24 bg-white min-h-screen">
+        <div className="max-w-7xl mx-auto px-6">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
               {settings?.courses_section_title || 'Cursos Disponíveis'}
             </h1>
-            <p className="text-slate-600 text-lg">
+            <p className="text-slate-500 text-lg">
               {settings?.courses_section_text ||
                 'Conheça nossos cursos e formações em hipnoterapia e desenvolvimento humano.'}
             </p>
@@ -77,7 +77,7 @@ export default function CursosPage() {
                 return (
                   <div
                     key={course.id}
-                    className="group bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 hover:border-accent/30 flex flex-col"
+                    className="group bg-white border border-slate-200 rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 hover:border-slate-300 flex flex-col"
                   >
                     <div className="aspect-video relative overflow-hidden bg-slate-200">
                       <img
@@ -86,7 +86,7 @@ export default function CursosPage() {
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                       {hasDiscount && !hasAccess && (
-                        <Badge className="absolute top-4 right-4 bg-accent text-white">
+                        <Badge className="absolute top-4 right-4 bg-primary text-white">
                           -
                           {course.discount_percentage ||
                             Math.round((1 - course.discount_price! / course.price!) * 100)}
@@ -103,12 +103,12 @@ export default function CursosPage() {
                       <h3 className="text-xl font-bold text-slate-900 mb-2 line-clamp-2">
                         {course.title}
                       </h3>
-                      <p className="text-slate-600 text-sm mb-6 flex-1">
+                      <p className="text-slate-500 text-sm mb-6 flex-1">
                         {course.short_description || course.description}
                       </p>
                       <div className="mb-6">
                         {isFree ? (
-                          <span className="text-2xl font-bold text-accent">Gratuito</span>
+                          <span className="text-2xl font-bold text-primary">Gratuito</span>
                         ) : isHypnosis ? (
                           <div className="flex items-center gap-2 text-slate-500">
                             <Lock className="h-5 w-5" />
@@ -119,24 +119,30 @@ export default function CursosPage() {
                             <span className="text-sm text-slate-400 line-through">
                               R$ {course.price?.toFixed(2)}
                             </span>
-                            <span className="text-2xl font-bold text-accent ml-2">
+                            <span className="text-2xl font-bold text-primary ml-2">
                               R$ {course.discount_price?.toFixed(2)}
                             </span>
                           </div>
                         ) : (
-                          <span className="text-2xl font-bold text-accent">
+                          <span className="text-2xl font-bold text-primary">
                             {course.price ? `R$ ${course.price.toFixed(2)}` : 'Consulte'}
                           </span>
                         )}
                       </div>
                       {hasAccess ? (
-                        <Button className="w-full bg-accent text-black hover:bg-accent/90" asChild>
+                        <Button
+                          className="w-full bg-slate-900 text-white hover:bg-slate-800"
+                          asChild
+                        >
                           <Link to={`/dashboard/curso/${course.id}`}>
                             <PlayCircle className="mr-2 h-4 w-4" /> Acessar Curso
                           </Link>
                         </Button>
                       ) : course.external_buy_url ? (
-                        <Button className="w-full bg-accent text-black hover:bg-accent/90" asChild>
+                        <Button
+                          className="w-full bg-slate-900 text-white hover:bg-slate-800"
+                          asChild
+                        >
                           <a
                             href={course.external_buy_url}
                             target="_blank"
@@ -146,7 +152,10 @@ export default function CursosPage() {
                           </a>
                         </Button>
                       ) : (
-                        <Button className="w-full bg-accent text-black hover:bg-accent/90" asChild>
+                        <Button
+                          className="w-full bg-slate-900 text-white hover:bg-slate-800"
+                          asChild
+                        >
                           <Link to={`/cursos/${course.id}`}>Ver Detalhes</Link>
                         </Button>
                       )}
@@ -155,18 +164,14 @@ export default function CursosPage() {
                 )
               })
             ) : (
-              <div className="col-span-full text-center py-20 text-slate-500">
+              <div className="col-span-full text-center py-20 text-slate-400">
                 Nenhum curso disponível no momento.
               </div>
             )}
           </div>
           {isAuthenticated && (
             <div className="text-center mt-16">
-              <Button
-                variant="outline"
-                className="border-accent text-accent hover:bg-accent hover:text-black rounded-full"
-                asChild
-              >
+              <Button variant="outline" className="rounded-full border-slate-300" asChild>
                 <Link to="/dashboard">Ir para Área do Aluno</Link>
               </Button>
             </div>

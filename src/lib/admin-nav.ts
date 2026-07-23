@@ -11,6 +11,8 @@ import {
   MessageCircle,
   Award,
   Mail,
+  Stethoscope,
+  Newspaper,
 } from 'lucide-react'
 
 export interface AdminNavItem {
@@ -38,6 +40,18 @@ export const adminNavItems: AdminNavItem[] = [
     href: '/admin/cursos',
     icon: BookOpen,
     description: 'Gerenciar cursos, módulos e aulas da plataforma',
+  },
+  {
+    title: 'Tratamentos',
+    href: '/admin/tratamentos',
+    icon: Stethoscope,
+    description: 'Gerenciar tratamentos exibidos na landing page',
+  },
+  {
+    title: 'Blog',
+    href: '/admin/blog',
+    icon: Newspaper,
+    description: 'Criar e gerenciar posts do blog',
   },
   {
     title: 'Alunos',

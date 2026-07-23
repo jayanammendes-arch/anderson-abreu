@@ -14,7 +14,6 @@ function VideoTestimonial({ testimonial }: { testimonial: Testimonial }) {
   const embedUrl = testimonial.content ? getYouTubeEmbedUrl(testimonial.content) : null
   const ytThumb = testimonial.content ? getYouTubeThumbnail(testimonial.content) : null
   const localImage = getTestimonialImageUrl(testimonial)
-
   const thumbnailSrc = localImage || ytThumb
 
   if (isPlaying && embedUrl) {
@@ -50,7 +49,7 @@ function VideoTestimonial({ testimonial }: { testimonial: Testimonial }) {
             </div>
           )}
           <div className="absolute inset-0 flex items-center justify-center bg-black/20 transition-colors group-hover:bg-black/40">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-accent/90 shadow-lg transition-transform group-hover:scale-110">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/90 shadow-lg transition-transform group-hover:scale-110">
               <Play className="h-6 w-6 fill-white text-white" />
             </div>
           </div>
@@ -78,13 +77,13 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
   const courseName = testimonial.expand?.course?.title
 
   return (
-    <div className="flex flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:shadow-lg hover:border-accent/30">
+    <div className="flex flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:shadow-lg hover:border-slate-300">
       {testimonial.type === 'video' ? (
         <div className="mb-4">
           <VideoTestimonial testimonial={testimonial} />
         </div>
       ) : (
-        <Quote className="h-8 w-8 text-accent/30 mb-3" />
+        <Quote className="h-8 w-8 text-primary/30 mb-3" />
       )}
 
       {testimonial.type === 'text' && testimonial.content && (
@@ -101,7 +100,7 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
             className="h-10 w-10 rounded-full object-cover"
           />
         ) : (
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-accent/10 text-accent font-bold text-sm">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary font-bold text-sm">
             {testimonial.student_name.charAt(0).toUpperCase()}
           </div>
         )}
@@ -116,7 +115,7 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
   )
 }
 
-export function TestimonialsSection() {
+export function TestimonialsSection({ customTitle }: { customTitle?: string }) {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -130,18 +129,16 @@ export function TestimonialsSection() {
   if (loading || testimonials.length === 0) return null
 
   return (
-    <section id="testimonials" className="py-24 bg-white">
-      <div className="container mx-auto px-6">
+    <section className="py-24 bg-white">
+      <div className="max-w-7xl mx-auto px-6">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-sm font-bold tracking-wider uppercase text-accent mb-3">
-            Depoimentos
+          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+            {customTitle || 'Depoimentos'}
           </h2>
-          <h3 className="text-4xl font-bold text-slate-900 mb-6">O que nossos alunos dizem</h3>
-          <p className="text-slate-600 text-lg">
+          <p className="text-slate-500 text-lg">
             Histórias reais de transformação e sucesso de quem já passou por aqui.
           </p>
         </div>
-
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {testimonials.map((testimonial) => (
             <TestimonialCard key={testimonial.id} testimonial={testimonial} />

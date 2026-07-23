@@ -10,6 +10,8 @@ const adminPageTitles: Record<string, string> = {
   '/admin/paginas': 'Configuração de Páginas Principais',
   '/admin/cursos': 'Gerenciar Cursos',
   '/admin/cursos/novo': 'Novo Curso',
+  '/admin/tratamentos': 'Gerenciar Tratamentos',
+  '/admin/blog': 'Gerenciar Blog',
   '/admin/alunos': 'Gerenciar Alunos',
   '/admin/liberacoes': 'Liberações de Acesso',
   '/admin/depoimentos': 'Gerenciar Depoimentos',

@@ -297,6 +297,17 @@ export interface PlatformSettings {
   courses_section_title?: string
   courses_section_text?: string
   courses_section_button?: string
+  saiba_mais_text?: string
+  agendar_sessao_text?: string
+  treatments_section_title?: string
+  blog_section_title?: string
+  testimonials_section_title?: string
+  about_intro?: string
+  about_full_bio?: string
+  about_credentials?: string
+  about_page_image?: string
+  blog_section_intro?: string
+  treatments_section_intro?: string
   created: string
   updated: string
 }
@@ -312,4 +323,29 @@ export interface Certificate {
   created: string
   updated: string
   expand?: { course?: Course }
+}
+
+export interface Treatment {
+  id: string
+  name: string
+  slug: string
+  short_description?: string
+  detailed_content: string
+  image?: string
+  order?: number
+  created: string
+  updated: string
+}
+
+export interface BlogPost {
+  id: string
+  title: string
+  slug: string
+  excerpt?: string
+  content: string
+  image?: string
+  author?: string
+  published_at: string
+  created: string
+  updated: string
 }

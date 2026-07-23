@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-23T17:31:59.125Z",
+  "generatedAt": "2026-07-23T17:47:41.016Z",
   "collections": [
     {
       "name": "users",
@@ -844,6 +844,72 @@
           "type": "text",
           "required": false,
           "system": false
+        },
+        {
+          "name": "saiba_mais_text",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "agendar_sessao_text",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "treatments_section_title",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "blog_section_title",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "testimonials_section_title",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "about_intro",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "about_full_bio",
+          "type": "editor",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "about_credentials",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "about_page_image",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "blog_section_intro",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "treatments_section_intro",
+          "type": "text",
+          "required": false,
+          "system": false
         }
       ],
       "indexes": []
@@ -1561,6 +1627,147 @@
       "indexes": [
         "CREATE INDEX idx_certificates_user ON certificates (user)",
         "CREATE INDEX idx_certificates_course ON certificates (course)"
+      ]
+    },
+    {
+      "name": "treatments",
+      "type": "base",
+      "apiRules": {
+        "list": "",
+        "view": "",
+        "create": "@request.auth.is_admin = true",
+        "update": "@request.auth.is_admin = true",
+        "delete": "@request.auth.is_admin = true"
+      },
+      "fields": [
+        {
+          "name": "name",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "slug",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "short_description",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "detailed_content",
+          "type": "editor",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "image",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "order",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": [
+        "CREATE UNIQUE INDEX idx_treatments_slug ON treatments (slug)",
+        "CREATE INDEX idx_treatments_name ON treatments (name)"
+      ]
+    },
+    {
+      "name": "blog_posts",
+      "type": "base",
+      "apiRules": {
+        "list": "",
+        "view": "",
+        "create": "@request.auth.is_admin = true",
+        "update": "@request.auth.is_admin = true",
+        "delete": "@request.auth.is_admin = true"
+      },
+      "fields": [
+        {
+          "name": "title",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "slug",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "excerpt",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "content",
+          "type": "editor",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "image",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "author",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "published_at",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": [
+        "CREATE UNIQUE INDEX idx_blog_posts_slug ON blog_posts (slug)",
+        "CREATE INDEX idx_blog_posts_published ON blog_posts (published_at DESC)"
       ]
     }
   ]

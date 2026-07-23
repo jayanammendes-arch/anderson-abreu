@@ -50,6 +50,16 @@ export function getAboutImageUrl(settings: { id: string; about_image?: string })
   return null
 }
 
+export function getAboutPageImageUrl(settings: {
+  id: string
+  about_page_image?: string
+}): string | null {
+  if (settings.about_page_image) {
+    return `${import.meta.env.VITE_POCKETBASE_URL}/api/files/platform_settings/${settings.id}/${settings.about_page_image}`
+  }
+  return null
+}
+
 export function getHomeHeroImageUrl(settings: {
   id: string
   home_hero_image?: string

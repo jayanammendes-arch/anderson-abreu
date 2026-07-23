@@ -23,11 +23,15 @@ interface FormState {
   hero_cta_text: string
   about_title: string
   about_content: string
+  about_intro: string
+  about_full_bio: string
+  about_credentials: string
   stats_students: string
   stats_years: string
   stats_courses: string
   stats_countries: string
   testimonials_active: boolean
+  testimonials_section_title: string
   agenda_highlight_title: string
   agenda_intro: string
   courses_title: string
@@ -51,6 +55,12 @@ interface FormState {
   courses_section_title: string
   courses_section_text: string
   courses_section_button: string
+  saiba_mais_text: string
+  agendar_sessao_text: string
+  treatments_section_title: string
+  treatments_section_intro: string
+  blog_section_title: string
+  blog_section_intro: string
 }
 
 const emptyForm: FormState = {
@@ -59,11 +69,15 @@ const emptyForm: FormState = {
   hero_cta_text: '',
   about_title: '',
   about_content: '',
+  about_intro: '',
+  about_full_bio: '',
+  about_credentials: '',
   stats_students: '',
   stats_years: '',
   stats_courses: '',
   stats_countries: '',
   testimonials_active: true,
+  testimonials_section_title: '',
   agenda_highlight_title: '',
   agenda_intro: '',
   courses_title: '',
@@ -87,6 +101,12 @@ const emptyForm: FormState = {
   courses_section_title: '',
   courses_section_text: '',
   courses_section_button: '',
+  saiba_mais_text: '',
+  agendar_sessao_text: '',
+  treatments_section_title: '',
+  treatments_section_intro: '',
+  blog_section_title: '',
+  blog_section_intro: '',
 }
 
 function FieldLabel({ label, description }: { label: string; description?: string }) {
@@ -200,6 +220,7 @@ export default function AdminPageConfig() {
   const [form, setForm] = useState<FormState>(emptyForm)
   const [heroImage, setHeroImage] = useState<File | null>(null)
   const [aboutImage, setAboutImage] = useState<File | null>(null)
+  const [aboutPageImage, setAboutPageImage] = useState<File | null>(null)
   const [agendaImage, setAgendaImage] = useState<File | null>(null)
   const [logoFile, setLogoFile] = useState<File | null>(null)
   const [loginImageFile, setLoginImageFile] = useState<File | null>(null)
@@ -219,11 +240,15 @@ export default function AdminPageConfig() {
             hero_cta_text: data.hero_cta_text || '',
             about_title: data.about_title || '',
             about_content: data.about_content || '',
+            about_intro: data.about_intro || '',
+            about_full_bio: data.about_full_bio || '',
+            about_credentials: data.about_credentials || '',
             stats_students: String(data.stats_students || ''),
             stats_years: String(data.stats_years || ''),
             stats_courses: String(data.stats_courses || ''),
             stats_countries: String(data.stats_countries || ''),
             testimonials_active: data.testimonials_active !== false,
+            testimonials_section_title: data.testimonials_section_title || '',
             agenda_highlight_title: data.agenda_highlight_title || '',
             agenda_intro: data.agenda_intro || '',
             courses_title: data.courses_title || '',
@@ -250,6 +275,12 @@ export default function AdminPageConfig() {
             courses_section_title: data.courses_section_title || '',
             courses_section_text: data.courses_section_text || '',
             courses_section_button: data.courses_section_button || '',
+            saiba_mais_text: data.saiba_mais_text || '',
+            agendar_sessao_text: data.agendar_sessao_text || '',
+            treatments_section_title: data.treatments_section_title || '',
+            treatments_section_intro: data.treatments_section_intro || '',
+            blog_section_title: data.blog_section_title || '',
+            blog_section_intro: data.blog_section_intro || '',
           })
         }
       } catch {
@@ -266,41 +297,10 @@ export default function AdminPageConfig() {
     setSaving(true)
     try {
       const fd = new FormData()
-      fd.append('hero_title', form.hero_title)
-      fd.append('hero_subtitle', form.hero_subtitle)
-      fd.append('hero_cta_text', form.hero_cta_text)
-      fd.append('about_title', form.about_title)
-      fd.append('about_content', form.about_content)
-      fd.append('stats_students', String(form.stats_students || 0))
-      fd.append('stats_years', String(form.stats_years || 0))
-      fd.append('stats_courses', String(form.stats_courses || 0))
-      fd.append('stats_countries', String(form.stats_countries || 0))
-      fd.append('testimonials_active', String(form.testimonials_active))
-      fd.append('agenda_highlight_title', form.agenda_highlight_title)
-      fd.append('agenda_intro', form.agenda_intro)
-      fd.append('courses_title', form.courses_title)
-      fd.append('courses_intro', form.courses_intro)
-      fd.append('contact_title', form.contact_title)
-      fd.append('contact_intro', form.contact_intro)
-      fd.append('support_email', form.support_email)
-      fd.append('whatsapp_number', form.whatsapp_number)
-      fd.append('contact_phone', form.contact_phone)
-      fd.append('instagram_handle', form.instagram_handle)
-      fd.append('facebook_url', form.facebook_url)
-      fd.append('linkedin_url', form.linkedin_url)
-      fd.append('youtube_url', form.youtube_url)
-      fd.append('company_name', form.company_name)
-      fd.append('primary_color', form.primary_color)
-      fd.append('login_text', form.login_text)
-      fd.append('login_gradient', form.login_gradient)
-      fd.append('services_title', form.services_title)
-      fd.append('services_subtitle', form.services_subtitle)
-      fd.append('services_items', form.services_items)
-      fd.append('courses_section_title', form.courses_section_title)
-      fd.append('courses_section_text', form.courses_section_text)
-      fd.append('courses_section_button', form.courses_section_button)
+      Object.entries(form).forEach(([key, value]) => fd.append(key, String(value)))
       if (heroImage) fd.append('home_hero_image', heroImage)
       if (aboutImage) fd.append('about_image', aboutImage)
+      if (aboutPageImage) fd.append('about_page_image', aboutPageImage)
       if (agendaImage) fd.append('agenda_image', agendaImage)
       if (logoFile) fd.append('logo', logoFile)
       if (loginImageFile) fd.append('login_image', loginImageFile)
@@ -324,15 +324,15 @@ export default function AdminPageConfig() {
   return (
     <form onSubmit={handleSave} className="space-y-6 animate-fade-in max-w-4xl">
       <h1 className="text-2xl font-bold">Configuração de Páginas Principais</h1>
-      <Tabs defaultValue="home">
+      <Tabs defaultValue="plataforma">
         <TabsList className="grid w-full grid-cols-2 md:grid-cols-7">
           <TabsTrigger value="plataforma">Plataforma</TabsTrigger>
           <TabsTrigger value="home">Home</TabsTrigger>
           <TabsTrigger value="sobre">Sobre</TabsTrigger>
-          <TabsTrigger value="servicos">Serviços</TabsTrigger>
-          <TabsTrigger value="agenda">Agenda</TabsTrigger>
-          <TabsTrigger value="cursos">Cursos</TabsTrigger>
-          <TabsTrigger value="contato">Fale Conosco</TabsTrigger>
+          <TabsTrigger value="tratamentos">Tratamentos</TabsTrigger>
+          <TabsTrigger value="blog">Blog</TabsTrigger>
+          <TabsTrigger value="depoimentos">Depoimentos</TabsTrigger>
+          <TabsTrigger value="contato">Contato</TabsTrigger>
         </TabsList>
 
         <TabsContent value="plataforma">
@@ -340,41 +340,27 @@ export default function AdminPageConfig() {
             <CardContent className="space-y-4 pt-6">
               <LabeledInput
                 label="Nome da Empresa"
-                description="Define o nome que aparece no título da aba do navegador e no rodapé."
                 value={form.company_name}
                 onChange={(v) => set('company_name', v)}
                 placeholder="Anderson Abreu"
               />
-              <ImageUpload
-                label="Logo da Plataforma"
-                description="Sua logomarca principal. Recomendado: PNG com fundo transparente."
-                onFile={setLogoFile}
-              />
+              <ImageUpload label="Logo da Plataforma" onFile={setLogoFile} />
               <ColorInput
                 label="Cor Principal"
-                description="Esta cor será aplicada automaticamente em botões, ícones e destaques em todo o site."
                 value={form.primary_color}
                 onChange={(v) => set('primary_color', v)}
               />
               <div className="pt-4 border-t border-border/50 space-y-4">
-                <ImageUpload
-                  label="Imagem de Fundo (Login)"
-                  description="Imagem que aparece ao lado do formulário de acesso para seus alunos."
-                  onFile={setLoginImageFile}
-                />
+                <ImageUpload label="Imagem de Fundo (Login)" onFile={setLoginImageFile} />
                 <LabeledInput
                   label="Texto de Boas-vindas (Login)"
-                  description="Mensagem personalizada que aparece na tela de login."
                   value={form.login_text}
                   onChange={(v) => set('login_text', v)}
-                  placeholder="Hipnose, inteligência emocional e mentoria de alta performance"
                 />
                 <LabeledInput
                   label="Gradiente Visual (Login)"
-                  description="Configuração de cores para o efeito visual da tela de login (CSS Gradient)."
                   value={form.login_gradient}
                   onChange={(v) => set('login_gradient', v)}
-                  placeholder="linear-gradient(to bottom, #1e3a8a, #172554, #000000)"
                 />
               </div>
             </CardContent>
@@ -395,9 +381,21 @@ export default function AdminPageConfig() {
                 onChange={(v) => set('hero_subtitle', v)}
               />
               <LabeledInput
-                label="Texto do botão de call-to-action"
+                label="Texto do botão CTA"
+                description="Texto do botão principal do hero (ex: Agendar Sessão)"
                 value={form.hero_cta_text}
                 onChange={(v) => set('hero_cta_text', v)}
+              />
+              <LabeledInput
+                label="Texto do botão Agendar"
+                description="Texto global do botão de agendamento"
+                value={form.agendar_sessao_text}
+                onChange={(v) => set('agendar_sessao_text', v)}
+              />
+              <LabeledInput
+                label="Texto do botão Saiba Mais"
+                value={form.saiba_mais_text}
+                onChange={(v) => set('saiba_mais_text', v)}
               />
               <ImageUpload label="Imagem do hero" onFile={setHeroImage} />
               <div className="grid grid-cols-2 gap-4 pt-2">
@@ -434,13 +432,6 @@ export default function AdminPageConfig() {
                   />
                 </div>
               </div>
-              <div className="flex items-center gap-3 pt-2">
-                <Switch
-                  checked={form.testimonials_active}
-                  onCheckedChange={(v) => set('testimonials_active', v)}
-                />
-                <Label>Ativar/Desativar Seção de Depoimentos</Label>
-              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -453,101 +444,98 @@ export default function AdminPageConfig() {
                 value={form.about_title}
                 onChange={(v) => set('about_title', v)}
               />
+              <LabeledInput
+                label="Introdução curta"
+                description="Texto curto exibido na landing page"
+                value={form.about_intro}
+                onChange={(v) => set('about_intro', v)}
+              />
               <div className="space-y-2">
-                <Label>Texto descritivo</Label>
+                <Label>Conteúdo da seção (Landing)</Label>
                 <RichTextEditor
                   value={form.about_content}
                   onChange={(html) => set('about_content', html)}
                 />
               </div>
-              <ImageUpload label="Imagem da seção" onFile={setAboutImage} />
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="servicos">
-          <Card className="bg-card/50 border-border/50">
-            <CardContent className="space-y-4 pt-6">
-              <LabeledInput
-                label="Título da seção"
-                value={form.services_title}
-                onChange={(v) => set('services_title', v)}
-                placeholder="Soluções em Hipnoterapia"
-              />
-              <LabeledTextarea
-                label="Subtítulo da seção"
-                value={form.services_subtitle}
-                onChange={(v) => set('services_subtitle', v)}
-                placeholder="Transforme sua vida com nossos serviços especializados"
-              />
-              <div className="space-y-2">
-                <FieldLabel
-                  label="Itens de Serviços"
-                  description="Adicione, edite ou remova itens exibidos na seção de serviços da landing page."
-                />
-                <ServicesItemsEditor
-                  value={form.services_items}
-                  onChange={(v) => set('services_items', v)}
+              <div className="space-y-2 pt-4 border-t border-border/50">
+                <Label>Biografia completa (Página /sobre)</Label>
+                <RichTextEditor
+                  value={form.about_full_bio}
+                  onChange={(html) => set('about_full_bio', html)}
                 />
               </div>
+              <LabeledInput
+                label="Credenciais"
+                value={form.about_credentials}
+                onChange={(v) => set('about_credentials', v)}
+              />
+              <ImageUpload label="Imagem da seção (Landing)" onFile={setAboutImage} />
+              <ImageUpload label="Imagem da página Sobre" onFile={setAboutPageImage} />
             </CardContent>
           </Card>
         </TabsContent>
 
-        <TabsContent value="agenda">
+        <TabsContent value="tratamentos">
           <Card className="bg-card/50 border-border/50">
             <CardContent className="space-y-4 pt-6">
               <LabeledInput
                 label="Título da seção"
-                value={form.agenda_highlight_title}
-                onChange={(v) => set('agenda_highlight_title', v)}
+                value={form.treatments_section_title}
+                onChange={(v) => set('treatments_section_title', v)}
+                placeholder="O que podemos tratar"
               />
               <LabeledTextarea
                 label="Texto introdutório"
-                value={form.agenda_intro}
-                onChange={(v) => set('agenda_intro', v)}
+                value={form.treatments_section_intro}
+                onChange={(v) => set('treatments_section_intro', v)}
               />
-              <ImageUpload label="Imagem de fundo ou banner" onFile={setAgendaImage} />
+              <p className="text-sm text-muted-foreground">
+                Os tratamentos são gerenciados na aba "Tratamentos" do painel admin.
+              </p>
             </CardContent>
           </Card>
         </TabsContent>
 
-        <TabsContent value="cursos">
+        <TabsContent value="blog">
           <Card className="bg-card/50 border-border/50">
             <CardContent className="space-y-4 pt-6">
               <LabeledInput
-                label="Título da seção (Landing)"
-                description="Título exibido na seção de cursos da página inicial."
-                value={form.courses_title}
-                onChange={(v) => set('courses_title', v)}
+                label="Título da seção"
+                value={form.blog_section_title}
+                onChange={(v) => set('blog_section_title', v)}
+                placeholder="Blog"
               />
               <LabeledTextarea
-                label="Texto introdutório (Landing)"
-                value={form.courses_intro}
-                onChange={(v) => set('courses_intro', v)}
+                label="Texto introdutório"
+                value={form.blog_section_intro}
+                onChange={(v) => set('blog_section_intro', v)}
               />
-              <div className="pt-4 border-t border-border/50 space-y-4">
-                <LabeledInput
-                  label="Título da página /cursos"
-                  description="Título principal da página dedicada aos cursos."
-                  value={form.courses_section_title}
-                  onChange={(v) => set('courses_section_title', v)}
-                  placeholder="Cursos Disponíveis"
+              <p className="text-sm text-muted-foreground">
+                Os posts são gerenciados na aba "Blog" do painel admin.
+              </p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="depoimentos">
+          <Card className="bg-card/50 border-border/50">
+            <CardContent className="space-y-4 pt-6">
+              <LabeledInput
+                label="Título da seção"
+                value={form.testimonials_section_title}
+                onChange={(v) => set('testimonials_section_title', v)}
+                placeholder="Depoimentos"
+              />
+              <div className="flex items-center gap-3 pt-2">
+                <Switch
+                  checked={form.testimonials_active}
+                  onCheckedChange={(v) => set('testimonials_active', v)}
                 />
-                <LabeledTextarea
-                  label="Texto da página /cursos"
-                  value={form.courses_section_text}
-                  onChange={(v) => set('courses_section_text', v)}
-                  placeholder="Conheça nossos cursos e formações em hipnoterapia."
-                />
-                <LabeledInput
-                  label="Texto do botão"
-                  description="Texto do botão que leva à página de cursos na landing."
-                  value={form.courses_section_button}
-                  onChange={(v) => set('courses_section_button', v)}
-                  placeholder="Ver Cursos"
-                />
+                <Label>Ativar/Desativar Seção de Depoimentos</Label>
               </div>
+              <p className="text-sm text-muted-foreground">
+                Os depoimentos são gerenciados na aba "Depoimentos" do painel admin.
+              </p>
             </CardContent>
           </Card>
         </TabsContent>
@@ -570,51 +558,40 @@ export default function AdminPageConfig() {
                   label="Email de Suporte"
                   value={form.support_email}
                   onChange={(v) => set('support_email', v)}
-                  placeholder="contato@andersonabreu.com.br"
                 />
                 <LabeledInput
                   label="WhatsApp"
                   value={form.whatsapp_number}
                   onChange={(v) => set('whatsapp_number', v)}
-                  placeholder="+55 (11) 99999-9999"
                 />
                 <LabeledInput
                   label="Telefone"
                   value={form.contact_phone}
                   onChange={(v) => set('contact_phone', v)}
-                  placeholder="+55 (11) 99999-9999"
                 />
               </div>
               <div className="pt-4 border-t border-border/50">
                 <Label className="text-base font-semibold">Redes Sociais</Label>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Adicione os links das suas redes sociais. Deixe em branco para ocultar o ícone na
-                  página inicial.
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                   <LabeledInput
-                    label="Link do Instagram"
+                    label="Instagram"
                     value={form.instagram_handle}
                     onChange={(v) => set('instagram_handle', v)}
-                    placeholder="https://instagram.com/andersonabreu"
                   />
                   <LabeledInput
-                    label="Link do Facebook"
+                    label="Facebook"
                     value={form.facebook_url}
                     onChange={(v) => set('facebook_url', v)}
-                    placeholder="https://facebook.com/andersonabreu"
                   />
                   <LabeledInput
-                    label="Link do LinkedIn"
+                    label="LinkedIn"
                     value={form.linkedin_url}
                     onChange={(v) => set('linkedin_url', v)}
-                    placeholder="https://linkedin.com/in/andersonabreu"
                   />
                   <LabeledInput
-                    label="Link do YouTube"
+                    label="YouTube"
                     value={form.youtube_url}
                     onChange={(v) => set('youtube_url', v)}
-                    placeholder="https://youtube.com/@andersonabreu"
                   />
                 </div>
               </div>
@@ -629,7 +606,7 @@ export default function AdminPageConfig() {
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           ) : (
             <Save className="mr-2 h-4 w-4" />
-          )}{' '}
+          )}
           Salvar
         </Button>
       </div>
