@@ -91,6 +91,16 @@ export function getLoginImageUrl(settings: { id: string; login_image?: string })
   return null
 }
 
+export function getAgendarBackgroundImageUrl(settings: {
+  id: string
+  agendar_background_image?: string
+}): string | null {
+  if (settings.agendar_background_image) {
+    return `${import.meta.env.VITE_POCKETBASE_URL}/api/files/platform_settings/${settings.id}/${settings.agendar_background_image}`
+  }
+  return null
+}
+
 export function applyBrandColor(color: string): void {
   document.documentElement.style.setProperty('--primary', color)
 }

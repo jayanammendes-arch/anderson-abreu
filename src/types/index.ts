@@ -308,6 +308,11 @@ export interface PlatformSettings {
   about_page_image?: string
   blog_section_intro?: string
   treatments_section_intro?: string
+  agendar_background_image?: string
+  agendar_headline?: string
+  agendar_subheadline?: string
+  agendar_benefits?: string
+  agendar_submit_button_text?: string
   created: string
   updated: string
 }

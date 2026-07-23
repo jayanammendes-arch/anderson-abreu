@@ -61,6 +61,10 @@ interface FormState {
   treatments_section_intro: string
   blog_section_title: string
   blog_section_intro: string
+  agendar_headline: string
+  agendar_subheadline: string
+  agendar_benefits: string
+  agendar_submit_button_text: string
 }
 
 const emptyForm: FormState = {
@@ -107,6 +111,10 @@ const emptyForm: FormState = {
   treatments_section_intro: '',
   blog_section_title: '',
   blog_section_intro: '',
+  agendar_headline: '',
+  agendar_subheadline: '',
+  agendar_benefits: '[]',
+  agendar_submit_button_text: '',
 }
 
 function FieldLabel({ label, description }: { label: string; description?: string }) {
@@ -224,6 +232,7 @@ export default function AdminPageConfig() {
   const [agendaImage, setAgendaImage] = useState<File | null>(null)
   const [logoFile, setLogoFile] = useState<File | null>(null)
   const [loginImageFile, setLoginImageFile] = useState<File | null>(null)
+  const [agendarBgImage, setAgendarBgImage] = useState<File | null>(null)
 
   const set = (key: keyof FormState, value: string | boolean) =>
     setForm((p) => ({ ...p, [key]: value }))
@@ -281,6 +290,13 @@ export default function AdminPageConfig() {
             treatments_section_intro: data.treatments_section_intro || '',
             blog_section_title: data.blog_section_title || '',
             blog_section_intro: data.blog_section_intro || '',
+            agendar_headline: data.agendar_headline || '',
+            agendar_subheadline: data.agendar_subheadline || '',
+            agendar_benefits:
+              typeof data.agendar_benefits === 'string'
+                ? data.agendar_benefits
+                : JSON.stringify(data.agendar_benefits || []),
+            agendar_submit_button_text: data.agendar_submit_button_text || '',
           })
         }
       } catch {
@@ -304,6 +320,7 @@ export default function AdminPageConfig() {
       if (agendaImage) fd.append('agenda_image', agendaImage)
       if (logoFile) fd.append('logo', logoFile)
       if (loginImageFile) fd.append('login_image', loginImageFile)
+      if (agendarBgImage) fd.append('agendar_background_image', agendarBgImage)
       if (settings) await updatePlatformSettings(settings.id, fd)
       else await createPlatformSettings(fd)
       toast.success('Configurações salvas com sucesso!')
@@ -325,10 +342,11 @@ export default function AdminPageConfig() {
     <form onSubmit={handleSave} className="space-y-6 animate-fade-in max-w-4xl">
       <h1 className="text-2xl font-bold">Configuração de Páginas Principais</h1>
       <Tabs defaultValue="plataforma">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-7">
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-8">
           <TabsTrigger value="plataforma">Plataforma</TabsTrigger>
           <TabsTrigger value="home">Home</TabsTrigger>
           <TabsTrigger value="sobre">Sobre</TabsTrigger>
+          <TabsTrigger value="agendar">Agendar</TabsTrigger>
           <TabsTrigger value="tratamentos">Tratamentos</TabsTrigger>
           <TabsTrigger value="blog">Blog</TabsTrigger>
           <TabsTrigger value="depoimentos">Depoimentos</TabsTrigger>
@@ -471,6 +489,44 @@ export default function AdminPageConfig() {
               />
               <ImageUpload label="Imagem da seção (Landing)" onFile={setAboutImage} />
               <ImageUpload label="Imagem da página Sobre" onFile={setAboutPageImage} />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="agendar">
+          <Card className="bg-card/50 border-border/50">
+            <CardContent className="space-y-4 pt-6">
+              <LabeledInput
+                label="Headline"
+                description="Título principal da página de agendamento"
+                value={form.agendar_headline}
+                onChange={(v) => set('agendar_headline', v)}
+                placeholder="Agende sua Sessão"
+              />
+              <LabeledInput
+                label="Subheadline"
+                description="Texto de destaque abaixo da headline"
+                value={form.agendar_subheadline}
+                onChange={(v) => set('agendar_subheadline', v)}
+                placeholder="Resultados em 2 Sessões"
+              />
+              <LabeledTextarea
+                label="Lista de Benefícios (JSON)"
+                description='Array de strings, ex: ["Atendimento Presencial", "Atendimento Online"]'
+                value={form.agendar_benefits}
+                onChange={(v) => set('agendar_benefits', v)}
+              />
+              <LabeledInput
+                label="Texto do Botão de Envio"
+                value={form.agendar_submit_button_text}
+                onChange={(v) => set('agendar_submit_button_text', v)}
+                placeholder="Enviar"
+              />
+              <ImageUpload
+                label="Imagem de Fundo"
+                description="Imagem de fundo da página de agendamento (recomendado: 1920x1080)"
+                onFile={setAgendarBgImage}
+              />
             </CardContent>
           </Card>
         </TabsContent>
