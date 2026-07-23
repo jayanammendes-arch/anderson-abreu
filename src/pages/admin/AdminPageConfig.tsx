@@ -342,9 +342,10 @@ export default function AdminPageConfig() {
     <form onSubmit={handleSave} className="space-y-6 animate-fade-in max-w-4xl">
       <h1 className="text-2xl font-bold">Configuração de Páginas Principais</h1>
       <Tabs defaultValue="plataforma">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-8">
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-9">
           <TabsTrigger value="plataforma">Plataforma</TabsTrigger>
           <TabsTrigger value="home">Home</TabsTrigger>
+          <TabsTrigger value="servicos">Serviços</TabsTrigger>
           <TabsTrigger value="sobre">Sobre</TabsTrigger>
           <TabsTrigger value="agendar">Agendar</TabsTrigger>
           <TabsTrigger value="tratamentos">Tratamentos</TabsTrigger>
@@ -379,6 +380,34 @@ export default function AdminPageConfig() {
                   label="Gradiente Visual (Login)"
                   value={form.login_gradient}
                   onChange={(v) => set('login_gradient', v)}
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="servicos">
+          <Card className="bg-card/50 border-border/50">
+            <CardContent className="space-y-4 pt-6">
+              <LabeledInput
+                label="Título da seção de serviços"
+                value={form.services_title}
+                onChange={(v) => set('services_title', v)}
+                placeholder="Ex: Como funciona?"
+              />
+              <LabeledTextarea
+                label="Subtítulo da seção"
+                value={form.services_subtitle}
+                onChange={(v) => set('services_subtitle', v)}
+              />
+              <div className="space-y-2">
+                <FieldLabel
+                  label="Itens de Serviço"
+                  description="Adicione os cards que aparecerão na seção"
+                />
+                <ServicesItemsEditor
+                  value={form.services_items}
+                  onChange={(v: string) => set('services_items', v)}
                 />
               </div>
             </CardContent>

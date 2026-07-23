@@ -17,7 +17,7 @@ import { TestimonialsSection } from '@/components/TestimonialsSection'
 import { LandingLayout } from '@/components/LandingLayout'
 import { TreatmentCard } from '@/components/TreatmentCard'
 import { BlogCard } from '@/components/BlogCard'
-import { ArrowRight, Calendar, Loader2 } from 'lucide-react'
+import { ArrowRight, Calendar, Loader2, CheckCircle2, ArrowUpRight } from 'lucide-react'
 
 export default function Landing() {
   const navigate = useNavigate()
@@ -69,50 +69,113 @@ export default function Landing() {
   return (
     <LandingLayout settings={settings}>
       {/* Hero */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
-        {heroImageUrl ? (
+      <section className="relative min-h-screen flex items-center overflow-hidden pt-20 bg-slate-50">
+        {heroImageUrl && (
           <>
             <img
               src={heroImageUrl}
               alt=""
-              className="absolute inset-0 h-full w-full object-cover"
+              className="absolute inset-0 h-full w-full object-cover object-right md:object-center"
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/70" />
+            <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-transparent md:w-3/4" />
+            <div className="absolute inset-0 bg-gradient-to-t from-white/95 via-white/40 to-transparent sm:hidden" />
           </>
-        ) : (
-          <div className="absolute inset-0 bg-gradient-to-b from-slate-50 via-white to-slate-50" />
         )}
-        <div className="relative z-10 max-w-4xl mx-auto px-6 text-center py-20">
-          <h1
-            className={cn(
-              'text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 leading-[1.1]',
-              heroImageUrl ? 'text-white' : 'text-slate-900',
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 py-20">
+          <div className="max-w-2xl">
+            <h1
+              className={cn(
+                'text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-4 leading-[1.1] text-slate-900 uppercase',
+              )}
+            >
+              {settings?.hero_title || 'HIPNOSE CLÍNICA AVANÇADA'}
+            </h1>
+
+            {settings?.hero_subtitle ? (
+              settings.hero_subtitle.split('\n').map((line, i, arr) => (
+                <p
+                  key={i}
+                  className={cn(
+                    arr.length > 1 && i === 0
+                      ? 'text-xl md:text-3xl text-slate-800 mb-6 font-medium'
+                      : 'text-lg md:text-xl text-slate-600 mb-6 leading-relaxed',
+                  )}
+                >
+                  {line}
+                </p>
+              ))
+            ) : (
+              <>
+                <p className="text-xl md:text-3xl text-slate-800 mb-6 font-medium">
+                  Resultados em 2 Sessões*
+                </p>
+                <p className="text-lg md:text-xl text-slate-600 mb-10 leading-relaxed">
+                  Ansiedade, depressão, traumas, fobias, compulsões e bloqueios tratados com hipnose
+                  clínica focada na causa.
+                </p>
+              </>
             )}
-          >
-            {settings?.hero_title || 'Hipnoterapia que transforma vidas'}
-          </h1>
-          <p
-            className={cn(
-              'text-lg md:text-xl mb-10 max-w-2xl mx-auto leading-relaxed',
-              heroImageUrl ? 'text-white/70' : 'text-slate-500',
-            )}
-          >
-            {settings?.hero_subtitle ||
-              'Hipnose clínica, inteligência emocional e mentoria de alta performance para quem deseja romper limites e alcançar resultados extraordinários.'}
-          </p>
-          <Button
-            size="lg"
-            className="bg-slate-900 text-white hover:bg-slate-800 rounded-full px-10 shadow-lg"
-            onClick={() => navigate('/agendar')}
-          >
-            <Calendar className="mr-2 h-5 w-5" />
-            {settings?.hero_cta_text || agendarText}
-          </Button>
+
+            <div className="pt-4">
+              <Button
+                size="lg"
+                className="bg-[#00A3C4] hover:bg-[#008ca8] text-white rounded-full px-10 py-6 text-lg font-medium shadow-lg transition-all hover:scale-105"
+                onClick={() => navigate('/agendar')}
+              >
+                {settings?.hero_cta_text || 'Falar com especialista'}
+              </Button>
+            </div>
+          </div>
         </div>
       </section>
 
+      {/* Services */}
+      {settings?.services_title && (
+        <section className="py-24 bg-white">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+                {settings.services_title}
+              </h2>
+              {settings.services_subtitle && (
+                <p className="text-slate-500 text-lg max-w-2xl mx-auto">
+                  {settings.services_subtitle}
+                </p>
+              )}
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {(() => {
+                try {
+                  const items = JSON.parse(settings.services_items || '[]')
+                  if (Array.isArray(items)) {
+                    return items.map((item: any, idx: number) => (
+                      <div
+                        key={idx}
+                        className="group block p-8 bg-slate-50 rounded-2xl border border-slate-100 hover:border-slate-200 hover:shadow-md transition-all duration-300"
+                      >
+                        <div className="flex items-start justify-between gap-4 mb-4">
+                          <h3 className="text-xl font-semibold text-slate-900 group-hover:text-primary transition-colors">
+                            {item.title || item.name}
+                          </h3>
+                          <ArrowUpRight className="h-6 w-6 shrink-0 text-slate-300 group-hover:text-primary group-hover:translate-x-1 group-hover:-translate-y-1 transition-all duration-300" />
+                        </div>
+                        <p className="text-slate-600 leading-relaxed">
+                          {item.description || item.content || item.text}
+                        </p>
+                      </div>
+                    ))
+                  }
+                } catch (e) {
+                  return null
+                }
+              })()}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* About Intro */}
-      <section className="py-24 bg-white">
+      <section className="py-24 bg-slate-50">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:grid-cols-2 gap-16 items-center">
             <div className="order-2 md:order-1">
@@ -157,7 +220,7 @@ export default function Landing() {
 
       {/* Treatments */}
       {treatments.length > 0 && (
-        <section id="tratamentos" className="py-24 bg-slate-50">
+        <section id="tratamentos" className="py-24 bg-white">
           <div className="max-w-5xl mx-auto px-6">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
@@ -179,7 +242,7 @@ export default function Landing() {
 
       {/* Courses */}
       {courses.length > 0 && (
-        <section className="py-24 bg-white">
+        <section className="py-24 bg-slate-50">
           <div className="max-w-7xl mx-auto px-6">
             <div className="flex items-end justify-between mb-12">
               <div>
@@ -238,7 +301,7 @@ export default function Landing() {
 
       {/* Blog */}
       {blogPosts.length > 0 && (
-        <section className="py-24 bg-slate-50">
+        <section className="py-24 bg-white">
           <div className="max-w-7xl mx-auto px-6">
             <div className="flex items-end justify-between mb-12">
               <div>
