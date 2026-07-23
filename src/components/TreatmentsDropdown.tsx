@@ -2,17 +2,17 @@ import { useState, useEffect, useRef, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { getTreatmentCategories } from '@/services/treatment-categories'
+import { getAllTreatments } from '@/services/treatments'
 import { getTreatmentIcon } from '@/lib/treatment-icons'
-import type { TreatmentCategory } from '@/types'
+import type { Treatment } from '@/types'
 
 export function TreatmentsDropdown({ children }: { children: ReactNode }) {
   const [isOpen, setIsOpen] = useState(false)
-  const [treatments, setTreatments] = useState<TreatmentCategory[]>([])
+  const [treatments, setTreatments] = useState<Treatment[]>([])
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
-    getTreatmentCategories()
+    getAllTreatments()
       .then((data) => setTreatments(data))
       .catch(() => {})
   }, [])
@@ -48,7 +48,10 @@ export function TreatmentsDropdown({ children }: { children: ReactNode }) {
           onMouseLeave={handleLeave}
         >
           <div className="bg-white rounded-xl shadow-lg border border-slate-100 p-4 min-w-[420px] animate-fade-in">
-            <div className="grid grid-cols-2 gap-x-6 gap-y-1">
+            <div
+              className="grid grid-flow-col gap-x-6 gap-y-1"
+              style={{ gridTemplateRows: `repeat(${Math.ceil(treatments.length / 2)}, auto)` }}
+            >
               {treatments.map((treatment) => {
                 const Icon = getTreatmentIcon(treatment.icon)
                 return (

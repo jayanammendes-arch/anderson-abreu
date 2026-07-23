@@ -8,10 +8,10 @@ import {
   getHomeHeroImageUrl,
   getAboutImageUrl,
 } from '@/services/landing'
-import { getTreatmentCategories } from '@/services/treatment-categories'
+import { getAllTreatments } from '@/services/treatments'
 import { getBlogPosts } from '@/services/blog'
 import { getThumbnailUrl } from '@/services/courses'
-import type { Course, PlatformSettings, TreatmentCategory, BlogPost } from '@/types'
+import type { Course, PlatformSettings, Treatment, BlogPost } from '@/types'
 import { Button } from '@/components/ui/button'
 import { TestimonialsSection } from '@/components/TestimonialsSection'
 import { LandingLayout } from '@/components/LandingLayout'
@@ -22,7 +22,7 @@ import { ArrowRight, Calendar, Loader2, CheckCircle2, ArrowUpRight } from 'lucid
 export default function Landing() {
   const navigate = useNavigate()
   const [settings, setSettings] = useState<PlatformSettings | null>(null)
-  const [treatments, setTreatments] = useState<TreatmentCategory[]>([])
+  const [treatments, setTreatments] = useState<Treatment[]>([])
   const [courses, setCourses] = useState<Course[]>([])
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([])
   const [loading, setLoading] = useState(true)
@@ -30,12 +30,12 @@ export default function Landing() {
   const loadData = async () => {
     const [settingsData, treatmentsData, coursesData, blogData] = await Promise.all([
       getPlatformSettingsPublic().catch(() => null),
-      getTreatmentCategories().catch(() => []),
+      getAllTreatments().catch(() => []),
       getPublicCourses().catch(() => []),
       getBlogPosts().catch(() => []),
     ])
     setSettings(settingsData as PlatformSettings | null)
-    setTreatments(treatmentsData as TreatmentCategory[])
+    setTreatments(treatmentsData as Treatment[])
     setCourses(coursesData as Course[])
     setBlogPosts((blogData as BlogPost[]).slice(0, 3))
     setLoading(false)
@@ -46,7 +46,7 @@ export default function Landing() {
   }, [])
 
   useRealtime('platform_settings', () => loadData())
-  useRealtime('treatment_categories', () => loadData())
+  useRealtime('treatments', () => loadData())
   useRealtime('blog_posts', () => loadData())
 
   const heroImageUrl = settings?.home_hero_image ? getHomeHeroImageUrl(settings) : null
@@ -143,8 +143,8 @@ export default function Landing() {
               </p>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-              {treatments.map((category) => (
-                <TreatmentCard key={category.id} category={category} />
+              {treatments.map((treatment) => (
+                <TreatmentCard key={treatment.id} treatment={treatment} />
               ))}
             </div>
           </div>
