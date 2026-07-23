@@ -2,16 +2,16 @@ import { useState, useEffect, useRef, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { getAllTreatments } from '@/services/treatments'
-import type { Treatment } from '@/types'
+import { getTreatmentCategories } from '@/services/treatment-categories'
+import type { TreatmentCategory } from '@/types'
 
 export function TreatmentsDropdown({ children }: { children: ReactNode }) {
   const [isOpen, setIsOpen] = useState(false)
-  const [treatments, setTreatments] = useState<Treatment[]>([])
+  const [treatments, setTreatments] = useState<TreatmentCategory[]>([])
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
-    getAllTreatments()
+    getTreatmentCategories()
       .then((data) => setTreatments(data))
       .catch(() => {})
   }, [])

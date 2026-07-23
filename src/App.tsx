@@ -31,6 +31,7 @@ import AdminCommunity from '@/pages/admin/AdminCommunity'
 import AdminCertificates from '@/pages/admin/AdminCertificates'
 import AdminContacts from '@/pages/admin/AdminContacts'
 import AdminTreatments from '@/pages/admin/AdminTreatments'
+import AdminTreatmentCategories from '@/pages/admin/AdminTreatmentCategories'
 import AdminBlog from '@/pages/admin/AdminBlog'
 import CourseDetail from '@/pages/CourseDetail'
 import CourseDetailsPage from '@/pages/CourseDetailsPage'
@@ -62,6 +63,7 @@ const App = () => (
               <Route path="cursos/novo" element={<AdminCourseForm />} />
               <Route path="cursos/:courseId" element={<AdminCourseForm />} />
               <Route path="tratamentos" element={<AdminTreatments />} />
+              <Route path="categorias-tratamentos" element={<AdminTreatmentCategories />} />
               <Route path="blog" element={<AdminBlog />} />
               <Route path="alunos" element={<AdminStudents />} />
               <Route path="liberacoes" element={<AdminAccessReleases />} />

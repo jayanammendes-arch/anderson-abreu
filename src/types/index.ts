@@ -344,6 +344,20 @@ export interface Treatment {
   updated: string
 }
 
+export interface TreatmentCategory {
+  id: string
+  name: string
+  slug: string
+  short_description: string
+  detailed_content: string
+  image?: string
+  icon: string
+  symptoms_list?: string
+  order: number
+  created: string
+  updated: string
+}
+
 export interface BlogPost {
   id: string
   title: string

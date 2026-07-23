@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-23T19:47:32.581Z",
+  "generatedAt": "2026-07-23T20:19:22.229Z",
   "collections": [
     {
       "name": "users",
@@ -1811,6 +1811,85 @@
       "indexes": [
         "CREATE UNIQUE INDEX idx_blog_posts_slug ON blog_posts (slug)",
         "CREATE INDEX idx_blog_posts_published ON blog_posts (published_at DESC)"
+      ]
+    },
+    {
+      "name": "treatment_categories",
+      "type": "base",
+      "apiRules": {
+        "list": "",
+        "view": "",
+        "create": "@request.auth.is_admin = true",
+        "update": "@request.auth.is_admin = true",
+        "delete": "@request.auth.is_admin = true"
+      },
+      "fields": [
+        {
+          "name": "name",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "slug",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "short_description",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "detailed_content",
+          "type": "editor",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "image",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "icon",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "symptoms_list",
+          "type": "editor",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "order",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": [
+        "CREATE UNIQUE INDEX idx_treatment_categories_slug ON treatment_categories (slug)",
+        "CREATE INDEX idx_treatment_categories_order ON treatment_categories (order)"
       ]
     }
   ]
