@@ -358,6 +358,16 @@ export interface TreatmentCategory {
   updated: string
 }
 
+export interface SiteFAQ {
+  id: string
+  question: string
+  answer: string
+  order: number
+  is_active: boolean
+  created: string
+  updated: string
+}
+
 export interface BlogPost {
   id: string
   title: string

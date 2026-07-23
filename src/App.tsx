@@ -25,7 +25,9 @@ import Products from '@/pages/Products'
 import Purchases from '@/pages/Purchases'
 import Community from '@/pages/Community'
 import Faq from '@/pages/Faq'
+import PublicFaq from '@/pages/PublicFaq'
 import AdminFaqs from '@/pages/admin/AdminFaqs'
+import AdminSiteFaqs from '@/pages/admin/AdminSiteFaqs'
 import AdminTestimonials from '@/pages/admin/AdminTestimonials'
 import AdminCommunity from '@/pages/admin/AdminCommunity'
 import AdminCertificates from '@/pages/admin/AdminCertificates'
@@ -50,6 +52,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/faq" element={<PublicFaq />} />
             <Route path="/sobre" element={<Sobre />} />
             <Route path="/tratamentos/:slug" element={<TreatmentDetail />} />
             <Route path="/blog" element={<Blog />} />
@@ -72,6 +75,7 @@ const App = () => (
               <Route path="depoimentos" element={<AdminTestimonials />} />
               <Route path="agenda" element={<AdminAgenda />} />
               <Route path="faqs" element={<AdminFaqs />} />
+              <Route path="site-faqs" element={<AdminSiteFaqs />} />
               <Route path="comunidade" element={<AdminCommunity />} />
               <Route path="certificados" element={<AdminCertificates />} />
               <Route path="contatos" element={<AdminContacts />} />

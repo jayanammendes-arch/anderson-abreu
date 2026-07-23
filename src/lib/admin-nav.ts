@@ -13,6 +13,7 @@ import {
   Mail,
   Stethoscope,
   Newspaper,
+  Globe,
 } from 'lucide-react'
 
 export interface AdminNavItem {
@@ -76,6 +77,12 @@ export const adminNavGroups: AdminNavGroup[] = [
         icon: MessageSquareQuote,
         description: 'Gerenciar depoimentos de alunos',
       },
+      {
+        title: 'FAQs',
+        href: '/admin/faqs',
+        icon: HelpCircle,
+        description: 'Gerenciar perguntas frequentes da área do aluno',
+      },
     ],
   },
   {
@@ -107,10 +114,10 @@ export const adminNavGroups: AdminNavGroup[] = [
         description: 'Gerenciar eventos e agenda da plataforma',
       },
       {
-        title: 'FAQs',
-        href: '/admin/faqs',
-        icon: HelpCircle,
-        description: 'Gerenciar perguntas frequentes e canais de suporte',
+        title: 'FAQs do Site',
+        href: '/admin/site-faqs',
+        icon: Globe,
+        description: 'Gerenciar perguntas frequentes públicas do site',
       },
       {
         title: 'Contatos',

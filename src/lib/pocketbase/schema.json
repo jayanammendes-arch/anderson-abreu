@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-23T20:42:40.365Z",
+  "generatedAt": "2026-07-23T20:54:59.332Z",
   "collections": [
     {
       "name": "users",
@@ -1890,6 +1890,61 @@
       "indexes": [
         "CREATE UNIQUE INDEX idx_treatment_categories_slug ON treatment_categories (slug)",
         "CREATE INDEX idx_treatment_categories_order ON treatment_categories (order)"
+      ]
+    },
+    {
+      "name": "site_faqs",
+      "type": "base",
+      "apiRules": {
+        "list": "is_active = true",
+        "view": "is_active = true",
+        "create": "",
+        "update": "",
+        "delete": ""
+      },
+      "fields": [
+        {
+          "name": "question",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "answer",
+          "type": "editor",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "order",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "is_active",
+          "type": "bool",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": [
+        "CREATE INDEX idx_site_faqs_order ON site_faqs (order)",
+        "CREATE INDEX idx_site_faqs_active_order ON site_faqs (is_active, order)"
       ]
     }
   ]
