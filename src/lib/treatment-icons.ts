@@ -1,7 +1,6 @@
 import {
   Brain,
   Heart,
-  Lungs,
   Wind,
   Waves,
   Cloud,
@@ -73,7 +72,6 @@ import {
   Siren,
   TriangleAlert,
   CircleAlert,
-  Candle,
   CigaretteOff,
   Repeat,
   type LucideIcon,
@@ -229,7 +227,7 @@ export const TREATMENT_ICON_GROUPS: Record<string, string[]> = {
 export const TREATMENT_ICONS: Record<string, LucideIcon> = {
   brain: Brain,
   heart: Heart,
-  lungs: Lungs,
+  lungs: Wind,
   heartbeat: HeartPulse,
   wind: Wind,
   waves: Waves,
@@ -277,7 +275,7 @@ export const TREATMENT_ICONS: Record<string, LucideIcon> = {
   'heart-off': HeartOff,
   leaf: Leaf,
   'moon-star': MoonStar,
-  candle: Candle,
+  candle: Flame,
   sleep: Moon,
   teeth: Smile,
   tooth: Smile,
