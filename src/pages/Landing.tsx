@@ -241,58 +241,7 @@ export default function Landing() {
       )}
 
       {/* Courses */}
-      {courses.length > 0 && (
-        <section className="py-24 bg-slate-50">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="flex items-end justify-between mb-12">
-              <div>
-                <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-3">
-                  {settings?.courses_title || 'Cursos Online'}
-                </h2>
-                <p className="text-slate-500 text-lg">
-                  {settings?.courses_intro || 'Aprenda no seu ritmo, com metodologia comprovada.'}
-                </p>
-              </div>
-              <Button variant="outline" className="rounded-full hidden md:flex" asChild>
-                <Link to="/cursos">
-                  Ver todos <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-            </div>
-            <div className="grid md:grid-cols-3 gap-6">
-              {courses.slice(0, 3).map((course) => (
-                <div
-                  key={course.id}
-                  className="group bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300"
-                >
-                  <div className="aspect-video overflow-hidden bg-slate-100">
-                    <img
-                      src={getThumbnailUrl(course)}
-                      alt={course.title}
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                  </div>
-                  <div className="p-5">
-                    <h4 className="font-semibold text-slate-900 mb-2 line-clamp-2">
-                      {course.title}
-                    </h4>
-                    <p className="text-sm text-slate-500 line-clamp-2 mb-3">
-                      {course.short_description || course.description}
-                    </p>
-                    {course.access_type === 'free' ? (
-                      <span className="text-lg font-bold text-primary">Gratuito</span>
-                    ) : course.price ? (
-                      <span className="text-lg font-bold text-primary">
-                        R$ {(course.discount_price || course.price).toFixed(2)}
-                      </span>
-                    ) : null}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
+      {courses.length > 0 && null}
 
       {/* Testimonials */}
       <section id="depoimentos">
