@@ -338,6 +338,7 @@ export interface Treatment {
   detailed_content: string
   image?: string
   order?: number
+  icon?: string
   created: string
   updated: string
 }

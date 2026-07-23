@@ -10,7 +10,6 @@ import type { Treatment } from '@/types'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
 import { Card } from '@/components/ui/card'
 import {
   Dialog,
@@ -29,8 +28,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { TooltipProvider } from '@/components/ui/tooltip'
 import { useRealtime } from '@/hooks/use-realtime'
 import { RichTextEditor } from '@/components/admin/RichTextEditor'
+import { IconPicker } from '@/components/admin/IconPicker'
+import { getTreatmentIcon } from '@/lib/treatment-icons'
 import { extractFieldErrors, type FieldErrors } from '@/lib/pocketbase/errors'
 import { toast } from 'sonner'
 import { Pencil, Trash2, Plus, Loader2, Save } from 'lucide-react'
@@ -41,6 +43,7 @@ const emptyForm: Partial<Treatment> = {
   short_description: '',
   detailed_content: '',
   order: 0,
+  icon: '',
 }
 
 function slugify(text: string): string {
@@ -107,6 +110,7 @@ export default function AdminTreatments() {
         short_description: formData.short_description || '',
         detailed_content: formData.detailed_content || '',
         order: Number(formData.order) || 0,
+        icon: formData.icon || '',
       }
 
       if (imageFile) {
@@ -167,20 +171,15 @@ export default function AdminTreatments() {
         <div className="grid gap-3">
           {treatments.map((treatment) => {
             const imgUrl = getTreatmentImageUrl(treatment)
+            const Icon = getTreatmentIcon(treatment.icon)
             return (
               <Card
                 key={treatment.id}
                 className="flex items-center gap-4 p-4 bg-card/50 border-border/50"
               >
-                {imgUrl ? (
-                  <img
-                    src={imgUrl}
-                    alt={treatment.name}
-                    className="h-12 w-12 rounded-lg object-cover"
-                  />
-                ) : (
-                  <div className="h-12 w-12 rounded-lg bg-primary/10" />
-                )}
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-sky-100">
+                  <Icon className="h-5 w-5 text-sky-600" strokeWidth={1.75} />
+                </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-semibold truncate">{treatment.name}</h3>
                   <p className="text-sm text-muted-foreground truncate">
@@ -246,6 +245,15 @@ export default function AdminTreatments() {
               {fieldErrors.detailed_content && (
                 <p className="text-sm text-red-500">{fieldErrors.detailed_content}</p>
               )}
+            </div>
+            <div className="space-y-2">
+              <Label>Ícone</Label>
+              <TooltipProvider>
+                <IconPicker
+                  value={formData.icon || ''}
+                  onChange={(icon) => setFormData({ ...formData, icon })}
+                />
+              </TooltipProvider>
             </div>
             <div className="space-y-2">
               <Label>Imagem</Label>
