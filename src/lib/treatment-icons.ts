@@ -103,7 +103,6 @@ import {
   FlaskConical,
   TestTube,
   Prescription,
-  Pill,
   Funnel,
   Vial,
   MessageCircle,
