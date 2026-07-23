@@ -98,11 +98,6 @@ import {
   Meh,
   Smile,
   Angry,
-  Dizzy,
-  Wink,
-  Laugh,
-  Confused,
-  Tongue,
   type LucideIcon,
 } from 'lucide-react'
 
@@ -353,11 +348,11 @@ export const TREATMENT_ICONS: Record<string, LucideIcon> = {
   meh: Meh,
   smile: Smile,
   angry: Angry,
-  dizzy: Dizzy,
-  wink: Wink,
-  laugh: Laugh,
-  confused: Confused,
-  tongue: Tongue,
+  dizzy: Skull,
+  wink: Star,
+  laugh: Sparkles,
+  confused: CircleAlert,
+  tongue: Smile,
 }
 
 const LEGACY_ICON_ALIASES: Record<string, string> = {
