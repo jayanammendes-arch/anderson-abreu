@@ -28,18 +28,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { TooltipProvider } from '@/components/ui/tooltip'
 import { useRealtime } from '@/hooks/use-realtime'
 import { RichTextEditor } from '@/components/admin/RichTextEditor'
 import { IconPicker } from '@/components/admin/IconPicker'
 import { getTreatmentIcon } from '@/lib/treatment-icons'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { extractFieldErrors, type FieldErrors } from '@/lib/pocketbase/errors'
 import { toast } from 'sonner'
 import { Pencil, Trash2, Plus, Loader2, Save } from 'lucide-react'
@@ -51,7 +43,6 @@ const emptyForm: Partial<Treatment> = {
   detailed_content: '',
   order: 0,
   icon: '',
-  category: '',
 }
 
 function slugify(text: string): string {
@@ -119,7 +110,6 @@ export default function AdminTreatments() {
         detailed_content: formData.detailed_content || '',
         order: Number(formData.order) || 0,
         icon: formData.icon || '',
-        category: formData.category || '',
       }
 
       if (imageFile) {
@@ -179,7 +169,6 @@ export default function AdminTreatments() {
       ) : (
         <div className="grid gap-3">
           {treatments.map((treatment) => {
-            const imgUrl = getTreatmentImageUrl(treatment)
             const Icon = getTreatmentIcon(treatment.icon)
             return (
               <Card
@@ -256,33 +245,11 @@ export default function AdminTreatments() {
               )}
             </div>
             <div className="space-y-2">
-              <Label>Categoria *</Label>
-              <Select
-                value={formData.category || ''}
-                onValueChange={(val) => setFormData({ ...formData, category: val, icon: '' })}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecione uma categoria" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Doenças Mentais">Doenças Mentais</SelectItem>
-                  <SelectItem value="Doenças Emocionais">Doenças Emocionais</SelectItem>
-                  <SelectItem value="Doenças Corporais">Doenças Corporais</SelectItem>
-                </SelectContent>
-              </Select>
-              {fieldErrors.category && (
-                <p className="text-sm text-red-500">{fieldErrors.category}</p>
-              )}
-            </div>
-            <div className="space-y-2">
               <Label>Ícone</Label>
-              <TooltipProvider>
-                <IconPicker
-                  value={formData.icon || ''}
-                  onChange={(icon) => setFormData({ ...formData, icon })}
-                  category={formData.category}
-                />
-              </TooltipProvider>
+              <IconPicker
+                value={formData.icon || ''}
+                onChange={(icon) => setFormData({ ...formData, icon })}
+              />
             </div>
             <div className="space-y-2">
               <Label>Imagem</Label>

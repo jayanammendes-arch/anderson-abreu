@@ -1,66 +1,54 @@
-import { useState, useMemo } from 'react'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { TREATMENT_ICON_GROUPS, TREATMENT_ICONS } from '@/lib/treatment-icons'
 import { cn } from '@/lib/utils'
-import { TREATMENT_ICONS, getIconsForCategory } from '@/lib/treatment-icons'
 import { Check } from 'lucide-react'
 
 export function IconPicker({
   value,
   onChange,
-  category,
 }: {
   value: string
   onChange: (icon: string) => void
-  category?: string
 }) {
-  const [selected, setSelected] = useState(value || '')
-
-  const iconNames = useMemo(() => getIconsForCategory(category), [category])
-
-  const handleSelect = (iconName: string) => {
-    setSelected(iconName)
-    onChange(iconName)
-  }
-
   return (
-    <div className="grid grid-cols-4 sm:grid-cols-6 gap-3">
-      {iconNames.map((iconName) => {
-        const Icon = TREATMENT_ICONS[iconName]
-        if (!Icon) return null
-        const isSelected = selected === iconName
-        return (
-          <Tooltip key={iconName}>
-            <TooltipTrigger asChild>
-              <button
-                type="button"
-                onClick={() => handleSelect(iconName)}
-                className={cn(
-                  'relative flex h-14 w-14 items-center justify-center rounded-lg border-2 transition-all duration-200',
-                  isSelected
-                    ? 'border-blue-500 bg-blue-50'
-                    : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50',
-                )}
-              >
-                <Icon
+    <div className="max-h-[300px] overflow-y-auto space-y-4 rounded-lg border p-3">
+      {Object.entries(TREATMENT_ICON_GROUPS).map(([groupName, iconNames]) => (
+        <div key={groupName} className="space-y-2">
+          <p className="text-xs font-medium text-muted-foreground">{groupName}</p>
+          <div className="grid grid-cols-6 sm:grid-cols-8 gap-2">
+            {iconNames.map((iconName) => {
+              const Icon = TREATMENT_ICONS[iconName]
+              if (!Icon) return null
+              const isSelected = value === iconName
+              return (
+                <button
+                  key={iconName}
+                  type="button"
+                  onClick={() => onChange(iconName)}
                   className={cn(
-                    'h-6 w-6 transition-colors',
-                    isSelected ? 'text-blue-600' : 'text-slate-500',
+                    'relative flex h-10 w-10 items-center justify-center rounded-lg border-2 transition-all duration-200',
+                    isSelected
+                      ? 'border-primary bg-primary/10'
+                      : 'border-border hover:border-primary/50 hover:bg-muted',
                   )}
-                  strokeWidth={2}
-                />
-                {isSelected && (
-                  <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-blue-500 text-white">
-                    <Check className="h-3 w-3" />
-                  </span>
-                )}
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="bottom" className="text-xs">
-              {iconName}
-            </TooltipContent>
-          </Tooltip>
-        )
-      })}
+                >
+                  <Icon
+                    className={cn(
+                      'h-5 w-5 transition-colors',
+                      isSelected ? 'text-primary' : 'text-muted-foreground',
+                    )}
+                    strokeWidth={2}
+                  />
+                  {isSelected && (
+                    <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-white">
+                      <Check className="h-2.5 w-2.5" />
+                    </span>
+                  )}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+      ))}
     </div>
   )
 }

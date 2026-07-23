@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-23T19:10:01.050Z",
+  "generatedAt": "2026-07-23T19:27:35.228Z",
   "collections": [
     {
       "name": "users",
@@ -1729,7 +1729,7 @@
         {
           "name": "category",
           "type": "select",
-          "required": true,
+          "required": false,
           "system": false,
           "selectValues": ["Doenças Mentais", "Doenças Emocionais", "Doenças Corporais"]
         }
