@@ -1,10 +1,12 @@
 import { useState, useEffect, type ReactNode } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
-import { Menu, X, Calendar } from 'lucide-react'
+import { Menu, X, Calendar, ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import type { PlatformSettings } from '@/types'
+import type { PlatformSettings, Treatment } from '@/types'
 import { getLogoUrl, applyBrandColor } from '@/services/landing'
+import { getAllTreatments } from '@/services/treatments'
+import { TreatmentsDropdown } from '@/components/TreatmentsDropdown'
 
 const navLinks = [
   { name: 'Home', href: '/', type: 'route' as const },
@@ -35,7 +37,15 @@ export function LandingLayout({
   const navigate = useNavigate()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+  const [mobileTreatmentsOpen, setMobileTreatmentsOpen] = useState(false)
+  const [treatments, setTreatments] = useState<Treatment[]>([])
   const isLanding = location.pathname === '/'
+
+  useEffect(() => {
+    getAllTreatments()
+      .then(setTreatments)
+      .catch(() => {})
+  }, [])
 
   useEffect(() => {
     const handler = () => setIsScrolled(window.scrollY > 30)
@@ -55,6 +65,14 @@ export function LandingLayout({
 
   const handleNavClick = (link: (typeof navLinks)[0]) => {
     setIsMenuOpen(false)
+    if (link.name === 'Tratamentos') {
+      if (isLanding) {
+        scrollToSection('#tratamentos')
+      } else {
+        navigate('/#tratamentos')
+      }
+      return
+    }
     if (link.type === 'route') {
       navigate(link.href)
     } else if (link.type === 'scroll') {
@@ -90,18 +108,22 @@ export function LandingLayout({
             )}
           </Link>
           <nav className="hidden lg:flex items-center gap-1">
-            {navLinks.map((link) => (
-              <button
-                key={link.name}
-                onClick={() => handleNavClick(link)}
-                className={cn(
-                  'text-sm font-medium px-3 py-2 rounded-md transition-colors',
-                  'text-slate-600 hover:text-slate-900 hover:bg-slate-100',
-                )}
-              >
-                {link.name}
-              </button>
-            ))}
+            {navLinks.map((link) =>
+              link.name === 'Tratamentos' ? (
+                <TreatmentsDropdown key={link.name}>Tratamentos</TreatmentsDropdown>
+              ) : (
+                <button
+                  key={link.name}
+                  onClick={() => handleNavClick(link)}
+                  className={cn(
+                    'text-sm font-medium px-3 py-2 rounded-md transition-colors',
+                    'text-slate-600 hover:text-slate-900 hover:bg-slate-100',
+                  )}
+                >
+                  {link.name}
+                </button>
+              ),
+            )}
           </nav>
           <div className="hidden lg:flex items-center">
             <Button
@@ -129,15 +151,49 @@ export function LandingLayout({
         )}
       >
         <nav className="flex flex-col gap-2 text-lg font-medium">
-          {navLinks.map((link) => (
-            <button
-              key={link.name}
-              onClick={() => handleNavClick(link)}
-              className="text-slate-700 hover:text-primary text-left py-3 border-b border-slate-100 transition-colors"
-            >
-              {link.name}
-            </button>
-          ))}
+          {navLinks.map((link) => {
+            if (link.name === 'Tratamentos') {
+              return (
+                <div key={link.name}>
+                  <button
+                    onClick={() => setMobileTreatmentsOpen(!mobileTreatmentsOpen)}
+                    className="flex items-center justify-between w-full text-slate-700 hover:text-primary text-left py-3 border-b border-slate-100 transition-colors"
+                  >
+                    Tratamentos
+                    <ChevronDown
+                      className={cn(
+                        'h-5 w-5 transition-transform duration-200',
+                        mobileTreatmentsOpen && 'rotate-180',
+                      )}
+                    />
+                  </button>
+                  {mobileTreatmentsOpen && (
+                    <div className="flex flex-col gap-0 pl-4 pb-2 animate-fade-in">
+                      {treatments.map((treatment) => (
+                        <Link
+                          key={treatment.id}
+                          to={`/tratamentos/${treatment.slug}`}
+                          onClick={() => setIsMenuOpen(false)}
+                          className="text-slate-600 hover:text-primary text-base text-left py-2.5 border-b border-slate-50 transition-colors"
+                        >
+                          {treatment.name}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )
+            }
+            return (
+              <button
+                key={link.name}
+                onClick={() => handleNavClick(link)}
+                className="text-slate-700 hover:text-primary text-left py-3 border-b border-slate-100 transition-colors"
+              >
+                {link.name}
+              </button>
+            )
+          })}
           <Button
             className="mt-6 bg-slate-900 text-white hover:bg-slate-800 rounded-full h-12 text-base"
             onClick={() => {
