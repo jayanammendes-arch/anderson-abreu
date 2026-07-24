@@ -12,8 +12,6 @@ export function HomeCredentialSection({ settings }: HomeCredentialSectionProps) 
   const name = settings?.home_credential_name || 'Anderson Abreu'
   const subtitle = settings?.home_credential_subtitle || 'Hipnoterapeuta e Professor de Hipnose'
   const ctaText = settings?.home_credential_cta_text || 'Conheça Mais'
-  const badgeText =
-    settings?.home_credential_floating_badge_text || '+8 Certificações Internacionais'
 
   let credentials: string[] = []
   if (settings?.home_credential_list) {
@@ -68,10 +66,10 @@ export function HomeCredentialSection({ settings }: HomeCredentialSectionProps) 
                 <img
                   src={imageUrl}
                   alt={name}
-                  className="rounded-2xl shadow-xl object-cover w-full h-[400px] md:h-[520px]"
+                  className="rounded-2xl shadow-xl object-cover w-full h-[400px] md:h-[680px]"
                 />
               ) : (
-                <div className="rounded-2xl shadow-xl bg-slate-100 w-full h-[400px] md:h-[520px] flex items-center justify-center">
+                <div className="rounded-2xl shadow-xl bg-slate-100 w-full h-[400px] md:h-[680px] flex items-center justify-center">
                   <img
                     src="https://img.usecurling.com/p/600/700?q=professional%20therapist&color=gray"
                     alt={name}
@@ -79,11 +77,6 @@ export function HomeCredentialSection({ settings }: HomeCredentialSectionProps) 
                   />
                 </div>
               )}
-              <div className="absolute bottom-4 right-4 md:bottom-6 md:right-6 bg-white rounded-2xl shadow-lg px-5 py-3 max-w-[220px]">
-                <p className="text-sm md:text-base font-semibold text-slate-900 leading-snug">
-                  {badgeText}
-                </p>
-              </div>
             </div>
           </div>
         </div>

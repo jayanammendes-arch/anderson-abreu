@@ -113,13 +113,24 @@ export default function Landing() {
               </>
             )}
 
-            <div className="pt-4">
+            <div className="pt-4 flex flex-col sm:flex-row gap-4">
               <Button
                 size="lg"
                 className="bg-[#00A3C4] hover:bg-[#008ca8] text-white rounded-full px-10 py-6 text-lg font-medium shadow-lg transition-all hover:scale-105"
                 onClick={() => navigate('/agendar')}
               >
                 {settings?.hero_cta_text || 'Falar com especialista'}
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="rounded-full px-10 py-6 text-lg font-medium shadow-lg transition-all hover:scale-105 border-slate-300 text-slate-900 hover:bg-slate-100"
+                asChild
+              >
+                <Link to="/sobre">
+                  {settings?.saiba_mais_text || 'Saiba mais'}
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
               </Button>
             </div>
           </div>
