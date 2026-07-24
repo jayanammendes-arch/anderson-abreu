@@ -388,3 +388,11 @@ export interface BlogPost {
   created: string
   updated: string
 }
+
+export interface CertificationLogo {
+  id: string
+  image: string
+  order: number
+  created: string
+  updated: string
+}

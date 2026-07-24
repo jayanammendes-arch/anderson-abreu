@@ -19,6 +19,7 @@ import { TreatmentCard } from '@/components/TreatmentCard'
 import { BlogCard } from '@/components/BlogCard'
 import { ArrowRight, Calendar, Loader2, CheckCircle2, ArrowUpRight } from 'lucide-react'
 import { CredentialsMarquee } from '@/components/CredentialsMarquee'
+import { cn } from '@/lib/utils'
 
 export default function Landing() {
   const navigate = useNavigate()
@@ -153,7 +154,7 @@ export default function Landing() {
       )}
 
       {/* Credentials Marquee */}
-      <CredentialsMarquee settings={settings} />
+      <CredentialsMarquee />
 
       {/* Services */}
       {settings?.services_title && (
@@ -305,8 +306,4 @@ export default function Landing() {
       </section>
     </LandingLayout>
   )
-}
-
-function cn(...args: any[]) {
-  return args.filter(Boolean).join(' ')
 }

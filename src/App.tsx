@@ -32,6 +32,7 @@ import AdminTestimonials from '@/pages/admin/AdminTestimonials'
 import AdminCommunity from '@/pages/admin/AdminCommunity'
 import AdminCertificates from '@/pages/admin/AdminCertificates'
 import AdminContacts from '@/pages/admin/AdminContacts'
+import AdminCertifications from '@/pages/admin/AdminCertifications'
 import AdminTreatments from '@/pages/admin/AdminTreatments'
 import AdminTreatmentCategories from '@/pages/admin/AdminTreatmentCategories'
 import AdminBlog from '@/pages/admin/AdminBlog'
@@ -79,6 +80,7 @@ const App = () => (
               <Route path="comunidade" element={<AdminCommunity />} />
               <Route path="certificados" element={<AdminCertificates />} />
               <Route path="contatos" element={<AdminContacts />} />
+              <Route path="certificacoes" element={<AdminCertifications />} />
             </Route>
             <Route path="/dashboard" element={<DashboardLayout />}>
               <Route index element={<Index />} />

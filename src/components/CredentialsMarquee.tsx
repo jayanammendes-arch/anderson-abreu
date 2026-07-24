@@ -1,12 +1,35 @@
-import { getCredentialsImageUrl } from '@/services/landing'
-import type { PlatformSettings } from '@/types'
+import { useState, useEffect } from 'react'
+import { getCertificationLogos, getCertificationLogoUrl } from '@/services/certification-logos'
+import { useRealtime } from '@/hooks/use-realtime'
+import type { CertificationLogo } from '@/types'
 
-const PLACEHOLDER_IMAGE =
-  'https://img.usecurling.com/p/1200/200?q=professional%20certifications%20logos'
+export function CredentialsMarquee() {
+  const [logos, setLogos] = useState<CertificationLogo[]>([])
 
-export function CredentialsMarquee({ settings }: { settings: PlatformSettings | null }) {
-  const credentialsUrl = settings ? getCredentialsImageUrl(settings) : null
-  const imageUrl = credentialsUrl || PLACEHOLDER_IMAGE
+  const loadData = async () => {
+    try {
+      const data = await getCertificationLogos()
+      setLogos(data as CertificationLogo[])
+    } catch {
+      setLogos([])
+    }
+  }
+
+  useEffect(() => {
+    loadData()
+  }, [])
+
+  useRealtime('certification_logos', () => {
+    loadData()
+  })
+
+  if (logos.length === 0) return null
+
+  const logoUrls = logos
+    .map((logo) => getCertificationLogoUrl(logo))
+    .filter((url): url is string => url !== null)
+
+  const doubledUrls = [...logoUrls, ...logoUrls]
 
   return (
     <section
@@ -14,19 +37,15 @@ export function CredentialsMarquee({ settings }: { settings: PlatformSettings | 
       style={{ backgroundColor: '#0a1628' }}
     >
       <div className="credentials-marquee">
-        <img
-          src={imageUrl}
-          alt="Credenciais e formações profissionais"
-          className="credentials-marquee-item"
-          draggable={false}
-        />
-        <img
-          src={imageUrl}
-          alt=""
-          aria-hidden="true"
-          className="credentials-marquee-item"
-          draggable={false}
-        />
+        {doubledUrls.map((url, i) => (
+          <img
+            key={i}
+            src={url}
+            alt="Credenciais e formações profissionais"
+            className="credentials-marquee-item"
+            draggable={false}
+          />
+        ))}
       </div>
     </section>
   )

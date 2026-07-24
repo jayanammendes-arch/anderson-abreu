@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-24T17:43:06.936Z",
+  "generatedAt": "2026-07-24T17:48:15.940Z",
   "collections": [
     {
       "name": "users",
@@ -1994,6 +1994,46 @@
         "CREATE INDEX idx_site_faqs_order ON site_faqs (order)",
         "CREATE INDEX idx_site_faqs_active_order ON site_faqs (is_active, order)"
       ]
+    },
+    {
+      "name": "certification_logos",
+      "type": "base",
+      "apiRules": {
+        "list": "",
+        "view": "",
+        "create": "@request.auth.is_admin = true",
+        "update": "@request.auth.is_admin = true",
+        "delete": "@request.auth.is_admin = true"
+      },
+      "fields": [
+        {
+          "name": "image",
+          "type": "file",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "order",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": ["CREATE INDEX idx_certification_logos_order ON certification_logos (order)"]
     }
   ]
 }

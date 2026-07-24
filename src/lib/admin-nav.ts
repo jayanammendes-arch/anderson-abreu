@@ -14,6 +14,7 @@ import {
   Stethoscope,
   Newspaper,
   Globe,
+  BadgeCheck,
 } from 'lucide-react'
 
 export interface AdminNavItem {
@@ -124,6 +125,12 @@ export const adminNavGroups: AdminNavGroup[] = [
         href: '/admin/contatos',
         icon: Mail,
         description: 'Visualizar mensagens de contato recebidas',
+      },
+      {
+        title: 'Certificações',
+        href: '/admin/certificacoes',
+        icon: BadgeCheck,
+        description: 'Gerenciar logos de certificações exibidos no site',
       },
     ],
   },
