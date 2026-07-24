@@ -9,7 +9,10 @@ export function CredentialsMarquee({ settings }: { settings: PlatformSettings | 
   const imageUrl = credentialsUrl || PLACEHOLDER_IMAGE
 
   return (
-    <section className="credentials-marquee-section w-full overflow-hidden bg-white border-y border-slate-100">
+    <section
+      className="credentials-marquee-section w-full overflow-hidden"
+      style={{ backgroundColor: '#0a1628' }}
+    >
       <div className="credentials-marquee">
         <img
           src={imageUrl}
