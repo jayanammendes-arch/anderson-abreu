@@ -149,48 +149,6 @@ export default function TreatmentDetail() {
         />
       )}
 
-      <section className="py-24 bg-slate-50">
-        <div className="max-w-5xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
-          <div>
-            {aboutImage ? (
-              <img
-                src={aboutImage}
-                alt="Profissional"
-                className="rounded-2xl shadow-xl w-full h-[400px] object-cover"
-              />
-            ) : (
-              <div className="rounded-2xl bg-slate-200 w-full h-[400px]" />
-            )}
-          </div>
-          <div>
-            <h2 className="text-3xl font-bold text-slate-900 mb-4">
-              {settings?.about_title || 'Sobre o Profissional'}
-            </h2>
-            {settings?.about_full_bio ? (
-              <div
-                className="prose prose-lg text-slate-600 mb-4 max-w-none"
-                dangerouslySetInnerHTML={{ __html: settings.about_full_bio }}
-              />
-            ) : (
-              <p className="text-lg text-slate-600 mb-4">
-                Especialista em hipnose clínica com mais de uma década transformando vidas.
-              </p>
-            )}
-            {settings?.about_credentials && (
-              <p className="text-sm text-slate-500 mb-6">{settings.about_credentials}</p>
-            )}
-            <div className="grid grid-cols-2 gap-4">
-              {stats.map((s, i) => (
-                <div key={i}>
-                  <span className="text-2xl font-bold text-[#00A3C4]">{s.value}</span>
-                  <p className="text-sm text-slate-500">{s.label}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
       {category.symptoms_list && (
         <section className="py-24 bg-white">
           <div className="max-w-4xl mx-auto px-6">
