@@ -7,7 +7,6 @@ import {
   getPlatformSettingsPublic,
   getHomeHeroImageUrl,
   getAboutImageUrl,
-  getCredentialsImageUrl,
 } from '@/services/landing'
 import { getTreatmentCategories } from '@/services/treatment-categories'
 import { getBlogPosts } from '@/services/blog'
@@ -19,6 +18,7 @@ import { LandingLayout } from '@/components/LandingLayout'
 import { TreatmentCard } from '@/components/TreatmentCard'
 import { BlogCard } from '@/components/BlogCard'
 import { ArrowRight, Calendar, Loader2, CheckCircle2, ArrowUpRight } from 'lucide-react'
+import { CredentialsMarquee } from '@/components/CredentialsMarquee'
 
 export default function Landing() {
   const navigate = useNavigate()
@@ -152,24 +152,8 @@ export default function Landing() {
         </section>
       )}
 
-      {/* Credentials Band */}
-      {(() => {
-        const credentialsUrl = settings ? getCredentialsImageUrl(settings) : null
-        const imageUrl =
-          credentialsUrl ||
-          'https://img.usecurling.com/p/1200/200?q=professional%20certifications%20logos'
-        return (
-          <section className="py-12 bg-white border-y border-slate-100">
-            <div className="max-w-4xl mx-auto px-6">
-              <img
-                src={imageUrl}
-                alt="Credenciais e formações profissionais"
-                className="w-full h-auto object-contain"
-              />
-            </div>
-          </section>
-        )
-      })()}
+      {/* Credentials Marquee */}
+      <CredentialsMarquee settings={settings} />
 
       {/* Services */}
       {settings?.services_title && (
