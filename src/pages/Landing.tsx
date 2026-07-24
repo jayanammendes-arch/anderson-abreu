@@ -263,7 +263,7 @@ export default function Landing() {
                 </p>
               </div>
               <Button variant="outline" className="rounded-full hidden md:flex" asChild>
-                <Link to="/blog">
+                <Link className="text-[#000000] bg-[Verde | #008000]" to="/blog">
                   Ver todos <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
