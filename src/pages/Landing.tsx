@@ -113,24 +113,13 @@ export default function Landing() {
               </>
             )}
 
-            <div className="pt-4 flex flex-col sm:flex-row gap-4">
+            <div className="pt-4">
               <Button
                 size="lg"
                 className="bg-[#00A3C4] hover:bg-[#008ca8] text-white rounded-full px-10 py-6 text-lg font-medium shadow-lg transition-all hover:scale-105"
                 onClick={() => navigate('/agendar')}
               >
                 {settings?.hero_cta_text || 'Falar com especialista'}
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="rounded-full px-10 py-6 text-lg font-medium shadow-lg transition-all hover:scale-105 border-slate-300 text-slate-900 hover:bg-slate-100"
-                asChild
-              >
-                <Link to="/sobre">
-                  {settings?.saiba_mais_text || 'Saiba mais'}
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
               </Button>
             </div>
           </div>
@@ -167,6 +156,58 @@ export default function Landing() {
 
       {/* Home Credential Section (replaces old About Intro) */}
       <HomeCredentialSection settings={settings} />
+
+      {/* Saiba mais button below specialist description */}
+      <div className="pb-16 bg-white">
+        <div className="max-w-7xl mx-auto px-6 flex justify-center">
+          <Button
+            size="lg"
+            variant="outline"
+            className="rounded-full px-10 py-6 text-lg font-medium shadow-lg transition-all hover:scale-105 border-slate-300 text-slate-900 hover:bg-slate-100"
+            asChild
+          >
+            <Link to="/sobre">
+              {settings?.saiba_mais_text || 'Saiba mais'}
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Link>
+          </Button>
+        </div>
+      </div>
+
+      {/* O que é Hipnose Clínica? */}
+      <section className="py-24 bg-slate-50">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+              <img
+                src="https://img.usecurling.com/p/600/500?q=clinical%20hypnosis%20session&color=blue"
+                alt="O que é Hipnose Clínica?"
+                className="rounded-2xl shadow-xl object-cover w-full h-[400px] md:h-[500px]"
+              />
+            </div>
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">
+                O que é Hipnose Clínica?
+              </h2>
+              <p className="text-lg text-slate-600 leading-relaxed mb-4">
+                A hipnose clínica é uma técnica terapêutica reconhecida cientificamente que utiliza
+                um estado de relaxamento profundo e foco concentrado para acessar o subconsciente,
+                permitindo transformações profundas e duradouras.
+              </p>
+              <p className="text-lg text-slate-600 leading-relaxed mb-4">
+                Diferente do que se vê em shows de entretenimento, a hipnose clínica é uma
+                ferramenta terapêutica séria e eficaz, utilizada para tratar ansiedade, depressão,
+                fobias, traumas, compulsões e diversos outros quadros emocionais e comportamentais.
+              </p>
+              <p className="text-lg text-slate-600 leading-relaxed">
+                Através de técnicas comprovadas, o terapeuta guia o paciente a um estado de
+                relaxamento profundo onde a mente se torna mais receptiva a mudanças positivas,
+                promovendo cura emocional e bem-estar duradouro.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Courses */}
       {courses.length > 0 && null}
