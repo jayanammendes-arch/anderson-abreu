@@ -96,12 +96,6 @@ export const adminNavGroups: AdminNavGroup[] = [
         description: 'Editar textos, imagens e configurações da plataforma',
       },
       {
-        title: 'Tratamentos',
-        href: '/admin/tratamentos',
-        icon: Stethoscope,
-        description: 'Gerenciar tratamentos exibidos na landing page',
-      },
-      {
         title: 'Categorias de Tratamento',
         href: '/admin/categorias-tratamentos',
         icon: Stethoscope,
