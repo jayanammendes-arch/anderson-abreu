@@ -128,6 +128,21 @@ export function TestimonialsSection({ customTitle }: { customTitle?: string }) {
 
   if (loading || testimonials.length === 0) return null
 
-  return
-  null
+  const title = customTitle || 'Depoimentos'
+
+  return (
+    <section className="py-16 md:py-24 bg-slate-50">
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-slate-900">{title}</h2>
+          <div className="mt-4 mx-auto w-20 h-1 bg-primary rounded-full" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {testimonials.map((t) => (
+            <TestimonialCard key={t.id} testimonial={t} />
+          ))}
+        </div>
+      </div>
+    </section>
+  )
 }
