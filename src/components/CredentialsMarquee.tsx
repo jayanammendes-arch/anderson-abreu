@@ -29,7 +29,10 @@ export function CredentialsMarquee() {
     .map((logo) => getCertificationLogoUrl(logo))
     .filter((url): url is string => url !== null)
 
-  const doubledUrls = [...logoUrls, ...logoUrls]
+  const minItems = 10
+  const minSets = Math.max(1, Math.ceil(minItems / logoUrls.length))
+  const baseSet = Array(minSets).fill(logoUrls).flat()
+  const doubledUrls = [...baseSet, ...baseSet]
 
   return (
     <section
