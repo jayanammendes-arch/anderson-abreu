@@ -11,7 +11,7 @@ interface HomeCredentialSectionProps {
 export function HomeCredentialSection({ settings }: HomeCredentialSectionProps) {
   const name = settings?.home_credential_name || 'Anderson Abreu'
   const subtitle = settings?.home_credential_subtitle || 'Hipnoterapeuta e Professor de Hipnose'
-  const ctaText = settings?.home_credential_cta_text || 'Conheça Mais'
+  const ctaText = settings?.home_credential_cta_text || 'Saiba mais'
 
   let credentials: string[] = []
   if (settings?.home_credential_list) {
@@ -61,21 +61,15 @@ export function HomeCredentialSection({ settings }: HomeCredentialSectionProps) 
           </div>
 
           <div className="order-1 md:order-2 relative">
-            <div className="relative">
+            <div className="relative h-[400px] md:h-[680px] w-full rounded-2xl overflow-hidden shadow-xl bg-slate-100">
               {imageUrl ? (
-                <img
-                  src={imageUrl}
-                  alt={name}
-                  className="rounded-2xl shadow-xl object-cover w-full h-[400px] md:h-[680px]"
-                />
+                <img src={imageUrl} alt={name} className="w-full h-full object-cover object-top" />
               ) : (
-                <div className="rounded-2xl shadow-xl bg-slate-100 w-full h-[400px] md:h-[680px] flex items-center justify-center">
-                  <img
-                    src="https://img.usecurling.com/p/600/700?q=professional%20therapist&color=gray"
-                    alt={name}
-                    className="rounded-2xl object-cover w-full h-full"
-                  />
-                </div>
+                <img
+                  src="https://img.usecurling.com/p/600/700?q=professional%20therapist&color=gray"
+                  alt={name}
+                  className="w-full h-full object-cover object-top"
+                />
               )}
             </div>
           </div>
