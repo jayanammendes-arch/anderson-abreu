@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-24T17:01:42.467Z",
+  "generatedAt": "2026-07-24T17:06:33.623Z",
   "collections": [
     {
       "name": "users",
@@ -1919,6 +1919,12 @@
         {
           "name": "cta_images",
           "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "is_active",
+          "type": "bool",
           "required": false,
           "system": false
         }

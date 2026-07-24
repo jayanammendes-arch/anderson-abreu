@@ -35,7 +35,7 @@ import { getTreatmentIcon } from '@/lib/treatment-icons'
 import { extractFieldErrors, type FieldErrors } from '@/lib/pocketbase/errors'
 import { toast } from 'sonner'
 import { Pencil, Trash2, Plus, Loader2, Save } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
+import { Switch } from '@/components/ui/switch'
 
 const emptyForm: Partial<TreatmentCategory> = {
   name: '',
@@ -48,6 +48,7 @@ const emptyForm: Partial<TreatmentCategory> = {
   cta_text: '',
   icon: 'brain',
   order: 0,
+  is_active: true,
 }
 
 function slugify(text: string): string {
@@ -77,6 +78,7 @@ export default function AdminTreatmentCategories() {
     resultados_images: [],
     cta_images: [],
   })
+  const [togglingId, setTogglingId] = useState<string | null>(null)
   const [removedExistingImages, setRemovedExistingImages] = useState<
     Record<MultiImageField, number[]>
   >({
@@ -152,6 +154,7 @@ export default function AdminTreatmentCategories() {
       fd.append('como_funciona_text', formData.como_funciona_text || '')
       fd.append('resultados_text', formData.resultados_text || '')
       fd.append('cta_text', formData.cta_text || '')
+      fd.append('is_active', String(formData.is_active ?? true))
 
       if (imageFile) fd.append('image', imageFile)
 
@@ -211,6 +214,23 @@ export default function AdminTreatmentCategories() {
     }
   }
 
+  const handleToggleActive = async (cat: TreatmentCategory) => {
+    const newValue = !cat.is_active
+    setTogglingId(cat.id)
+    setCategories((prev) => prev.map((c) => (c.id === cat.id ? { ...c, is_active: newValue } : c)))
+    try {
+      await adminUpdateTreatmentCategory(cat.id, { is_active: newValue })
+      toast.success(newValue ? 'Categoria ativada!' : 'Categoria desativada!')
+    } catch {
+      setCategories((prev) =>
+        prev.map((c) => (c.id === cat.id ? { ...c, is_active: !newValue } : c)),
+      )
+      toast.error('Erro ao alterar status da categoria')
+    } finally {
+      setTogglingId(null)
+    }
+  }
+
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="flex justify-between items-center">
@@ -244,9 +264,16 @@ export default function AdminTreatmentCategories() {
                   <h3 className="font-semibold truncate">{cat.name}</h3>
                   <p className="text-sm text-muted-foreground truncate">/tratamentos/{cat.slug}</p>
                 </div>
-                <Badge variant={cat.order > 0 ? 'default' : 'secondary'} className="shrink-0">
-                  {cat.order > 0 ? 'Ativo' : 'Inativo'}
-                </Badge>
+                <div className="flex items-center gap-2 shrink-0">
+                  <Switch
+                    checked={cat.is_active ?? false}
+                    onCheckedChange={() => handleToggleActive(cat)}
+                    disabled={togglingId === cat.id}
+                  />
+                  <span className="text-xs text-muted-foreground w-12">
+                    {cat.is_active ? 'Ativo' : 'Inativo'}
+                  </span>
+                </div>
                 <div className="flex gap-2 shrink-0">
                   <Button variant="ghost" size="icon" onClick={() => handleEdit(cat)}>
                     <Pencil className="h-4 w-4" />

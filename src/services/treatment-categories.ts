@@ -2,10 +2,10 @@ import pb from '@/lib/pocketbase/client'
 import type { TreatmentCategory } from '@/types'
 
 export const getTreatmentCategories = (): Promise<TreatmentCategory[]> =>
-  pb.collection('treatment_categories').getFullList({ sort: 'order' })
+  pb.collection('treatment_categories').getFullList({ sort: 'order', filter: 'is_active = true' })
 
 export const getTreatmentCategoryBySlug = (slug: string): Promise<TreatmentCategory> =>
-  pb.collection('treatment_categories').getFirstListItem(`slug = "${slug}"`)
+  pb.collection('treatment_categories').getFirstListItem(`slug = "${slug}" && is_active = true`)
 
 export function getTreatmentCategoryImageUrl(category: TreatmentCategory): string | null {
   if (!category.image) return null

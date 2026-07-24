@@ -354,6 +354,7 @@ export interface TreatmentCategory {
   icon: string
   symptoms_list?: string
   order: number
+  is_active?: boolean
   como_funciona_text?: string
   como_funciona_images?: string[]
   resultados_text?: string
