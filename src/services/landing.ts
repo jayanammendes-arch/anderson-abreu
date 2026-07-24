@@ -101,6 +101,16 @@ export function getAgendarBackgroundImageUrl(settings: {
   return null
 }
 
+export function getCredentialsImageUrl(settings: {
+  id: string
+  credentials_image?: string
+}): string | null {
+  if (settings.credentials_image) {
+    return pb.files.getUrl(settings, settings.credentials_image)
+  }
+  return null
+}
+
 export function applyBrandColor(color: string): void {
   document.documentElement.style.setProperty('--primary', color)
 }

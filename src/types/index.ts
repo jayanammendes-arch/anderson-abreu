@@ -313,6 +313,7 @@ export interface PlatformSettings {
   agendar_subheadline?: string
   agendar_benefits?: string
   agendar_submit_button_text?: string
+  credentials_image?: string
   created: string
   updated: string
 }

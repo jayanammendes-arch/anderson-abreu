@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-24T17:14:05.199Z",
+  "generatedAt": "2026-07-24T17:29:47.714Z",
   "collections": [
     {
       "name": "users",
@@ -938,6 +938,12 @@
         {
           "name": "agendar_submit_button_text",
           "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "credentials_image",
+          "type": "file",
           "required": false,
           "system": false
         }
