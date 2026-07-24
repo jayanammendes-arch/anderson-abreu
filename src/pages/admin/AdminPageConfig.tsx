@@ -65,6 +65,11 @@ interface FormState {
   agendar_subheadline: string
   agendar_benefits: string
   agendar_submit_button_text: string
+  home_credential_name: string
+  home_credential_subtitle: string
+  home_credential_list: string
+  home_credential_cta_text: string
+  home_credential_floating_badge_text: string
 }
 
 const emptyForm: FormState = {
@@ -115,6 +120,11 @@ const emptyForm: FormState = {
   agendar_subheadline: '',
   agendar_benefits: '[]',
   agendar_submit_button_text: '',
+  home_credential_name: '',
+  home_credential_subtitle: '',
+  home_credential_list: '[]',
+  home_credential_cta_text: '',
+  home_credential_floating_badge_text: '',
 }
 
 function FieldLabel({ label, description }: { label: string; description?: string }) {
@@ -233,6 +243,7 @@ export default function AdminPageConfig() {
   const [logoFile, setLogoFile] = useState<File | null>(null)
   const [loginImageFile, setLoginImageFile] = useState<File | null>(null)
   const [agendarBgImage, setAgendarBgImage] = useState<File | null>(null)
+  const [homeCredentialImage, setHomeCredentialImage] = useState<File | null>(null)
 
   const set = (key: keyof FormState, value: string | boolean) =>
     setForm((p) => ({ ...p, [key]: value }))
@@ -297,6 +308,14 @@ export default function AdminPageConfig() {
                 ? data.agendar_benefits
                 : JSON.stringify(data.agendar_benefits || []),
             agendar_submit_button_text: data.agendar_submit_button_text || '',
+            home_credential_name: data.home_credential_name || '',
+            home_credential_subtitle: data.home_credential_subtitle || '',
+            home_credential_list:
+              typeof data.home_credential_list === 'string'
+                ? data.home_credential_list
+                : JSON.stringify(data.home_credential_list || []),
+            home_credential_cta_text: data.home_credential_cta_text || '',
+            home_credential_floating_badge_text: data.home_credential_floating_badge_text || '',
           })
         }
       } catch {
@@ -321,6 +340,7 @@ export default function AdminPageConfig() {
       if (logoFile) fd.append('logo', logoFile)
       if (loginImageFile) fd.append('login_image', loginImageFile)
       if (agendarBgImage) fd.append('agendar_background_image', agendarBgImage)
+      if (homeCredentialImage) fd.append('home_credential_image', homeCredentialImage)
       if (settings) await updatePlatformSettings(settings.id, fd)
       else await createPlatformSettings(fd)
       toast.success('Configurações salvas com sucesso!')
@@ -480,38 +500,97 @@ export default function AdminPageConfig() {
             <TabsContent value="sobre">
               <Card className="bg-card/50 border-border/50">
                 <CardContent className="space-y-4 pt-6">
-                  <LabeledInput
-                    label="Título da seção"
-                    value={form.about_title}
-                    onChange={(v) => set('about_title', v)}
-                  />
-                  <LabeledInput
-                    label="Introdução curta"
-                    description="Texto curto exibido na landing page"
-                    value={form.about_intro}
-                    onChange={(v) => set('about_intro', v)}
-                  />
                   <div className="space-y-2">
-                    <Label>Conteúdo da seção (Landing)</Label>
-                    <RichTextEditor
-                      value={form.about_content}
-                      onChange={(html) => set('about_content', html)}
-                    />
-                  </div>
-                  <div className="space-y-2 pt-4 border-t border-border/50">
-                    <Label>Biografia completa (Página /sobre)</Label>
-                    <RichTextEditor
-                      value={form.about_full_bio}
-                      onChange={(html) => set('about_full_bio', html)}
-                    />
+                    <h3 className="text-base font-semibold">Seção de Credenciais (Home)</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Configurações da seção de credenciais exibida na home page abaixo do carrossel
+                      de logos.
+                    </p>
                   </div>
                   <LabeledInput
-                    label="Credenciais"
-                    value={form.about_credentials}
-                    onChange={(v) => set('about_credentials', v)}
+                    label="Nome do Especialista"
+                    value={form.home_credential_name}
+                    onChange={(v) => set('home_credential_name', v)}
+                    placeholder="Anderson Abreu"
                   />
-                  <ImageUpload label="Imagem da seção (Landing)" onFile={setAboutImage} />
-                  <ImageUpload label="Imagem da página Sobre" onFile={setAboutPageImage} />
+                  <LabeledInput
+                    label="Subtítulo"
+                    value={form.home_credential_subtitle}
+                    onChange={(v) => set('home_credential_subtitle', v)}
+                    placeholder="Hipnoterapeuta e Professor de Hipnose"
+                  />
+                  <LabeledTextarea
+                    label="Lista de Credenciais (uma por linha)"
+                    description="Cada linha será exibida com um checkmark azul"
+                    value={
+                      form.home_credential_list.startsWith('[')
+                        ? (() => {
+                            try {
+                              const arr = JSON.parse(form.home_credential_list)
+                              return Array.isArray(arr) ? arr.join('\n') : ''
+                            } catch {
+                              return ''
+                            }
+                          })()
+                        : form.home_credential_list
+                    }
+                    onChange={(v) => {
+                      const arr = v.split('\n').filter((line) => line.trim())
+                      set('home_credential_list', JSON.stringify(arr))
+                    }}
+                  />
+                  <LabeledInput
+                    label="Texto do Botão (CTA)"
+                    value={form.home_credential_cta_text}
+                    onChange={(v) => set('home_credential_cta_text', v)}
+                    placeholder="Conheça Mais"
+                  />
+                  <LabeledInput
+                    label="Texto do Badge Flutuante"
+                    value={form.home_credential_floating_badge_text}
+                    onChange={(v) => set('home_credential_floating_badge_text', v)}
+                    placeholder="+8 Certificações Internacionais"
+                  />
+                  <ImageUpload
+                    label="Foto do Especialista"
+                    description="Imagem exibida na coluna direita da seção"
+                    onFile={setHomeCredentialImage}
+                  />
+                  <div className="pt-4 border-t border-border/50 space-y-4">
+                    <h3 className="text-base font-semibold">Página /sobre</h3>
+                    <LabeledInput
+                      label="Título da seção"
+                      value={form.about_title}
+                      onChange={(v) => set('about_title', v)}
+                    />
+                    <LabeledInput
+                      label="Introdução curta"
+                      description="Texto curto exibido na landing page"
+                      value={form.about_intro}
+                      onChange={(v) => set('about_intro', v)}
+                    />
+                    <div className="space-y-2">
+                      <Label>Conteúdo da seção (Landing)</Label>
+                      <RichTextEditor
+                        value={form.about_content}
+                        onChange={(html) => set('about_content', html)}
+                      />
+                    </div>
+                    <div className="space-y-2 pt-4 border-t border-border/50">
+                      <Label>Biografia completa (Página /sobre)</Label>
+                      <RichTextEditor
+                        value={form.about_full_bio}
+                        onChange={(html) => set('about_full_bio', html)}
+                      />
+                    </div>
+                    <LabeledInput
+                      label="Credenciais"
+                      value={form.about_credentials}
+                      onChange={(v) => set('about_credentials', v)}
+                    />
+                    <ImageUpload label="Imagem da seção (Landing)" onFile={setAboutImage} />
+                    <ImageUpload label="Imagem da página Sobre" onFile={setAboutPageImage} />
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>

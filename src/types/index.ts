@@ -314,6 +314,12 @@ export interface PlatformSettings {
   agendar_benefits?: string
   agendar_submit_button_text?: string
   credentials_image?: string
+  home_credential_name?: string
+  home_credential_subtitle?: string
+  home_credential_image?: string
+  home_credential_list?: string
+  home_credential_cta_text?: string
+  home_credential_floating_badge_text?: string
   created: string
   updated: string
 }

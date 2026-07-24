@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-24T18:14:38.128Z",
+  "generatedAt": "2026-07-24T18:31:19.502Z",
   "collections": [
     {
       "name": "users",
@@ -944,6 +944,42 @@
         {
           "name": "credentials_image",
           "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "home_credential_name",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "home_credential_subtitle",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "home_credential_image",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "home_credential_list",
+          "type": "json",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "home_credential_cta_text",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "home_credential_floating_badge_text",
+          "type": "text",
           "required": false,
           "system": false
         }

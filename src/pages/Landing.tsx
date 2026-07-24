@@ -6,7 +6,6 @@ import {
   submitContact,
   getPlatformSettingsPublic,
   getHomeHeroImageUrl,
-  getAboutImageUrl,
 } from '@/services/landing'
 import { getTreatmentCategories } from '@/services/treatment-categories'
 import { getBlogPosts } from '@/services/blog'
@@ -17,8 +16,9 @@ import { TestimonialsSection } from '@/components/TestimonialsSection'
 import { LandingLayout } from '@/components/LandingLayout'
 import { TreatmentCard } from '@/components/TreatmentCard'
 import { BlogCard } from '@/components/BlogCard'
-import { ArrowRight, Calendar, Loader2, CheckCircle2, ArrowUpRight } from 'lucide-react'
+import { ArrowRight, Calendar, Loader2, ArrowUpRight } from 'lucide-react'
 import { CredentialsMarquee } from '@/components/CredentialsMarquee'
+import { HomeCredentialSection } from '@/components/HomeCredentialSection'
 import { cn } from '@/lib/utils'
 
 export default function Landing() {
@@ -52,12 +52,7 @@ export default function Landing() {
   useRealtime('blog_posts', () => loadData())
 
   const heroImageUrl = settings?.home_hero_image ? getHomeHeroImageUrl(settings) : null
-  const aboutImageUrl = settings?.about_image
-    ? getAboutImageUrl(settings)
-    : 'https://img.usecurling.com/p/600/700?q=professional%20therapist&color=gray'
   const agendarText = settings?.agendar_sessao_text || 'Agendar Sessão'
-  const saibaMaisText = settings?.saiba_mais_text || 'Saiba mais'
-
   if (loading) {
     return (
       <LandingLayout settings={settings}>
@@ -201,49 +196,8 @@ export default function Landing() {
         </section>
       )}
 
-      {/* About Intro */}
-      <section className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid md:grid-cols-2 gap-16 items-center">
-            <div className="order-2 md:order-1">
-              <h2 className="text-sm font-semibold tracking-wider uppercase text-primary mb-4">
-                {settings?.about_title || 'Nossa Metodologia'}
-              </h2>
-              <p className="text-3xl md:text-4xl font-bold text-slate-900 leading-tight mb-6">
-                {settings?.about_intro ||
-                  'Especialista em hipnose clínica e desenvolvimento humano, com mais de uma década transformando vidas.'}
-              </p>
-              {settings?.about_content ? (
-                <div
-                  className="prose prose-lg max-w-none text-slate-600"
-                  dangerouslySetInnerHTML={{ __html: settings.about_content }}
-                />
-              ) : (
-                <p className="text-lg text-slate-600 leading-relaxed">
-                  Fundado pelo especialista Anderson Abreu, o instituto tem a missão de formar
-                  profissionais capacitados com o melhor ensino da hipnoterapia e desenvolvimento
-                  humano.
-                </p>
-              )}
-              <Button
-                variant="outline"
-                className="mt-8 rounded-full border-slate-300 hover:bg-slate-50"
-                onClick={() => navigate('/sobre')}
-              >
-                {saibaMaisText}
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </div>
-            <div className="order-1 md:order-2">
-              <img
-                src={aboutImageUrl}
-                alt="Anderson Abreu"
-                className="rounded-2xl shadow-xl object-cover w-full h-[500px]"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Home Credential Section (replaces old About Intro) */}
+      <HomeCredentialSection settings={settings} />
 
       {/* Courses */}
       {courses.length > 0 && null}

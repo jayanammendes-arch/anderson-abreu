@@ -111,6 +111,16 @@ export function getCredentialsImageUrl(settings: {
   return null
 }
 
+export function getHomeCredentialImageUrl(settings: {
+  id: string
+  home_credential_image?: string
+}): string | null {
+  if (settings.home_credential_image) {
+    return `${import.meta.env.VITE_POCKETBASE_URL}/api/files/platform_settings/${settings.id}/${settings.home_credential_image}`
+  }
+  return null
+}
+
 export function applyBrandColor(color: string): void {
   document.documentElement.style.setProperty('--primary', color)
 }
