@@ -18,7 +18,14 @@ export const deleteCertificationLogo = (id: string) =>
 
 export function getCertificationLogoUrl(logo: { id: string; image?: string }): string | null {
   if (logo.image) {
-    return `${import.meta.env.VITE_POCKETBASE_URL}/api/files/certification_logos/${logo.id}/${logo.image}`
+    return pb.files.getUrl(
+      {
+        id: logo.id,
+        collectionId: 'certification_logos',
+        collectionName: 'certification_logos',
+      } as any,
+      logo.image,
+    )
   }
   return null
 }
