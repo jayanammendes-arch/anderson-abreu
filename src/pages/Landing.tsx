@@ -8,10 +8,10 @@ import {
   getHomeHeroImageUrl,
   getAboutImageUrl,
 } from '@/services/landing'
-import { getAllTreatments } from '@/services/treatments'
+import { getTreatmentCategories } from '@/services/treatment-categories'
 import { getBlogPosts } from '@/services/blog'
 import { getThumbnailUrl } from '@/services/courses'
-import type { Course, PlatformSettings, Treatment, BlogPost } from '@/types'
+import type { Course, PlatformSettings, TreatmentCategory, BlogPost } from '@/types'
 import { Button } from '@/components/ui/button'
 import { TestimonialsSection } from '@/components/TestimonialsSection'
 import { LandingLayout } from '@/components/LandingLayout'
@@ -22,7 +22,7 @@ import { ArrowRight, Calendar, Loader2, CheckCircle2, ArrowUpRight } from 'lucid
 export default function Landing() {
   const navigate = useNavigate()
   const [settings, setSettings] = useState<PlatformSettings | null>(null)
-  const [treatments, setTreatments] = useState<Treatment[]>([])
+  const [treatmentCategories, setTreatmentCategories] = useState<TreatmentCategory[]>([])
   const [courses, setCourses] = useState<Course[]>([])
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([])
   const [loading, setLoading] = useState(true)
@@ -30,12 +30,12 @@ export default function Landing() {
   const loadData = async () => {
     const [settingsData, treatmentsData, coursesData, blogData] = await Promise.all([
       getPlatformSettingsPublic().catch(() => null),
-      getAllTreatments().catch(() => []),
+      getTreatmentCategories().catch(() => []),
       getPublicCourses().catch(() => []),
       getBlogPosts().catch(() => []),
     ])
     setSettings(settingsData as PlatformSettings | null)
-    setTreatments(treatmentsData as Treatment[])
+    setTreatmentCategories(treatmentsData as TreatmentCategory[])
     setCourses(coursesData as Course[])
     setBlogPosts((blogData as BlogPost[]).slice(0, 3))
     setLoading(false)
@@ -46,7 +46,7 @@ export default function Landing() {
   }, [])
 
   useRealtime('platform_settings', () => loadData())
-  useRealtime('treatments', () => loadData())
+  useRealtime('treatment_categories', () => loadData())
   useRealtime('blog_posts', () => loadData())
 
   const heroImageUrl = settings?.home_hero_image ? getHomeHeroImageUrl(settings) : null
@@ -130,7 +130,7 @@ export default function Landing() {
       </section>
 
       {/* Treatments */}
-      {treatments.length > 0 && (
+      {treatmentCategories.length > 0 && (
         <section id="tratamentos" className="py-24 bg-white">
           <div className="max-w-7xl mx-auto px-6">
             <div className="text-center mb-16">
@@ -143,8 +143,8 @@ export default function Landing() {
               </p>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-              {treatments.map((treatment) => (
-                <TreatmentCard key={treatment.id} treatment={treatment} />
+              {treatmentCategories.map((category) => (
+                <TreatmentCard key={category.id} category={category} />
               ))}
             </div>
           </div>
