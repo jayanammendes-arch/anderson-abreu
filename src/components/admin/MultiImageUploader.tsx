@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react'
 import { Button } from '@/components/ui/button'
-import { Upload, Trash2, Loader2, ImageIcon } from 'lucide-react'
+import { Upload, Trash2, Loader2, ArrowLeft, ArrowRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface MultiImageUploaderProps {
@@ -44,6 +44,29 @@ export function MultiImageUploader({
     onChange(updated)
   }
 
+  const moveExistingImage = (idx: number, direction: -1 | 1) => {
+    const newList = [...existingImages]
+    const targetIdx = idx + direction
+    if (targetIdx < 0 || targetIdx >= newList.length) return
+    ;[newList[idx], newList[targetIdx]] = [newList[targetIdx], newList[idx]]
+    const reordered = newList.filter((_, i) => !removedExistingImages.includes(i))
+    const removedAdjusted = removedExistingImages.map((ri) => {
+      if (ri === idx) return targetIdx
+      if (ri === targetIdx) return idx
+      return ri
+    })
+    removedAdjusted.forEach((ri) => onRemoveExisting(ri))
+  }
+
+  const moveNewFile = (idx: number, direction: -1 | 1) => {
+    const targetIdx = idx + direction
+    if (targetIdx < 0 || targetIdx >= newFiles.length) return
+    const updated = [...newFiles]
+    ;[updated[idx], updated[targetIdx]] = [updated[targetIdx], updated[idx]]
+    setNewFiles(updated)
+    onChange(updated)
+  }
+
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
@@ -66,6 +89,24 @@ export function MultiImageUploader({
             >
               <Trash2 className="h-4 w-4 text-white" />
             </button>
+            <div className="absolute bottom-0 left-0 right-0 flex justify-between p-1 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity">
+              <button
+                type="button"
+                onClick={() => moveExistingImage(i, -1)}
+                className="p-0.5 rounded bg-white/20 hover:bg-white/40 transition-colors"
+                disabled={i === 0}
+              >
+                <ArrowLeft className="h-3 w-3 text-white" />
+              </button>
+              <button
+                type="button"
+                onClick={() => moveExistingImage(i, 1)}
+                className="p-0.5 rounded bg-white/20 hover:bg-white/40 transition-colors"
+                disabled={i === existingImages.length - 1}
+              >
+                <ArrowRight className="h-3 w-3 text-white" />
+              </button>
+            </div>
           </div>
         ))}
         {newFiles.map((file, i) => (
@@ -81,6 +122,24 @@ export function MultiImageUploader({
             >
               <Trash2 className="h-4 w-4 text-white" />
             </button>
+            <div className="absolute bottom-0 left-0 right-0 flex justify-between p-1 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity">
+              <button
+                type="button"
+                onClick={() => moveNewFile(i, -1)}
+                className="p-0.5 rounded bg-white/20 hover:bg-white/40 transition-colors"
+                disabled={i === 0}
+              >
+                <ArrowLeft className="h-3 w-3 text-white" />
+              </button>
+              <button
+                type="button"
+                onClick={() => moveNewFile(i, 1)}
+                className="p-0.5 rounded bg-white/20 hover:bg-white/40 transition-colors"
+                disabled={i === newFiles.length - 1}
+              >
+                <ArrowRight className="h-3 w-3 text-white" />
+              </button>
+            </div>
           </div>
         ))}
         {remainingSlots > 0 && (

@@ -102,6 +102,12 @@ export const adminNavGroups: AdminNavGroup[] = [
         description: 'Gerenciar tratamentos exibidos na landing page',
       },
       {
+        title: 'Categorias de Tratamento',
+        href: '/admin/categorias-tratamentos',
+        icon: Stethoscope,
+        description: 'Gerenciar categorias de tratamento e seções dinâmicas',
+      },
+      {
         title: 'Blog',
         href: '/admin/blog',
         icon: Newspaper,

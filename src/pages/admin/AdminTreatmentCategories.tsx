@@ -30,10 +30,12 @@ import {
 import { useRealtime } from '@/hooks/use-realtime'
 import { RichTextEditor } from '@/components/admin/RichTextEditor'
 import { MultiImageUploader } from '@/components/admin/MultiImageUploader'
+import { IconPicker } from '@/components/admin/IconPicker'
 import { getTreatmentIcon } from '@/lib/treatment-icons'
 import { extractFieldErrors, type FieldErrors } from '@/lib/pocketbase/errors'
 import { toast } from 'sonner'
 import { Pencil, Trash2, Plus, Loader2, Save } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
 
 const emptyForm: Partial<TreatmentCategory> = {
   name: '',
@@ -139,7 +141,6 @@ export default function AdminTreatmentCategories() {
     setFieldErrors({})
     try {
       const slug = formData.slug || slugify(formData.name || '')
-      const baseUrl = `${import.meta.env.VITE_POCKETBASE_URL}/api/files/treatment_categories`
       const fd = new FormData()
       fd.append('name', formData.name || '')
       fd.append('slug', slug)
@@ -243,6 +244,9 @@ export default function AdminTreatmentCategories() {
                   <h3 className="font-semibold truncate">{cat.name}</h3>
                   <p className="text-sm text-muted-foreground truncate">/tratamentos/{cat.slug}</p>
                 </div>
+                <Badge variant={cat.order > 0 ? 'default' : 'secondary'} className="shrink-0">
+                  {cat.order > 0 ? 'Ativo' : 'Inativo'}
+                </Badge>
                 <div className="flex gap-2 shrink-0">
                   <Button variant="ghost" size="icon" onClick={() => handleEdit(cat)}>
                     <Pencil className="h-4 w-4" />
@@ -313,11 +317,11 @@ export default function AdminTreatmentCategories() {
             </div>
             <div className="space-y-2">
               <Label>Ícone *</Label>
-              <Input
+              <IconPicker
                 value={formData.icon || ''}
-                onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
-                placeholder="nome do ícone (ex: brain)"
+                onChange={(icon) => setFormData({ ...formData, icon })}
               />
+              {fieldErrors.icon && <p className="text-sm text-red-500">{fieldErrors.icon}</p>}
             </div>
             <div className="space-y-2">
               <Label>Imagem Principal</Label>
