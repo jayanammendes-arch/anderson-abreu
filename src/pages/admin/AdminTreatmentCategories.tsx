@@ -357,6 +357,9 @@ export default function AdminTreatmentCategories() {
                 accept="image/jpeg,image/png,image/webp"
                 onChange={(e) => setImageFile(e.target.files?.[0] || null)}
               />
+              <p className="text-xs text-muted-foreground">
+                Recomendado: 800×600 px (formato paisagem)
+              </p>
             </div>
             <div className="space-y-2">
               <Label>Ordem</Label>
@@ -382,6 +385,7 @@ export default function AdminTreatmentCategories() {
                   }
                   onRemoveExisting={(idx) => handleRemoveExistingImage('como_funciona_images', idx)}
                   baseUrl={`${import.meta.env.VITE_POCKETBASE_URL}/api/files/treatment_categories/${formData.id}`}
+                  helperText="Recomendado: 800×600 px (formato paisagem)"
                 />
               )}
               {!formData.id && (
@@ -393,6 +397,7 @@ export default function AdminTreatmentCategories() {
                   }
                   onRemoveExisting={() => {}}
                   baseUrl=""
+                  helperText="Recomendado: 800×600 px (formato paisagem)"
                 />
               )}
             </div>
@@ -412,6 +417,7 @@ export default function AdminTreatmentCategories() {
                   }
                   onRemoveExisting={(idx) => handleRemoveExistingImage('resultados_images', idx)}
                   baseUrl={`${import.meta.env.VITE_POCKETBASE_URL}/api/files/treatment_categories/${formData.id}`}
+                  helperText="Recomendado: 800×600 px (formato paisagem)"
                 />
               )}
               {!formData.id && (
@@ -423,6 +429,7 @@ export default function AdminTreatmentCategories() {
                   }
                   onRemoveExisting={() => {}}
                   baseUrl=""
+                  helperText="Recomendado: 800×600 px (formato paisagem)"
                 />
               )}
             </div>
@@ -440,6 +447,7 @@ export default function AdminTreatmentCategories() {
                   onChange={(files) => setNewImages((prev) => ({ ...prev, cta_images: files }))}
                   onRemoveExisting={(idx) => handleRemoveExistingImage('cta_images', idx)}
                   baseUrl={`${import.meta.env.VITE_POCKETBASE_URL}/api/files/treatment_categories/${formData.id}`}
+                  helperText="Recomendado: 800×600 px (formato paisagem)"
                 />
               )}
               {!formData.id && (
@@ -449,6 +457,7 @@ export default function AdminTreatmentCategories() {
                   onChange={(files) => setNewImages((prev) => ({ ...prev, cta_images: files }))}
                   onRemoveExisting={() => {}}
                   baseUrl=""
+                  helperText="Recomendado: 800×600 px (formato paisagem)"
                 />
               )}
             </div>

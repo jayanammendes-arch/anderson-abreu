@@ -258,6 +258,9 @@ export default function AdminTreatments() {
                 accept="image/jpeg,image/png,image/webp"
                 onChange={(e) => setImageFile(e.target.files?.[0] || null)}
               />
+              <p className="text-xs text-muted-foreground">
+                Recomendado: 800×600 px (formato paisagem)
+              </p>
             </div>
             <div className="space-y-2">
               <Label>Ordem</Label>

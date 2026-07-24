@@ -262,6 +262,9 @@ export default function AdminBlog() {
                 accept="image/jpeg,image/png,image/webp"
                 onChange={(e) => setImageFile(e.target.files?.[0] || null)}
               />
+              <p className="text-xs text-muted-foreground">
+                Recomendado: 1200×630 px (proporção 16:9)
+              </p>
             </div>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>

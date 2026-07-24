@@ -186,10 +186,12 @@ function LabeledTextarea({
 function ImageUpload({
   label,
   description,
+  helperText,
   onFile,
 }: {
   label: string
   description?: string
+  helperText?: string
   onFile: (f: File | null) => void
 }) {
   return (
@@ -200,6 +202,7 @@ function ImageUpload({
         accept="image/jpeg,image/png,image/webp"
         onChange={(e) => onFile(e.target.files?.[0] || null)}
       />
+      {helperText && <p className="text-xs text-muted-foreground">{helperText}</p>}
     </div>
   )
 }
@@ -244,6 +247,7 @@ export default function AdminPageConfig() {
   const [loginImageFile, setLoginImageFile] = useState<File | null>(null)
   const [agendarBgImage, setAgendarBgImage] = useState<File | null>(null)
   const [homeCredentialImage, setHomeCredentialImage] = useState<File | null>(null)
+  const [credentialsImage, setCredentialsImage] = useState<File | null>(null)
 
   const set = (key: keyof FormState, value: string | boolean) =>
     setForm((p) => ({ ...p, [key]: value }))
@@ -341,6 +345,7 @@ export default function AdminPageConfig() {
       if (loginImageFile) fd.append('login_image', loginImageFile)
       if (agendarBgImage) fd.append('agendar_background_image', agendarBgImage)
       if (homeCredentialImage) fd.append('home_credential_image', homeCredentialImage)
+      if (credentialsImage) fd.append('credentials_image', credentialsImage)
       if (settings) await updatePlatformSettings(settings.id, fd)
       else await createPlatformSettings(fd)
       toast.success('Configurações salvas com sucesso!')
@@ -390,7 +395,11 @@ export default function AdminPageConfig() {
                     onChange={(v) => set('company_name', v)}
                     placeholder="Anderson Abreu"
                   />
-                  <ImageUpload label="Logo da Plataforma" onFile={setLogoFile} />
+                  <ImageUpload
+                    label="Logo da Plataforma"
+                    helperText="Recomendado: 200×60 px (PNG com fundo transparente)"
+                    onFile={setLogoFile}
+                  />
                   <ColorInput
                     label="Cor Principal"
                     value={form.primary_color}
@@ -458,7 +467,11 @@ export default function AdminPageConfig() {
                     value={form.saiba_mais_text}
                     onChange={(v) => set('saiba_mais_text', v)}
                   />
-                  <ImageUpload label="Imagem do hero" onFile={setHeroImage} />
+                  <ImageUpload
+                    label="Imagem do hero"
+                    helperText="Recomendado: 1920×800 px (formato paisagem)"
+                    onFile={setHeroImage}
+                  />
                   <div className="grid grid-cols-2 gap-4 pt-2">
                     <div className="space-y-2">
                       <Label>Alunos formados</Label>
@@ -554,6 +567,7 @@ export default function AdminPageConfig() {
                   <ImageUpload
                     label="Foto do Especialista"
                     description="Imagem exibida na coluna direita da seção"
+                    helperText="Recomendado: 600×700 px (formato retrato vertical)"
                     onFile={setHomeCredentialImage}
                   />
                   <div className="pt-4 border-t border-border/50 space-y-4">
@@ -588,8 +602,21 @@ export default function AdminPageConfig() {
                       value={form.about_credentials}
                       onChange={(v) => set('about_credentials', v)}
                     />
-                    <ImageUpload label="Imagem da seção (Landing)" onFile={setAboutImage} />
-                    <ImageUpload label="Imagem da página Sobre" onFile={setAboutPageImage} />
+                    <ImageUpload
+                      label="Imagem da seção (Landing)"
+                      helperText="Recomendado: 800×600 px (formato paisagem)"
+                      onFile={setAboutImage}
+                    />
+                    <ImageUpload
+                      label="Imagem da página Sobre"
+                      helperText="Recomendado: 800×600 px (formato paisagem)"
+                      onFile={setAboutPageImage}
+                    />
+                    <ImageUpload
+                      label="Imagem de Credenciais"
+                      helperText="Recomendado: 800×600 px (formato paisagem)"
+                      onFile={setCredentialsImage}
+                    />
                   </div>
                 </CardContent>
               </Card>
@@ -626,7 +653,8 @@ export default function AdminPageConfig() {
                   />
                   <ImageUpload
                     label="Imagem de Fundo"
-                    description="Imagem de fundo da página de agendamento (recomendado: 1920x1080)"
+                    description="Imagem de fundo da página de agendamento"
+                    helperText="Recomendado: 1920×1080 px (formato paisagem)"
                     onFile={setAgendarBgImage}
                   />
                 </CardContent>
@@ -768,7 +796,11 @@ export default function AdminPageConfig() {
                   Configure a aparência da página de acesso dos alunos.
                 </p>
               </div>
-              <ImageUpload label="Imagem de Fundo (Login)" onFile={setLoginImageFile} />
+              <ImageUpload
+                label="Imagem de Fundo (Login)"
+                helperText="Recomendado: 1920×1080 px (formato paisagem)"
+                onFile={setLoginImageFile}
+              />
               <LabeledInput
                 label="Texto de Boas-vindas (Login)"
                 value={form.login_text}

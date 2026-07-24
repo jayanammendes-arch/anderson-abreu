@@ -271,6 +271,9 @@ export default function AdminCourseForm() {
               accept="image/jpeg,image/png,image/webp"
               onChange={(e) => setFooterBanner(e.target.files?.[0] || null)}
             />
+            <p className="text-xs text-muted-foreground">
+              Recomendado: 1200×200 px (formato horizontal)
+            </p>
           </div>
         </Section>
 
@@ -282,7 +285,10 @@ export default function AdminCourseForm() {
               accept="image/jpeg,image/png,image/webp"
               onChange={(e) => setThumbnail(e.target.files?.[0] || null)}
             />
-          </div>
+            <p className="text-xs text-muted-foreground">
+              Recomendado: 800×600 px (formato paisagem)
+            </p>
+          </div>{' '}
         </Section>
 
         <Section title="Preços">

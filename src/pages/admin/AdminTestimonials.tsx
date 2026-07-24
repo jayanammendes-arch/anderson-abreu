@@ -323,6 +323,9 @@ export default function AdminTestimonials() {
                 accept="image/jpeg,image/png,image/webp"
                 onChange={(e) => setImageFile(e.target.files?.[0] || null)}
               />
+              <p className="text-xs text-muted-foreground">
+                Recomendado: 400×400 px (formato quadrado)
+              </p>
             </div>
 
             <div className="space-y-2">

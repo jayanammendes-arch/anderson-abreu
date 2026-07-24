@@ -10,6 +10,7 @@ interface MultiImageUploaderProps {
   onRemoveExisting: (index: number) => void
   baseUrl: string
   maxImages?: number
+  helperText?: string
 }
 
 export function MultiImageUploader({
@@ -19,6 +20,7 @@ export function MultiImageUploader({
   onRemoveExisting,
   baseUrl,
   maxImages = 3,
+  helperText,
 }: MultiImageUploaderProps) {
   const [uploading, setUploading] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -75,6 +77,7 @@ export function MultiImageUploader({
           {existingImages.length + newFiles.length}/{maxImages} imagens
         </span>
       </div>
+      {helperText && <p className="text-xs text-muted-foreground">{helperText}</p>}
       <div className="grid grid-cols-3 gap-2">
         {existingImages.map((img, i) => (
           <div
