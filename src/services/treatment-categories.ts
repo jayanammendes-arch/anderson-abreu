@@ -12,6 +12,16 @@ export function getTreatmentCategoryImageUrl(category: TreatmentCategory): strin
   return `${import.meta.env.VITE_POCKETBASE_URL}/api/files/treatment_categories/${category.id}/${category.image}`
 }
 
+export function getTreatmentCategoryImageUrls(
+  category: TreatmentCategory,
+  field: 'como_funciona_images' | 'resultados_images' | 'cta_images',
+): string[] {
+  const files = category[field]
+  if (!files || !Array.isArray(files) || files.length === 0) return []
+  const base = `${import.meta.env.VITE_POCKETBASE_URL}/api/files/treatment_categories/${category.id}`
+  return files.map((f) => `${base}/${f}`)
+}
+
 export const adminGetTreatmentCategories = (): Promise<TreatmentCategory[]> =>
   pb.collection('treatment_categories').getFullList({ sort: 'order' })
 

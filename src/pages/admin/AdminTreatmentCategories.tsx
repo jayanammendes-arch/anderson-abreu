@@ -29,7 +29,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { useRealtime } from '@/hooks/use-realtime'
 import { RichTextEditor } from '@/components/admin/RichTextEditor'
-import { IconPicker } from '@/components/admin/IconPicker'
+import { MultiImageUploader } from '@/components/admin/MultiImageUploader'
 import { getTreatmentIcon } from '@/lib/treatment-icons'
 import { extractFieldErrors, type FieldErrors } from '@/lib/pocketbase/errors'
 import { toast } from 'sonner'
@@ -41,6 +41,9 @@ const emptyForm: Partial<TreatmentCategory> = {
   short_description: '',
   detailed_content: '',
   symptoms_list: '',
+  como_funciona_text: '',
+  resultados_text: '',
+  cta_text: '',
   icon: 'brain',
   order: 0,
 }
@@ -55,6 +58,8 @@ function slugify(text: string): string {
     .replace(/\s+/g, '-')
 }
 
+type MultiImageField = 'como_funciona_images' | 'resultados_images' | 'cta_images'
+
 export default function AdminTreatmentCategories() {
   const [categories, setCategories] = useState<TreatmentCategory[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -65,6 +70,18 @@ export default function AdminTreatmentCategories() {
   const [formData, setFormData] = useState<Partial<TreatmentCategory>>(emptyForm)
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
+  const [newImages, setNewImages] = useState<Record<MultiImageField, File[]>>({
+    como_funciona_images: [],
+    resultados_images: [],
+    cta_images: [],
+  })
+  const [removedExistingImages, setRemovedExistingImages] = useState<
+    Record<MultiImageField, number[]>
+  >({
+    como_funciona_images: [],
+    resultados_images: [],
+    cta_images: [],
+  })
 
   const loadData = useCallback(async () => {
     setIsLoading(true)
@@ -83,10 +100,16 @@ export default function AdminTreatmentCategories() {
   }, [loadData])
   useRealtime('treatment_categories', () => loadData())
 
+  const resetMultiImages = () => {
+    setNewImages({ como_funciona_images: [], resultados_images: [], cta_images: [] })
+    setRemovedExistingImages({ como_funciona_images: [], resultados_images: [], cta_images: [] })
+  }
+
   const handleNew = () => {
     setFormData({ ...emptyForm, order: categories.length })
     setImageFile(null)
     setFieldErrors({})
+    resetMultiImages()
     setDialogOpen(true)
   }
 
@@ -94,7 +117,20 @@ export default function AdminTreatmentCategories() {
     setFormData({ ...cat })
     setImageFile(null)
     setFieldErrors({})
+    resetMultiImages()
     setDialogOpen(true)
+  }
+
+  const getExistingImages = (field: MultiImageField): string[] => {
+    const all = (formData[field] as string[]) || []
+    return all.filter((_, idx) => !removedExistingImages[field].includes(idx))
+  }
+
+  const handleRemoveExistingImage = (field: MultiImageField, index: number) => {
+    setRemovedExistingImages((prev) => ({
+      ...prev,
+      [field]: [...prev[field], index],
+    }))
   }
 
   const handleSave = async (e: React.FormEvent) => {
@@ -103,26 +139,51 @@ export default function AdminTreatmentCategories() {
     setFieldErrors({})
     try {
       const slug = formData.slug || slugify(formData.name || '')
-      const baseData: Record<string, unknown> = {
-        name: formData.name || '',
-        slug,
-        short_description: formData.short_description || '',
-        detailed_content: formData.detailed_content || '',
-        symptoms_list: formData.symptoms_list || '',
-        icon: formData.icon || 'brain',
-        order: Number(formData.order) || 0,
+      const baseUrl = `${import.meta.env.VITE_POCKETBASE_URL}/api/files/treatment_categories`
+      const fd = new FormData()
+      fd.append('name', formData.name || '')
+      fd.append('slug', slug)
+      fd.append('short_description', formData.short_description || '')
+      fd.append('detailed_content', formData.detailed_content || '')
+      fd.append('symptoms_list', formData.symptoms_list || '')
+      fd.append('icon', formData.icon || 'brain')
+      fd.append('order', String(Number(formData.order) || 0))
+      fd.append('como_funciona_text', formData.como_funciona_text || '')
+      fd.append('resultados_text', formData.resultados_text || '')
+      fd.append('cta_text', formData.cta_text || '')
+
+      if (imageFile) fd.append('image', imageFile)
+
+      const multiFields: MultiImageField[] = [
+        'como_funciona_images',
+        'resultados_images',
+        'cta_images',
+      ]
+      for (const field of multiFields) {
+        const allExisting = (formData[field] as string[]) || []
+        const kept = allExisting.filter((_, idx) => !removedExistingImages[field].includes(idx))
+        for (const filename of kept) {
+          fd.append(`${field}`, filename)
+        }
+        for (const file of newImages[field]) {
+          fd.append(`${field}`, file)
+        }
       }
-      if (imageFile) {
-        const fd = new FormData()
-        Object.entries(baseData).forEach(([k, v]) => fd.append(k, String(v)))
-        fd.append('image', imageFile)
-        if (formData.id) await adminUpdateTreatmentCategory(formData.id, fd)
-        else await adminCreateTreatmentCategory(fd)
+
+      const recordId = formData.id
+      if (recordId) {
+        for (const field of multiFields) {
+          const allExisting = (formData[field] as string[]) || []
+          for (const idx of removedExistingImages[field]) {
+            const filename = allExisting[idx]
+            if (filename) fd.append(`${field}-`, filename)
+          }
+        }
+        await adminUpdateTreatmentCategory(recordId, fd)
       } else {
-        if (formData.id) await adminUpdateTreatmentCategory(formData.id, baseData)
-        else await adminCreateTreatmentCategory(baseData)
+        await adminCreateTreatmentCategory(fd)
       }
-      toast.success(formData.id ? 'Categoria atualizada!' : 'Categoria criada!')
+      toast.success(recordId ? 'Categoria atualizada!' : 'Categoria criada!')
       setDialogOpen(false)
       loadData()
     } catch (err) {
@@ -202,7 +263,7 @@ export default function AdminTreatmentCategories() {
       )}
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{formData.id ? 'Editar Categoria' : 'Nova Categoria'}</DialogTitle>
           </DialogHeader>
@@ -252,13 +313,14 @@ export default function AdminTreatmentCategories() {
             </div>
             <div className="space-y-2">
               <Label>Ícone *</Label>
-              <IconPicker
+              <Input
                 value={formData.icon || ''}
-                onChange={(icon) => setFormData({ ...formData, icon })}
+                onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
+                placeholder="nome do ícone (ex: brain)"
               />
             </div>
             <div className="space-y-2">
-              <Label>Imagem</Label>
+              <Label>Imagem Principal</Label>
               <Input
                 type="file"
                 accept="image/jpeg,image/png,image/webp"
@@ -273,6 +335,93 @@ export default function AdminTreatmentCategories() {
                 onChange={(e) => setFormData({ ...formData, order: Number(e.target.value) })}
               />
             </div>
+
+            <div className="border-t pt-4 space-y-4">
+              <h3 className="text-lg font-semibold">Como Funciona</h3>
+              <RichTextEditor
+                value={formData.como_funciona_text || ''}
+                onChange={(html) => setFormData({ ...formData, como_funciona_text: html })}
+              />
+              {formData.id && (
+                <MultiImageUploader
+                  label="Imagens (até 3)"
+                  existingImages={getExistingImages('como_funciona_images')}
+                  onChange={(files) =>
+                    setNewImages((prev) => ({ ...prev, como_funciona_images: files }))
+                  }
+                  onRemoveExisting={(idx) => handleRemoveExistingImage('como_funciona_images', idx)}
+                  baseUrl={`${import.meta.env.VITE_POCKETBASE_URL}/api/files/treatment_categories/${formData.id}`}
+                />
+              )}
+              {!formData.id && (
+                <MultiImageUploader
+                  label="Imagens (até 3)"
+                  existingImages={[]}
+                  onChange={(files) =>
+                    setNewImages((prev) => ({ ...prev, como_funciona_images: files }))
+                  }
+                  onRemoveExisting={() => {}}
+                  baseUrl=""
+                />
+              )}
+            </div>
+
+            <div className="border-t pt-4 space-y-4">
+              <h3 className="text-lg font-semibold">Resultados</h3>
+              <RichTextEditor
+                value={formData.resultados_text || ''}
+                onChange={(html) => setFormData({ ...formData, resultados_text: html })}
+              />
+              {formData.id && (
+                <MultiImageUploader
+                  label="Imagens (até 3)"
+                  existingImages={getExistingImages('resultados_images')}
+                  onChange={(files) =>
+                    setNewImages((prev) => ({ ...prev, resultados_images: files }))
+                  }
+                  onRemoveExisting={(idx) => handleRemoveExistingImage('resultados_images', idx)}
+                  baseUrl={`${import.meta.env.VITE_POCKETBASE_URL}/api/files/treatment_categories/${formData.id}`}
+                />
+              )}
+              {!formData.id && (
+                <MultiImageUploader
+                  label="Imagens (até 3)"
+                  existingImages={[]}
+                  onChange={(files) =>
+                    setNewImages((prev) => ({ ...prev, resultados_images: files }))
+                  }
+                  onRemoveExisting={() => {}}
+                  baseUrl=""
+                />
+              )}
+            </div>
+
+            <div className="border-t pt-4 space-y-4">
+              <h3 className="text-lg font-semibold">CTA Final</h3>
+              <RichTextEditor
+                value={formData.cta_text || ''}
+                onChange={(html) => setFormData({ ...formData, cta_text: html })}
+              />
+              {formData.id && (
+                <MultiImageUploader
+                  label="Imagens (até 3)"
+                  existingImages={getExistingImages('cta_images')}
+                  onChange={(files) => setNewImages((prev) => ({ ...prev, cta_images: files }))}
+                  onRemoveExisting={(idx) => handleRemoveExistingImage('cta_images', idx)}
+                  baseUrl={`${import.meta.env.VITE_POCKETBASE_URL}/api/files/treatment_categories/${formData.id}`}
+                />
+              )}
+              {!formData.id && (
+                <MultiImageUploader
+                  label="Imagens (até 3)"
+                  existingImages={[]}
+                  onChange={(files) => setNewImages((prev) => ({ ...prev, cta_images: files }))}
+                  onRemoveExisting={() => {}}
+                  baseUrl=""
+                />
+              )}
+            </div>
+
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
                 Cancelar

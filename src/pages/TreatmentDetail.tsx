@@ -4,6 +4,7 @@ import {
   getTreatmentCategoryBySlug,
   getTreatmentCategories,
   getTreatmentCategoryImageUrl,
+  getTreatmentCategoryImageUrls,
 } from '@/services/treatment-categories'
 import { getPlatformSettingsPublic, getAboutPageImageUrl } from '@/services/landing'
 import type { TreatmentCategory, PlatformSettings } from '@/types'
@@ -11,6 +12,7 @@ import { LandingLayout } from '@/components/LandingLayout'
 import { Button } from '@/components/ui/button'
 import { TestimonialsSection } from '@/components/TestimonialsSection'
 import { ComparisonTable } from '@/components/treatment/ComparisonTable'
+import { RichSection } from '@/components/treatment/RichSection'
 import { getTreatmentIcon } from '@/lib/treatment-icons'
 import { Loader2, ArrowLeft } from 'lucide-react'
 
@@ -73,6 +75,14 @@ export default function TreatmentDetail() {
     { value: `${settings?.stats_countries || 5}+`, label: 'Países' },
   ]
 
+  const comoFuncionaImages = getTreatmentCategoryImageUrls(category, 'como_funciona_images')
+  const resultadosImages = getTreatmentCategoryImageUrls(category, 'resultados_images')
+  const ctaImages = getTreatmentCategoryImageUrls(category, 'cta_images')
+
+  const hasComoFunciona = category.como_funciona_text?.trim() || comoFuncionaImages.length > 0
+  const hasResultados = category.resultados_text?.trim() || resultadosImages.length > 0
+  const hasCta = category.cta_text?.trim() || ctaImages.length > 0
+
   return (
     <LandingLayout settings={settings}>
       <section className="relative min-h-[60vh] flex items-center overflow-hidden pt-20">
@@ -121,44 +131,23 @@ export default function TreatmentDetail() {
         </div>
       </section>
 
-      <section className="py-24 bg-slate-50">
-        <div className="max-w-4xl mx-auto px-6">
-          <h2 className="text-3xl font-bold text-slate-900 mb-6">Como a Hipnose Funciona</h2>
-          <p className="text-lg text-slate-600 leading-relaxed mb-4">
-            Através da hipnose clínica, acessamos o subconsciente para reprogramar padrões mentais
-            que mantêm o problema. Em estado de relaxamento profundo, a mente se torna mais
-            receptiva a sugestões positivas, permitindo mudanças duradouras no comportamento e nas
-            emoções.
-          </p>
-          <p className="text-lg text-slate-600 leading-relaxed">
-            O tratamento é personalizado e respeita o ritmo de cada paciente, garantindo segurança e
-            eficácia em todo o processo terapêutico.
-          </p>
-        </div>
-      </section>
+      {hasComoFunciona && (
+        <RichSection
+          title="Como a Hipnose Funciona"
+          html={category.como_funciona_text}
+          images={comoFuncionaImages}
+          className="py-24 bg-slate-50"
+        />
+      )}
 
-      <section className="py-24 bg-white">
-        <div className="max-w-4xl mx-auto px-6">
-          <h2 className="text-3xl font-bold text-slate-900 mb-6">Resultados Comprovados</h2>
-          <p className="text-lg text-slate-600 leading-relaxed mb-8">
-            A hipnose clínica é reconhecida cientificamente como uma ferramenta terapêutica eficaz,
-            com resultados significativos em poucas sessões e mudanças que se mantêm a longo prazo.
-          </p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {[
-              { value: '90%', label: 'Taxa de sucesso' },
-              { value: '2', label: 'Sessões em média' },
-              { value: '10+', label: 'Anos de experiência' },
-              { value: '500+', label: 'Pacientes atendidos' },
-            ].map((s, i) => (
-              <div key={i} className="text-center">
-                <div className="text-3xl font-bold text-[#00A3C4] mb-1">{s.value}</div>
-                <div className="text-sm text-slate-500">{s.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {hasResultados && (
+        <RichSection
+          title="Resultados Comprovados"
+          html={category.resultados_text}
+          images={resultadosImages}
+          className="py-24 bg-white"
+        />
+      )}
 
       <section className="py-24 bg-slate-50">
         <div className="max-w-5xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
@@ -240,21 +229,32 @@ export default function TreatmentDetail() {
       <TestimonialsSection customTitle={settings?.testimonials_section_title} />
       <ComparisonTable />
 
-      <section className="py-24 bg-slate-900">
-        <div className="max-w-3xl mx-auto px-6 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Pronto para começar?</h2>
-          <p className="text-white/60 text-lg mb-10">
-            Dê o primeiro passo rumo à transformação. Agende sua sessão de hipnose clínica.
-          </p>
-          <Button
-            size="lg"
-            className="bg-white text-slate-900 hover:bg-white/90 rounded-full px-10"
-            onClick={() => navigate('/agendar')}
-          >
-            {agendarText}
-          </Button>
-        </div>
-      </section>
+      {hasCta && (
+        <RichSection
+          title="Pronto para começar?"
+          html={category.cta_text}
+          images={ctaImages}
+          className="py-24 bg-slate-50"
+        />
+      )}
+
+      {!hasCta && (
+        <section className="py-24 bg-slate-900">
+          <div className="max-w-3xl mx-auto px-6 text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Pronto para começar?</h2>
+            <p className="text-white/60 text-lg mb-10">
+              Dê o primeiro passo rumo à transformação. Agende sua sessão de hipnose clínica.
+            </p>
+            <Button
+              size="lg"
+              className="bg-white text-slate-900 hover:bg-white/90 rounded-full px-10"
+              onClick={() => navigate('/agendar')}
+            >
+              {agendarText}
+            </Button>
+          </div>
+        </section>
+      )}
     </LandingLayout>
   )
 }

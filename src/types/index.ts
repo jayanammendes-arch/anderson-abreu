@@ -354,6 +354,12 @@ export interface TreatmentCategory {
   icon: string
   symptoms_list?: string
   order: number
+  como_funciona_text?: string
+  como_funciona_images?: string[]
+  resultados_text?: string
+  resultados_images?: string[]
+  cta_text?: string
+  cta_images?: string[]
   created: string
   updated: string
 }

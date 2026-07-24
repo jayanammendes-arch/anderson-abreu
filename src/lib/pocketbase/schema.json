@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-23T20:59:48.928Z",
+  "generatedAt": "2026-07-24T16:50:47.769Z",
   "collections": [
     {
       "name": "users",
@@ -1885,6 +1885,42 @@
           "required": false,
           "system": false,
           "autodateTriggers": ["onCreate", "onUpdate"]
+        },
+        {
+          "name": "como_funciona_text",
+          "type": "editor",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "como_funciona_images",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "resultados_text",
+          "type": "editor",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "resultados_images",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "cta_text",
+          "type": "editor",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "cta_images",
+          "type": "file",
+          "required": false,
+          "system": false
         }
       ],
       "indexes": [
