@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-24T18:59:47.099Z",
+  "generatedAt": "2026-07-24T19:12:50.610Z",
   "collections": [
     {
       "name": "users",
@@ -980,6 +980,30 @@
         {
           "name": "home_credential_floating_badge_text",
           "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "parallax_background_image",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "parallax_headline",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "parallax_button_text",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "parallax_button_link",
+          "type": "url",
           "required": false,
           "system": false
         }

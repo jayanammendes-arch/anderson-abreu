@@ -121,6 +121,16 @@ export function getHomeCredentialImageUrl(settings: {
   return null
 }
 
+export function getParallaxBackgroundImageUrl(settings: {
+  id: string
+  parallax_background_image?: string
+}): string | null {
+  if (settings.parallax_background_image) {
+    return `${import.meta.env.VITE_POCKETBASE_URL}/api/files/platform_settings/${settings.id}/${settings.parallax_background_image}`
+  }
+  return null
+}
+
 export function applyBrandColor(color: string): void {
   document.documentElement.style.setProperty('--primary', color)
 }

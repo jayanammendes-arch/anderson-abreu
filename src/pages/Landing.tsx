@@ -6,6 +6,7 @@ import {
   submitContact,
   getPlatformSettingsPublic,
   getHomeHeroImageUrl,
+  getParallaxBackgroundImageUrl,
 } from '@/services/landing'
 import { getTreatmentCategories } from '@/services/treatment-categories'
 import { getBlogPosts } from '@/services/blog'
@@ -20,6 +21,36 @@ import { ArrowRight, Calendar, Loader2, ArrowUpRight } from 'lucide-react'
 import { CredentialsMarquee } from '@/components/CredentialsMarquee'
 import { HomeCredentialSection } from '@/components/HomeCredentialSection'
 import { cn } from '@/lib/utils'
+
+function ParallaxCTASection({ settings }: { settings: PlatformSettings }) {
+  const bgUrl = getParallaxBackgroundImageUrl(settings)
+  if (!bgUrl) return null
+
+  return (
+    <section className="parallax-cta-section">
+      <div className="parallax-cta-bg" style={{ backgroundImage: `url(${bgUrl})` }} />
+      <div className="parallax-cta-overlay" />
+      <div className="relative z-10 max-w-4xl mx-auto px-6 text-center flex flex-col items-center justify-center min-h-[70vh]">
+        <h2 className="parallax-cta-headline">{settings.parallax_headline}</h2>
+        {settings.parallax_button_text && (
+          <Button
+            size="lg"
+            className="mt-8 bg-[#00A3C4] hover:bg-[#008ca8] text-white rounded-full px-10 py-6 text-lg font-medium shadow-lg transition-all hover:scale-105"
+            asChild
+          >
+            {settings.parallax_button_link ? (
+              <a href={settings.parallax_button_link} target="_blank" rel="noopener noreferrer">
+                {settings.parallax_button_text}
+              </a>
+            ) : (
+              <span>{settings.parallax_button_text}</span>
+            )}
+          </Button>
+        )}
+      </div>
+    </section>
+  )
+}
 
 export default function Landing() {
   const navigate = useNavigate()
@@ -208,6 +239,11 @@ export default function Landing() {
           </div>
         </div>
       </section>
+
+      {/* Parallax CTA Section */}
+      {settings?.parallax_background_image && settings?.parallax_headline && (
+        <ParallaxCTASection settings={settings} />
+      )}
 
       {/* Courses */}
       {courses.length > 0 && null}

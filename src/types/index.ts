@@ -320,6 +320,10 @@ export interface PlatformSettings {
   home_credential_list?: string
   home_credential_cta_text?: string
   home_credential_floating_badge_text?: string
+  parallax_background_image?: string
+  parallax_headline?: string
+  parallax_button_text?: string
+  parallax_button_link?: string
   created: string
   updated: string
 }

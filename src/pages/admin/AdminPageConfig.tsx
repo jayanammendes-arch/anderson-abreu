@@ -70,6 +70,9 @@ interface FormState {
   home_credential_list: string
   home_credential_cta_text: string
   home_credential_floating_badge_text: string
+  parallax_headline: string
+  parallax_button_text: string
+  parallax_button_link: string
 }
 
 const emptyForm: FormState = {
@@ -125,6 +128,9 @@ const emptyForm: FormState = {
   home_credential_list: '[]',
   home_credential_cta_text: '',
   home_credential_floating_badge_text: '',
+  parallax_headline: '',
+  parallax_button_text: '',
+  parallax_button_link: '',
 }
 
 function FieldLabel({ label, description }: { label: string; description?: string }) {
@@ -248,6 +254,7 @@ export default function AdminPageConfig() {
   const [agendarBgImage, setAgendarBgImage] = useState<File | null>(null)
   const [homeCredentialImage, setHomeCredentialImage] = useState<File | null>(null)
   const [credentialsImage, setCredentialsImage] = useState<File | null>(null)
+  const [parallaxBgImage, setParallaxBgImage] = useState<File | null>(null)
 
   const set = (key: keyof FormState, value: string | boolean) =>
     setForm((p) => ({ ...p, [key]: value }))
@@ -320,6 +327,9 @@ export default function AdminPageConfig() {
                 : JSON.stringify(data.home_credential_list || []),
             home_credential_cta_text: data.home_credential_cta_text || '',
             home_credential_floating_badge_text: data.home_credential_floating_badge_text || '',
+            parallax_headline: data.parallax_headline || '',
+            parallax_button_text: data.parallax_button_text || '',
+            parallax_button_link: data.parallax_button_link || '',
           })
         }
       } catch {
@@ -346,6 +356,7 @@ export default function AdminPageConfig() {
       if (agendarBgImage) fd.append('agendar_background_image', agendarBgImage)
       if (homeCredentialImage) fd.append('home_credential_image', homeCredentialImage)
       if (credentialsImage) fd.append('credentials_image', credentialsImage)
+      if (parallaxBgImage) fd.append('parallax_background_image', parallaxBgImage)
       if (settings) await updatePlatformSettings(settings.id, fd)
       else await createPlatformSettings(fd)
       toast.success('Configurações salvas com sucesso!')
@@ -383,6 +394,7 @@ export default function AdminPageConfig() {
               <TabsTrigger value="tratamentos">Tratamentos</TabsTrigger>
               <TabsTrigger value="blog">Blog</TabsTrigger>
               <TabsTrigger value="depoimentos">Depoimentos</TabsTrigger>
+              <TabsTrigger value="parallax">Parallax</TabsTrigger>
               <TabsTrigger value="contato">Contato</TabsTrigger>
             </TabsList>
 
@@ -722,6 +734,47 @@ export default function AdminPageConfig() {
                   <p className="text-sm text-muted-foreground">
                     Os depoimentos são gerenciados na aba "Depoimentos" do painel admin.
                   </p>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="parallax">
+              <Card className="bg-card/50 border-border/50">
+                <CardContent className="space-y-4 pt-6">
+                  <div className="space-y-2">
+                    <h3 className="text-lg font-semibold">Seção Parallax</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Configurações da seção parallax exibida abaixo de "O que é Hipnose Clínica?"
+                      na landing page.
+                    </p>
+                  </div>
+                  <ImageUpload
+                    label="Imagem de Fundo (Parallax)"
+                    description="Imagem de fundo da seção parallax com efeito de rolagem fixa"
+                    helperText="Recomendado: 1920×1080px a 2400×1600px, WebP ou JPG, até 500KB"
+                    onFile={setParallaxBgImage}
+                  />
+                  <LabeledInput
+                    label="Headline"
+                    description="Texto principal exibido sobre a imagem"
+                    value={form.parallax_headline}
+                    onChange={(v) => set('parallax_headline', v)}
+                    placeholder="Acredito que você pode mudar e eu posso te ajudar!"
+                  />
+                  <LabeledInput
+                    label="Texto do Botão"
+                    description="Texto do botão de call-to-action"
+                    value={form.parallax_button_text}
+                    onChange={(v) => set('parallax_button_text', v)}
+                    placeholder="Entre em Contato"
+                  />
+                  <LabeledInput
+                    label="Link do Botão"
+                    description="URL para onde o botão direciona (ex: /agendar ou https://exemplo.com)"
+                    value={form.parallax_button_link}
+                    onChange={(v) => set('parallax_button_link', v)}
+                    placeholder="/agendar"
+                  />
                 </CardContent>
               </Card>
             </TabsContent>
