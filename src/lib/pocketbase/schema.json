@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-27T14:15:04.408Z",
+  "generatedAt": "2026-07-27T14:22:36.427Z",
   "collections": [
     {
       "name": "users",
@@ -2363,6 +2363,12 @@
           "required": false,
           "system": false,
           "autodateTriggers": ["onCreate", "onUpdate"]
+        },
+        {
+          "name": "video_url",
+          "type": "url",
+          "required": false,
+          "system": false
         }
       ],
       "indexes": ["CREATE INDEX idx_about_media_mentions_order ON about_media_mentions (order)"]

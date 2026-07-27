@@ -44,6 +44,7 @@ export default function AdminAboutContent() {
   const [mDesc, setMDesc] = useState('')
   const [mLink, setMLink] = useState('')
   const [mFile, setMFile] = useState<File | null>(null)
+  const [mVideoUrl, setMVideoUrl] = useState('')
   const [rUrl, setRUrl] = useState('')
   const [rDesc, setRDesc] = useState('')
   const [eFile, setEFile] = useState<File | null>(null)
@@ -99,12 +100,14 @@ export default function AdminAboutContent() {
       fd.append('title', mTitle)
       fd.append('description', mDesc)
       fd.append('link', mLink)
+      fd.append('video_url', mVideoUrl)
       if (mFile) fd.append('image', mFile)
       fd.append('order', String(media.length))
       await adminCreateAboutMediaMention(fd)
       setMTitle('')
       setMDesc('')
       setMLink('')
+      setMVideoUrl('')
       setMFile(null)
       toast.success('Adicionado')
     } catch {
@@ -238,7 +241,7 @@ export default function AdminAboutContent() {
                   <Input value={mDesc} onChange={(e) => setMDesc(e.target.value)} />
                 </div>
                 <div>
-                  <Label>Link</Label>
+                  <Label>Link (opcional)</Label>
                   <Input
                     value={mLink}
                     onChange={(e) => setMLink(e.target.value)}
@@ -246,7 +249,15 @@ export default function AdminAboutContent() {
                   />
                 </div>
                 <div>
-                  <Label>Imagem</Label>
+                  <Label>Vídeo (YouTube)</Label>
+                  <Input
+                    value={mVideoUrl}
+                    onChange={(e) => setMVideoUrl(e.target.value)}
+                    placeholder="https://youtube.com/..."
+                  />
+                </div>
+                <div>
+                  <Label>Imagem (opcional)</Label>
                   <Input
                     type="file"
                     accept="image/*"
@@ -261,6 +272,9 @@ export default function AdminAboutContent() {
                 {media.map((item) => (
                   <div key={item.id} className="relative group bg-white rounded-lg border p-4">
                     <p className="font-medium">{item.title}</p>
+                    {item.video_url && (
+                      <p className="text-xs text-primary mt-1 truncate">{item.video_url}</p>
+                    )}
                     <p className="text-sm text-muted-foreground">{item.description}</p>
                     <DelBtn
                       onClick={async () => {

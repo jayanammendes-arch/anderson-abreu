@@ -28,7 +28,7 @@ import { LandingLayout } from '@/components/LandingLayout'
 import { Button } from '@/components/ui/button'
 import { CredentialsMarquee } from '@/components/CredentialsMarquee'
 import { VideoEmbed } from '@/components/community/VideoEmbed'
-import { Check, Loader2, ExternalLink } from 'lucide-react'
+import { Check, Loader2 } from 'lucide-react'
 
 export default function Sobre() {
   const [settings, setSettings] = useState<PlatformSettings | null>(null)
@@ -118,8 +118,6 @@ export default function Sobre() {
         </section>
       )}
 
-      {settings?.about_credentials_visible !== false && <CredentialsMarquee />}
-
       {settings?.about_journey_visible !== false && (
         <section className="py-20 bg-white">
           <div className="max-w-7xl mx-auto px-6">
@@ -193,6 +191,8 @@ export default function Sobre() {
         </section>
       )}
 
+      {settings?.about_credentials_visible !== false && <CredentialsMarquee />}
+
       {settings?.about_grand_names_visible !== false && grandNames.length > 0 && (
         <section className="py-20 bg-white">
           <div className="max-w-7xl mx-auto px-6">
@@ -225,27 +225,11 @@ export default function Sobre() {
             <div className="grid md:grid-cols-3 gap-6">
               {mediaMentions.map((item) => (
                 <div key={item.id} className="bg-white rounded-xl shadow-md overflow-hidden">
-                  {item.image && (
-                    <img
-                      src={getAboutMediaMentionImageUrl(item) || ''}
-                      alt={item.title}
-                      className="w-full h-48 object-cover"
-                    />
-                  )}
+                  {item.video_url && <VideoEmbed url={item.video_url} />}
                   <div className="p-6">
                     <h3 className="font-bold text-slate-900 mb-2">{item.title}</h3>
                     {item.description && (
-                      <p className="text-sm text-slate-600 mb-4">{item.description}</p>
-                    )}
-                    {item.link && (
-                      <a
-                        href={item.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-sm text-primary hover:underline inline-flex items-center gap-1"
-                      >
-                        Saiba mais <ExternalLink className="h-3 w-3" />
-                      </a>
+                      <p className="text-sm text-slate-600">{item.description}</p>
                     )}
                   </div>
                 </div>

@@ -450,6 +450,7 @@ export interface AboutMediaMention {
   description?: string
   link?: string
   image?: string
+  video_url?: string
   order: number
   created: string
   updated: string
