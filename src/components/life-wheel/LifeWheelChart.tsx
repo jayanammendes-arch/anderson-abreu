@@ -8,7 +8,6 @@ import {
   Legend,
   Tooltip,
 } from 'recharts'
-import { ChartContainer } from '@/components/ui/chart'
 
 export interface ChartData {
   category: string
@@ -24,17 +23,8 @@ export function LifeWheelChart({
   data: ChartData[]
   showComparison?: boolean
 }) {
-  const config = showComparison
-    ? {
-        pre: { label: 'Pré-Tratamento', color: '#3b82f6' },
-        post: { label: 'Pós-Tratamento', color: '#22c55e' },
-      }
-    : {
-        score: { label: 'Pontuação', color: 'hsl(var(--primary))' },
-      }
-
   return (
-    <ChartContainer config={config} className="mx-auto aspect-square max-h-[400px] w-full">
+    <ResponsiveContainer width="100%" height={400}>
       <RadarChart data={data} outerRadius="75%">
         <PolarGrid stroke="hsl(var(--border))" />
         <PolarAngleAxis
@@ -58,17 +48,17 @@ export function LifeWheelChart({
             <Radar
               name="Pré"
               dataKey="pre"
-              stroke="#3b82f6"
-              fill="#3b82f6"
-              fillOpacity={0.25}
+              stroke="#60a5fa"
+              fill="#60a5fa"
+              fillOpacity={0.3}
               strokeWidth={2}
             />
             <Radar
               name="Pós"
               dataKey="post"
-              stroke="#22c55e"
-              fill="#22c55e"
-              fillOpacity={0.25}
+              stroke="#4ade80"
+              fill="#4ade80"
+              fillOpacity={0.3}
               strokeWidth={2}
             />
             <Legend />
@@ -84,6 +74,6 @@ export function LifeWheelChart({
           />
         )}
       </RadarChart>
-    </ChartContainer>
+    </ResponsiveContainer>
   )
 }

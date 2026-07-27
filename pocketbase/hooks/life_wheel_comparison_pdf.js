@@ -130,8 +130,8 @@ routerAdd(
       cs += fillR + ' ' + fillG + ' ' + fillB + ' rg\n' + p + ' h f\n'
       cs += strokeR + ' ' + strokeG + ' ' + strokeB + ' RG\n1.5 w\n' + p + ' h S\n'
     }
-    drawPoly(s1, 0.2, 0.5, 0.9, 0.1, 0.3, 0.7)
-    drawPoly(s2, 0.2, 0.7, 0.4, 0.1, 0.5, 0.2)
+    drawPoly(s1, 0.376, 0.647, 0.98, 0.231, 0.51, 0.965)
+    drawPoly(s2, 0.29, 0.871, 0.502, 0.133, 0.773, 0.369)
 
     for (i = 0; i < numCats; i++) {
       angle = ((-90 + i * (360 / numCats)) * Math.PI) / 180
@@ -148,21 +148,21 @@ routerAdd(
     ty -= 22
     cs += '0.9 0.9 0.93 rg\n' + tx + ' ' + (ty - 4) + ' 320 16 re f\n'
     cs += tb('F2', 9, 0.2, 0.2, 0.25, tx + 8, ty, 'Categoria')
-    cs += tb('F2', 9, 0.3, 0.3, 0.85, tx + 210, ty, 'Pré')
-    cs += tb('F2', 9, 0.2, 0.6, 0.3, tx + 270, ty, 'Pós')
+    cs += tb('F2', 9, 0.376, 0.647, 0.98, tx + 210, ty, 'Pré')
+    cs += tb('F2', 9, 0.29, 0.871, 0.502, tx + 270, ty, 'Pós')
     ty -= 18
     for (i = 0; i < numCats; i++) {
       if (i % 2 === 0) cs += '0.96 0.96 0.98 rg\n' + tx + ' ' + (ty - 2) + ' 320 16 re f\n'
       cs += tb('F1', 9, 0.2, 0.2, 0.25, tx + 8, ty, cats[i].getString('name'))
-      cs += tb('F1', 9, 0.3, 0.3, 0.85, tx + 218, ty, (s1[cats[i].id] || 0).toFixed(1))
-      cs += tb('F1', 9, 0.2, 0.6, 0.3, tx + 278, ty, (s2[cats[i].id] || 0).toFixed(1))
+      cs += tb('F1', 9, 0.376, 0.647, 0.98, tx + 218, ty, (s1[cats[i].id] || 0).toFixed(1))
+      cs += tb('F1', 9, 0.29, 0.871, 0.502, tx + 278, ty, (s2[cats[i].id] || 0).toFixed(1))
       ty -= 16
     }
     ty -= 10
     cs += '0.85 0.85 0.9 rg\n' + tx + ' ' + (ty - 4) + ' 320 18 re f\n'
     cs += tb('F2', 10, 0.11, 0.11, 0.15, tx + 8, ty, 'Média Geral')
-    cs += tb('F2', 10, 0.3, 0.3, 0.85, tx + 218, ty, (s1.overall_average || 0).toFixed(1))
-    cs += tb('F2', 10, 0.2, 0.6, 0.3, tx + 278, ty, (s2.overall_average || 0).toFixed(1))
+    cs += tb('F2', 10, 0.376, 0.647, 0.98, tx + 218, ty, (s1.overall_average || 0).toFixed(1))
+    cs += tb('F2', 10, 0.29, 0.871, 0.502, tx + 278, ty, (s2.overall_average || 0).toFixed(1))
     cs += tb('F1', 7, 0.5, 0.5, 0.55, 40, 30, 'Anderson Abreu — Roda da Vida (Comparativo)')
 
     var objs = [

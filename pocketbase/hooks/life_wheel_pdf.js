@@ -155,8 +155,8 @@ routerAdd(
           ? x.toFixed(1) + ' ' + y.toFixed(1) + ' m'
           : ' ' + x.toFixed(1) + ' ' + y.toFixed(1) + ' l'
     }
-    cs += '0.2 0.5 0.9 rg\n' + scorePath + ' h f\n'
-    cs += '0.1 0.3 0.7 RG\n1.5 w\n' + scorePath + ' h S\n'
+    cs += '0.376 0.647 0.980 rg\n' + scorePath + ' h f\n'
+    cs += '0.231 0.510 0.965 RG\n1.5 w\n' + scorePath + ' h S\n'
 
     for (i = 0; i < numCats; i++) {
       angle = ((-90 + i * (360 / numCats)) * Math.PI) / 180
