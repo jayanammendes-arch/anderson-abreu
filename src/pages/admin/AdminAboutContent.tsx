@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent } from '@/components/ui/card'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
-import { Plus, Trash2, Loader2 } from 'lucide-react'
+import { Plus, Trash2, Loader2, ChevronUp, ChevronDown } from 'lucide-react'
 import { toast } from 'sonner'
 import { useRealtime } from '@/hooks/use-realtime'
 import {
@@ -21,6 +21,7 @@ import {
   getAboutEnvironmentImages,
   getAboutEnvironmentImageUrl,
   adminCreateAboutEnvironmentImage,
+  adminUpdateAboutEnvironmentImage,
   adminDeleteAboutEnvironmentImage,
 } from '@/services/about-collections'
 import type {
@@ -48,6 +49,7 @@ export default function AdminAboutContent() {
   const [rUrl, setRUrl] = useState('')
   const [rDesc, setRDesc] = useState('')
   const [eFile, setEFile] = useState<File | null>(null)
+  const [envCaptions, setEnvCaptions] = useState<Record<string, string>>({})
 
   const load = useCallback(async () => {
     const [gnD, mD, rD, eD] = await Promise.all([
@@ -150,6 +152,40 @@ export default function AdminAboutContent() {
       toast.error('Erro')
     } finally {
       setSaving(false)
+    }
+  }
+
+  const moveEnv = async (index: number, direction: 'up' | 'down') => {
+    if (direction === 'up' && index === 0) return
+    if (direction === 'down' && index === env.length - 1) return
+    const swapIndex = direction === 'up' ? index - 1 : index + 1
+    const current = env[index]
+    const swap = env[swapIndex]
+    const newCurrentOrder = swap.order
+    const newSwapOrder = current.order
+    try {
+      await adminUpdateAboutEnvironmentImage(current.id, { order: newCurrentOrder })
+      await adminUpdateAboutEnvironmentImage(swap.id, { order: newSwapOrder })
+      toast.success('Ordem atualizada')
+      load()
+    } catch {
+      toast.error('Erro ao reordenar')
+    }
+  }
+
+  const saveEnvCaption = async (id: string) => {
+    const caption = envCaptions[id] ?? ''
+    try {
+      await adminUpdateAboutEnvironmentImage(id, { caption })
+      toast.success('Legenda salva')
+      setEnvCaptions((prev) => {
+        const next = { ...prev }
+        delete next[id]
+        return next
+      })
+      load()
+    } catch {
+      toast.error('Erro ao salvar legenda')
     }
   }
 
@@ -336,7 +372,7 @@ export default function AdminAboutContent() {
           <Card className="bg-card/50 border-border/50">
             <CardContent className="space-y-4 pt-6">
               <div className="flex gap-2 items-end">
-                <div>
+                <div className="flex-1">
                   <Label>Imagem</Label>
                   <Input
                     type="file"
@@ -348,22 +384,80 @@ export default function AdminAboutContent() {
                   <Plus className="h-4 w-4 mr-1" /> Adicionar
                 </Button>
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {env.map((item) => (
-                  <div key={item.id} className="relative group">
-                    <img
-                      src={getAboutEnvironmentImageUrl(item) || ''}
-                      alt=""
-                      className="rounded-lg w-full h-32 object-cover"
-                    />
-                    <DelBtn
-                      onClick={async () => {
-                        await adminDeleteAboutEnvironmentImage(item.id)
-                        toast.success('Removido')
-                      }}
-                    />
-                  </div>
-                ))}
+              <div className="space-y-3">
+                {env.map((item, index) => {
+                  const captionValue =
+                    envCaptions[item.id] !== undefined ? envCaptions[item.id] : item.caption || ''
+                  return (
+                    <div
+                      key={item.id}
+                      className="relative group flex items-center gap-3 bg-white rounded-lg border p-3"
+                    >
+                      <span className="text-xs font-mono w-6 text-center text-muted-foreground">
+                        {index + 1}
+                      </span>
+                      <img
+                        src={getAboutEnvironmentImageUrl(item) || ''}
+                        alt=""
+                        className="w-20 h-20 object-cover rounded-md flex-shrink-0"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <Label className="text-xs text-muted-foreground">Legenda</Label>
+                        <Input
+                          value={captionValue}
+                          onChange={(e) =>
+                            setEnvCaptions((prev) => ({
+                              ...prev,
+                              [item.id]: e.target.value,
+                            }))
+                          }
+                          onBlur={() => {
+                            if (
+                              envCaptions[item.id] !== undefined &&
+                              envCaptions[item.id] !== (item.caption || '')
+                            ) {
+                              saveEnvCaption(item.id)
+                            }
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              ;(e.target as HTMLInputElement).blur()
+                            }
+                          }}
+                          maxLength={255}
+                          placeholder="Ex: Recepção"
+                          className="h-8"
+                        />
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-6 w-6"
+                          disabled={index === 0}
+                          onClick={() => moveEnv(index, 'up')}
+                        >
+                          <ChevronUp className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-6 w-6"
+                          disabled={index === env.length - 1}
+                          onClick={() => moveEnv(index, 'down')}
+                        >
+                          <ChevronDown className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      <DelBtn
+                        onClick={async () => {
+                          await adminDeleteAboutEnvironmentImage(item.id)
+                          toast.success('Removido')
+                        }}
+                      />
+                    </div>
+                  )
+                })}
               </div>
             </CardContent>
           </Card>

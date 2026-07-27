@@ -468,6 +468,7 @@ export interface AboutRecommendation {
 export interface AboutEnvironmentImage {
   id: string
   image: string
+  caption?: string
   order: number
   created: string
   updated: string

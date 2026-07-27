@@ -57,5 +57,8 @@ export function getAboutEnvironmentImageUrl(item: { id: string; image?: string }
 export const adminCreateAboutEnvironmentImage = (data: FormData) =>
   pb.collection('about_environment_images').create(data)
 
+export const adminUpdateAboutEnvironmentImage = (id: string, data: Record<string, unknown>) =>
+  pb.collection('about_environment_images').update(id, data)
+
 export const adminDeleteAboutEnvironmentImage = (id: string) =>
   pb.collection('about_environment_images').delete(id)
