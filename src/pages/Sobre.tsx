@@ -261,18 +261,44 @@ export default function Sobre() {
         <section className="py-20 bg-slate-50">
           <div className="max-w-7xl mx-auto px-6">
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-12 text-center">
-              {settings?.about_environment_title || 'Nosso Ambiente'}
+              {(() => {
+                const title = settings?.about_environment_title || 'Nosso Ambiente'
+                const parts = title.split(/(Ambiente)/i)
+                return parts.map((part, i) =>
+                  part.toLowerCase() === 'ambiente' ? (
+                    <span
+                      key={i}
+                      style={{ color: settings?.primary_color || 'hsl(var(--primary))' }}
+                    >
+                      {part}
+                    </span>
+                  ) : (
+                    <span key={i}>{part}</span>
+                  ),
+                )
+              })()}
             </h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {envImages.map((item) => (
-                <div key={item.id} className="rounded-xl overflow-hidden">
-                  <img
-                    src={getAboutEnvironmentImageUrl(item) || ''}
-                    alt=""
-                    className="w-full h-64 object-cover"
-                  />
-                </div>
-              ))}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {envImages.map((item, idx) => {
+                const fallbackImages = [
+                  'https://img.usecurling.com/p/600/800?q=clinic%20reception',
+                  'https://img.usecurling.com/p/600/800?q=treatment%20room%20therapy',
+                  'https://img.usecurling.com/p/600/800?q=certificates%20wall',
+                  'https://img.usecurling.com/p/600/800?q=therapy%20armchair',
+                ]
+                return (
+                  <div key={item.id} className="rounded-2xl overflow-hidden shadow-md">
+                    <img
+                      src={
+                        getAboutEnvironmentImageUrl(item) ||
+                        fallbackImages[idx % fallbackImages.length]
+                      }
+                      alt=""
+                      className="w-full h-72 object-cover rounded-2xl"
+                    />
+                  </div>
+                )
+              })}
             </div>
           </div>
         </section>
