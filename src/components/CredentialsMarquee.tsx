@@ -27,7 +27,7 @@ export function CredentialsMarquee() {
 
   const logoUrls = logos
     .map((logo) => getCertificationLogoUrl(logo))
-    .filter((url): url is string => url !== null)
+    .filter((url): url is string => !!url)
 
   const minItems = 10
   const minSets = Math.max(1, Math.ceil(minItems / logoUrls.length))
