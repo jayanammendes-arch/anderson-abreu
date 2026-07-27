@@ -20,7 +20,7 @@ export default function RodaDaVida() {
   const [categories, setCategories] = useState<LifeWheelCategory[]>([])
   const [questions, setQuestions] = useState<LifeWheelQuestion[]>([])
   const [assessments, setAssessments] = useState<LifeWheelAssessment[]>([])
-  const [answers, setAnswers] = useState<Record<string, number>>({})
+  const [answers, setAnswers] = useState<Record<string, number | undefined>>({})
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [showForm, setShowForm] = useState(false)
@@ -36,11 +36,7 @@ export default function RodaDaVida() {
       setCategories(cats)
       setQuestions(qs)
       setAssessments(assmts)
-      const initial: Record<string, number> = {}
-      qs.forEach((q) => {
-        initial[q.id] = 5
-      })
-      setAnswers(initial)
+      setAnswers({})
     } catch {
       /* ignore */
     } finally {

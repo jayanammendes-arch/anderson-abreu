@@ -1,4 +1,4 @@
-import { useState, useRef, type KeyboardEvent } from 'react'
+import { useState, useRef, useMemo, type KeyboardEvent } from 'react'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -7,7 +7,7 @@ import type { LifeWheelCategory, LifeWheelQuestion } from '@/types'
 interface Props {
   categories: LifeWheelCategory[]
   questions: LifeWheelQuestion[]
-  answers: Record<string, number>
+  answers: Record<string, number | undefined>
   onAnswerChange: (questionId: string, value: number) => void
   onSubmit: () => void
   submitLabel: string
@@ -20,7 +20,13 @@ function getScoreColor(value: number): string {
   return 'bg-green-500 text-white border-green-500'
 }
 
-function NumberButtonGroup({ value, onChange }: { value: number; onChange: (v: number) => void }) {
+function NumberButtonGroup({
+  value,
+  onChange,
+}: {
+  value: number | undefined
+  onChange: (v: number) => void
+}) {
   const buttonsRef = useRef<(HTMLButtonElement | null)[]>([])
 
   const handleKeyDown = (e: KeyboardEvent<HTMLButtonElement>, idx: number) => {
@@ -49,6 +55,7 @@ function NumberButtonGroup({ value, onChange }: { value: number; onChange: (v: n
     <div role="radiogroup" aria-label="Pontuação" className="flex flex-wrap gap-1.5">
       {Array.from({ length: 11 }, (_, i) => {
         const isSelected = value === i
+        const isFocusable = isSelected || (value === undefined && i === 0)
         return (
           <button
             key={i}
@@ -59,7 +66,7 @@ function NumberButtonGroup({ value, onChange }: { value: number; onChange: (v: n
             role="radio"
             aria-checked={isSelected}
             aria-label={`Pontuação ${i}`}
-            tabIndex={isSelected ? 0 : -1}
+            tabIndex={isFocusable ? 0 : -1}
             onClick={() => onChange(i)}
             onKeyDown={(e) => handleKeyDown(e, i)}
             className={cn(
@@ -88,11 +95,56 @@ export function LifeWheelForm({
   submitting,
 }: Props) {
   const [expandedCat, setExpandedCat] = useState<string | null>(categories[0]?.id ?? null)
+  const [completedCategories, setCompletedCategories] = useState<Set<string>>(new Set())
+
+  const categoryQuestions = useMemo(() => {
+    const map = new Map<string, LifeWheelQuestion[]>()
+    categories.forEach((cat) => {
+      map.set(
+        cat.id,
+        questions.filter((q) => q.category === cat.id),
+      )
+    })
+    return map
+  }, [categories, questions])
+
+  const totalQuestions = questions.length
+  const answeredCount = useMemo(
+    () => questions.filter((q) => answers[q.id] !== undefined).length,
+    [questions, answers],
+  )
+  const remainingCount = totalQuestions - answeredCount
+  const allAnswered = remainingCount === 0
+
+  const handleAnswerChange = (questionId: string, value: number) => {
+    onAnswerChange(questionId, value)
+
+    const catId = questions.find((q) => q.id === questionId)?.category
+    if (!catId) return
+
+    const catQs = categoryQuestions.get(catId) ?? []
+    const allCatAnswered = catQs.every((q) => {
+      if (q.id === questionId) return true
+      return answers[q.id] !== undefined
+    })
+
+    if (allCatAnswered && !completedCategories.has(catId)) {
+      setCompletedCategories((prev) => new Set(prev).add(catId))
+
+      if (expandedCat === catId) {
+        const catIndex = categories.findIndex((c) => c.id === catId)
+        const nextCat = categories[catIndex + 1]
+        if (nextCat) {
+          setExpandedCat(nextCat.id)
+        }
+      }
+    }
+  }
 
   return (
     <div className="space-y-4">
       {categories.map((cat) => {
-        const catQuestions = questions.filter((q) => q.category === cat.id)
+        const catQuestions = categoryQuestions.get(cat.id) ?? []
         if (catQuestions.length === 0) return null
         const isOpen = expandedCat === cat.id
         const catAvg =
@@ -131,8 +183,8 @@ export function LifeWheelForm({
                     )}
                     <div className="mt-3">
                       <NumberButtonGroup
-                        value={answers[q.id] ?? 5}
-                        onChange={(v) => onAnswerChange(q.id, v)}
+                        value={answers[q.id]}
+                        onChange={(v) => handleAnswerChange(q.id, v)}
                       />
                     </div>
                   </div>
@@ -142,9 +194,14 @@ export function LifeWheelForm({
           </div>
         )
       })}
-      <Button onClick={onSubmit} disabled={submitting} className="w-full" size="lg">
+      <Button onClick={onSubmit} disabled={submitting || !allAnswered} className="w-full" size="lg">
         {submitting ? 'Salvando...' : submitLabel}
       </Button>
+      {!allAnswered && (
+        <p className="text-center text-sm text-muted-foreground">
+          Faltam {remainingCount} perguntas para responder
+        </p>
+      )}
     </div>
   )
 }
