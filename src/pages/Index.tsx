@@ -7,7 +7,7 @@ import { getLastUpdatedProgress } from '@/services/user-progress'
 import { getUserAccess } from '@/services/user-access'
 import { CourseCard } from '@/components/CourseCard'
 import { Button } from '@/components/ui/button'
-import { PlayCircle, Star, Loader2, Sparkles } from 'lucide-react'
+import { PlayCircle, Star, Loader2, Sparkles, Radar } from 'lucide-react'
 import type { CourseWithProgress } from '@/types'
 
 export default function Index() {
@@ -104,6 +104,27 @@ export default function Index() {
   )
   return (
     <div className="space-y-10 animate-fade-in pb-10">
+      <section className="relative overflow-hidden rounded-3xl border border-primary/20 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-6 sm:p-8 shadow-elevation">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary/15">
+            <Radar className="h-7 w-7 text-primary" />
+          </div>
+          <div className="flex-1">
+            <h2 className="text-xl font-bold tracking-tight sm:text-2xl">Roda da Vida</h2>
+            <p className="text-sm text-muted-foreground mt-1">
+              Avalie sua vida antes e depois do tratamento. Visualize sua evolução em um gráfico
+              interativo.
+            </p>
+          </div>
+          <Button asChild className="shrink-0 shadow-glow">
+            <Link to="/dashboard/roda-da-vida">
+              <Radar className="mr-2 h-4 w-4" />
+              Iniciar Avaliação
+            </Link>
+          </Button>
+        </div>
+      </section>
+
       <section className="relative overflow-hidden rounded-3xl bg-gradient-brand p-8 sm:p-12 border border-white/5 shadow-elevation">
         <div className="absolute top-0 right-0 -mt-16 -mr-16 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
         <div className="absolute bottom-0 left-0 -mb-16 -ml-16 h-48 w-48 rounded-full bg-blue-500/10 blur-3xl" />

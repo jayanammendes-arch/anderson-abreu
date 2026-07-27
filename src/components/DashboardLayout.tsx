@@ -26,6 +26,7 @@ const pageTitles: Record<string, string> = {
   '/dashboard/faq': 'FAQ',
   '/dashboard/profile': 'Perfil',
   '/dashboard/certificates': 'Certificados',
+  '/dashboard/roda-da-vida': 'Roda da Vida',
 }
 
 export function DashboardLayout() {

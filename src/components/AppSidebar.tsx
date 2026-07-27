@@ -21,10 +21,12 @@ import {
   GraduationCap,
   Settings,
   Users,
+  Radar,
 } from 'lucide-react'
 
 const studentNavItems = [
   { title: 'Início', href: '/dashboard', icon: Home },
+  { title: 'Roda da Vida', href: '/dashboard/roda-da-vida', icon: Radar },
   { title: 'Produtos', href: '/dashboard/produtos', icon: Package },
   { title: 'Compras', href: '/dashboard/compras', icon: ShoppingBag },
   { title: 'Comunidade', href: '/dashboard/comunidade', icon: Users },

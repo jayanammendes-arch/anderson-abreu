@@ -43,6 +43,9 @@ import CourseDetailsPage from '@/pages/CourseDetailsPage'
 import CursosPage from '@/pages/CursosPage'
 import Profile from '@/pages/Profile'
 import Certificates from '@/pages/Certificates'
+import RodaDaVida from '@/pages/RodaDaVida'
+import AdminLifeWheelCategories from '@/pages/admin/AdminLifeWheelCategories'
+import AdminLifeWheelQuestions from '@/pages/admin/AdminLifeWheelQuestions'
 import NotFound from '@/pages/NotFound'
 
 const App = () => (
@@ -80,6 +83,8 @@ const App = () => (
               <Route path="agenda" element={<AdminAgenda />} />
               <Route path="faqs" element={<AdminFaqs />} />
               <Route path="site-faqs" element={<AdminSiteFaqs />} />
+              <Route path="roda-da-vida-categorias" element={<AdminLifeWheelCategories />} />
+              <Route path="roda-da-vida-perguntas" element={<AdminLifeWheelQuestions />} />
               <Route path="comunidade" element={<AdminCommunity />} />
               <Route path="certificados" element={<AdminCertificates />} />
               <Route path="contatos" element={<AdminContacts />} />
@@ -94,6 +99,7 @@ const App = () => (
               <Route path="faq" element={<Faq />} />
               <Route path="profile" element={<Profile />} />
               <Route path="certificates" element={<Certificates />} />
+              <Route path="roda-da-vida" element={<RodaDaVida />} />
               <Route path="curso/:courseId" element={<CourseDetail />} />
             </Route>
             <Route path="*" element={<NotFound />} />

@@ -473,3 +473,34 @@ export interface AboutEnvironmentImage {
   created: string
   updated: string
 }
+
+export interface LifeWheelCategory {
+  id: string
+  name: string
+  icon: string
+  color: string
+  order: number
+  created: string
+  updated: string
+}
+
+export interface LifeWheelQuestion {
+  id: string
+  text: string
+  explanation: string
+  category: string
+  order: number
+  created: string
+  updated: string
+  expand?: { category?: LifeWheelCategory }
+}
+
+export interface LifeWheelAssessment {
+  id: string
+  user: string
+  type: 'pre' | 'post'
+  date: string
+  scores: Record<string, number> & { overall_average?: number }
+  created: string
+  updated: string
+}
