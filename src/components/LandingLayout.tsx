@@ -20,11 +20,20 @@ const navLinks = [
 ]
 
 function scrollToSection(href: string) {
-  const el = document.querySelector(href)
-  if (el) {
-    const top = el.getBoundingClientRect().top + window.scrollY - 80
-    window.scrollTo({ top, behavior: 'smooth' })
-  }
+  let elapsed = 0
+  const interval = setInterval(() => {
+    const el = document.querySelector(href)
+    if (el) {
+      const top = el.getBoundingClientRect().top + window.scrollY - 80
+      window.scrollTo({ top, behavior: 'smooth' })
+      clearInterval(interval)
+    } else {
+      elapsed += 100
+      if (elapsed >= 5000) {
+        clearInterval(interval)
+      }
+    }
+  }, 100)
 }
 
 export function LandingLayout({
