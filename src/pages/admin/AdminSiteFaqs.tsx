@@ -5,7 +5,13 @@ import {
   adminUpdateSiteFaq,
   adminDeleteSiteFaq,
 } from '@/services/site-faqs'
-import type { SiteFAQ } from '@/types'
+import {
+  getPlatformSettings,
+  updatePlatformSettings,
+  createPlatformSettings,
+} from '@/services/admin-settings'
+import { getFaqSectionImageUrl } from '@/services/landing'
+import type { SiteFAQ, PlatformSettings } from '@/types'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -33,7 +39,7 @@ import { RichTextEditor } from '@/components/admin/RichTextEditor'
 import { useRealtime } from '@/hooks/use-realtime'
 import { extractFieldErrors, type FieldErrors } from '@/lib/pocketbase/errors'
 import { toast } from 'sonner'
-import { Pencil, Trash2, Plus, Loader2, Save, HelpCircle } from 'lucide-react'
+import { Pencil, Trash2, Plus, Loader2, Save, HelpCircle, ImagePlus, X, Upload } from 'lucide-react'
 
 const emptyFaq: Partial<SiteFAQ> = {
   question: '',
@@ -52,6 +58,11 @@ export default function AdminSiteFaqs() {
   const [formData, setFormData] = useState<Partial<SiteFAQ>>(emptyFaq)
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
 
+  const [settings, setSettings] = useState<PlatformSettings | null>(null)
+  const [imageFile, setImageFile] = useState<File | null>(null)
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [imageSaving, setImageSaving] = useState(false)
+
   const loadFaqs = useCallback(async () => {
     setIsLoading(true)
     try {
@@ -63,13 +74,81 @@ export default function AdminSiteFaqs() {
     }
   }, [])
 
+  const loadSettings = useCallback(async () => {
+    try {
+      const data = await getPlatformSettings()
+      if (data) setSettings(data)
+    } catch {
+      // settings optional
+    }
+  }, [])
+
   useEffect(() => {
     loadFaqs()
-  }, [loadFaqs])
+    loadSettings()
+  }, [loadFaqs, loadSettings])
 
   useRealtime('site_faqs', () => {
     loadFaqs()
   })
+
+  useRealtime('platform_settings', () => {
+    loadSettings()
+  })
+
+  const currentImageUrl = settings ? getFaqSectionImageUrl(settings) : null
+  const displayImageUrl = imageFile ? imagePreview : currentImageUrl
+
+  const handleImageSelect = (file: File | null) => {
+    if (file) {
+      setImageFile(file)
+      setImagePreview(URL.createObjectURL(file))
+    }
+  }
+
+  const handleImageSave = async () => {
+    if (!imageFile) return
+    setImageSaving(true)
+    try {
+      const fd = new FormData()
+      fd.append('faq_section_image', imageFile)
+      if (settings) {
+        const updated = await updatePlatformSettings(settings.id, fd)
+        setSettings(updated as PlatformSettings)
+      } else {
+        const created = await createPlatformSettings(fd)
+        setSettings(created as PlatformSettings)
+      }
+      setImageFile(null)
+      setImagePreview(null)
+      toast.success('Imagem salva com sucesso!')
+      loadSettings()
+    } catch {
+      toast.error('Erro ao salvar imagem')
+    } finally {
+      setImageSaving(false)
+    }
+  }
+
+  const handleImageRemove = async () => {
+    setImageSaving(true)
+    try {
+      const fd = new FormData()
+      fd.append('faq_section_image', '')
+      if (settings) {
+        const updated = await updatePlatformSettings(settings.id, fd)
+        setSettings(updated as PlatformSettings)
+      }
+      setImageFile(null)
+      setImagePreview(null)
+      toast.success('Imagem removida!')
+      loadSettings()
+    } catch {
+      toast.error('Erro ao remover imagem')
+    } finally {
+      setImageSaving(false)
+    }
+  }
 
   const handleNew = () => {
     setFormData({ ...emptyFaq, order: faqs.length })
@@ -135,6 +214,102 @@ export default function AdminSiteFaqs() {
           <Plus className="mr-2 h-4 w-4" /> Nova FAQ
         </Button>
       </div>
+
+      <Card className="bg-card/50 border-border/50 p-6">
+        <div className="space-y-4">
+          <div>
+            <Label className="text-base font-semibold">
+              Imagem da Seção de Perguntas Frequentes
+            </Label>
+            <p className="text-sm text-muted-foreground mt-1">
+              Esta imagem é exibida ao lado das perguntas frequentes na página inicial.
+            </p>
+          </div>
+
+          {displayImageUrl ? (
+            <div className="space-y-3">
+              <div className="relative inline-block">
+                <img
+                  src={displayImageUrl}
+                  alt="Imagem da seção de FAQ"
+                  className="rounded-lg border border-border/50 max-h-48 object-cover"
+                />
+                {imageFile && (
+                  <span className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full">
+                    Pré-visualização
+                  </span>
+                )}
+              </div>
+              <div className="flex gap-2 flex-wrap">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => document.getElementById('faq-section-image-upload')?.click()}
+                  disabled={imageSaving}
+                >
+                  <Upload className="mr-2 h-4 w-4" />
+                  Substituir imagem
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleImageRemove}
+                  disabled={imageSaving}
+                  className="text-red-500 hover:text-red-600"
+                >
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Remover imagem
+                </Button>
+                {imageFile && (
+                  <Button size="sm" onClick={handleImageSave} disabled={imageSaving}>
+                    {imageSaving ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      <Save className="mr-2 h-4 w-4" />
+                    )}
+                    Salvar imagem
+                  </Button>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              <label
+                htmlFor="faq-section-image-upload"
+                className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-border/60 rounded-lg cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-colors"
+              >
+                <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                  <ImagePlus className="h-10 w-10" />
+                  <span className="text-sm font-medium">Clique para enviar uma imagem</span>
+                  <span className="text-xs">Recomendado: 600×520 px (PNG, JPG ou WebP)</span>
+                </div>
+              </label>
+            </div>
+          )}
+
+          <Input
+            id="faq-section-image-upload"
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            className="hidden"
+            onChange={(e) => {
+              handleImageSelect(e.target.files?.[0] || null)
+              e.target.value = ''
+            }}
+          />
+
+          {imageFile && !displayImageUrl && (
+            <Button size="sm" onClick={handleImageSave} disabled={imageSaving}>
+              {imageSaving ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Save className="mr-2 h-4 w-4" />
+              )}
+              Salvar imagem
+            </Button>
+          )}
+        </div>
+      </Card>
 
       {isLoading ? (
         <div className="flex justify-center py-12">
