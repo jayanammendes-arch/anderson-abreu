@@ -15,6 +15,7 @@ import { ComparisonTable } from '@/components/treatment/ComparisonTable'
 import { RichSection } from '@/components/treatment/RichSection'
 import { getTreatmentIcon } from '@/lib/treatment-icons'
 import { Loader2, ArrowLeft } from 'lucide-react'
+import { ScrollFadeIn } from '@/components/ScrollFadeIn'
 
 export default function TreatmentDetail() {
   const { slug } = useParams<{ slug: string }>()
@@ -85,6 +86,7 @@ export default function TreatmentDetail() {
 
   return (
     <LandingLayout settings={settings}>
+      <ScrollFadeIn>
       <section className="relative min-h-[60vh] flex items-center overflow-hidden pt-20">
         {imageUrl ? (
           <>
@@ -120,7 +122,9 @@ export default function TreatmentDetail() {
           </div>
         </div>
       </section>
+      </ScrollFadeIn>
 
+      <ScrollFadeIn>
       <section id="o-que-e" className="py-24 bg-white">
         <div className="max-w-4xl mx-auto px-6">
           <h2 className="text-3xl font-bold text-slate-900 mb-6">O que é {category.name}</h2>
@@ -130,26 +134,32 @@ export default function TreatmentDetail() {
           />
         </div>
       </section>
+      </ScrollFadeIn>
 
       {hasComoFunciona && (
+        <ScrollFadeIn>
         <RichSection
           title="Como a Hipnose Funciona"
           html={category.como_funciona_text}
           images={comoFuncionaImages}
           className="py-24 bg-slate-50"
         />
+        </ScrollFadeIn>
       )}
 
       {hasResultados && (
+        <ScrollFadeIn>
         <RichSection
           title="Resultados Comprovados"
           html={category.resultados_text}
           images={resultadosImages}
           className="py-24 bg-white"
         />
+        </ScrollFadeIn>
       )}
 
       {category.symptoms_list && (
+        <ScrollFadeIn>
         <section className="py-24 bg-white">
           <div className="max-w-4xl mx-auto px-6">
             <h2 className="text-3xl font-bold text-slate-900 mb-6">Sintomas Comuns</h2>
@@ -159,8 +169,10 @@ export default function TreatmentDetail() {
             />
           </div>
         </section>
+        </ScrollFadeIn>
       )}
 
+      <ScrollFadeIn>
       <section className="py-24 bg-slate-50">
         <div className="max-w-7xl mx-auto px-6">
           <h2 className="text-3xl font-bold text-slate-900 mb-8 text-center">Outros Tratamentos</h2>
@@ -183,20 +195,29 @@ export default function TreatmentDetail() {
           </div>
         </div>
       </section>
+      </ScrollFadeIn>
 
+      <ScrollFadeIn>
       <TestimonialsSection customTitle={settings?.testimonials_section_title} />
+      </ScrollFadeIn>
+
+      <ScrollFadeIn>
       <ComparisonTable />
+      </ScrollFadeIn>
 
       {hasCta && (
+        <ScrollFadeIn>
         <RichSection
           title="Pronto para começar?"
           html={category.cta_text}
           images={ctaImages}
           className="py-24 bg-slate-50"
         />
+        </ScrollFadeIn>
       )}
 
       {!hasCta && (
+        <ScrollFadeIn>
         <section className="py-24 bg-slate-900">
           <div className="max-w-3xl mx-auto px-6 text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Pronto para começar?</h2>
