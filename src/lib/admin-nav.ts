@@ -15,6 +15,7 @@ import {
   Newspaper,
   Globe,
   BadgeCheck,
+  Images,
 } from 'lucide-react'
 
 export interface AdminNavItem {
@@ -131,6 +132,12 @@ export const adminNavGroups: AdminNavGroup[] = [
         href: '/admin/certificacoes',
         icon: BadgeCheck,
         description: 'Gerenciar logos de certificações exibidos no site',
+      },
+      {
+        title: 'Conteúdo Sobre',
+        href: '/admin/sobre-conteudo',
+        icon: Images,
+        description: 'Gerenciar galerias e conteúdo da página Sobre',
       },
     ],
   },

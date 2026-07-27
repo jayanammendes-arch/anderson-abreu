@@ -141,6 +141,46 @@ export function getFaqSectionImageUrl(settings: {
   return null
 }
 
+export function getAboutHeroImageUrl(settings: {
+  id: string
+  about_hero_image?: string
+}): string | null {
+  if (settings.about_hero_image) {
+    return `${import.meta.env.VITE_POCKETBASE_URL}/api/files/platform_settings/${settings.id}/${settings.about_hero_image}`
+  }
+  return null
+}
+
+export function getAboutJourneyPhotoUrl(settings: {
+  id: string
+  about_journey_photo?: string
+}): string | null {
+  if (settings.about_journey_photo) {
+    return `${import.meta.env.VITE_POCKETBASE_URL}/api/files/platform_settings/${settings.id}/${settings.about_journey_photo}`
+  }
+  return null
+}
+
+export function getAboutFormationsImageUrl(settings: {
+  id: string
+  about_formations_image?: string
+}): string | null {
+  if (settings.about_formations_image) {
+    return `${import.meta.env.VITE_POCKETBASE_URL}/api/files/platform_settings/${settings.id}/${settings.about_formations_image}`
+  }
+  return null
+}
+
+export function getAboutCtaBackgroundImageUrl(settings: {
+  id: string
+  about_cta_background_image?: string
+}): string | null {
+  if (settings.about_cta_background_image) {
+    return `${import.meta.env.VITE_POCKETBASE_URL}/api/files/platform_settings/${settings.id}/${settings.about_cta_background_image}`
+  }
+  return null
+}
+
 export function applyBrandColor(color: string): void {
   document.documentElement.style.setProperty('--primary', color)
 }

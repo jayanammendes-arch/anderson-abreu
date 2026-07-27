@@ -325,6 +325,32 @@ export interface PlatformSettings {
   parallax_button_text?: string
   parallax_button_link?: string
   faq_section_image?: string
+  about_hero_image?: string
+  about_hero_title?: string
+  about_hero_subtitle?: string
+  about_hero_visible?: boolean
+  about_credentials_visible?: boolean
+  about_journey_title?: string
+  about_journey_photo?: string
+  about_journey_visible?: boolean
+  about_formations_title?: string
+  about_formations_list?: string
+  about_formations_image?: string
+  about_formations_visible?: boolean
+  about_grand_names_title?: string
+  about_grand_names_visible?: boolean
+  about_media_title?: string
+  about_media_visible?: boolean
+  about_recommendations_title?: string
+  about_recommendations_visible?: boolean
+  about_environment_title?: string
+  about_environment_visible?: boolean
+  about_cta_title?: string
+  about_cta_subtitle?: string
+  about_cta_button_text?: string
+  about_cta_button_link?: string
+  about_cta_background_image?: string
+  about_cta_visible?: boolean
   created: string
   updated: string
 }
@@ -401,6 +427,44 @@ export interface BlogPost {
 }
 
 export interface CertificationLogo {
+  id: string
+  image: string
+  order: number
+  created: string
+  updated: string
+}
+
+export interface AboutGrandName {
+  id: string
+  image: string
+  name: string
+  description?: string
+  order: number
+  created: string
+  updated: string
+}
+
+export interface AboutMediaMention {
+  id: string
+  title: string
+  description?: string
+  link?: string
+  image?: string
+  order: number
+  created: string
+  updated: string
+}
+
+export interface AboutRecommendation {
+  id: string
+  video_url: string
+  description?: string
+  order: number
+  created: string
+  updated: string
+}
+
+export interface AboutEnvironmentImage {
   id: string
   image: string
   order: number

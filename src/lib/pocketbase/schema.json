@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-27T13:47:34.057Z",
+  "generatedAt": "2026-07-27T14:09:46.185Z",
   "collections": [
     {
       "name": "users",
@@ -1010,6 +1010,162 @@
         {
           "name": "faq_section_image",
           "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "about_hero_title",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "about_hero_subtitle",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "about_journey_title",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "about_formations_title",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "about_grand_names_title",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "about_media_title",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "about_recommendations_title",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "about_environment_title",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "about_cta_title",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "about_cta_subtitle",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "about_cta_button_text",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "about_cta_button_link",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "about_hero_visible",
+          "type": "bool",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "about_credentials_visible",
+          "type": "bool",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "about_journey_visible",
+          "type": "bool",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "about_formations_visible",
+          "type": "bool",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "about_grand_names_visible",
+          "type": "bool",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "about_media_visible",
+          "type": "bool",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "about_recommendations_visible",
+          "type": "bool",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "about_environment_visible",
+          "type": "bool",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "about_cta_visible",
+          "type": "bool",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "about_hero_image",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "about_journey_photo",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "about_formations_image",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "about_cta_background_image",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "about_formations_list",
+          "type": "json",
           "required": false,
           "system": false
         }
@@ -2100,6 +2256,204 @@
         }
       ],
       "indexes": ["CREATE INDEX idx_certification_logos_order ON certification_logos (order)"]
+    },
+    {
+      "name": "about_grand_names",
+      "type": "base",
+      "apiRules": {
+        "list": "",
+        "view": "",
+        "create": "@request.auth.is_admin = true",
+        "update": "@request.auth.is_admin = true",
+        "delete": "@request.auth.is_admin = true"
+      },
+      "fields": [
+        {
+          "name": "image",
+          "type": "file",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "name",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "description",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "order",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": ["CREATE INDEX idx_about_grand_names_order ON about_grand_names (order)"]
+    },
+    {
+      "name": "about_media_mentions",
+      "type": "base",
+      "apiRules": {
+        "list": "",
+        "view": "",
+        "create": "@request.auth.is_admin = true",
+        "update": "@request.auth.is_admin = true",
+        "delete": "@request.auth.is_admin = true"
+      },
+      "fields": [
+        {
+          "name": "title",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "description",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "link",
+          "type": "url",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "image",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "order",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": ["CREATE INDEX idx_about_media_mentions_order ON about_media_mentions (order)"]
+    },
+    {
+      "name": "about_recommendations",
+      "type": "base",
+      "apiRules": {
+        "list": "",
+        "view": "",
+        "create": "@request.auth.is_admin = true",
+        "update": "@request.auth.is_admin = true",
+        "delete": "@request.auth.is_admin = true"
+      },
+      "fields": [
+        {
+          "name": "video_url",
+          "type": "url",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "description",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "order",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": ["CREATE INDEX idx_about_recommendations_order ON about_recommendations (order)"]
+    },
+    {
+      "name": "about_environment_images",
+      "type": "base",
+      "apiRules": {
+        "list": "",
+        "view": "",
+        "create": "@request.auth.is_admin = true",
+        "update": "@request.auth.is_admin = true",
+        "delete": "@request.auth.is_admin = true"
+      },
+      "fields": [
+        {
+          "name": "image",
+          "type": "file",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "order",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": [
+        "CREATE INDEX idx_about_environment_images_order ON about_environment_images (order)"
+      ]
     }
   ]
 }

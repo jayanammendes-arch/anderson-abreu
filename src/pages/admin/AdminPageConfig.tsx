@@ -13,6 +13,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Switch } from '@/components/ui/switch'
 import { RichTextEditor } from '@/components/admin/RichTextEditor'
 import { ServicesItemsEditor } from '@/components/admin/ServicesItemsEditor'
+import { AboutSectionsConfig } from '@/components/admin/AboutSectionsConfig'
 import { Save, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import type { PlatformSettings } from '@/types'
@@ -73,6 +74,28 @@ interface FormState {
   parallax_headline: string
   parallax_button_text: string
   parallax_button_link: string
+  about_hero_title: string
+  about_hero_subtitle: string
+  about_hero_visible: boolean
+  about_credentials_visible: boolean
+  about_journey_title: string
+  about_journey_visible: boolean
+  about_formations_title: string
+  about_formations_list: string
+  about_formations_visible: boolean
+  about_grand_names_title: string
+  about_grand_names_visible: boolean
+  about_media_title: string
+  about_media_visible: boolean
+  about_recommendations_title: string
+  about_recommendations_visible: boolean
+  about_environment_title: string
+  about_environment_visible: boolean
+  about_cta_title: string
+  about_cta_subtitle: string
+  about_cta_button_text: string
+  about_cta_button_link: string
+  about_cta_visible: boolean
 }
 
 const emptyForm: FormState = {
@@ -131,6 +154,28 @@ const emptyForm: FormState = {
   parallax_headline: '',
   parallax_button_text: '',
   parallax_button_link: '',
+  about_hero_title: '',
+  about_hero_subtitle: '',
+  about_hero_visible: true,
+  about_credentials_visible: true,
+  about_journey_title: '',
+  about_journey_visible: true,
+  about_formations_title: '',
+  about_formations_list: '[]',
+  about_formations_visible: true,
+  about_grand_names_title: '',
+  about_grand_names_visible: true,
+  about_media_title: '',
+  about_media_visible: true,
+  about_recommendations_title: '',
+  about_recommendations_visible: true,
+  about_environment_title: '',
+  about_environment_visible: true,
+  about_cta_title: '',
+  about_cta_subtitle: '',
+  about_cta_button_text: '',
+  about_cta_button_link: '',
+  about_cta_visible: true,
 }
 
 function FieldLabel({ label, description }: { label: string; description?: string }) {
@@ -255,6 +300,10 @@ export default function AdminPageConfig() {
   const [homeCredentialImage, setHomeCredentialImage] = useState<File | null>(null)
   const [credentialsImage, setCredentialsImage] = useState<File | null>(null)
   const [parallaxBgImage, setParallaxBgImage] = useState<File | null>(null)
+  const [aboutHeroImage, setAboutHeroImage] = useState<File | null>(null)
+  const [aboutJourneyPhoto, setAboutJourneyPhoto] = useState<File | null>(null)
+  const [aboutFormationsImage, setAboutFormationsImage] = useState<File | null>(null)
+  const [aboutCtaBgImage, setAboutCtaBgImage] = useState<File | null>(null)
 
   const set = (key: keyof FormState, value: string | boolean) =>
     setForm((p) => ({ ...p, [key]: value }))
@@ -330,6 +379,31 @@ export default function AdminPageConfig() {
             parallax_headline: data.parallax_headline || '',
             parallax_button_text: data.parallax_button_text || '',
             parallax_button_link: data.parallax_button_link || '',
+            about_hero_title: data.about_hero_title || '',
+            about_hero_subtitle: data.about_hero_subtitle || '',
+            about_hero_visible: data.about_hero_visible !== false,
+            about_credentials_visible: data.about_credentials_visible !== false,
+            about_journey_title: data.about_journey_title || '',
+            about_journey_visible: data.about_journey_visible !== false,
+            about_formations_title: data.about_formations_title || '',
+            about_formations_list:
+              typeof data.about_formations_list === 'string'
+                ? data.about_formations_list
+                : JSON.stringify(data.about_formations_list || []),
+            about_formations_visible: data.about_formations_visible !== false,
+            about_grand_names_title: data.about_grand_names_title || '',
+            about_grand_names_visible: data.about_grand_names_visible !== false,
+            about_media_title: data.about_media_title || '',
+            about_media_visible: data.about_media_visible !== false,
+            about_recommendations_title: data.about_recommendations_title || '',
+            about_recommendations_visible: data.about_recommendations_visible !== false,
+            about_environment_title: data.about_environment_title || '',
+            about_environment_visible: data.about_environment_visible !== false,
+            about_cta_title: data.about_cta_title || '',
+            about_cta_subtitle: data.about_cta_subtitle || '',
+            about_cta_button_text: data.about_cta_button_text || '',
+            about_cta_button_link: data.about_cta_button_link || '',
+            about_cta_visible: data.about_cta_visible !== false,
           })
         }
       } catch {
@@ -357,6 +431,10 @@ export default function AdminPageConfig() {
       if (homeCredentialImage) fd.append('home_credential_image', homeCredentialImage)
       if (credentialsImage) fd.append('credentials_image', credentialsImage)
       if (parallaxBgImage) fd.append('parallax_background_image', parallaxBgImage)
+      if (aboutHeroImage) fd.append('about_hero_image', aboutHeroImage)
+      if (aboutJourneyPhoto) fd.append('about_journey_photo', aboutJourneyPhoto)
+      if (aboutFormationsImage) fd.append('about_formations_image', aboutFormationsImage)
+      if (aboutCtaBgImage) fd.append('about_cta_background_image', aboutCtaBgImage)
       if (settings) await updatePlatformSettings(settings.id, fd)
       else await createPlatformSettings(fd)
       toast.success('Configurações salvas com sucesso!')
@@ -630,6 +708,15 @@ export default function AdminPageConfig() {
                       onFile={setCredentialsImage}
                     />
                   </div>
+
+                  <AboutSectionsConfig
+                    form={form}
+                    set={set as (key: string, value: string | boolean) => void}
+                    setAboutHeroImage={setAboutHeroImage}
+                    setAboutJourneyPhoto={setAboutJourneyPhoto}
+                    setAboutFormationsImage={setAboutFormationsImage}
+                    setAboutCtaBgImage={setAboutCtaBgImage}
+                  />
                 </CardContent>
               </Card>
             </TabsContent>
