@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { getActiveSiteFaqs } from '@/services/site-faqs'
+import { getPlatformSettingsPublic, getFaqSectionImageUrl } from '@/services/landing'
 import { useRealtime } from '@/hooks/use-realtime'
-import type { SiteFAQ } from '@/types'
+import type { SiteFAQ, PlatformSettings } from '@/types'
 import {
   Accordion,
   AccordionContent,
@@ -12,12 +13,17 @@ import { HelpCircle } from 'lucide-react'
 
 export function HomeFaqSection() {
   const [faqs, setFaqs] = useState<SiteFAQ[]>([])
+  const [settings, setSettings] = useState<PlatformSettings | null>(null)
   const [loading, setLoading] = useState(true)
 
   const loadData = async () => {
     try {
-      const data = await getActiveSiteFaqs()
-      setFaqs(data)
+      const [faqData, settingsData] = await Promise.all([
+        getActiveSiteFaqs(),
+        getPlatformSettingsPublic().catch(() => null),
+      ])
+      setFaqs(faqData)
+      setSettings(settingsData as PlatformSettings | null)
     } catch {
       setFaqs([])
     } finally {
@@ -33,7 +39,13 @@ export function HomeFaqSection() {
     loadData()
   })
 
+  useRealtime('platform_settings', () => {
+    loadData()
+  })
+
   if (!loading && faqs.length === 0) return null
+
+  const faqImageUrl = settings ? getFaqSectionImageUrl(settings) : null
 
   return (
     <section className="py-24 bg-white">
@@ -72,13 +84,19 @@ export function HomeFaqSection() {
           </div>
 
           <div className="order-1 md:order-2">
-            <div className="relative overflow-hidden rounded-2xl shadow-xl">
-              <img
-                src="https://img.usecurling.com/p/600/700?q=calm%20meditation%20serene&color=blue"
-                alt="Ilustração de tranquilidade e suporte"
-                className="w-full h-[300px] md:h-[520px] object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#00A3C4]/20 to-transparent" />
+            <div className="relative overflow-hidden rounded-2xl shadow-xl h-[300px] md:h-[520px]">
+              {faqImageUrl ? (
+                <img
+                  src={faqImageUrl}
+                  alt="Ilustração de tranquilidade e suporte"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#00A3C4]/20 via-[#00A3C4]/10 to-slate-100">
+                  <HelpCircle className="h-24 w-24 text-[#00A3C4]/40" />
+                </div>
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#00A3C4]/20 to-transparent pointer-events-none" />
             </div>
           </div>
         </div>

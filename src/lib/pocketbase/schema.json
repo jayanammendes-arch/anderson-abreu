@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-27T13:03:51.862Z",
+  "generatedAt": "2026-07-27T13:18:05.121Z",
   "collections": [
     {
       "name": "users",
@@ -1004,6 +1004,12 @@
         {
           "name": "parallax_button_link",
           "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "faq_section_image",
+          "type": "file",
           "required": false,
           "system": false
         }

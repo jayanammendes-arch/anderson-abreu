@@ -32,9 +32,9 @@
     "README.md"
   ],
   "deployment": {
-    "lastDevBuildRef": "fda1215",
-    "lastProdBuildRef": "fda1215",
-    "publishedAt": "2026-07-27T12:59:45.253Z",
-    "lastPublishedRef": "fda1215"
+    "lastDevBuildRef": "3015e41",
+    "lastProdBuildRef": "3015e41",
+    "publishedAt": "2026-07-27T13:14:05.792Z",
+    "lastPublishedRef": "3015e41"
   }
 }

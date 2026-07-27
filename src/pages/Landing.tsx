@@ -7,6 +7,7 @@ import {
   getPlatformSettingsPublic,
   getHomeHeroImageUrl,
   getParallaxBackgroundImageUrl,
+  getFaqSectionImageUrl,
 } from '@/services/landing'
 import { getTreatmentCategories } from '@/services/treatment-categories'
 import { getBlogPosts } from '@/services/blog'

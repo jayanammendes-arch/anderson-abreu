@@ -324,6 +324,7 @@ export interface PlatformSettings {
   parallax_headline?: string
   parallax_button_text?: string
   parallax_button_link?: string
+  faq_section_image?: string
   created: string
   updated: string
 }

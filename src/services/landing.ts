@@ -131,6 +131,16 @@ export function getParallaxBackgroundImageUrl(settings: {
   return null
 }
 
+export function getFaqSectionImageUrl(settings: {
+  id: string
+  faq_section_image?: string
+}): string | null {
+  if (settings.faq_section_image) {
+    return pb.files.getUrl(settings, settings.faq_section_image)
+  }
+  return null
+}
+
 export function applyBrandColor(color: string): void {
   document.documentElement.style.setProperty('--primary', color)
 }
