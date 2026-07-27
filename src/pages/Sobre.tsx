@@ -120,7 +120,7 @@ export default function Sobre() {
                 <div className="absolute inset-0 bg-black/50" />
               </>
             ) : (
-              <div className="absolute inset-0 bg-slate-900" />
+              <div className="absolute inset-0 royal-gradient-bg" />
             )}
             <div className="relative z-10 text-center px-6 py-20">
               <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
@@ -346,7 +346,7 @@ export default function Sobre() {
             {ctaBg ? (
               <>
                 <img src={ctaBg} alt="" className="absolute inset-0 h-full w-full object-cover" />
-                <div className="absolute inset-0 bg-black/60" />
+                <div className="absolute inset-0 bg-gradient-to-b from-[hsl(var(--royal-blue))]/70 to-black/70" />{' '}
               </>
             ) : (
               <div className="absolute inset-0 bg-slate-900" />

@@ -312,7 +312,7 @@ export default function Landing() {
 
       {/* CTA */}
       <ScrollFadeIn>
-        <section className="py-24 bg-slate-900">
+        <section className="py-24 royal-gradient-bg">
           <div className="max-w-3xl mx-auto px-6 text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
               Pronto para transformar sua vida?
@@ -322,7 +322,7 @@ export default function Landing() {
             </p>
             <Button
               size="lg"
-              className="bg-white text-slate-900 hover:bg-white/90 rounded-full px-10"
+              className="bg-royal hover:bg-royal-hover text-white rounded-full px-10"
               onClick={() => navigate('/agendar')}
             >
               <Calendar className="mr-2 h-5 w-5" />

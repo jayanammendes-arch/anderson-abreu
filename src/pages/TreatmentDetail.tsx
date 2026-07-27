@@ -103,7 +103,7 @@ export default function TreatmentDetail() {
               <div className="flex flex-wrap gap-4">
                 <Button
                   size="lg"
-                  className="bg-white text-slate-900 hover:bg-white/90 rounded-full px-8"
+                  className="bg-royal hover:bg-royal-hover text-white rounded-full px-8"
                   onClick={() => navigate('/agendar')}
                 >
                   {agendarText}
@@ -229,7 +229,7 @@ export default function TreatmentDetail() {
               </p>
               <Button
                 size="lg"
-                className="bg-white text-slate-900 hover:bg-white/90 rounded-full px-10"
+                className="bg-royal hover:bg-royal-hover text-white rounded-full px-10"
                 onClick={() => navigate('/agendar')}
               >
                 {agendarText}

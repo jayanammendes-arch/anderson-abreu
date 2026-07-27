@@ -152,7 +152,7 @@ export function LandingLayout({
             ) : (
               <Button
                 size="sm"
-                className="bg-slate-900 text-white hover:bg-slate-800 rounded-full px-6 shadow-sm"
+                className="bg-royal text-white hover:bg-royal-hover rounded-full px-6 shadow-sm"
                 onClick={() => navigate('/agendar')}
               >
                 <Calendar className="mr-1.5 h-4 w-4" />
@@ -232,7 +232,7 @@ export function LandingLayout({
             </Button>
           ) : (
             <Button
-              className="mt-6 bg-slate-900 text-white hover:bg-slate-800 rounded-full h-12 text-base"
+              className="mt-6 bg-royal text-white hover:bg-royal-hover rounded-full h-12 text-base"
               onClick={() => {
                 setIsMenuOpen(false)
                 navigate('/agendar')

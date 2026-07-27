@@ -299,7 +299,7 @@ export default function Login() {
                 )}
                 <Button
                   type="submit"
-                  className="w-full hover:bg-primary/90 text-[#ffffff] bg-[#000d81] shadow-[0px_0px_6px_0px_#ffffff]"
+                  className="w-full bg-royal hover:bg-royal-hover text-white shadow-[0px_0px_6px_0px_#ffffff]"
                   disabled={submitting}
                 >
                   {submitting ? 'Aguarde...' : mode === 'login' ? 'Entrar' : 'Criar Conta'}
@@ -343,7 +343,7 @@ export default function Login() {
       <div
         className={cn(
           'relative hidden items-center justify-center overflow-hidden lg:flex lg:flex-1',
-          !loginSettings?.login_gradient && 'bg-gradient-to-b from-blue-900 via-blue-950 to-black',
+          !loginSettings?.login_gradient && 'royal-gradient-bg',
         )}
         style={
           loginSettings?.login_gradient
@@ -357,7 +357,7 @@ export default function Login() {
               : undefined
         }
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/40 via-transparent to-black/60" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(var(--royal-blue))]/40 via-transparent to-black/60" />
         <div className="relative z-10 flex flex-col items-center gap-8 px-12 text-center">
           <Link
             to="/"

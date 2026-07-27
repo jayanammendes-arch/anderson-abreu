@@ -137,10 +137,10 @@ export default function Agendar() {
           {bgUrl ? (
             <img src={bgUrl} alt="Sessão de Hipnose" className="h-full w-full object-cover" />
           ) : (
-            <div className="h-full w-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900" />
+            <div className="h-full w-full royal-gradient-bg" />
           )}
-          <div className="absolute inset-0 bg-black/70" />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/60 to-black/80" />
+          <div className="absolute inset-0 bg-black/60" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[hsl(var(--royal-blue))]/50 via-black/60 to-black/80" />
         </div>
 
         <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 py-12 md:py-20">
@@ -190,7 +190,7 @@ export default function Agendar() {
                   )}
                   <button
                     onClick={scrollToForm}
-                    className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-white text-slate-900 font-semibold text-base shadow-lg hover:bg-white/90 transition-colors duration-200"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-royal text-white font-semibold text-base shadow-lg hover:bg-royal-hover transition-colors duration-200"
                   >
                     {settings?.agendar_sessao_text || 'Agendar Sessão'}
                     <ArrowRight className="h-5 w-5" />

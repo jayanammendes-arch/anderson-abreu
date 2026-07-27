@@ -39,6 +39,8 @@
     --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 0 0% 15%;
     --sidebar-ring: 222 84% 30%;
+    --royal-blue: 224 76% 25%;
+    --royal-blue-hover: 224 76% 32%;
   }
   .light {
     --background: 0 0% 98%;
@@ -76,6 +78,8 @@
     --sidebar-accent-foreground: 222 47% 11%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 222 84% 30%;
+    --royal-blue: 224 76% 25%;
+    --royal-blue-hover: 224 76% 32%;
   }
 }
 
@@ -208,5 +212,16 @@
   .scroll-fade-in--visible {
     opacity: 1;
     transform: translateY(0);
+  }
+
+  .royal-gradient-bg {
+    background: linear-gradient(
+      160deg,
+      #020412 0%,
+      #051030 25%,
+      #0a1a5e 55%,
+      #122a8a 80%,
+      #1a3fa8 100%
+    );
   }
 }

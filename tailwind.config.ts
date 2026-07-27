@@ -48,6 +48,10 @@ export default {
           DEFAULT: 'hsl(var(--gold))',
           foreground: 'hsl(var(--gold-foreground))',
         },
+        royal: {
+          DEFAULT: 'hsl(var(--royal-blue))',
+          hover: 'hsl(var(--royal-blue-hover))',
+        },
         chart: {
           1: 'hsl(var(--chart-1))',
           2: 'hsl(var(--chart-2))',
