@@ -6,7 +6,7 @@ import {
   getTreatmentCategoryImageUrl,
   getTreatmentCategoryImageUrls,
 } from '@/services/treatment-categories'
-import { getPlatformSettingsPublic, getAboutPageImageUrl } from '@/services/landing'
+import { getPlatformSettingsPublic } from '@/services/landing'
 import type { TreatmentCategory, PlatformSettings } from '@/types'
 import { LandingLayout } from '@/components/LandingLayout'
 import { Button } from '@/components/ui/button'
@@ -67,7 +67,6 @@ export default function TreatmentDetail() {
   const imageUrl = getTreatmentCategoryImageUrl(category)
   const Icon = getTreatmentIcon(category.icon)
   const otherCategories = allCategories.filter((c) => c.slug !== slug)
-  const aboutImage = settings?.about_page_image ? getAboutPageImageUrl(settings) : null
   const agendarText = settings?.agendar_sessao_text || 'Agendar Sessão'
   const stats = [
     { value: `${settings?.stats_students || 500}+`, label: 'Pacientes' },

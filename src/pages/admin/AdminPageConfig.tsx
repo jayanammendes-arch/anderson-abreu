@@ -22,11 +22,7 @@ interface FormState {
   hero_title: string
   hero_subtitle: string
   hero_cta_text: string
-  about_title: string
-  about_content: string
-  about_intro: string
   about_full_bio: string
-  about_credentials: string
   stats_students: string
   stats_years: string
   stats_courses: string
@@ -102,11 +98,7 @@ const emptyForm: FormState = {
   hero_title: '',
   hero_subtitle: '',
   hero_cta_text: '',
-  about_title: '',
-  about_content: '',
-  about_intro: '',
   about_full_bio: '',
-  about_credentials: '',
   stats_students: '',
   stats_years: '',
   stats_courses: '',
@@ -291,14 +283,11 @@ export default function AdminPageConfig() {
   const [saving, setSaving] = useState(false)
   const [form, setForm] = useState<FormState>(emptyForm)
   const [heroImage, setHeroImage] = useState<File | null>(null)
-  const [aboutImage, setAboutImage] = useState<File | null>(null)
-  const [aboutPageImage, setAboutPageImage] = useState<File | null>(null)
   const [agendaImage, setAgendaImage] = useState<File | null>(null)
   const [logoFile, setLogoFile] = useState<File | null>(null)
   const [loginImageFile, setLoginImageFile] = useState<File | null>(null)
   const [agendarBgImage, setAgendarBgImage] = useState<File | null>(null)
   const [homeCredentialImage, setHomeCredentialImage] = useState<File | null>(null)
-  const [credentialsImage, setCredentialsImage] = useState<File | null>(null)
   const [parallaxBgImage, setParallaxBgImage] = useState<File | null>(null)
   const [aboutHeroImage, setAboutHeroImage] = useState<File | null>(null)
   const [aboutJourneyPhoto, setAboutJourneyPhoto] = useState<File | null>(null)
@@ -318,11 +307,7 @@ export default function AdminPageConfig() {
             hero_title: data.hero_title || '',
             hero_subtitle: data.hero_subtitle || '',
             hero_cta_text: data.hero_cta_text || '',
-            about_title: data.about_title || '',
-            about_content: data.about_content || '',
-            about_intro: data.about_intro || '',
             about_full_bio: data.about_full_bio || '',
-            about_credentials: data.about_credentials || '',
             stats_students: String(data.stats_students || ''),
             stats_years: String(data.stats_years || ''),
             stats_courses: String(data.stats_courses || ''),
@@ -422,14 +407,11 @@ export default function AdminPageConfig() {
       const fd = new FormData()
       Object.entries(form).forEach(([key, value]) => fd.append(key, String(value)))
       if (heroImage) fd.append('home_hero_image', heroImage)
-      if (aboutImage) fd.append('about_image', aboutImage)
-      if (aboutPageImage) fd.append('about_page_image', aboutPageImage)
       if (agendaImage) fd.append('agenda_image', agendaImage)
       if (logoFile) fd.append('logo', logoFile)
       if (loginImageFile) fd.append('login_image', loginImageFile)
       if (agendarBgImage) fd.append('agendar_background_image', agendarBgImage)
       if (homeCredentialImage) fd.append('home_credential_image', homeCredentialImage)
-      if (credentialsImage) fd.append('credentials_image', credentialsImage)
       if (parallaxBgImage) fd.append('parallax_background_image', parallaxBgImage)
       if (aboutHeroImage) fd.append('about_hero_image', aboutHeroImage)
       if (aboutJourneyPhoto) fd.append('about_journey_photo', aboutJourneyPhoto)
@@ -662,51 +644,13 @@ export default function AdminPageConfig() {
                   />
                   <div className="pt-4 border-t border-border/50 space-y-4">
                     <h3 className="text-base font-semibold">Página /sobre</h3>
-                    <LabeledInput
-                      label="Título da seção"
-                      value={form.about_title}
-                      onChange={(v) => set('about_title', v)}
-                    />
-                    <LabeledInput
-                      label="Introdução curta"
-                      description="Texto curto exibido na landing page"
-                      value={form.about_intro}
-                      onChange={(v) => set('about_intro', v)}
-                    />
                     <div className="space-y-2">
-                      <Label>Conteúdo da seção (Landing)</Label>
-                      <RichTextEditor
-                        value={form.about_content}
-                        onChange={(html) => set('about_content', html)}
-                      />
-                    </div>
-                    <div className="space-y-2 pt-4 border-t border-border/50">
                       <Label>Biografia completa (Página /sobre)</Label>
                       <RichTextEditor
                         value={form.about_full_bio}
                         onChange={(html) => set('about_full_bio', html)}
                       />
                     </div>
-                    <LabeledInput
-                      label="Credenciais"
-                      value={form.about_credentials}
-                      onChange={(v) => set('about_credentials', v)}
-                    />
-                    <ImageUpload
-                      label="Imagem da seção (Landing)"
-                      helperText="Recomendado: 800×600 px (formato paisagem)"
-                      onFile={setAboutImage}
-                    />
-                    <ImageUpload
-                      label="Imagem da página Sobre"
-                      helperText="Recomendado: 800×600 px (formato paisagem)"
-                      onFile={setAboutPageImage}
-                    />
-                    <ImageUpload
-                      label="Imagem de Credenciais"
-                      helperText="Recomendado: 800×600 px (formato paisagem)"
-                      onFile={setCredentialsImage}
-                    />
                   </div>
 
                   <AboutSectionsConfig

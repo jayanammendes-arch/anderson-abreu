@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-27T15:10:32.719Z",
+  "generatedAt": "2026-07-27T15:26:55.903Z",
   "collections": [
     {
       "name": "users",
@@ -678,18 +678,6 @@
           "system": false
         },
         {
-          "name": "about_content",
-          "type": "editor",
-          "required": false,
-          "system": false
-        },
-        {
-          "name": "about_image",
-          "type": "file",
-          "required": false,
-          "system": false
-        },
-        {
           "name": "home_hero_image",
           "type": "file",
           "required": false,
@@ -709,12 +697,6 @@
         },
         {
           "name": "hero_cta_text",
-          "type": "text",
-          "required": false,
-          "system": false
-        },
-        {
-          "name": "about_title",
           "type": "text",
           "required": false,
           "system": false
@@ -876,26 +858,8 @@
           "system": false
         },
         {
-          "name": "about_intro",
-          "type": "text",
-          "required": false,
-          "system": false
-        },
-        {
           "name": "about_full_bio",
           "type": "editor",
-          "required": false,
-          "system": false
-        },
-        {
-          "name": "about_credentials",
-          "type": "text",
-          "required": false,
-          "system": false
-        },
-        {
-          "name": "about_page_image",
-          "type": "file",
           "required": false,
           "system": false
         },
@@ -938,12 +902,6 @@
         {
           "name": "agendar_submit_button_text",
           "type": "text",
-          "required": false,
-          "system": false
-        },
-        {
-          "name": "credentials_image",
-          "type": "file",
           "required": false,
           "system": false
         },

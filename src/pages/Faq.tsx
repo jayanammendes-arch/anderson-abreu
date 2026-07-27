@@ -93,13 +93,6 @@ export default function Faq() {
         </Card>
       )}
 
-      {settings?.about_content && (
-        <div
-          className="prose prose-sm max-w-none prose-headings:text-white prose-p:text-muted-foreground prose-li:text-muted-foreground"
-          dangerouslySetInnerHTML={{ __html: settings.about_content }}
-        />
-      )}
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card className="border-border/50 bg-card text-center hover:border-primary/50 transition-colors">
           <CardHeader>

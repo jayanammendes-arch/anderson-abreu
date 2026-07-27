@@ -158,11 +158,6 @@ export default function Sobre() {
                       className="prose prose-lg max-w-none text-slate-600"
                       dangerouslySetInnerHTML={{ __html: settings.about_full_bio }}
                     />
-                  ) : settings?.about_content ? (
-                    <div
-                      className="prose prose-lg max-w-none text-slate-600"
-                      dangerouslySetInnerHTML={{ __html: settings.about_content }}
-                    />
                   ) : (
                     <p className="text-lg text-slate-600 leading-relaxed">
                       Especialista em hipnose clínica e desenvolvimento humano, com mais de uma
