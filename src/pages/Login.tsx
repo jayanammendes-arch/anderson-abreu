@@ -299,7 +299,7 @@ export default function Login() {
                 )}
                 <Button
                   type="submit"
-                  className="w-full bg-primary hover:bg-primary/90"
+                  className="w-full hover:bg-primary/90 text-[#ffffff] bg-[#000d81]"
                   disabled={submitting}
                 >
                   {submitting ? 'Aguarde...' : mode === 'login' ? 'Entrar' : 'Criar Conta'}
