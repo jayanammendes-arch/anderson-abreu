@@ -199,8 +199,7 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-6 flex justify-center">
           <Button
             size="lg"
-            variant="outline"
-            className="rounded-full px-10 py-6 text-lg font-medium shadow-lg transition-all hover:scale-105 border-slate-300 text-slate-900 hover:bg-slate-100"
+            className="rounded-full px-10 py-6 text-lg font-medium shadow-lg transition-all hover:scale-105 bg-[#22C55E] hover:bg-[#20a854] text-white border-none"
             asChild
           >
             <Link to="/sobre">
@@ -276,11 +275,11 @@ export default function Landing() {
                     'Reflexões e técnicas sobre hipnose e desenvolvimento humano.'}
                 </p>
               </div>
-              <Button variant="outline" className="rounded-full hidden md:flex" asChild>
-                <Link
-                  className="text-[#000000] bg-[Verde | #008000] bg-[Verde | #008000]"
-                  to="/blog"
-                >
+              <Button
+                className="rounded-full hidden md:flex bg-[#22C55E] hover:bg-[#20a854] text-white border-none"
+                asChild
+              >
+                <Link to="/blog">
                   Ver todos <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
