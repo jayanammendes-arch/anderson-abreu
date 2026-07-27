@@ -19,11 +19,6 @@ export const saveLifeWheelAssessment = (data: {
   scores: Record<string, number>
 }) => pb.collection('life_wheel_assessments').create(data)
 
-export const updateLifeWheelAssessment = (
-  id: string,
-  data: Partial<{ scores: Record<string, number> }>,
-) => pb.collection('life_wheel_assessments').update(id, data)
-
 export async function downloadLifeWheelPdf(id: string): Promise<void> {
   const response = await fetch(
     `${import.meta.env.VITE_POCKETBASE_URL}/backend/v1/life-wheel/assessments/${id}/pdf`,
@@ -35,6 +30,23 @@ export async function downloadLifeWheelPdf(id: string): Promise<void> {
   const a = document.createElement('a')
   a.href = url
   a.download = `roda-da-vida-${id}.pdf`
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  window.URL.revokeObjectURL(url)
+}
+
+export async function downloadLifeWheelComparisonPdf(id1: string, id2: string): Promise<void> {
+  const response = await fetch(
+    `${import.meta.env.VITE_POCKETBASE_URL}/backend/v1/life-wheel/compare/${id1}/${id2}/pdf`,
+    { headers: { Authorization: pb.authStore.token || '' } },
+  )
+  if (!response.ok) throw new Error('Failed to download comparison PDF')
+  const blob = await response.blob()
+  const url = window.URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `roda-da-vida-comparativo-${id1}-${id2}.pdf`
   document.body.appendChild(a)
   a.click()
   document.body.removeChild(a)

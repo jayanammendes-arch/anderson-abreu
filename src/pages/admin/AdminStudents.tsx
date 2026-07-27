@@ -16,6 +16,7 @@ import { Search, ArrowLeft, Lock, Unlock, Loader2, Sparkles } from 'lucide-react
 import { toast } from 'sonner'
 import { Switch } from '@/components/ui/switch'
 import type { Course, UserAccess } from '@/types'
+import { AdminStudentLifeWheel } from '@/components/life-wheel/AdminStudentLifeWheel'
 
 export default function AdminStudents() {
   const [students, setStudents] = useState<any[]>([])
@@ -173,6 +174,11 @@ export default function AdminStudents() {
             })}
           </div>
         )}
+
+        <div className="space-y-4">
+          <h2 className="text-xl font-bold">Roda da Vida</h2>
+          <AdminStudentLifeWheel userId={selected.id} />
+        </div>
       </div>
     )
   }
