@@ -261,9 +261,7 @@ export default function Landing() {
 
       {/* Parallax CTA Section */}
       {settings?.parallax_background_image && settings?.parallax_headline && (
-        <ScrollFadeIn>
-          <ParallaxCTASection settings={settings} />
-        </ScrollFadeIn>
+        <ParallaxCTASection settings={settings} />
       )}
 
       {/* Courses */}
