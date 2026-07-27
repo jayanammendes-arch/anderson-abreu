@@ -22,3 +22,8 @@ export const adminUpdateTreatment = (id: string, data: Record<string, unknown> |
   pb.collection('treatments').update(id, data)
 
 export const adminDeleteTreatment = (id: string) => pb.collection('treatments').delete(id)
+
+export const adminReorderTreatments = (items: { id: string; order: number }[]) =>
+  Promise.all(
+    items.map((item) => pb.collection('treatments').update(item.id, { order: item.order })),
+  )

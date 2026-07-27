@@ -4,8 +4,10 @@ import {
   adminCreateTreatment,
   adminUpdateTreatment,
   adminDeleteTreatment,
+  adminReorderTreatments,
   getTreatmentImageUrl,
 } from '@/services/treatments'
+import { SortableList } from '@/components/admin/SortableList'
 import type { Treatment } from '@/types'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -82,6 +84,22 @@ export default function AdminTreatments() {
     loadData()
   }, [loadData])
   useRealtime('treatments', () => loadData())
+
+  const handleReorder = async (reordered: Treatment[]) => {
+    const updates = reordered.map((item, index) => ({ id: item.id, order: index + 1 }))
+    try {
+      await adminReorderTreatments(updates)
+    } catch (err) {
+      toast.error('Erro ao reordenar. Tente novamente.')
+      throw err
+    }
+    const orderMap = new Map(updates.map((u) => [u.id, u.order]))
+    setTreatments((prev) =>
+      prev
+        .map((item) => ({ ...item, order: orderMap.get(item.id) ?? item.order }))
+        .sort((a, b) => (a.order ?? 0) - (b.order ?? 0)),
+    )
+  }
 
   const handleNew = () => {
     setFormData({ ...emptyForm, order: treatments.length })
@@ -167,14 +185,15 @@ export default function AdminTreatments() {
           Nenhum tratamento cadastrado.
         </Card>
       ) : (
-        <div className="grid gap-3">
-          {treatments.map((treatment) => {
+        <SortableList
+          items={treatments}
+          keyExtractor={(t) => t.id}
+          onReorder={handleReorder}
+          renderItem={(treatment, { dragHandle }) => {
             const Icon = getTreatmentIcon(treatment.icon)
             return (
-              <Card
-                key={treatment.id}
-                className="flex items-center gap-4 p-4 bg-card/50 border-border/50"
-              >
+              <Card className="flex items-center gap-2 p-4 bg-card/50 border-border/50">
+                {dragHandle}
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-sky-100">
                   <Icon className="h-5 w-5 text-sky-600" strokeWidth={1.75} />
                 </div>
@@ -199,8 +218,8 @@ export default function AdminTreatments() {
                 </div>
               </Card>
             )
-          })}
-        </div>
+          }}
+        />
       )}
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>

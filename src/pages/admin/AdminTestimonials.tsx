@@ -4,7 +4,9 @@ import {
   adminCreateTestimonial,
   adminUpdateTestimonial,
   adminDeleteTestimonial,
+  adminReorderTestimonials,
 } from '@/services/testimonials'
+import { SortableList } from '@/components/admin/SortableList'
 import { adminGetCourses } from '@/services/admin-courses'
 import type { Testimonial, Course } from '@/types'
 import { Button } from '@/components/ui/button'
@@ -168,9 +170,26 @@ export default function AdminTestimonials() {
     }
   }
 
+  const handleReorder = async (reordered: Testimonial[]) => {
+    const updates = reordered.map((item, index) => ({ id: item.id, order: index + 1 }))
+    try {
+      await adminReorderTestimonials(updates)
+    } catch (err) {
+      toast.error('Erro ao reordenar. Tente novamente.')
+      throw err
+    }
+    const orderMap = new Map(updates.map((u) => [u.id, u.order]))
+    setTestimonials((prev) =>
+      prev
+        .map((item) => ({ ...item, order: orderMap.get(item.id) ?? item.order }))
+        .sort((a, b) => (a.order ?? 0) - (b.order ?? 0)),
+    )
+  }
+
   const filtered = testimonials.filter((t) =>
     t.student_name.toLowerCase().includes(search.toLowerCase()),
   )
+  const hasSearch = search.trim().length > 0
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -200,12 +219,14 @@ export default function AdminTestimonials() {
           Nenhum depoimento cadastrado.
         </Card>
       ) : (
-        <div className="grid gap-3">
-          {filtered.map((testimonial) => (
-            <Card
-              key={testimonial.id}
-              className="flex items-center gap-4 p-4 bg-card/50 border-border/50"
-            >
+        <SortableList
+          items={filtered}
+          keyExtractor={(t) => t.id}
+          onReorder={handleReorder}
+          disabled={hasSearch}
+          renderItem={(testimonial, { dragHandle }) => (
+            <Card className="flex items-center gap-2 p-4 bg-card/50 border-border/50">
+              {dragHandle}
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
                 {testimonial.type === 'video' ? (
                   <Video className="h-5 w-5 text-primary" />
@@ -248,8 +269,8 @@ export default function AdminTestimonials() {
                 </Button>
               </div>
             </Card>
-          ))}
-        </div>
+          )}
+        />
       )}
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>

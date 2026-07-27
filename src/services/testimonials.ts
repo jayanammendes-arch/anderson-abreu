@@ -41,3 +41,8 @@ export const adminUpdateTestimonial = (id: string, data: Record<string, unknown>
   pb.collection('testimonials').update(id, data)
 
 export const adminDeleteTestimonial = (id: string) => pb.collection('testimonials').delete(id)
+
+export const adminReorderTestimonials = (items: { id: string; order: number }[]) =>
+  Promise.all(
+    items.map((item) => pb.collection('testimonials').update(item.id, { order: item.order })),
+  )
