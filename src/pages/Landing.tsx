@@ -14,6 +14,7 @@ import { getThumbnailUrl } from '@/services/courses'
 import type { Course, PlatformSettings, TreatmentCategory, BlogPost } from '@/types'
 import { Button } from '@/components/ui/button'
 import { TestimonialsSection } from '@/components/TestimonialsSection'
+import { HomeFaqSection } from '@/components/HomeFaqSection'
 import { LandingLayout } from '@/components/LandingLayout'
 import { TreatmentCard } from '@/components/TreatmentCard'
 import { BlogCard } from '@/components/BlogCard'
@@ -256,6 +257,9 @@ export default function Landing() {
       <section id="depoimentos">
         <TestimonialsSection customTitle={settings?.testimonials_section_title} />
       </section>
+
+      {/* FAQ */}
+      <HomeFaqSection />
 
       {/* Blog */}
       {blogPosts.length > 0 && (
