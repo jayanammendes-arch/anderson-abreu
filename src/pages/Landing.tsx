@@ -195,9 +195,6 @@ export default function Landing() {
         <CredentialsMarquee />
       </ScrollFadeIn>
 
-      {/* Services */}
-      {settings?.services_title && null}
-
       {/* Home Credential Section (replaces old About Intro) */}
       <ScrollFadeIn>
         <HomeCredentialSection settings={settings} />

@@ -12,7 +12,6 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Switch } from '@/components/ui/switch'
 import { RichTextEditor } from '@/components/admin/RichTextEditor'
-import { ServicesItemsEditor } from '@/components/admin/ServicesItemsEditor'
 import { AboutSectionsConfig } from '@/components/admin/AboutSectionsConfig'
 import { Save, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
@@ -27,7 +26,6 @@ interface FormState {
   stats_years: string
   stats_courses: string
   stats_countries: string
-  testimonials_active: boolean
   testimonials_section_title: string
   agenda_highlight_title: string
   agenda_intro: string
@@ -46,9 +44,6 @@ interface FormState {
   primary_color: string
   login_text: string
   login_gradient: string
-  services_title: string
-  services_subtitle: string
-  services_items: string
   courses_section_title: string
   courses_section_text: string
   courses_section_button: string
@@ -103,7 +98,6 @@ const emptyForm: FormState = {
   stats_years: '',
   stats_courses: '',
   stats_countries: '',
-  testimonials_active: true,
   testimonials_section_title: '',
   agenda_highlight_title: '',
   agenda_intro: '',
@@ -122,9 +116,6 @@ const emptyForm: FormState = {
   primary_color: '',
   login_text: '',
   login_gradient: '',
-  services_title: '',
-  services_subtitle: '',
-  services_items: '[]',
   courses_section_title: '',
   courses_section_text: '',
   courses_section_button: '',
@@ -312,7 +303,6 @@ export default function AdminPageConfig() {
             stats_years: String(data.stats_years || ''),
             stats_courses: String(data.stats_courses || ''),
             stats_countries: String(data.stats_countries || ''),
-            testimonials_active: data.testimonials_active !== false,
             testimonials_section_title: data.testimonials_section_title || '',
             agenda_highlight_title: data.agenda_highlight_title || '',
             agenda_intro: data.agenda_intro || '',
@@ -331,12 +321,6 @@ export default function AdminPageConfig() {
             primary_color: data.primary_color || '',
             login_text: data.login_text || '',
             login_gradient: data.login_gradient || '',
-            services_title: data.services_title || '',
-            services_subtitle: data.services_subtitle || '',
-            services_items:
-              typeof data.services_items === 'string'
-                ? data.services_items
-                : JSON.stringify(data.services_items || []),
             courses_section_title: data.courses_section_title || '',
             courses_section_text: data.courses_section_text || '',
             courses_section_button: data.courses_section_button || '',
@@ -448,7 +432,6 @@ export default function AdminPageConfig() {
             <TabsList className="grid w-full grid-cols-2 md:grid-cols-9">
               <TabsTrigger value="plataforma">Plataforma</TabsTrigger>
               <TabsTrigger value="home">Home</TabsTrigger>
-              <TabsTrigger value="servicos">Serviços</TabsTrigger>
               <TabsTrigger value="sobre">Sobre</TabsTrigger>
               <TabsTrigger value="agendar">Agendar</TabsTrigger>
               <TabsTrigger value="tratamentos">Tratamentos</TabsTrigger>
@@ -481,70 +464,57 @@ export default function AdminPageConfig() {
               </Card>
             </TabsContent>
 
-            <TabsContent value="servicos">
-              <Card className="bg-card/50 border-border/50">
-                <CardContent className="space-y-4 pt-6">
-                  <LabeledInput
-                    label="Título da seção de serviços"
-                    value={form.services_title}
-                    onChange={(v) => set('services_title', v)}
-                    placeholder="Ex: Como funciona?"
-                  />
-                  <LabeledTextarea
-                    label="Subtítulo da seção"
-                    value={form.services_subtitle}
-                    onChange={(v) => set('services_subtitle', v)}
-                  />
-                  <div className="space-y-2">
-                    <FieldLabel
-                      label="Itens de Serviço"
-                      description="Adicione os cards que aparecerão na seção"
-                    />
-                    <ServicesItemsEditor
-                      value={form.services_items}
-                      onChange={(v: string) => set('services_items', v)}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
             <TabsContent value="home">
               <Card className="bg-card/50 border-border/50">
                 <CardContent className="space-y-4 pt-6">
                   <LabeledInput
-                    label="Título principal do hero"
+                    label="Título do Hero"
+                    description="Título principal exibido no topo da página inicial"
                     value={form.hero_title}
                     onChange={(v) => set('hero_title', v)}
+                    placeholder="Ex: Hipnose Clínica Avançada"
                   />
                   <LabeledTextarea
-                    label="Subtítulo do hero"
+                    label="Subtítulo do Hero"
+                    description="Texto de apoio exibido abaixo do título principal"
                     value={form.hero_subtitle}
                     onChange={(v) => set('hero_subtitle', v)}
+                    placeholder="Ex: Resultados em 2 Sessões"
                   />
                   <LabeledInput
-                    label="Texto do botão CTA"
-                    description="Texto do botão principal do hero (ex: Agendar Sessão)"
+                    label="Texto do Botão CTA do Hero"
+                    description="Botão de ação principal da seção hero"
                     value={form.hero_cta_text}
                     onChange={(v) => set('hero_cta_text', v)}
-                  />
-                  <LabeledInput
-                    label="Texto do botão Agendar"
-                    description="Texto global do botão de agendamento"
-                    value={form.agendar_sessao_text}
-                    onChange={(v) => set('agendar_sessao_text', v)}
-                  />
-                  <LabeledInput
-                    label="Texto do botão Saiba Mais"
-                    value={form.saiba_mais_text}
-                    onChange={(v) => set('saiba_mais_text', v)}
+                    placeholder="Ex: Falar com especialista"
                   />
                   <ImageUpload
-                    label="Imagem do hero"
-                    helperText="Recomendado: 1920×800 px (formato paisagem)"
+                    label="Imagem de Fundo do Hero"
+                    description="Imagem exibida atrás do título na seção principal"
+                    helperText="Recomendado: 1920×800 px (formato paisagem, até 500KB)"
                     onFile={setHeroImage}
                   />
-                  <div className="grid grid-cols-2 gap-4 pt-2">
+                  <LabeledInput
+                    label="Texto do Botão 'Saiba Mais'"
+                    description="Botão exibido abaixo da seção de credenciais do especialista"
+                    value={form.saiba_mais_text}
+                    onChange={(v) => set('saiba_mais_text', v)}
+                    placeholder="Ex: Saiba mais"
+                  />
+                  <LabeledInput
+                    label="Texto Global do Botão 'Agendar Sessão'"
+                    description="Texto reutilizado em botões de agendamento em toda a página"
+                    value={form.agendar_sessao_text}
+                    onChange={(v) => set('agendar_sessao_text', v)}
+                    placeholder="Ex: Agendar Sessão"
+                  />
+                  <div className="pt-4 border-t border-border/50">
+                    <FieldLabel
+                      label="Estatísticas"
+                      description="Números exibidos na página de detalhes de tratamentos"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label>Alunos formados</Label>
                       <Input
@@ -668,37 +638,38 @@ export default function AdminPageConfig() {
             <TabsContent value="agendar">
               <Card className="bg-card/50 border-border/50">
                 <CardContent className="space-y-4 pt-6">
+                  <ImageUpload
+                    label="Imagem de Fundo da Página"
+                    description="Imagem exibida em tela cheia na página de agendamento"
+                    helperText="Recomendado: 1920×1080 px (formato paisagem, até 500KB)"
+                    onFile={setAgendarBgImage}
+                  />
                   <LabeledInput
-                    label="Headline"
-                    description="Título principal da página de agendamento"
+                    label="Título Principal"
+                    description="Headline exibida sobre a imagem de fundo"
                     value={form.agendar_headline}
                     onChange={(v) => set('agendar_headline', v)}
-                    placeholder="Agende sua Sessão"
+                    placeholder="Ex: Agende sua Sessão"
                   />
                   <LabeledInput
-                    label="Subheadline"
-                    description="Texto de destaque abaixo da headline"
+                    label="Subtítulo"
+                    description="Texto de destaque abaixo do título principal"
                     value={form.agendar_subheadline}
                     onChange={(v) => set('agendar_subheadline', v)}
-                    placeholder="Resultados em 2 Sessões"
+                    placeholder="Ex: Resultados em 2 Sessões"
                   />
                   <LabeledTextarea
-                    label="Lista de Benefícios (JSON)"
-                    description='Array de strings, ex: ["Atendimento Presencial", "Atendimento Online"]'
+                    label="Lista de Benefícios"
+                    description='Itens exibidos com checkmark. Formato JSON: ["Atendimento Presencial", "Atendimento Online"]'
                     value={form.agendar_benefits}
                     onChange={(v) => set('agendar_benefits', v)}
                   />
                   <LabeledInput
                     label="Texto do Botão de Envio"
+                    description="Texto do botão do formulário de agendamento"
                     value={form.agendar_submit_button_text}
                     onChange={(v) => set('agendar_submit_button_text', v)}
-                    placeholder="Enviar"
-                  />
-                  <ImageUpload
-                    label="Imagem de Fundo"
-                    description="Imagem de fundo da página de agendamento"
-                    helperText="Recomendado: 1920×1080 px (formato paisagem)"
-                    onFile={setAgendarBgImage}
+                    placeholder="Ex: Enviar"
                   />
                 </CardContent>
               </Card>
@@ -708,13 +679,15 @@ export default function AdminPageConfig() {
               <Card className="bg-card/50 border-border/50">
                 <CardContent className="space-y-4 pt-6">
                   <LabeledInput
-                    label="Título da seção"
+                    label="Título da Seção de Tratamentos"
+                    description="Título exibido acima dos cards de tratamento na página inicial"
                     value={form.treatments_section_title}
                     onChange={(v) => set('treatments_section_title', v)}
-                    placeholder="O que podemos tratar"
+                    placeholder="Ex: O que podemos tratar"
                   />
                   <LabeledTextarea
-                    label="Texto introdutório"
+                    label="Texto Introdutório dos Tratamentos"
+                    description="Descrição exibida abaixo do título da seção"
                     value={form.treatments_section_intro}
                     onChange={(v) => set('treatments_section_intro', v)}
                   />
@@ -729,13 +702,15 @@ export default function AdminPageConfig() {
               <Card className="bg-card/50 border-border/50">
                 <CardContent className="space-y-4 pt-6">
                   <LabeledInput
-                    label="Título da seção"
+                    label="Título da Seção de Blog"
+                    description="Título exibido no topo da seção de blog e na página /blog"
                     value={form.blog_section_title}
                     onChange={(v) => set('blog_section_title', v)}
-                    placeholder="Blog"
+                    placeholder="Ex: Blog"
                   />
                   <LabeledTextarea
-                    label="Texto introdutório"
+                    label="Texto Introdutório do Blog"
+                    description="Descrição exibida abaixo do título da seção"
                     value={form.blog_section_intro}
                     onChange={(v) => set('blog_section_intro', v)}
                   />
@@ -750,18 +725,12 @@ export default function AdminPageConfig() {
               <Card className="bg-card/50 border-border/50">
                 <CardContent className="space-y-4 pt-6">
                   <LabeledInput
-                    label="Título da seção"
+                    label="Título da Seção de Depoimentos"
+                    description="Título exibido no topo da seção de depoimentos na página inicial"
                     value={form.testimonials_section_title}
                     onChange={(v) => set('testimonials_section_title', v)}
-                    placeholder="Depoimentos"
+                    placeholder="Ex: Depoimentos"
                   />
-                  <div className="flex items-center gap-3 pt-2">
-                    <Switch
-                      checked={form.testimonials_active}
-                      onCheckedChange={(v) => set('testimonials_active', v)}
-                    />
-                    <Label>Ativar/Desativar Seção de Depoimentos</Label>
-                  </div>
                   <p className="text-sm text-muted-foreground">
                     Os depoimentos são gerenciados na aba "Depoimentos" do painel admin.
                   </p>
@@ -780,28 +749,28 @@ export default function AdminPageConfig() {
                     </p>
                   </div>
                   <ImageUpload
-                    label="Imagem de Fundo (Parallax)"
-                    description="Imagem de fundo da seção parallax com efeito de rolagem fixa"
+                    label="Imagem de Fundo do Parallax"
+                    description="Imagem fixa com efeito de rolagem na seção parallax"
                     helperText="Recomendado: 1920×1080px a 2400×1600px, WebP ou JPG, até 500KB"
                     onFile={setParallaxBgImage}
                   />
                   <LabeledInput
-                    label="Headline"
-                    description="Texto principal exibido sobre a imagem"
+                    label="Texto Principal do Parallax"
+                    description="Frase de destaque exibida sobre a imagem de fundo"
                     value={form.parallax_headline}
                     onChange={(v) => set('parallax_headline', v)}
-                    placeholder="Acredito que você pode mudar e eu posso te ajudar!"
+                    placeholder="Ex: Acredito que você pode mudar e eu posso te ajudar!"
                   />
                   <LabeledInput
-                    label="Texto do Botão"
-                    description="Texto do botão de call-to-action"
+                    label="Texto do Botão do Parallax"
+                    description="Texto do botão de call-to-action sobre a imagem"
                     value={form.parallax_button_text}
                     onChange={(v) => set('parallax_button_text', v)}
-                    placeholder="Entre em Contato"
+                    placeholder="Ex: Entre em Contato"
                   />
                   <LabeledInput
-                    label="Link do Botão"
-                    description="URL para onde o botão direciona (ex: /agendar ou https://exemplo.com)"
+                    label="Link do Botão do Parallax"
+                    description="URL de destino do botão (ex: /agendar ou https://exemplo.com)"
                     value={form.parallax_button_link}
                     onChange={(v) => set('parallax_button_link', v)}
                     placeholder="/agendar"
@@ -814,30 +783,39 @@ export default function AdminPageConfig() {
               <Card className="bg-card/50 border-border/50">
                 <CardContent className="space-y-4 pt-6">
                   <LabeledInput
-                    label="Título da seção"
+                    label="Título da Seção de Contato"
+                    description="Título exibido no rodapé ou seção de contato"
                     value={form.contact_title}
                     onChange={(v) => set('contact_title', v)}
+                    placeholder="Ex: Dê o primeiro passo."
                   />
                   <LabeledTextarea
-                    label="Texto introdutório"
+                    label="Texto Introdutório de Contato"
+                    description="Descrição exibida abaixo do título de contato"
                     value={form.contact_intro}
                     onChange={(v) => set('contact_intro', v)}
                   />
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <LabeledInput
-                      label="Email de Suporte"
-                      value={form.support_email}
-                      onChange={(v) => set('support_email', v)}
-                    />
-                    <LabeledInput
                       label="WhatsApp"
+                      description="Número para contato via WhatsApp"
                       value={form.whatsapp_number}
                       onChange={(v) => set('whatsapp_number', v)}
+                      placeholder="Ex: 5511999999999"
                     />
                     <LabeledInput
-                      label="Telefone"
+                      label="Telefone de Contato"
+                      description="Telefone fixo para contato"
                       value={form.contact_phone}
                       onChange={(v) => set('contact_phone', v)}
+                      placeholder="Ex: +55 (11) 99999-9999"
+                    />
+                    <LabeledInput
+                      label="Email de Suporte"
+                      description="Email para dúvidas e suporte"
+                      value={form.support_email}
+                      onChange={(v) => set('support_email', v)}
+                      placeholder="Ex: contato@andersonabreu.com"
                     />
                   </div>
                   <div className="pt-4 border-t border-border/50">
@@ -845,21 +823,25 @@ export default function AdminPageConfig() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                       <LabeledInput
                         label="Instagram"
+                        description="Handle do Instagram (ex: @andersonabreu)"
                         value={form.instagram_handle}
                         onChange={(v) => set('instagram_handle', v)}
                       />
                       <LabeledInput
                         label="Facebook"
+                        description="URL da página do Facebook"
                         value={form.facebook_url}
                         onChange={(v) => set('facebook_url', v)}
                       />
                       <LabeledInput
                         label="LinkedIn"
+                        description="URL do perfil do LinkedIn"
                         value={form.linkedin_url}
                         onChange={(v) => set('linkedin_url', v)}
                       />
                       <LabeledInput
                         label="YouTube"
+                        description="URL do canal do YouTube"
                         value={form.youtube_url}
                         onChange={(v) => set('youtube_url', v)}
                       />
