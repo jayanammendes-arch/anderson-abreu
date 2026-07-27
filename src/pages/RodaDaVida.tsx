@@ -9,6 +9,7 @@ import {
   downloadLifeWheelPdf,
 } from '@/services/life-wheel'
 import { LifeWheelChart, type ChartData } from '@/components/life-wheel/LifeWheelChart'
+import { LifeWheelForm } from '@/components/life-wheel/LifeWheelForm'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Loader2, Download, RefreshCw, ClipboardList } from 'lucide-react'
