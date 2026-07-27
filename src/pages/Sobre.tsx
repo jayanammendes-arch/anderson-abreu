@@ -349,7 +349,7 @@ export default function Sobre() {
                 <div className="absolute inset-0 bg-gradient-to-b from-[hsl(var(--royal-blue))]/70 to-black/70" />{' '}
               </>
             ) : (
-              <div className="absolute inset-0 bg-slate-900" />
+              <div className="absolute inset-0 royal-gradient-bg" />
             )}
             <div className="relative z-10 max-w-3xl mx-auto px-6 text-center">
               <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">

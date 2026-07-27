@@ -120,7 +120,7 @@ export default function Login() {
   }
 
   return (
-    <div className="flex min-h-screen bg-black">
+    <div className="flex min-h-screen royal-gradient-bg">
       <div className="flex w-full flex-col justify-center px-6 py-12 lg:max-w-xl lg:px-12 xl:px-16">
         <div className="mx-auto w-full max-w-sm">
           <Link to="/" className="mb-8 flex items-center gap-3 transition-opacity hover:opacity-80">
@@ -310,7 +310,7 @@ export default function Login() {
                   <span className="w-full border-t border-white/10" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-black px-2 text-muted-foreground">ou</span>
+                  <span className="bg-transparent px-2 text-muted-foreground">ou</span>
                 </div>
               </div>
               <Button
@@ -340,23 +340,7 @@ export default function Login() {
           )}
         </div>
       </div>
-      <div
-        className={cn(
-          'relative hidden items-center justify-center overflow-hidden lg:flex lg:flex-1',
-          !loginSettings?.login_gradient && 'royal-gradient-bg',
-        )}
-        style={
-          loginSettings?.login_gradient
-            ? { backgroundImage: loginSettings.login_gradient }
-            : loginSettings && getLoginImageUrl(loginSettings)
-              ? {
-                  backgroundImage: `url(${getLoginImageUrl(loginSettings)})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                }
-              : undefined
-        }
-      >
+      <div className="relative hidden items-center justify-center overflow-hidden lg:flex lg:flex-1 royal-gradient-bg">
         <div className="absolute inset-0 bg-gradient-to-br from-[hsl(var(--royal-blue))]/40 via-transparent to-black/60" />
         <div className="relative z-10 flex flex-col items-center gap-8 px-12 text-center">
           <Link

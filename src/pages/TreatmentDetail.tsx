@@ -219,7 +219,7 @@ export default function TreatmentDetail() {
 
       {!hasCta && (
         <ScrollFadeIn>
-          <section className="py-24 bg-slate-900">
+          <section className="py-24 royal-gradient-bg">
             <div className="max-w-3xl mx-auto px-6 text-center">
               <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
                 Pronto para começar?
