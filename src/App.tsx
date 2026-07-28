@@ -37,6 +37,7 @@ import AdminCertifications from '@/pages/admin/AdminCertifications'
 import AdminAboutContent from '@/pages/admin/AdminAboutContent'
 import AdminTreatments from '@/pages/admin/AdminTreatments'
 import AdminTreatmentCategories from '@/pages/admin/AdminTreatmentCategories'
+import AdminTreatmentCategoryEdit from '@/pages/admin/AdminTreatmentCategoryEdit'
 import AdminBlog from '@/pages/admin/AdminBlog'
 import CourseDetail from '@/pages/CourseDetail'
 import CourseDetailsPage from '@/pages/CourseDetailsPage'
@@ -74,6 +75,11 @@ const App = () => (
               <Route path="cursos/:courseId" element={<AdminCourseForm />} />
               <Route path="tratamentos" element={<AdminTreatments />} />
               <Route path="categorias-tratamentos" element={<AdminTreatmentCategories />} />
+              <Route path="categorias-tratamentos/novo" element={<AdminTreatmentCategoryEdit />} />
+              <Route
+                path="categorias-tratamentos/:id/editar"
+                element={<AdminTreatmentCategoryEdit />}
+              />
               <Route path="blog" element={<AdminBlog />} />
               <Route path="alunos" element={<AdminStudents />} />
               <Route path="liberacoes" element={<AdminAccessReleases />} />

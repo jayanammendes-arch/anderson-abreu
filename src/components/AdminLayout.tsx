@@ -41,7 +41,13 @@ export function AdminLayout() {
 
   const pageTitle =
     adminPageTitles[location.pathname] ||
-    (location.pathname.match(/^\/admin\/cursos\/[^/]+$/) ? 'Editar Curso' : 'Admin')
+    (location.pathname.match(/^\/admin\/cursos\/[^/]+$/)
+      ? 'Editar Curso'
+      : location.pathname.match(/^\/admin\/categorias-tratamentos\/novo$/)
+        ? 'Nova Categoria de Tratamento'
+        : location.pathname.match(/^\/admin\/categorias-tratamentos\/[^/]+\/editar$/)
+          ? 'Editar Categoria de Tratamento'
+          : 'Admin')
 
   return (
     <SidebarProvider>

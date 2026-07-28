@@ -30,6 +30,9 @@ export function getTreatmentCategorySintomasImageUrl(category: TreatmentCategory
 export const adminGetTreatmentCategories = (): Promise<TreatmentCategory[]> =>
   pb.collection('treatment_categories').getFullList({ sort: 'order' })
 
+export const adminGetTreatmentCategory = (id: string): Promise<TreatmentCategory> =>
+  pb.collection('treatment_categories').getOne(id)
+
 export const adminCreateTreatmentCategory = (data: Record<string, unknown> | FormData) =>
   pb.collection('treatment_categories').create(data)
 
