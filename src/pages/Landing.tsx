@@ -23,7 +23,6 @@ import { ArrowRight, Calendar, Loader2, ArrowUpRight } from 'lucide-react'
 import { CredentialsMarquee } from '@/components/CredentialsMarquee'
 import { HomeCredentialSection } from '@/components/HomeCredentialSection'
 import { ScrollFadeIn } from '@/components/ScrollFadeIn'
-import { GlobalBlueBand } from '@/components/GlobalBlueBand'
 import { HypnotherapyComparisonSection } from '@/components/HypnotherapyComparisonSection'
 import { cn } from '@/lib/utils'
 
@@ -166,11 +165,6 @@ export default function Landing() {
             </div>
           </div>
         </section>
-      </ScrollFadeIn>
-
-      {/* Global Blue Band - O que é Hipnose? */}
-      <ScrollFadeIn>
-        <GlobalBlueBand settings={settings} />
       </ScrollFadeIn>
 
       {/* Treatments */}
