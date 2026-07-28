@@ -23,6 +23,12 @@ import { cn } from '@/lib/utils'
 const proseClass =
   'prose prose-lg max-w-none text-slate-600 [&_h1]:text-slate-900 [&_h1]:font-bold [&_h1]:text-3xl [&_h1]:mb-4 [&_h2]:text-slate-900 [&_h2]:font-bold [&_h3]:text-slate-800 [&_h3]:font-semibold [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mb-2 [&_a]:text-blue-600'
 
+const titleHtmlClass =
+  'mb-6 [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:text-slate-900 [&_h2]:text-3xl [&_h2]:font-bold [&_h2]:text-slate-900 [&_h3]:text-2xl [&_h3]:font-semibold [&_h3]:text-slate-800 [&_p]:text-3xl [&_p]:font-bold [&_p]:text-slate-900 [&_p]:mb-0'
+
+const ctaTitleHtmlClass =
+  'mb-4 [&_h1]:text-3xl [&_h1]:md:text-4xl [&_h1]:font-bold [&_h1]:text-white [&_h2]:text-3xl [&_h2]:md:text-4xl [&_h2]:font-bold [&_h2]:text-white [&_h3]:text-2xl [&_h3]:font-semibold [&_h3]:text-white [&_p]:text-3xl [&_p]:md:text-4xl [&_p]:font-bold [&_p]:text-white [&_p]:mb-0'
+
 function FramedImage({
   src,
   alt,
@@ -155,9 +161,12 @@ export default function TreatmentDetail() {
           <section className="py-24 bg-white">
             <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
               <div>
-                <h2 className="text-3xl font-bold text-slate-900 mb-6">
-                  {category.como_funciona_title || 'Como Funciona'}
-                </h2>
+                <div
+                  className={titleHtmlClass}
+                  dangerouslySetInnerHTML={{
+                    __html: category.como_funciona_title || 'Como Funciona',
+                  }}
+                />
                 <div
                   className={proseClass}
                   dangerouslySetInnerHTML={{ __html: category.como_funciona_text! }}
@@ -189,9 +198,12 @@ export default function TreatmentDetail() {
                 <FramedImage src={resultadosImg} alt="Resultados" position="left" />
               )}
               <div className={resultadosImg ? 'md:col-span-1' : 'md:col-span-2'}>
-                <h2 className="text-3xl font-bold text-slate-900 mb-6">
-                  {category.resultados_title || 'Resultados Respaldados Pela Ciência'}
-                </h2>
+                <div
+                  className={titleHtmlClass}
+                  dangerouslySetInnerHTML={{
+                    __html: category.resultados_title || 'Resultados Respaldados Pela Ciência',
+                  }}
+                />
                 <div
                   className={proseClass}
                   dangerouslySetInnerHTML={{ __html: category.resultados_text! }}
@@ -207,9 +219,10 @@ export default function TreatmentDetail() {
           <section className="py-24 bg-white">
             <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
               <div>
-                <h2 className="text-3xl font-bold text-slate-900 mb-6">
-                  {category.sintomas_title || 'Sintomas'}
-                </h2>
+                <div
+                  className={titleHtmlClass}
+                  dangerouslySetInnerHTML={{ __html: category.sintomas_title || 'Sintomas' }}
+                />
                 <div
                   className={proseClass}
                   dangerouslySetInnerHTML={{ __html: category.sintomas_text! }}
@@ -258,9 +271,14 @@ export default function TreatmentDetail() {
         <ScrollFadeIn>
           <section className="py-24 bg-white">
             <div className="max-w-4xl mx-auto px-6">
-              <h2 className="text-3xl font-bold text-slate-900 mb-6">
-                {category.por_que_tantas_title || 'Por que tantas pessoas buscam a Hipnoterapia?'}
-              </h2>
+              <div
+                className={titleHtmlClass}
+                dangerouslySetInnerHTML={{
+                  __html:
+                    category.por_que_tantas_title ||
+                    'Por que tantas pessoas buscam a Hipnoterapia?',
+                }}
+              />
               <div
                 className={proseClass}
                 dangerouslySetInnerHTML={{ __html: category.por_que_tantas_content! }}
@@ -274,10 +292,14 @@ export default function TreatmentDetail() {
         <ScrollFadeIn>
           <section className="py-24 bg-slate-50">
             <div className="max-w-4xl mx-auto px-6">
-              <h2 className="text-3xl font-bold text-slate-900 mb-6">
-                {category.comparacao_title ||
-                  'Hipnoterapia Clínica Avançada vs Abordagens Tradicionais'}
-              </h2>
+              <div
+                className={titleHtmlClass}
+                dangerouslySetInnerHTML={{
+                  __html:
+                    category.comparacao_title ||
+                    'Hipnoterapia Clínica Avançada vs Abordagens Tradicionais',
+                }}
+              />
               <div
                 className={proseClass}
                 dangerouslySetInnerHTML={{ __html: category.comparacao_content! }}
@@ -290,7 +312,10 @@ export default function TreatmentDetail() {
       <ScrollFadeIn>
         <section className="py-24 bg-gradient-to-br from-blue-900 to-blue-700">
           <div className="max-w-4xl mx-auto px-6 text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Comece sua Jornada</h2>
+            <div
+              className={ctaTitleHtmlClass}
+              dangerouslySetInnerHTML={{ __html: category.cta_title || 'Comece sua Jornada' }}
+            />
             <p className="text-lg text-white/80 mb-8">
               Agende sua sessão de hipnose clínica e dê o primeiro passo para uma vida mais
               equilibrada e plena.

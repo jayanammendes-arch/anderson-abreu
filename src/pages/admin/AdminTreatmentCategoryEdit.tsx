@@ -43,6 +43,7 @@ const emptyForm: Partial<TreatmentCategory> = {
   por_que_tantas_content: '',
   comparacao_title: '',
   comparacao_content: '',
+  cta_title: '',
 }
 
 function slugify(text: string): string {
@@ -167,6 +168,7 @@ export default function AdminTreatmentCategoryEdit() {
       fd.append('por_que_tantas_content', formData.por_que_tantas_content || '')
       fd.append('comparacao_title', formData.comparacao_title || '')
       fd.append('comparacao_content', formData.comparacao_content || '')
+      fd.append('cta_title', formData.cta_title || '')
       fd.append('detailed_content', formData.detailed_content || '')
       fd.append('symptoms_list', formData.symptoms_list || '')
       if (imageFile) fd.append('image', imageFile)
@@ -273,10 +275,9 @@ export default function AdminTreatmentCategoryEdit() {
         <FormSection title="1. Como Funciona" defaultOpen>
           <div className="space-y-2">
             <Label>Título</Label>
-            <Input
+            <RichTextEditor
               value={formData.como_funciona_title || ''}
-              onChange={(e) => setFormData({ ...formData, como_funciona_title: e.target.value })}
-              placeholder="Como Funciona"
+              onChange={(html) => setFormData({ ...formData, como_funciona_title: html })}
             />
           </div>
           <div className="space-y-2">
@@ -310,10 +311,9 @@ export default function AdminTreatmentCategoryEdit() {
         <FormSection title="3. Resultados Respaldados Pela Ciência" defaultOpen>
           <div className="space-y-2">
             <Label>Título</Label>
-            <Input
+            <RichTextEditor
               value={formData.resultados_title || ''}
-              onChange={(e) => setFormData({ ...formData, resultados_title: e.target.value })}
-              placeholder="Resultados Respaldados Pela Ciência"
+              onChange={(html) => setFormData({ ...formData, resultados_title: html })}
             />
           </div>
           <div className="space-y-2">
@@ -336,10 +336,9 @@ export default function AdminTreatmentCategoryEdit() {
         <FormSection title="4. Sintomas" defaultOpen>
           <div className="space-y-2">
             <Label>Título</Label>
-            <Input
+            <RichTextEditor
               value={formData.sintomas_title || ''}
-              onChange={(e) => setFormData({ ...formData, sintomas_title: e.target.value })}
-              placeholder="Sintomas"
+              onChange={(html) => setFormData({ ...formData, sintomas_title: html })}
             />
           </div>
           <div className="space-y-2">
@@ -362,10 +361,9 @@ export default function AdminTreatmentCategoryEdit() {
         <FormSection title="5. Por que tantas pessoas buscam a Hipnoterapia?" defaultOpen>
           <div className="space-y-2">
             <Label>Título</Label>
-            <Input
+            <RichTextEditor
               value={formData.por_que_tantas_title || ''}
-              onChange={(e) => setFormData({ ...formData, por_que_tantas_title: e.target.value })}
-              placeholder="Por que tantas pessoas buscam a Hipnoterapia?"
+              onChange={(html) => setFormData({ ...formData, por_que_tantas_title: html })}
             />
           </div>
           <div className="space-y-2">
@@ -373,6 +371,33 @@ export default function AdminTreatmentCategoryEdit() {
             <RichTextEditor
               value={formData.por_que_tantas_content || ''}
               onChange={(html) => setFormData({ ...formData, por_que_tantas_content: html })}
+            />
+          </div>
+        </FormSection>
+
+        <FormSection title="6. Comparação / Explicação" defaultOpen>
+          <div className="space-y-2">
+            <Label>Título</Label>
+            <RichTextEditor
+              value={formData.comparacao_title || ''}
+              onChange={(html) => setFormData({ ...formData, comparacao_title: html })}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>Conteúdo</Label>
+            <RichTextEditor
+              value={formData.comparacao_content || ''}
+              onChange={(html) => setFormData({ ...formData, comparacao_content: html })}
+            />
+          </div>
+        </FormSection>
+
+        <FormSection title="7. CTA Final (Comece sua Jornada)" defaultOpen>
+          <div className="space-y-2">
+            <Label>Título</Label>
+            <RichTextEditor
+              value={formData.cta_title || ''}
+              onChange={(html) => setFormData({ ...formData, cta_title: html })}
             />
           </div>
         </FormSection>
