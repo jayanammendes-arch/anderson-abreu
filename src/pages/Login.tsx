@@ -128,21 +128,7 @@ export default function Login() {
             to="/"
             className="mb-8 flex items-center gap-3 transition-opacity hover:opacity-80 group"
           >
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[hsl(224,76%,25%)] border border-blue-400/30 text-white shadow-md group-hover:scale-105 transition-transform">
-              {loginSettings && getLogoUrl(loginSettings) ? (
-                <img
-                  src={getLogoUrl(loginSettings)!}
-                  alt="Logo"
-                  className="h-7 w-7 object-contain"
-                />
-              ) : (
-                <Brain className="h-6 w-6 text-white" />
-              )}
-            </div>
             <div>
-              <h1 className="text-xl font-bold text-white tracking-tight">
-                {loginSettings?.company_name || 'Anderson Abreu'}
-              </h1>
               <p className="text-xs text-blue-200/70 font-medium">Área do Aluno</p>
             </div>
           </Link>
