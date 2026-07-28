@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-28T13:58:16.712Z",
+  "generatedAt": "2026-07-28T14:14:33.147Z",
   "collections": [
     {
       "name": "users",
@@ -2089,6 +2089,21 @@
           "type": "bool",
           "required": false,
           "system": false
+        },
+        {
+          "name": "image_position",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": [
+            "top",
+            "center",
+            "bottom",
+            "left",
+            "right",
+            "center-left",
+            "center-right"
+          ]
         }
       ],
       "indexes": [

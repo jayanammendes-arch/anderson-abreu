@@ -36,6 +36,7 @@ import { extractFieldErrors, type FieldErrors } from '@/lib/pocketbase/errors'
 import { toast } from 'sonner'
 import { Pencil, Trash2, Plus, Loader2, Save } from 'lucide-react'
 import { Switch } from '@/components/ui/switch'
+import { ImagePositionSelector } from '@/components/admin/ImagePositionSelector'
 
 const emptyForm: Partial<TreatmentCategory> = {
   name: '',
@@ -49,6 +50,7 @@ const emptyForm: Partial<TreatmentCategory> = {
   icon: 'brain',
   order: 0,
   is_active: true,
+  image_position: 'center',
 }
 
 function slugify(text: string): string {
@@ -72,6 +74,7 @@ export default function AdminTreatmentCategories() {
   const [isDeleting, setIsDeleting] = useState(false)
   const [formData, setFormData] = useState<Partial<TreatmentCategory>>(emptyForm)
   const [imageFile, setImageFile] = useState<File | null>(null)
+  const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null)
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [newImages, setNewImages] = useState<Record<MultiImageField, File[]>>({
     como_funciona_images: [],
@@ -103,6 +106,21 @@ export default function AdminTreatmentCategories() {
     loadData()
   }, [loadData])
   useRealtime('treatment_categories', () => loadData())
+
+  useEffect(() => {
+    if (imageFile) {
+      const url = URL.createObjectURL(imageFile)
+      setImagePreviewUrl(url)
+      return () => URL.revokeObjectURL(url)
+    }
+    if (formData.id && formData.image) {
+      setImagePreviewUrl(
+        `${import.meta.env.VITE_POCKETBASE_URL}/api/files/treatment_categories/${formData.id}/${formData.image}`,
+      )
+    } else {
+      setImagePreviewUrl(null)
+    }
+  }, [imageFile, formData.id, formData.image])
 
   const resetMultiImages = () => {
     setNewImages({ como_funciona_images: [], resultados_images: [], cta_images: [] })
@@ -155,6 +173,7 @@ export default function AdminTreatmentCategories() {
       fd.append('resultados_text', formData.resultados_text || '')
       fd.append('cta_text', formData.cta_text || '')
       fd.append('is_active', String(formData.is_active ?? true))
+      fd.append('image_position', formData.image_position || 'center')
 
       if (imageFile) fd.append('image', imageFile)
 
@@ -360,6 +379,16 @@ export default function AdminTreatmentCategories() {
               <p className="text-xs text-muted-foreground">
                 Recomendado: 800×600 px (formato paisagem)
               </p>
+              <ImagePositionSelector
+                value={formData.image_position || 'center'}
+                onChange={(pos) =>
+                  setFormData({
+                    ...formData,
+                    image_position: pos as TreatmentCategory['image_position'],
+                  })
+                }
+                imageUrl={imagePreviewUrl}
+              />
             </div>
             <div className="space-y-2">
               <Label>Ordem</Label>

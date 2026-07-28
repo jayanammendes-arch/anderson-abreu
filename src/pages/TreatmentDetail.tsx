@@ -16,6 +16,7 @@ import { RichSection } from '@/components/treatment/RichSection'
 import { getTreatmentIcon } from '@/lib/treatment-icons'
 import { Loader2, ArrowLeft } from 'lucide-react'
 import { ScrollFadeIn } from '@/components/ScrollFadeIn'
+import { getImagePositionCss } from '@/lib/image-position'
 
 export default function TreatmentDetail() {
   const { slug } = useParams<{ slug: string }>()
@@ -89,7 +90,12 @@ export default function TreatmentDetail() {
         <section className="relative min-h-[60vh] flex items-center overflow-hidden pt-20">
           {imageUrl ? (
             <>
-              <img src={imageUrl} alt="" className="absolute inset-0 h-full w-full object-cover" />
+              <img
+                src={imageUrl}
+                alt=""
+                className="absolute inset-0 h-full w-full object-cover"
+                style={{ objectPosition: getImagePositionCss(category.image_position) }}
+              />
               <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-black/40" />
             </>
           ) : (
