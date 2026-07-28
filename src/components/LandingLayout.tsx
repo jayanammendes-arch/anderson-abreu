@@ -39,9 +39,11 @@ function scrollToSection(href: string) {
 export function LandingLayout({
   settings,
   children,
+  darkBg,
 }: {
   settings: PlatformSettings | null
   children: ReactNode
+  darkBg?: boolean
 }) {
   const location = useLocation()
   const navigate = useNavigate()
@@ -50,8 +52,11 @@ export function LandingLayout({
   const [isScrolled, setIsScrolled] = useState(false)
   const [mobileTreatmentsOpen, setMobileTreatmentsOpen] = useState(false)
   const [treatments, setTreatments] = useState<Treatment[]>([])
+
   const isLanding = location.pathname === '/'
   const isCursosPage = location.pathname === '/cursos'
+  const isAgendarPage = location.pathname === '/agendar'
+  const isDarkPage = darkBg ?? isAgendarPage
   const areaAlunoHref = isAuthenticated ? '/dashboard' : '/login'
 
   useEffect(() => {
@@ -102,13 +107,22 @@ export function LandingLayout({
   const handleAreaAlunoClick = () => navigate(areaAlunoHref)
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 font-sans selection:bg-primary selection:text-white">
+    <div
+      className={cn(
+        'min-h-screen flex flex-col justify-between font-sans selection:bg-primary selection:text-white transition-colors duration-300',
+        isDarkPage ? 'royal-gradient-bg text-white' : 'bg-white text-slate-900',
+      )}
+    >
       <header
         className={cn(
           'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
           isScrolled
-            ? 'bg-white/95 backdrop-blur-md shadow-sm border-b border-slate-100 py-3'
-            : 'bg-white/80 backdrop-blur-sm py-5',
+            ? isDarkPage
+              ? 'bg-[#020412]/90 backdrop-blur-md shadow-sm border-b border-white/10 py-3'
+              : 'bg-white/95 backdrop-blur-md shadow-sm border-b border-slate-100 py-3'
+            : isDarkPage
+              ? 'bg-transparent py-5'
+              : 'bg-white/80 backdrop-blur-sm py-5',
         )}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between">
@@ -116,7 +130,12 @@ export function LandingLayout({
             {logoUrl ? (
               <img src={logoUrl} alt="Logo" className="h-9 w-auto object-contain" />
             ) : (
-              <span className="text-xl font-bold tracking-tight text-slate-900">
+              <span
+                className={cn(
+                  'text-xl font-bold tracking-tight',
+                  isDarkPage ? 'text-white' : 'text-slate-900',
+                )}
+              >
                 {settings?.company_name || 'Anderson Abreu'}
               </span>
             )}
@@ -124,14 +143,18 @@ export function LandingLayout({
           <nav className="hidden lg:flex items-center gap-1">
             {navLinks.map((link) =>
               link.name === 'Tratamentos' ? (
-                <TreatmentsDropdown key={link.name}>Tratamentos</TreatmentsDropdown>
+                <TreatmentsDropdown key={link.name} isDark={isDarkPage}>
+                  Tratamentos
+                </TreatmentsDropdown>
               ) : (
                 <button
                   key={link.name}
                   onClick={() => handleNavClick(link)}
                   className={cn(
                     'text-sm font-medium px-3 py-2 rounded-md transition-colors',
-                    'text-slate-600 hover:text-slate-900 hover:bg-slate-100',
+                    isDarkPage
+                      ? 'text-white/80 hover:text-white hover:bg-white/10'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100',
                   )}
                 >
                   {link.name}
@@ -143,7 +166,12 @@ export function LandingLayout({
             {isCursosPage ? (
               <Button
                 size="sm"
-                className="bg-slate-900 text-white hover:bg-slate-800 rounded-full px-6 shadow-sm"
+                className={cn(
+                  'rounded-full px-6 shadow-sm',
+                  isDarkPage
+                    ? 'bg-white text-slate-900 hover:bg-white/90'
+                    : 'bg-slate-900 text-white hover:bg-slate-800',
+                )}
                 onClick={handleAreaAlunoClick}
               >
                 <GraduationCap className="mr-1.5 h-4 w-4" />
@@ -161,7 +189,7 @@ export function LandingLayout({
             )}
           </div>
           <button
-            className="lg:hidden p-2 text-slate-900"
+            className={cn('lg:hidden p-2', isDarkPage ? 'text-white' : 'text-slate-900')}
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             {isMenuOpen ? <X /> : <Menu />}
@@ -171,7 +199,8 @@ export function LandingLayout({
 
       <div
         className={cn(
-          'fixed inset-0 z-40 bg-white transition-transform duration-300 lg:hidden flex flex-col pt-24 px-6',
+          'fixed inset-0 z-40 transition-transform duration-300 lg:hidden flex flex-col pt-24 px-6',
+          isDarkPage ? 'bg-[#020412] text-white' : 'bg-white text-slate-900',
           isMenuOpen ? 'translate-x-0' : 'translate-x-full',
         )}
       >
@@ -182,7 +211,12 @@ export function LandingLayout({
                 <div key={link.name}>
                   <button
                     onClick={() => setMobileTreatmentsOpen(!mobileTreatmentsOpen)}
-                    className="flex items-center justify-between w-full text-slate-700 hover:text-primary text-left py-3 border-b border-slate-100 transition-colors"
+                    className={cn(
+                      'flex items-center justify-between w-full text-left py-3 border-b transition-colors',
+                      isDarkPage
+                        ? 'text-white/90 border-white/10 hover:text-white'
+                        : 'text-slate-700 border-slate-100 hover:text-primary',
+                    )}
                   >
                     Tratamentos
                     <ChevronDown
@@ -199,7 +233,12 @@ export function LandingLayout({
                           key={treatment.id}
                           to={`/tratamentos/${treatment.slug}`}
                           onClick={() => setIsMenuOpen(false)}
-                          className="text-slate-600 hover:text-primary text-base text-left py-2.5 border-b border-slate-50 transition-colors"
+                          className={cn(
+                            'text-base text-left py-2.5 border-b transition-colors',
+                            isDarkPage
+                              ? 'text-white/70 border-white/5 hover:text-white'
+                              : 'text-slate-600 border-slate-50 hover:text-primary',
+                          )}
                         >
                           {treatment.name}
                         </Link>
@@ -213,7 +252,12 @@ export function LandingLayout({
               <button
                 key={link.name}
                 onClick={() => handleNavClick(link)}
-                className="text-slate-700 hover:text-primary text-left py-3 border-b border-slate-100 transition-colors"
+                className={cn(
+                  'text-left py-3 border-b transition-colors',
+                  isDarkPage
+                    ? 'text-white/90 border-white/10 hover:text-white'
+                    : 'text-slate-700 border-slate-100 hover:text-primary',
+                )}
               >
                 {link.name}
               </button>
@@ -245,16 +289,21 @@ export function LandingLayout({
         </nav>
       </div>
 
-      {children}
+      <main className="flex-1 w-full">{children}</main>
 
-      <footer className="royal-gradient-bg text-white pt-16 pb-8">
+      <footer
+        className={cn(
+          'text-white pt-16 pb-8 transition-colors duration-300',
+          isDarkPage ? 'bg-transparent border-t border-white/10' : 'royal-gradient-footer',
+        )}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex flex-col md:flex-row justify-between items-start gap-8 mb-12">
             <div className="max-w-sm">
               <span className="text-2xl font-bold text-white">
                 {settings?.company_name || 'Anderson Abreu'}
               </span>
-              <p className="text-white/50 text-sm leading-relaxed mt-3">
+              <p className="text-white/60 text-sm leading-relaxed mt-3">
                 {settings?.hero_subtitle ||
                   'Hipnoterapia clínica, inteligência emocional e mentoria de alta performance.'}
               </p>
@@ -265,7 +314,7 @@ export function LandingLayout({
                 <button
                   key={link.name}
                   onClick={() => handleNavClick(link)}
-                  className="text-white/50 hover:text-white text-sm text-left transition-colors"
+                  className="text-white/60 hover:text-white text-sm text-left transition-colors"
                 >
                   {link.name}
                 </button>
@@ -275,23 +324,23 @@ export function LandingLayout({
               <h4 className="text-white font-semibold mb-2">Contato</h4>
               <a
                 href={`mailto:${settings?.support_email || 'contato@andersonabreu.com.br'}`}
-                className="text-white/50 hover:text-white text-sm transition-colors"
+                className="text-white/60 hover:text-white text-sm transition-colors"
               >
                 {settings?.support_email || 'contato@andersonabreu.com.br'}
               </a>
-              <span className="text-white/50 text-sm">
+              <span className="text-white/60 text-sm">
                 {settings?.whatsapp_number || settings?.contact_phone || ''}
               </span>
               <Link
                 to="/login"
-                className="text-white/50 hover:text-white text-sm transition-colors mt-2"
+                className="text-white/60 hover:text-white text-sm transition-colors mt-2"
               >
                 Área do Aluno
               </Link>
             </div>
           </div>
           <div className="border-t border-white/10 pt-8 text-center">
-            <p className="text-white/40 text-sm">
+            <p className="text-white/50 text-sm">
               © {new Date().getFullYear()} {settings?.company_name || 'Anderson Abreu'}. Todos os
               direitos reservados.
             </p>

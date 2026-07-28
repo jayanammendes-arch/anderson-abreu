@@ -216,12 +216,16 @@
 
   .royal-gradient-bg {
     background: linear-gradient(
-      160deg,
+      180deg,
       #020412 0%,
-      #051030 25%,
-      #0a1a5e 55%,
+      #051030 20%,
+      #0a1a5e 50%,
       #122a8a 80%,
       #1a3fa8 100%
     );
+  }
+
+  .royal-gradient-footer {
+    background: linear-gradient(180deg, #122a8a 0%, #0a1a5e 40%, #051030 75%, #020412 100%);
   }
 }

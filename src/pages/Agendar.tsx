@@ -117,8 +117,8 @@ export default function Agendar() {
 
   if (loading) {
     return (
-      <LandingLayout settings={settings}>
-        <div className="royal-gradient-bg flex h-screen items-center justify-center pt-20">
+      <LandingLayout settings={settings} darkBg>
+        <div className="flex h-screen items-center justify-center pt-20">
           <Loader2 className="h-8 w-8 animate-spin text-white" />
         </div>
       </LandingLayout>
@@ -126,25 +126,20 @@ export default function Agendar() {
   }
 
   return (
-    <LandingLayout settings={settings}>
-      <section className="royal-gradient-bg relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-black/20" />
-          <div className="absolute inset-0 bg-gradient-to-b from-[hsl(var(--royal-blue))]/20 via-transparent to-black/40" />
-        </div>
-
-        <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 py-12 md:py-20">
+    <LandingLayout settings={settings} darkBg>
+      <section className="relative min-h-[calc(100vh-80px)] flex items-center justify-center overflow-hidden pt-24 pb-16 md:pt-28 md:pb-20 bg-transparent">
+        <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <ScrollFadeIn>
               <div className="text-white">
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 mb-6">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-6">
                   <Calendar className="h-4 w-4 text-white" />
                   <span className="text-sm font-medium text-white/90">
                     Hipnose Clínica & Desenvolvimento Humano
                   </span>
                 </div>
 
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-4 drop-shadow-lg">
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-4 drop-shadow-sm text-white">
                   {headline}
                 </h1>
                 <p className="text-xl sm:text-2xl font-semibold text-white/90 mb-8 flex items-center gap-2">
@@ -156,7 +151,7 @@ export default function Agendar() {
                   {benefits.map((benefit, i) => (
                     <li
                       key={i}
-                      className="flex items-center gap-3 text-white/80 text-base sm:text-lg"
+                      className="flex items-center gap-3 text-white/90 text-base sm:text-lg"
                     >
                       <span className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-white/15 border border-white/25">
                         <CheckCircle2 className="h-4 w-4 text-white" />
@@ -172,7 +167,7 @@ export default function Agendar() {
                       href={`https://wa.me/${whatsappNumber}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-[#25D366] text-white font-semibold text-base shadow-lg hover:bg-[#1ebe5b] transition-colors duration-200"
+                      className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-[#25D366] text-white font-semibold text-base shadow-lg hover:bg-[#1ebe5b] transition-all duration-200 hover:scale-105"
                     >
                       <MessageCircle className="h-5 w-5" />
                       WhatsApp
@@ -180,7 +175,7 @@ export default function Agendar() {
                   )}
                   <button
                     onClick={scrollToForm}
-                    className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-royal text-white font-semibold text-base shadow-lg hover:bg-royal-hover transition-colors duration-200"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-royal text-white font-semibold text-base shadow-lg hover:bg-royal-hover transition-all duration-200 hover:scale-105"
                   >
                     {settings?.agendar_sessao_text || 'Agendar Sessão'}
                     <ArrowRight className="h-5 w-5" />
@@ -192,43 +187,43 @@ export default function Agendar() {
             <ScrollFadeIn>
               <div ref={formRef}>
                 {submitted ? (
-                  <div className="glass-card rounded-3xl p-10 text-center">
-                    <CheckCircle2 className="h-16 w-16 text-green-400 mx-auto mb-6" />
+                  <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-10 text-center shadow-2xl">
+                    <CheckCircle2 className="h-16 w-16 text-emerald-400 mx-auto mb-6" />
                     <h2 className="text-2xl font-bold text-white mb-3">Solicitação Enviada!</h2>
-                    <p className="text-white/70 mb-8">
+                    <p className="text-white/80 mb-8">
                       Recebemos sua solicitação e entraremos em contato em breve para confirmar seu
                       agendamento.
                     </p>
                     <Button
                       variant="outline"
-                      className="rounded-full border-white/30 bg-white/5 text-white hover:bg-white/10 hover:text-white"
+                      className="rounded-full border-white/30 bg-white/10 text-white hover:bg-white/20 hover:text-white"
                       onClick={() => setSubmitted(false)}
                     >
                       Enviar nova solicitação
                     </Button>
                   </div>
                 ) : (
-                  <div className="glass-card rounded-3xl p-6 sm:p-8">
+                  <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 sm:p-8 shadow-2xl">
                     <h2 className="text-2xl font-bold text-white mb-2">Solicite seu Agendamento</h2>
-                    <p className="text-white/60 text-sm mb-6">
+                    <p className="text-white/70 text-sm mb-6">
                       Preencha o formulário e entraremos em contato para agendar sua sessão.
                     </p>
 
                     <form onSubmit={handleSubmit} className="space-y-5">
                       <div className="space-y-2">
-                        <Label htmlFor="name" className="text-white/80 text-sm font-medium">
+                        <Label htmlFor="name" className="text-white/90 text-sm font-medium">
                           Nome *
                         </Label>
                         <div className="relative">
-                          <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
+                          <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/50" />
                           <Input
                             id="name"
                             required
                             value={formData.name}
                             onChange={(e) => setFormData((p) => ({ ...p, name: e.target.value }))}
                             className={cn(
-                              'h-12 pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/40',
-                              'focus:bg-white/15 focus:border-white/40 rounded-xl',
+                              'h-12 pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/50',
+                              'focus:bg-white/20 focus:border-white/50 rounded-xl',
                               errors.name && 'border-red-400',
                             )}
                             placeholder="Seu nome completo"
@@ -238,11 +233,11 @@ export default function Agendar() {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="email" className="text-white/80 text-sm font-medium">
+                        <Label htmlFor="email" className="text-white/90 text-sm font-medium">
                           Email *
                         </Label>
                         <div className="relative">
-                          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
+                          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/50" />
                           <Input
                             id="email"
                             type="email"
@@ -250,8 +245,8 @@ export default function Agendar() {
                             value={formData.email}
                             onChange={(e) => setFormData((p) => ({ ...p, email: e.target.value }))}
                             className={cn(
-                              'h-12 pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/40',
-                              'focus:bg-white/15 focus:border-white/40 rounded-xl',
+                              'h-12 pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/50',
+                              'focus:bg-white/20 focus:border-white/50 rounded-xl',
                               errors.email && 'border-red-400',
                             )}
                             placeholder="seu@email.com"
@@ -261,30 +256,30 @@ export default function Agendar() {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="phone" className="text-white/80 text-sm font-medium">
+                        <Label htmlFor="phone" className="text-white/90 text-sm font-medium">
                           Telefone / WhatsApp
                         </Label>
                         <div className="relative">
-                          <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
+                          <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/50" />
                           <Input
                             id="phone"
                             value={formData.phone}
                             onChange={(e) => setFormData((p) => ({ ...p, phone: e.target.value }))}
-                            className="h-12 pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/40 focus:bg-white/15 focus:border-white/40 rounded-xl"
+                            className="h-12 pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:bg-white/20 focus:border-white/50 rounded-xl"
                             placeholder="(11) 99999-9999"
                           />
                         </div>
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="message" className="text-white/80 text-sm font-medium">
+                        <Label htmlFor="message" className="text-white/90 text-sm font-medium">
                           Descrição
                         </Label>
                         <Textarea
                           id="message"
                           value={formData.message}
                           onChange={(e) => setFormData((p) => ({ ...p, message: e.target.value }))}
-                          className="min-h-[120px] bg-white/10 border-white/20 text-white placeholder:text-white/40 focus:bg-white/15 focus:border-white/40 rounded-xl resize-none"
+                          className="min-h-[120px] bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:bg-white/20 focus:border-white/50 rounded-xl resize-none"
                           placeholder="Conte-nos brevemente sobre o que você gostaria de trabalhar na sessão..."
                         />
                       </div>
@@ -292,7 +287,7 @@ export default function Agendar() {
                       <Button
                         type="submit"
                         disabled={submitting}
-                        className="w-full h-12 text-base font-semibold rounded-xl bg-white text-slate-900 hover:bg-white/90 transition-colors duration-200"
+                        className="w-full h-12 text-base font-semibold rounded-xl bg-white text-slate-900 hover:bg-white/90 transition-colors duration-200 shadow-md"
                       >
                         {submitting ? (
                           <>
