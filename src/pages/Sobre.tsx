@@ -361,7 +361,7 @@ export default function Sobre() {
               </p>
               <Button
                 size="lg"
-                className="bg-[#22C55E] hover:bg-[#20a854] text-white rounded-full px-10 py-6 text-lg font-medium shadow-lg transition-all hover:scale-105"
+                className="bg-[#22C55E] hover:bg-[#1ea34d] text-white rounded-full px-10 py-6 text-lg font-medium shadow-lg transition-all hover:scale-105 border-none"
                 asChild
               >
                 {ctaLink.startsWith('/') ? (

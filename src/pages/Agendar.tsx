@@ -175,7 +175,7 @@ export default function Agendar() {
                   )}
                   <button
                     onClick={scrollToForm}
-                    className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full royal-btn-gradient text-white font-semibold text-base shadow-lg transition-all duration-200 hover:scale-105"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-[#22C55E] hover:bg-[#1ea34d] text-white font-semibold text-base shadow-lg transition-all duration-200 hover:scale-105"
                   >
                     {settings?.agendar_sessao_text || 'Agendar Sessão'}
                     <ArrowRight className="h-5 w-5" />

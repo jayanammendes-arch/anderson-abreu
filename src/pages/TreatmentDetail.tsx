@@ -229,7 +229,7 @@ export default function TreatmentDetail() {
               </p>
               <Button
                 size="lg"
-                className="royal-btn-gradient text-white rounded-full px-10"
+                className="bg-[#22C55E] hover:bg-[#1ea34d] text-white rounded-full px-10 py-6 text-lg font-medium shadow-lg transition-all hover:scale-105 border-none"
                 onClick={() => navigate('/agendar')}
               >
                 {agendarText}
