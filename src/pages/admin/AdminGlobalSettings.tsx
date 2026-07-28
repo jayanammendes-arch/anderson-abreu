@@ -6,8 +6,16 @@ import { useToast } from '@/hooks/use-toast'
 import { useFormValidation, type ValidationRule } from '@/hooks/use-form-validation'
 import { ValidatedInput } from '@/components/admin/ValidatedInput'
 import { FileUploadField } from '@/components/admin/FileUploadField'
+import { RichTextEditor } from '@/components/admin/RichTextEditor'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { getFileUrl } from '@/lib/pocketbase/files'
 import pb from '@/lib/pocketbase/client'
 
@@ -15,15 +23,18 @@ interface FieldDef {
   key: string
   label: string
   required?: boolean
-  type?: 'email' | 'url' | 'boolean'
+  type?: 'email' | 'url' | 'boolean' | 'richtext' | 'select'
   placeholder?: string
+  options?: Array<{ value: string; label: string }>
 }
 
-const SECTIONS: Array<{
+interface SectionDef {
   title: string
   fields: FieldDef[]
   fileFields?: Array<{ key: string; label: string }>
-}> = [
+}
+
+const SECTIONS: SectionDef[] = [
   {
     title: 'Identidade da Marca',
     fields: [
@@ -92,7 +103,38 @@ const SECTIONS: Array<{
       {
         key: 'treatments_accordion_enabled',
         label: 'Ativar Acordeão nos Tratamentos',
-        type: 'boolean' as const,
+        type: 'boolean',
+      },
+    ],
+  },
+  {
+    title: 'Faixa Azul (O que é Hipnose?)',
+    fields: [
+      { key: 'global_blue_band_title', label: 'Título da Seção', placeholder: 'O que é Hipnose?' },
+      { key: 'blue_band_phrase', label: 'Conteúdo (Rich Text)', type: 'richtext' },
+      {
+        key: 'blue_band_whatsapp_text',
+        label: 'Texto do Botão WhatsApp',
+        placeholder: 'Fale Conosco',
+      },
+      { key: 'blue_band_whatsapp_enabled', label: 'Ativar Botão WhatsApp', type: 'boolean' },
+    ],
+  },
+  {
+    title: 'Comece sua Jornada',
+    fields: [
+      { key: 'journey_title', label: 'Título (Rich Text)', type: 'richtext' },
+      { key: 'journey_text', label: 'Texto (Rich Text)', type: 'richtext' },
+      { key: 'journey_button_text', label: 'Texto do Botão', placeholder: 'Agendar Sessão' },
+      { key: 'journey_button_link', label: 'Link do Botão (URL interno)', placeholder: '/agendar' },
+      {
+        key: 'journey_button_type',
+        label: 'Tipo do Botão',
+        type: 'select',
+        options: [
+          { value: 'internal', label: 'Interno (navegação)' },
+          { value: 'whatsapp', label: 'WhatsApp' },
+        ],
       },
     ],
   },
@@ -165,6 +207,71 @@ export default function AdminGlobalSettings() {
   const getFileSrc = (key: string) =>
     settings?.[key] ? getFileUrl('platform_settings', settings.id, settings[key]) : null
 
+  const renderField = (field: FieldDef) => {
+    if (field.type === 'boolean') {
+      return (
+        <div key={field.key} className="flex items-center justify-between">
+          <Label>{field.label}</Label>
+          <Switch
+            checked={Boolean(settings?.[field.key])}
+            onCheckedChange={(checked) => {
+              setSettings((prev) => ({ ...prev, [field.key]: checked }))
+              clearFieldError(field.key)
+            }}
+          />
+        </div>
+      )
+    }
+
+    if (field.type === 'richtext') {
+      return (
+        <div key={field.key} className="space-y-2">
+          <Label>{field.label}</Label>
+          <RichTextEditor
+            value={settings?.[field.key] || ''}
+            onChange={(html) => updateField(field.key, html)}
+          />
+        </div>
+      )
+    }
+
+    if (field.type === 'select') {
+      return (
+        <div key={field.key} className="space-y-2">
+          <Label>{field.label}</Label>
+          <Select
+            value={settings?.[field.key] || ''}
+            onValueChange={(value) => updateField(field.key, value)}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Selecione..." />
+            </SelectTrigger>
+            <SelectContent>
+              {field.options?.map((opt) => (
+                <SelectItem key={opt.value} value={opt.value}>
+                  {opt.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )
+    }
+
+    return (
+      <ValidatedInput
+        key={field.key}
+        label={field.label}
+        required={field.required}
+        type={field.type}
+        placeholder={field.placeholder}
+        value={settings?.[field.key] || ''}
+        onChange={(e) => updateField(field.key, e.target.value)}
+        error={errors[field.key]}
+      />
+    )
+  }
+
   return (
     <div className="space-y-6 p-4 md:p-6">
       <div className="flex items-center justify-between">
@@ -185,36 +292,12 @@ export default function AdminGlobalSettings() {
       </div>
       <div className="grid gap-6 md:grid-cols-2">
         {SECTIONS.map((section) => (
-          <Card key={section.title}>
+          <Card key={section.title} className="md:col-span-2">
             <CardHeader>
               <CardTitle>{section.title}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {section.fields.map((field) =>
-                field.type === 'boolean' ? (
-                  <div key={field.key} className="flex items-center justify-between">
-                    <Label>{field.label}</Label>
-                    <Switch
-                      checked={Boolean(settings?.[field.key])}
-                      onCheckedChange={(checked) => {
-                        setSettings((prev) => ({ ...prev, [field.key]: checked }))
-                        clearFieldError(field.key)
-                      }}
-                    />
-                  </div>
-                ) : (
-                  <ValidatedInput
-                    key={field.key}
-                    label={field.label}
-                    required={field.required}
-                    type={field.type}
-                    placeholder={field.placeholder}
-                    value={settings?.[field.key] || ''}
-                    onChange={(e) => updateField(field.key, e.target.value)}
-                    error={errors[field.key]}
-                  />
-                ),
-              )}
+              {section.fields.map(renderField)}
               {section.fileFields?.map((f) => (
                 <FileUploadField
                   key={f.key}
