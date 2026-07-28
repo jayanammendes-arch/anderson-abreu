@@ -35,11 +35,11 @@ function FramedImage({
   return (
     <div
       className={cn(
-        'overflow-hidden rounded-lg shadow-xl border-blue-600',
+        'overflow-hidden rounded-lg shadow-xl border-blue-600 max-w-full',
         position === 'right' ? 'border-l-4' : 'border-r-4',
       )}
     >
-      <img src={src} alt={alt} className="w-full h-96 object-cover" />
+      <img src={src} alt={alt} className="w-[800px] h-[600px] max-w-full object-cover" />
     </div>
   )
 }
