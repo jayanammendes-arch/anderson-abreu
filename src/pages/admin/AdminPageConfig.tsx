@@ -13,6 +13,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Switch } from '@/components/ui/switch'
 import { RichTextEditor } from '@/components/admin/RichTextEditor'
 import { AboutSectionsConfig } from '@/components/admin/AboutSectionsConfig'
+import { ColumnItemsEditor } from '@/components/admin/ColumnItemsEditor'
 import { Save, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import type { PlatformSettings } from '@/types'
@@ -97,6 +98,11 @@ interface FormState {
   journey_button_text: string
   journey_button_link: string
   journey_button_type: string
+  home_section_title: string
+  home_section_subtitle: string
+  home_column1_items: string
+  home_column2_items: string
+  home_section_footer: string
 }
 
 const emptyForm: FormState = {
@@ -179,6 +185,11 @@ const emptyForm: FormState = {
   journey_button_text: '',
   journey_button_link: '',
   journey_button_type: 'whatsapp',
+  home_section_title: '',
+  home_section_subtitle: '',
+  home_column1_items: '[]',
+  home_column2_items: '[]',
+  home_section_footer: '',
 }
 
 function FieldLabel({ label, description }: { label: string; description?: string }) {
@@ -403,6 +414,17 @@ export default function AdminPageConfig() {
             journey_button_text: data.journey_button_text || '',
             journey_button_link: data.journey_button_link || '',
             journey_button_type: data.journey_button_type || 'whatsapp',
+            home_section_title: data.home_section_title || '',
+            home_section_subtitle: data.home_section_subtitle || '',
+            home_column1_items:
+              typeof data.home_column1_items === 'string'
+                ? data.home_column1_items
+                : JSON.stringify(data.home_column1_items || []),
+            home_column2_items:
+              typeof data.home_column2_items === 'string'
+                ? data.home_column2_items
+                : JSON.stringify(data.home_column2_items || []),
+            home_section_footer: data.home_section_footer || '',
           })
         }
       } catch {
@@ -615,6 +637,49 @@ export default function AdminPageConfig() {
                         onChange={(e) => set('stats_countries', e.target.value)}
                       />
                     </div>
+                  </div>
+                  <div className="pt-4 border-t border-border/50 space-y-4">
+                    <div className="space-y-1">
+                      <Label className="text-base font-semibold">Seção de Duas Colunas</Label>
+                      <p className="text-sm text-muted-foreground">
+                        Configuração da seção de comparação exibida na página inicial abaixo de "O
+                        que é Hipnose Clínica?".
+                      </p>
+                    </div>
+                    <LabeledInput
+                      label="Título da Seção"
+                      value={form.home_section_title}
+                      onChange={(v) => set('home_section_title', v)}
+                      placeholder="Ex: Por que tantas pessoas buscam a Hipnoterapia?"
+                    />
+                    <LabeledTextarea
+                      label="Subtítulo"
+                      value={form.home_section_subtitle}
+                      onChange={(v) => set('home_section_subtitle', v)}
+                      placeholder="Ex: Conheça as características que tornam a hipnoterapia uma abordagem diferenciada."
+                    />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Coluna 1 (Hipnoterapia)</Label>
+                        <ColumnItemsEditor
+                          value={form.home_column1_items}
+                          onChange={(v) => set('home_column1_items', v)}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Coluna 2 (Abordagens Tradicionais)</Label>
+                        <ColumnItemsEditor
+                          value={form.home_column2_items}
+                          onChange={(v) => set('home_column2_items', v)}
+                        />
+                      </div>
+                    </div>
+                    <LabeledInput
+                      label="Nota de Rodapé"
+                      value={form.home_section_footer}
+                      onChange={(v) => set('home_section_footer', v)}
+                      placeholder="Ex: * As abordagens convencionais são igualmente importantes..."
+                    />
                   </div>
                 </CardContent>
               </Card>

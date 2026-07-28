@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-28T19:18:43.815Z",
+  "generatedAt": "2026-07-28T19:27:43.054Z",
   "collections": [
     {
       "name": "users",
@@ -1169,6 +1169,36 @@
           "required": false,
           "system": false,
           "selectValues": ["whatsapp", "internal"]
+        },
+        {
+          "name": "home_section_title",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "home_section_subtitle",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "home_column1_items",
+          "type": "json",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "home_column2_items",
+          "type": "json",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "home_section_footer",
+          "type": "text",
+          "required": false,
+          "system": false
         }
       ],
       "indexes": []

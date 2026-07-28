@@ -362,6 +362,11 @@ export interface PlatformSettings {
   journey_button_text?: string
   journey_button_link?: string
   journey_button_type?: 'whatsapp' | 'internal'
+  home_section_title?: string
+  home_section_subtitle?: string
+  home_column1_items?: string | Array<{ text: string; icon: string }>
+  home_column2_items?: string | Array<{ text: string; icon: string }>
+  home_section_footer?: string
   created: string
   updated: string
 }

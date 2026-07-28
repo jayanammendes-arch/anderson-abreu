@@ -265,7 +265,7 @@ export default function Landing() {
 
       {/* Por que tantas pessoas buscam a Hipnoterapia? (Comparison Section) */}
       <ScrollFadeIn>
-        <HypnotherapyComparisonSection />
+        <HypnotherapyComparisonSection settings={settings} />
       </ScrollFadeIn>
 
       {/* Parallax CTA Section */}
