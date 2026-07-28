@@ -39,11 +39,6 @@ const emptyForm: Partial<TreatmentCategory> = {
   resultados_text: '',
   sintomas_title: '',
   sintomas_text: '',
-  por_que_tantas_title: '',
-  por_que_tantas_content: '',
-  comparacao_title: '',
-  comparacao_content: '',
-  cta_title: '',
 }
 
 function slugify(text: string): string {
@@ -164,11 +159,6 @@ export default function AdminTreatmentCategoryEdit() {
       fd.append('resultados_text', formData.resultados_text || '')
       fd.append('sintomas_title', formData.sintomas_title || '')
       fd.append('sintomas_text', formData.sintomas_text || '')
-      fd.append('por_que_tantas_title', formData.por_que_tantas_title || '')
-      fd.append('por_que_tantas_content', formData.por_que_tantas_content || '')
-      fd.append('comparacao_title', formData.comparacao_title || '')
-      fd.append('comparacao_content', formData.comparacao_content || '')
-      fd.append('cta_title', formData.cta_title || '')
       fd.append('detailed_content', formData.detailed_content || '')
       fd.append('symptoms_list', formData.symptoms_list || '')
       if (imageFile) fd.append('image', imageFile)
@@ -356,50 +346,6 @@ export default function AdminTreatmentCategoryEdit() {
             accept="image/jpeg,image/png,image/webp,image/svg+xml"
             error={fieldErrors.sintomas_image}
           />
-        </FormSection>
-
-        <FormSection title="5. Por que tantas pessoas buscam a Hipnoterapia?" defaultOpen>
-          <div className="space-y-2">
-            <Label>Título</Label>
-            <RichTextEditor
-              value={formData.por_que_tantas_title || ''}
-              onChange={(html) => setFormData({ ...formData, por_que_tantas_title: html })}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>Conteúdo</Label>
-            <RichTextEditor
-              value={formData.por_que_tantas_content || ''}
-              onChange={(html) => setFormData({ ...formData, por_que_tantas_content: html })}
-            />
-          </div>
-        </FormSection>
-
-        <FormSection title="6. Comparação / Explicação" defaultOpen>
-          <div className="space-y-2">
-            <Label>Título</Label>
-            <RichTextEditor
-              value={formData.comparacao_title || ''}
-              onChange={(html) => setFormData({ ...formData, comparacao_title: html })}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>Conteúdo</Label>
-            <RichTextEditor
-              value={formData.comparacao_content || ''}
-              onChange={(html) => setFormData({ ...formData, comparacao_content: html })}
-            />
-          </div>
-        </FormSection>
-
-        <FormSection title="7. CTA Final (Comece sua Jornada)" defaultOpen>
-          <div className="space-y-2">
-            <Label>Título</Label>
-            <RichTextEditor
-              value={formData.cta_title || ''}
-              onChange={(html) => setFormData({ ...formData, cta_title: html })}
-            />
-          </div>
         </FormSection>
 
         <div className="flex justify-end gap-3">
