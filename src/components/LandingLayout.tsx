@@ -103,6 +103,13 @@ export function LandingLayout({
   }
 
   const logoUrl = settings ? getLogoUrl(settings) : null
+  const brandGradientImage =
+    settings?.login_gradient ||
+    (settings?.primary_color
+      ? `linear-gradient(135deg, ${settings.primary_color}, ${isDarkPage ? '#6b8cce' : '#1a3fa8'})`
+      : isDarkPage
+        ? 'linear-gradient(135deg, #ffffff, #8ba5d9)'
+        : 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--royal-blue-hover)))')
   const agendarText = settings?.agendar_sessao_text || 'Agendar Sessão'
   const handleAreaAlunoClick = () => navigate(areaAlunoHref)
 
@@ -127,18 +134,15 @@ export function LandingLayout({
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            {logoUrl ? (
-              <img src={logoUrl} alt="Logo" className="h-9 w-auto object-contain" />
-            ) : (
-              <span
-                className={cn(
-                  'text-xl font-bold tracking-tight',
-                  isDarkPage ? 'text-white' : 'text-slate-900',
-                )}
-              >
-                {settings?.company_name || 'Anderson Abreu'}
-              </span>
+            {logoUrl && (
+              <img src={logoUrl} alt="Logo" className="h-9 w-auto object-contain flex-shrink-0" />
             )}
+            <span
+              className="text-xl font-bold tracking-tight brand-gradient-text"
+              style={{ backgroundImage: brandGradientImage }}
+            >
+              {settings?.company_name || 'Anderson Abreu'}
+            </span>
           </Link>
           <nav className="hidden lg:flex items-center gap-1">
             {navLinks.map((link) =>
