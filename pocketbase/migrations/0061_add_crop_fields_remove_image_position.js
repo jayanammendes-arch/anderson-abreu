@@ -9,9 +9,8 @@ migrate(
       col.fields.add(new NumberField({ name: 'crop_y' }))
     }
 
-    var imagePosField = col.fields.getByName('image_position')
-    if (imagePosField) {
-      col.fields.remove(imagePosField.getId())
+    if (col.fields.getByName('image_position')) {
+      col.fields.removeByName('image_position')
     }
 
     app.save(col)
@@ -36,13 +35,11 @@ migrate(
   (app) => {
     var col = app.findCollectionByNameOrId('treatment_categories')
 
-    var cropXField = col.fields.getByName('crop_x')
-    if (cropXField) {
-      col.fields.remove(cropXField.getId())
+    if (col.fields.getByName('crop_x')) {
+      col.fields.removeByName('crop_x')
     }
-    var cropYField = col.fields.getByName('crop_y')
-    if (cropYField) {
-      col.fields.remove(cropYField.getId())
+    if (col.fields.getByName('crop_y')) {
+      col.fields.removeByName('crop_y')
     }
 
     if (!col.fields.getByName('image_position')) {

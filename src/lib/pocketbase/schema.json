@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-28T16:20:09.870Z",
+  "generatedAt": "2026-07-28T16:24:11.330Z",
   "collections": [
     {
       "name": "users",
@@ -2097,21 +2097,6 @@
           "system": false
         },
         {
-          "name": "image_position",
-          "type": "select",
-          "required": false,
-          "system": false,
-          "selectValues": [
-            "top",
-            "center",
-            "bottom",
-            "left",
-            "right",
-            "center-left",
-            "center-right"
-          ]
-        },
-        {
           "name": "como_funciona_title",
           "type": "text",
           "required": false,
@@ -2162,6 +2147,18 @@
         {
           "name": "hide_icon",
           "type": "bool",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "crop_x",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "crop_y",
+          "type": "number",
           "required": false,
           "system": false
         }
