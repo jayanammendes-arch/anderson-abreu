@@ -247,7 +247,7 @@ export function LandingLayout({
 
       {children}
 
-      <footer className="bg-slate-900 text-white pt-16 pb-8">
+      <footer className="royal-gradient-bg text-white pt-16 pb-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex flex-col md:flex-row justify-between items-start gap-8 mb-12">
             <div className="max-w-sm">
