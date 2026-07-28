@@ -119,23 +119,8 @@ export default function Login() {
     setRecoverySent(false)
   }
 
-  const customBg = loginSettings?.login_gradient
-  const bgStyle = customBg ? { background: customBg } : undefined
-
   return (
-    <div
-      className={cn(
-        'relative min-h-screen w-full flex items-center justify-center p-4 sm:p-6 lg:p-12 overflow-x-hidden text-white',
-        !customBg && 'royal-gradient-bg',
-      )}
-      style={bgStyle}
-    >
-      {/* Soft background ambient glow */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/30 pointer-events-none" />
-      <div className="absolute -top-40 -left-40 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-indigo-600/15 rounded-full blur-3xl pointer-events-none" />
-
-      {/* Main unified grid container over seamless gradient */}
+    <div className="relative min-h-screen w-full flex items-center justify-center p-4 sm:p-6 lg:p-12 overflow-x-hidden text-white royal-gradient-bg">
       <div className="relative z-10 w-full max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
         {/* Left Form Card */}
         <div className="w-full max-w-md mx-auto lg:max-w-none lg:col-span-6 bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl p-6 sm:p-8 lg:p-10 shadow-2xl">
