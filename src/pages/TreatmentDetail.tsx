@@ -17,7 +17,7 @@ import { getTreatmentIcon } from '@/lib/treatment-icons'
 import { getTreatmentDetailConfig, type SectionConfigItem } from '@/lib/treatment-sections'
 import { Loader2, ArrowLeft } from 'lucide-react'
 import { ScrollFadeIn } from '@/components/ScrollFadeIn'
-import { getImagePositionCss } from '@/lib/image-position'
+import { getCropPositionCss } from '@/lib/image-position'
 
 export default function TreatmentDetail() {
   const { slug } = useParams<{ slug: string }>()
@@ -190,7 +190,7 @@ export default function TreatmentDetail() {
                 src={imageUrl}
                 alt=""
                 className="absolute inset-0 h-full w-full object-cover"
-                style={{ objectPosition: getImagePositionCss(category.image_position) }}
+                style={{ objectPosition: getCropPositionCss(category.crop_x, category.crop_y) }}
               />
               <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-black/40" />
             </>

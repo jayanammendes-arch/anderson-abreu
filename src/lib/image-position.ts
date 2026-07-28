@@ -13,6 +13,12 @@ export function getImagePositionCss(value?: string): string {
   return CSS_POSITION_MAP[value] || 'center'
 }
 
+export function getCropPositionCss(cropX?: number, cropY?: number): string {
+  const x = typeof cropX === 'number' && cropX >= 0 && cropX <= 1 ? cropX : 0.5
+  const y = typeof cropY === 'number' && cropY >= 0 && cropY <= 1 ? cropY : 0.5
+  return `${x * 100}% ${y * 100}%`
+}
+
 export const IMAGE_POSITION_OPTIONS = [
   { value: 'top', label: 'Topo', css: 'top' },
   { value: 'center', label: 'Centro', css: 'center' },

@@ -390,7 +390,8 @@ export interface TreatmentCategory {
   short_description: string
   detailed_content: string
   image?: string
-  image_position?: 'top' | 'center' | 'bottom' | 'left' | 'right' | 'center-left' | 'center-right'
+  crop_x?: number
+  crop_y?: number
   icon: string
   symptoms_list?: string
   order: number

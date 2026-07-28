@@ -43,7 +43,8 @@ import {
 import { toast } from 'sonner'
 import { Pencil, Trash2, Plus, Loader2, Save } from 'lucide-react'
 import { Switch } from '@/components/ui/switch'
-import { ImagePositionSelector } from '@/components/admin/ImagePositionSelector'
+import { CropImageUploader } from '@/components/admin/CropImageUploader'
+import { FileSizeDisplay } from '@/components/admin/FileSizeDisplay'
 
 const emptyForm: Partial<TreatmentCategory> = {
   name: '',
@@ -53,7 +54,8 @@ const emptyForm: Partial<TreatmentCategory> = {
   icon: 'brain',
   order: 0,
   is_active: true,
-  image_position: 'center',
+  crop_x: 0.5,
+  crop_y: 0.5,
   hide_icon: false,
   como_funciona_title: '',
   como_funciona_text: '',
@@ -93,6 +95,7 @@ export default function AdminTreatmentCategories() {
     resultados_images: [],
   })
   const [togglingId, setTogglingId] = useState<string | null>(null)
+  const [showIconPicker, setShowIconPicker] = useState(false)
   const [removedExistingImages, setRemovedExistingImages] = useState<
     Record<MultiImageField, number[]>
   >({
@@ -193,7 +196,8 @@ export default function AdminTreatmentCategories() {
       fd.append('icon', formData.icon || 'brain')
       fd.append('order', String(Number(formData.order) || 0))
       fd.append('is_active', String(formData.is_active ?? true))
-      fd.append('image_position', formData.image_position || 'center')
+      fd.append('crop_x', String(formData.crop_x ?? 0.5))
+      fd.append('crop_y', String(formData.crop_y ?? 0.5))
       fd.append('hide_icon', String(formData.hide_icon ?? false))
       fd.append('como_funciona_title', formData.como_funciona_title || '')
       fd.append('como_funciona_text', formData.como_funciona_text || '')
@@ -369,13 +373,16 @@ export default function AdminTreatmentCategories() {
         )
       case 'sintomas_imagem':
         return (
-          <FileUploadField
-            label="Imagem de Sintomas"
-            currentSrc={getSintomasImageSrc()}
-            file={sintomasImageFile}
-            onChange={setSintomasImageFile}
-            accept="image/jpeg,image/png,image/webp"
-          />
+          <div className="space-y-2">
+            <FileUploadField
+              label="Imagem de Sintomas"
+              currentSrc={getSintomasImageSrc()}
+              file={sintomasImageFile}
+              onChange={setSintomasImageFile}
+              accept="image/jpeg,image/png,image/webp"
+            />
+            <FileSizeDisplay file={sintomasImageFile} url={getSintomasImageSrc()} />
+          </div>
         )
       default:
         return null
@@ -494,42 +501,30 @@ export default function AdminTreatmentCategories() {
               <Label className="cursor-pointer">Ocultar ícone no Conteúdo Detalhado</Label>
             </div>
             <div className="space-y-2">
-              <Label>Ícone *</Label>
-              <IconPicker
-                value={formData.icon || ''}
-                onChange={(icon) => setFormData({ ...formData, icon })}
-              />
-              {fieldErrors.icon && <p className="text-sm text-red-500">{fieldErrors.icon}</p>}
+              <div className="flex items-center gap-3">
+                <Switch checked={showIconPicker} onCheckedChange={setShowIconPicker} />
+                <Label className="cursor-pointer">Mostrar/Ocultar seletor de ícones</Label>
+              </div>
+              {showIconPicker && (
+                <>
+                  <IconPicker
+                    value={formData.icon || ''}
+                    onChange={(icon) => setFormData({ ...formData, icon })}
+                  />
+                  {fieldErrors.icon && <p className="text-sm text-red-500">{fieldErrors.icon}</p>}
+                </>
+              )}
             </div>
-            <div className="space-y-2">
-              <Label>Imagem Principal</Label>
-              <Input
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                onChange={(e) => setImageFile(e.target.files?.[0] || null)}
-              />
-              <p className="text-xs text-muted-foreground">
-                Recomendado: 800×600 px (formato paisagem)
-              </p>
-              <ImagePositionSelector
-                value={formData.image_position || 'center'}
-                onChange={(pos) =>
-                  setFormData({
-                    ...formData,
-                    image_position: pos as TreatmentCategory['image_position'],
-                  })
-                }
-                imageUrl={imagePreviewUrl}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Ordem</Label>
-              <Input
-                type="number"
-                value={formData.order || 0}
-                onChange={(e) => setFormData({ ...formData, order: Number(e.target.value) })}
-              />
-            </div>
+            <CropImageUploader
+              label="Imagem Principal"
+              imageUrl={imagePreviewUrl}
+              file={imageFile}
+              cropX={formData.crop_x ?? 0.5}
+              cropY={formData.crop_y ?? 0.5}
+              onFileChange={setImageFile}
+              onCropChange={(x, y) => setFormData({ ...formData, crop_x: x, crop_y: y })}
+              accept="image/jpeg,image/png,image/webp"
+            />
 
             <div className="border-t pt-4 space-y-4">
               <div>
