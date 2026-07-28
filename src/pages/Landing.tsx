@@ -206,7 +206,7 @@ export default function Landing() {
           <div className="max-w-7xl mx-auto px-6 flex justify-center">
             <Button
               size="lg"
-              className="rounded-full px-10 py-6 text-lg font-medium shadow-lg transition-all hover:scale-105 bg-[#22C55E] hover:bg-[#20a854] text-white border-none"
+              className="royal-btn-gradient text-white rounded-full px-10 py-6 text-lg font-medium shadow-lg transition-all hover:scale-105"
               asChild
             >
               <Link to="/sobre">
