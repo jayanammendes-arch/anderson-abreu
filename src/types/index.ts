@@ -352,6 +352,7 @@ export interface PlatformSettings {
   about_cta_background_image?: string
   about_cta_visible?: boolean
   treatments_accordion_enabled?: boolean
+  global_blue_band_text?: string
   created: string
   updated: string
 }
@@ -409,6 +410,13 @@ export interface TreatmentCategory {
   faixa_text?: string
   sintomas_text?: string
   sintomas_image?: string
+  como_funciona_image?: string
+  faixa_azul_frase?: string
+  resultados_image?: string
+  por_que_tantas_title?: string
+  por_que_tantas_content?: string
+  comparacao_title?: string
+  comparacao_content?: string
   hide_icon?: boolean
   sections_config?: Array<{ id: string; visible: boolean }>
   created: string

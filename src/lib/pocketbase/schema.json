@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-28T16:47:36.530Z",
+  "generatedAt": "2026-07-28T17:10:47.916Z",
   "collections": [
     {
       "name": "users",
@@ -1108,6 +1108,12 @@
           "type": "bool",
           "required": false,
           "system": false
+        },
+        {
+          "name": "global_blue_band_text",
+          "type": "text",
+          "required": false,
+          "system": false
         }
       ],
       "indexes": []
@@ -2159,6 +2165,48 @@
         {
           "name": "crop_y",
           "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "como_funciona_image",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "faixa_azul_frase",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "resultados_image",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "por_que_tantas_title",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "por_que_tantas_content",
+          "type": "editor",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "comparacao_title",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "comparacao_content",
+          "type": "editor",
           "required": false,
           "system": false
         }

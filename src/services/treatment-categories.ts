@@ -27,6 +27,18 @@ export function getTreatmentCategorySintomasImageUrl(category: TreatmentCategory
   return `${import.meta.env.VITE_POCKETBASE_URL}/api/files/treatment_categories/${category.id}/${category.sintomas_image}`
 }
 
+export function getTreatmentCategoryComoFuncionaImageUrl(
+  category: TreatmentCategory,
+): string | null {
+  if (!category.como_funciona_image) return null
+  return `${import.meta.env.VITE_POCKETBASE_URL}/api/files/treatment_categories/${category.id}/${category.como_funciona_image}`
+}
+
+export function getTreatmentCategoryResultadosImageUrl(category: TreatmentCategory): string | null {
+  if (!category.resultados_image) return null
+  return `${import.meta.env.VITE_POCKETBASE_URL}/api/files/treatment_categories/${category.id}/${category.resultados_image}`
+}
+
 export const adminGetTreatmentCategories = (): Promise<TreatmentCategory[]> =>
   pb.collection('treatment_categories').getFullList({ sort: 'order' })
 

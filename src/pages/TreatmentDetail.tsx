@@ -4,7 +4,8 @@ import {
   getTreatmentCategoryBySlug,
   getTreatmentCategories,
   getTreatmentCategoryImageUrl,
-  getTreatmentCategoryImageUrls,
+  getTreatmentCategoryComoFuncionaImageUrl,
+  getTreatmentCategoryResultadosImageUrl,
   getTreatmentCategorySintomasImageUrl,
 } from '@/services/treatment-categories'
 import { getPlatformSettingsPublic } from '@/services/landing'
@@ -12,12 +13,13 @@ import type { TreatmentCategory, PlatformSettings } from '@/types'
 import { LandingLayout } from '@/components/LandingLayout'
 import { Button } from '@/components/ui/button'
 import { TestimonialsSection } from '@/components/TestimonialsSection'
-import { AccordionSection } from '@/components/treatment/AccordionSection'
 import { getTreatmentIcon } from '@/lib/treatment-icons'
-import { getTreatmentDetailConfig, type SectionConfigItem } from '@/lib/treatment-sections'
-import { Loader2, ArrowLeft } from 'lucide-react'
+import { Loader2, ArrowRight } from 'lucide-react'
 import { ScrollFadeIn } from '@/components/ScrollFadeIn'
 import { getCropPositionCss } from '@/lib/image-position'
+
+const proseClass =
+  'prose prose-lg max-w-none text-slate-600 [&_h2]:text-slate-900 [&_h2]:font-bold [&_ul]:list-disc [&_ul]:pl-6 [&_li]:mb-2 [&_a]:text-blue-600'
 
 export default function TreatmentDetail() {
   const { slug } = useParams<{ slug: string }>()
@@ -58,7 +60,7 @@ export default function TreatmentDetail() {
           <h1 className="text-3xl font-bold text-slate-900 mb-4">Tratamento não encontrado</h1>
           <Button asChild>
             <Link to="/#tratamentos">
-              <ArrowLeft className="mr-2 h-4 w-4" /> Voltar para tratamentos
+              <ArrowRight className="mr-2 h-4 w-4" /> Voltar para tratamentos
             </Link>
           </Button>
         </div>
@@ -70,154 +72,18 @@ export default function TreatmentDetail() {
   const Icon = getTreatmentIcon(category.icon)
   const otherCategories = allCategories.filter((c) => c.slug !== slug)
   const agendarText = settings?.agendar_sessao_text || 'Agendar Sessão'
-  const saibaText = settings?.saiba_mais_text || 'Saiba Mais'
-  const accordionEnabled = settings?.treatments_accordion_enabled ?? false
-  const comoFuncionaImg = getTreatmentCategoryImageUrls(category, 'como_funciona_images')[0]
-  const resultadosImg = getTreatmentCategoryImageUrls(category, 'resultados_images')[0]
+  const comoFuncionaImg = getTreatmentCategoryComoFuncionaImageUrl(category)
+  const resultadosImg = getTreatmentCategoryResultadosImageUrl(category)
   const sintomasImg = getTreatmentCategorySintomasImageUrl(category)
-  const ctaImg = getTreatmentCategoryImageUrls(category, 'cta_images')[0]
+  const globalBlueBandText =
+    settings?.global_blue_band_text ||
+    'A hipnose clínica é uma terapia cientificamente comprovada que acessa o subconsciente para promover mudanças duradouras e profundas.'
 
-  const sectionsConfig = getTreatmentDetailConfig(
-    category.sections_config as SectionConfigItem[] | undefined,
-  )
-
-  const renderDynamicSection = (section: SectionConfigItem) => {
-    if (!section.visible) return null
-
-    switch (section.id) {
-      case 'como_funciona': {
-        const hasText = category.como_funciona_text?.trim()
-        if (!hasText && !comoFuncionaImg) return null
-        return (
-          <AccordionSection
-            id="como-funciona"
-            title={category.como_funciona_title || 'Como Funciona'}
-            accordionEnabled={accordionEnabled}
-            className="py-24 bg-slate-50"
-          >
-            {hasText && (
-              <div
-                className="prose prose-lg max-w-none text-slate-600 [&_h2]:text-slate-900 [&_h2]:font-bold [&_ul]:list-disc [&_ul]:pl-6 [&_li]:mb-2"
-                dangerouslySetInnerHTML={{ __html: category.como_funciona_text! }}
-              />
-            )}
-            {comoFuncionaImg && (
-              <img
-                src={comoFuncionaImg}
-                alt="Como Funciona"
-                className="rounded-xl shadow-md w-full h-64 object-cover mt-6"
-              />
-            )}
-          </AccordionSection>
-        )
-      }
-      case 'sintomas': {
-        const hasText = category.sintomas_text?.trim()
-        if (!hasText) return null
-        return (
-          <AccordionSection
-            title={category.sintomas_title || 'Sintomas'}
-            accordionEnabled={accordionEnabled}
-            className="py-24 bg-white"
-          >
-            <div
-              className="prose prose-lg max-w-none text-slate-600 [&_h2]:text-slate-900 [&_h2]:font-bold [&_ul]:list-disc [&_ul]:pl-6 [&_li]:mb-2"
-              dangerouslySetInnerHTML={{ __html: category.sintomas_text! }}
-            />
-          </AccordionSection>
-        )
-      }
-      case 'sintomas_imagem': {
-        if (!sintomasImg) return null
-        return (
-          <section className="py-24 bg-white">
-            <div className="max-w-4xl mx-auto px-6">
-              <img
-                src={sintomasImg}
-                alt="Sintomas"
-                className="rounded-xl shadow-md w-full h-64 object-cover"
-              />
-            </div>
-          </section>
-        )
-      }
-      case 'resultados': {
-        const hasText = category.resultados_text?.trim()
-        if (!hasText && !resultadosImg) return null
-        return (
-          <AccordionSection
-            title={category.resultados_title || 'Resultados'}
-            accordionEnabled={accordionEnabled}
-            className="py-24 bg-slate-50"
-          >
-            {hasText && (
-              <div
-                className="prose prose-lg max-w-none text-slate-600 [&_h2]:text-slate-900 [&_h2]:font-bold [&_ul]:list-disc [&_ul]:pl-6 [&_li]:mb-2"
-                dangerouslySetInnerHTML={{ __html: category.resultados_text! }}
-              />
-            )}
-            {resultadosImg && (
-              <img
-                src={resultadosImg}
-                alt="Resultados"
-                className="rounded-xl shadow-md w-full h-64 object-cover mt-6"
-              />
-            )}
-          </AccordionSection>
-        )
-      }
-      case 'faixa_destaque': {
-        if (!category.faixa_text?.trim()) return null
-        return (
-          <section className="py-12 bg-gradient-to-r from-blue-600 to-blue-800">
-            <div className="max-w-4xl mx-auto px-6 text-center">
-              <p className="text-2xl md:text-3xl font-bold text-white">{category.faixa_text}</p>
-            </div>
-          </section>
-        )
-      }
-      case 'detailed_content': {
-        if (!category.detailed_content?.trim()) return null
-        return (
-          <section className="py-24 bg-white">
-            <div className="max-w-4xl mx-auto px-6">
-              <div
-                className="prose prose-lg max-w-none text-slate-600 [&_h2]:text-slate-900 [&_h2]:font-bold [&_ul]:list-disc [&_ul]:pl-6 [&_li]:mb-2"
-                dangerouslySetInnerHTML={{ __html: category.detailed_content! }}
-              />
-            </div>
-          </section>
-        )
-      }
-      case 'cta': {
-        const hasCtaText = category.cta_text?.trim()
-        if (!hasCtaText && !ctaImg) return null
-        return (
-          <AccordionSection
-            title={category.cta_title || 'Pronto para começar?'}
-            accordionEnabled={accordionEnabled}
-            className="py-24 bg-slate-50"
-          >
-            {hasCtaText && (
-              <div
-                className="prose prose-lg max-w-none text-slate-600 [&_h2]:text-slate-900 [&_h2]:font-bold [&_ul]:list-disc [&_ul]:pl-6 [&_li]:mb-2"
-                dangerouslySetInnerHTML={{ __html: category.cta_text! }}
-              />
-            )}
-            {ctaImg && (
-              <img
-                src={ctaImg}
-                alt="CTA"
-                className="rounded-xl shadow-md w-full h-64 object-cover mt-6"
-              />
-            )}
-          </AccordionSection>
-        )
-      }
-      default:
-        return null
-    }
-  }
+  const hasComoFunciona = category.como_funciona_text?.trim()
+  const hasResultados = category.resultados_text?.trim()
+  const hasSintomas = category.sintomas_text?.trim()
+  const hasPorQueTantas = category.por_que_tantas_content?.trim()
+  const hasComparacao = category.comparacao_content?.trim()
 
   return (
     <LandingLayout settings={settings}>
@@ -229,7 +95,9 @@ export default function TreatmentDetail() {
                 src={imageUrl}
                 alt=""
                 className="absolute inset-0 h-full w-full object-cover"
-                style={{ objectPosition: getCropPositionCss(category.crop_x, category.crop_y) }}
+                style={{
+                  objectPosition: getCropPositionCss(category.crop_x, category.crop_y),
+                }}
               />
               <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-black/40" />
             </>
@@ -243,40 +111,114 @@ export default function TreatmentDetail() {
               )}
               <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">{category.name}</h1>
               <p className="text-lg md:text-xl text-white/80 mb-8">{category.short_description}</p>
-              <div className="flex flex-wrap gap-4">
-                <Button
-                  size="lg"
-                  className="royal-btn-gradient text-white rounded-full px-8"
-                  onClick={() => navigate('/agendar')}
-                >
-                  {agendarText}
-                </Button>
-                <a href="#como-funciona">
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    className="rounded-full border-white/30 text-white hover:bg-white/10 hover:text-white"
-                  >
-                    {saibaText}
-                  </Button>
-                </a>
-              </div>
+              <Button
+                size="lg"
+                className="royal-btn-gradient text-white rounded-full px-8"
+                onClick={() => navigate('/agendar')}
+              >
+                {agendarText}
+              </Button>
             </div>
           </div>
         </section>
       </ScrollFadeIn>
 
-      {sectionsConfig.map((section) => (
-        <div key={section.id}>{renderDynamicSection(section)}</div>
-      ))}
+      <section className="w-full bg-blue-800 py-5">
+        <div className="max-w-7xl mx-auto px-6 text-center">
+          <p className="text-white text-sm md:text-base font-medium leading-relaxed">
+            {globalBlueBandText}
+          </p>
+        </div>
+      </section>
 
-      <ScrollFadeIn>
-        <TestimonialsSection customTitle={settings?.testimonials_section_title} />
-      </ScrollFadeIn>
+      {hasComoFunciona && (
+        <ScrollFadeIn>
+          <section className="py-24 bg-white">
+            <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
+              <div>
+                <h2 className="text-3xl font-bold text-slate-900 mb-6">
+                  {category.como_funciona_title || 'Como Funciona'}
+                </h2>
+                <div
+                  className={proseClass}
+                  dangerouslySetInnerHTML={{ __html: category.como_funciona_text! }}
+                />
+              </div>
+              {comoFuncionaImg && (
+                <img
+                  src={comoFuncionaImg}
+                  alt="Como Funciona"
+                  className="rounded-2xl shadow-xl w-full h-80 object-cover"
+                />
+              )}
+            </div>
+          </section>
+        </ScrollFadeIn>
+      )}
+
+      {category.faixa_azul_frase?.trim() && (
+        <section className="w-full bg-blue-700 py-5">
+          <div className="max-w-7xl mx-auto px-6 text-center">
+            <p className="text-white text-base md:text-lg font-semibold leading-relaxed">
+              {category.faixa_azul_frase}
+            </p>
+          </div>
+        </section>
+      )}
+
+      {hasResultados && (
+        <ScrollFadeIn>
+          <section className="py-24 bg-slate-50">
+            <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
+              {resultadosImg && (
+                <img
+                  src={resultadosImg}
+                  alt="Resultados"
+                  className="rounded-2xl shadow-xl w-full h-80 object-cover md:order-2"
+                />
+              )}
+              <div className={resultadosImg ? 'md:order-1' : 'md:col-span-2'}>
+                <h2 className="text-3xl font-bold text-slate-900 mb-6">
+                  {category.resultados_title || 'Resultados Respaldados Pela Ciência'}
+                </h2>
+                <div
+                  className={proseClass}
+                  dangerouslySetInnerHTML={{ __html: category.resultados_text! }}
+                />
+              </div>
+            </div>
+          </section>
+        </ScrollFadeIn>
+      )}
+
+      {hasSintomas && (
+        <ScrollFadeIn>
+          <section className="py-24 bg-white">
+            <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
+              <div>
+                <h2 className="text-3xl font-bold text-slate-900 mb-6">
+                  {category.sintomas_title || 'Sintomas'}
+                </h2>
+                <div
+                  className={proseClass}
+                  dangerouslySetInnerHTML={{ __html: category.sintomas_text! }}
+                />
+              </div>
+              {sintomasImg && (
+                <img
+                  src={sintomasImg}
+                  alt="Sintomas"
+                  className="rounded-2xl shadow-xl w-full h-80 object-cover"
+                />
+              )}
+            </div>
+          </section>
+        </ScrollFadeIn>
+      )}
 
       {otherCategories.length > 0 && (
         <ScrollFadeIn>
-          <section className="py-24 bg-white">
+          <section className="py-24 bg-slate-50">
             <div className="max-w-7xl mx-auto px-6">
               <h2 className="text-3xl font-bold text-slate-900 mb-8 text-center">
                 Outros Tratamentos
@@ -302,6 +244,62 @@ export default function TreatmentDetail() {
           </section>
         </ScrollFadeIn>
       )}
+
+      <ScrollFadeIn>
+        <TestimonialsSection customTitle={settings?.testimonials_section_title} />
+      </ScrollFadeIn>
+
+      {hasPorQueTantas && (
+        <ScrollFadeIn>
+          <section className="py-24 bg-white">
+            <div className="max-w-4xl mx-auto px-6">
+              <h2 className="text-3xl font-bold text-slate-900 mb-6">
+                {category.por_que_tantas_title || 'Por que tantas pessoas buscam a Hipnoterapia?'}
+              </h2>
+              <div
+                className={proseClass}
+                dangerouslySetInnerHTML={{ __html: category.por_que_tantas_content! }}
+              />
+            </div>
+          </section>
+        </ScrollFadeIn>
+      )}
+
+      {hasComparacao && (
+        <ScrollFadeIn>
+          <section className="py-24 bg-slate-50">
+            <div className="max-w-4xl mx-auto px-6">
+              <h2 className="text-3xl font-bold text-slate-900 mb-6">
+                {category.comparacao_title ||
+                  'Hipnoterapia Clínica Avançada vs Abordagens Tradicionais'}
+              </h2>
+              <div
+                className={proseClass}
+                dangerouslySetInnerHTML={{ __html: category.comparacao_content! }}
+              />
+            </div>
+          </section>
+        </ScrollFadeIn>
+      )}
+
+      <ScrollFadeIn>
+        <section className="py-24 bg-gradient-to-br from-blue-900 to-blue-700">
+          <div className="max-w-4xl mx-auto px-6 text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Comece sua Jornada</h2>
+            <p className="text-lg text-white/80 mb-8">
+              Agende sua sessão de hipnose clínica e dê o primeiro passo para uma vida mais
+              equilibrada e plena.
+            </p>
+            <Button
+              size="lg"
+              className="rounded-full px-8 bg-white text-blue-900 hover:bg-white/90"
+              onClick={() => navigate('/agendar')}
+            >
+              {agendarText}
+            </Button>
+          </div>
+        </section>
+      </ScrollFadeIn>
     </LandingLayout>
   )
 }

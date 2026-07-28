@@ -13,23 +13,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Switch } from '@/components/ui/switch'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { RichTextEditor } from '@/components/admin/RichTextEditor'
-import { MultiImageUploader } from '@/components/admin/MultiImageUploader'
 import { IconPicker } from '@/components/admin/IconPicker'
 import { FileUploadField } from '@/components/admin/FileUploadField'
 import { CropImageUploader } from '@/components/admin/CropImageUploader'
-import { FileSizeDisplay } from '@/components/admin/FileSizeDisplay'
-import { SortableList } from '@/components/admin/SortableList'
-import {
-  getTreatmentDetailConfig,
-  TREATMENT_DETAIL_SECTION_LABELS,
-  type SectionConfigItem,
-} from '@/lib/treatment-sections'
 import { extractFieldErrors, type FieldErrors } from '@/lib/pocketbase/errors'
 import { toast } from 'sonner'
-import { ArrowLeft, Save, Loader2, ChevronDown } from 'lucide-react'
+import { ArrowLeft, Save, Loader2, ChevronDown, Info } from 'lucide-react'
 import { cn } from '@/lib/utils'
-
-type MultiImageField = 'como_funciona_images' | 'resultados_images' | 'cta_images'
 
 const emptyForm: Partial<TreatmentCategory> = {
   name: '',
@@ -37,7 +27,6 @@ const emptyForm: Partial<TreatmentCategory> = {
   short_description: '',
   detailed_content: '',
   icon: 'brain',
-  symptoms_list: '',
   order: 0,
   is_active: true,
   crop_x: 0.5,
@@ -45,18 +34,15 @@ const emptyForm: Partial<TreatmentCategory> = {
   hide_icon: false,
   como_funciona_title: '',
   como_funciona_text: '',
-  como_funciona_images: [],
+  faixa_azul_frase: '',
   resultados_title: '',
   resultados_text: '',
-  resultados_images: [],
-  cta_title: '',
-  cta_text: '',
-  cta_images: [],
   sintomas_title: '',
   sintomas_text: '',
-  sintomas_image: undefined,
-  faixa_text: '',
-  sections_config: undefined,
+  por_que_tantas_title: '',
+  por_que_tantas_content: '',
+  comparacao_title: '',
+  comparacao_content: '',
 }
 
 function slugify(text: string): string {
@@ -107,20 +93,10 @@ export default function AdminTreatmentCategoryEdit() {
   const [formData, setFormData] = useState<Partial<TreatmentCategory>>(emptyForm)
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null)
+  const [comoFuncionaImageFile, setComoFuncionaImageFile] = useState<File | null>(null)
+  const [resultadosImageFile, setResultadosImageFile] = useState<File | null>(null)
   const [sintomasImageFile, setSintomasImageFile] = useState<File | null>(null)
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
-  const [newImages, setNewImages] = useState<Record<MultiImageField, File[]>>({
-    como_funciona_images: [],
-    resultados_images: [],
-    cta_images: [],
-  })
-  const [removedExistingImages, setRemovedExistingImages] = useState<
-    Record<MultiImageField, number[]>
-  >({
-    como_funciona_images: [],
-    resultados_images: [],
-    cta_images: [],
-  })
   const [showIconPicker, setShowIconPicker] = useState(false)
 
   useEffect(() => {
@@ -154,155 +130,14 @@ export default function AdminTreatmentCategoryEdit() {
     }
   }, [imageFile, formData.id, formData.image])
 
-  const sections = getTreatmentDetailConfig(
-    formData.sections_config as SectionConfigItem[] | undefined,
-  )
-
-  const handleToggleSectionVisible = (sectionId: string) => {
-    const updated = sections.map((s) => (s.id === sectionId ? { ...s, visible: !s.visible } : s))
-    setFormData({ ...formData, sections_config: updated })
-  }
-
-  const getExistingImages = (field: MultiImageField): string[] => {
-    const all = (formData[field] as string[]) || []
-    return all.filter((_, idx) => !removedExistingImages[field].includes(idx))
-  }
-
-  const handleRemoveExistingImage = (field: MultiImageField, index: number) => {
-    setRemovedExistingImages((prev) => ({ ...prev, [field]: [...prev[field], index] }))
-  }
-
-  const getSintomasImageSrc = () => {
-    if (sintomasImageFile) return URL.createObjectURL(sintomasImageFile)
-    if (formData.id && formData.sintomas_image) {
-      return `${import.meta.env.VITE_POCKETBASE_URL}/api/files/treatment_categories/${formData.id}/${formData.sintomas_image}`
-    }
-    return null
-  }
-
-  const renderMultiImageUploader = (field: MultiImageField, label: string) => (
-    <MultiImageUploader
-      label={label}
-      existingImages={getExistingImages(field)}
-      onChange={(files) => setNewImages((prev) => ({ ...prev, [field]: files }))}
-      onRemoveExisting={(idx) => handleRemoveExistingImage(field, idx)}
-      baseUrl={
-        formData.id
-          ? `${import.meta.env.VITE_POCKETBASE_URL}/api/files/treatment_categories/${formData.id}`
-          : ''
-      }
-      helperText="Recomendado: 800×600 px (formato paisagem)"
-    />
-  )
-
-  const renderSectionContent = (sectionId: string) => {
-    switch (sectionId) {
-      case 'detailed_content':
-        return (
-          <RichTextEditor
-            value={formData.detailed_content || ''}
-            onChange={(html) => setFormData({ ...formData, detailed_content: html })}
-          />
-        )
-      case 'como_funciona':
-        return (
-          <>
-            <div className="space-y-2">
-              <Label>Título da seção</Label>
-              <Input
-                value={formData.como_funciona_title || ''}
-                onChange={(e) => setFormData({ ...formData, como_funciona_title: e.target.value })}
-                placeholder="Como Funciona"
-              />
-            </div>
-            <RichTextEditor
-              value={formData.como_funciona_text || ''}
-              onChange={(html) => setFormData({ ...formData, como_funciona_text: html })}
-            />
-            {renderMultiImageUploader('como_funciona_images', 'Imagens (até 3)')}
-          </>
-        )
-      case 'sintomas':
-        return (
-          <>
-            <div className="space-y-2">
-              <Label>Título da seção</Label>
-              <Input
-                value={formData.sintomas_title || ''}
-                onChange={(e) => setFormData({ ...formData, sintomas_title: e.target.value })}
-                placeholder="Sintomas"
-              />
-            </div>
-            <RichTextEditor
-              value={formData.sintomas_text || ''}
-              onChange={(html) => setFormData({ ...formData, sintomas_text: html })}
-            />
-          </>
-        )
-      case 'sintomas_imagem':
-        return (
-          <div className="space-y-2">
-            <FileUploadField
-              label="Imagem de Sintomas"
-              currentSrc={getSintomasImageSrc()}
-              file={sintomasImageFile}
-              onChange={setSintomasImageFile}
-              accept="image/jpeg,image/png,image/webp"
-              error={fieldErrors.sintomas_image}
-            />
-            <FileSizeDisplay file={sintomasImageFile} url={getSintomasImageSrc()} />
-          </div>
-        )
-      case 'resultados':
-        return (
-          <>
-            <div className="space-y-2">
-              <Label>Título da seção</Label>
-              <Input
-                value={formData.resultados_title || ''}
-                onChange={(e) => setFormData({ ...formData, resultados_title: e.target.value })}
-                placeholder="Resultados"
-              />
-            </div>
-            <RichTextEditor
-              value={formData.resultados_text || ''}
-              onChange={(html) => setFormData({ ...formData, resultados_text: html })}
-            />
-            {renderMultiImageUploader('resultados_images', 'Imagens (até 3)')}
-          </>
-        )
-      case 'faixa_destaque':
-        return (
-          <div className="space-y-2">
-            <Label>Texto da Faixa</Label>
-            <Input
-              value={formData.faixa_text || ''}
-              onChange={(e) => setFormData({ ...formData, faixa_text: e.target.value })}
-              placeholder="Texto exibido em destaque full-width"
-            />
-          </div>
-        )
-      case 'cta':
-        return (
-          <>
-            <div className="space-y-2">
-              <Label>Título da seção</Label>
-              <Input
-                value={formData.cta_title || ''}
-                onChange={(e) => setFormData({ ...formData, cta_title: e.target.value })}
-                placeholder="Pronto para começar?"
-              />
-            </div>
-            <RichTextEditor
-              value={formData.cta_text || ''}
-              onChange={(html) => setFormData({ ...formData, cta_text: html })}
-            />
-            {renderMultiImageUploader('cta_images', 'Imagens (até 3)')}
-          </>
-        )
-      default:
-        return null
-    }
+  const getExistingImageSrc = (
+    field: keyof TreatmentCategory,
+    file: File | null,
+  ): string | null => {
+    if (file) return URL.createObjectURL(file)
+    const filename = formData[field] as string
+    if (!filename || !formData.id) return null
+    return `${import.meta.env.VITE_POCKETBASE_URL}/api/files/treatment_categories/${formData.id}/${filename}`
   }
 
   const handleSave = async (e: React.FormEvent) => {
@@ -315,7 +150,6 @@ export default function AdminTreatmentCategoryEdit() {
       fd.append('name', formData.name || '')
       fd.append('slug', slug)
       fd.append('short_description', formData.short_description || '')
-      fd.append('detailed_content', formData.detailed_content || '')
       fd.append('icon', formData.icon || 'brain')
       fd.append('order', String(Number(formData.order) || 0))
       fd.append('is_active', String(formData.is_active ?? true))
@@ -324,34 +158,22 @@ export default function AdminTreatmentCategoryEdit() {
       fd.append('hide_icon', String(formData.hide_icon ?? false))
       fd.append('como_funciona_title', formData.como_funciona_title || '')
       fd.append('como_funciona_text', formData.como_funciona_text || '')
+      fd.append('faixa_azul_frase', formData.faixa_azul_frase || '')
       fd.append('resultados_title', formData.resultados_title || '')
       fd.append('resultados_text', formData.resultados_text || '')
       fd.append('sintomas_title', formData.sintomas_title || '')
       fd.append('sintomas_text', formData.sintomas_text || '')
-      fd.append('faixa_text', formData.faixa_text || '')
-      fd.append('cta_title', formData.cta_title || '')
-      fd.append('cta_text', formData.cta_text || '')
+      fd.append('por_que_tantas_title', formData.por_que_tantas_title || '')
+      fd.append('por_que_tantas_content', formData.por_que_tantas_content || '')
+      fd.append('comparacao_title', formData.comparacao_title || '')
+      fd.append('comparacao_content', formData.comparacao_content || '')
+      fd.append('detailed_content', formData.detailed_content || '')
       fd.append('symptoms_list', formData.symptoms_list || '')
-      fd.append('sections_config', JSON.stringify(sections))
       if (imageFile) fd.append('image', imageFile)
+      if (comoFuncionaImageFile) fd.append('como_funciona_image', comoFuncionaImageFile)
+      if (resultadosImageFile) fd.append('resultados_image', resultadosImageFile)
       if (sintomasImageFile) fd.append('sintomas_image', sintomasImageFile)
-      const multiFields: MultiImageField[] = [
-        'como_funciona_images',
-        'resultados_images',
-        'cta_images',
-      ]
-      for (const field of multiFields) {
-        const allExisting = (formData[field] as string[]) || []
-        const kept = allExisting.filter((_, idx) => !removedExistingImages[field].includes(idx))
-        for (const filename of kept) fd.append(field, filename)
-        for (const file of newImages[field]) fd.append(field, file)
-        if (id) {
-          for (const idx of removedExistingImages[field]) {
-            const filename = allExisting[idx]
-            if (filename) fd.append(`${field}-`, filename)
-          }
-        }
-      }
+
       if (id) {
         await adminUpdateTreatmentCategory(id, fd)
         toast.success('Categoria atualizada!')
@@ -404,7 +226,6 @@ export default function AdminTreatmentCategoryEdit() {
               onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
               placeholder="auto-gerado a partir do nome"
             />
-            {fieldErrors.slug && <p className="text-sm text-red-500">{fieldErrors.slug}</p>}
           </div>
           <div className="space-y-2">
             <Label>Descrição Curta *</Label>
@@ -413,9 +234,6 @@ export default function AdminTreatmentCategoryEdit() {
               value={formData.short_description || ''}
               onChange={(e) => setFormData({ ...formData, short_description: e.target.value })}
             />
-            {fieldErrors.short_description && (
-              <p className="text-sm text-red-500">{fieldErrors.short_description}</p>
-            )}
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -447,18 +265,15 @@ export default function AdminTreatmentCategoryEdit() {
               <Label className="cursor-pointer">Mostrar/Ocultar seletor de ícones</Label>
             </div>
             {showIconPicker && (
-              <>
-                <IconPicker
-                  value={formData.icon || ''}
-                  onChange={(icon) => setFormData({ ...formData, icon })}
-                />
-                {fieldErrors.icon && <p className="text-sm text-red-500">{fieldErrors.icon}</p>}
-              </>
+              <IconPicker
+                value={formData.icon || ''}
+                onChange={(icon) => setFormData({ ...formData, icon })}
+              />
             )}
           </div>
         </FormSection>
 
-        <FormSection title="Imagem Principal" defaultOpen>
+        <FormSection title="Imagem Principal (Hero)" defaultOpen>
           <CropImageUploader
             label="Imagem Principal"
             imageUrl={imagePreviewUrl}
@@ -467,51 +282,164 @@ export default function AdminTreatmentCategoryEdit() {
             cropY={formData.crop_y ?? 0.5}
             onFileChange={setImageFile}
             onCropChange={(x, y) => setFormData({ ...formData, crop_x: x, crop_y: y })}
-            accept="image/jpeg,image/png,image/webp"
+            accept="image/jpeg,image/png,image/webp,image/svg+xml"
             error={fieldErrors.image}
+          />
+          <p className="text-xs text-muted-foreground">
+            O botão "Agendar Sessão" é exibido automaticamente no hero e direciona para /agendar.
+          </p>
+        </FormSection>
+
+        <FormSection title="1. Como Funciona" defaultOpen>
+          <div className="space-y-2">
+            <Label>Título</Label>
+            <Input
+              value={formData.como_funciona_title || ''}
+              onChange={(e) => setFormData({ ...formData, como_funciona_title: e.target.value })}
+              placeholder="Como Funciona"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>Conteúdo</Label>
+            <RichTextEditor
+              value={formData.como_funciona_text || ''}
+              onChange={(html) => setFormData({ ...formData, como_funciona_text: html })}
+            />
+          </div>
+          <FileUploadField
+            label="Imagem"
+            currentSrc={getExistingImageSrc('como_funciona_image', comoFuncionaImageFile)}
+            file={comoFuncionaImageFile}
+            onChange={setComoFuncionaImageFile}
+            accept="image/jpeg,image/png,image/webp,image/svg+xml"
+            error={fieldErrors.como_funciona_image}
           />
         </FormSection>
 
-        <FormSection title="Lista de Sintomas (Legacy)">
+        <FormSection title="2. Faixa Azul (Frase Configurável)" defaultOpen>
           <div className="space-y-2">
-            <Label>Lista de Sintomas</Label>
-            <RichTextEditor
-              value={formData.symptoms_list || ''}
-              onChange={(html) => setFormData({ ...formData, symptoms_list: html })}
+            <Label>Frase da Faixa Azul</Label>
+            <Input
+              value={formData.faixa_azul_frase || ''}
+              onChange={(e) => setFormData({ ...formData, faixa_azul_frase: e.target.value })}
+              placeholder="Texto exibido na faixa azul full-width"
             />
           </div>
         </FormSection>
 
-        <FormSection title="Seções da Página de Tratamento" defaultOpen>
-          <p className="text-sm text-muted-foreground mb-3">
-            Arraste para reordenar as seções. Use o switch para controlar a visibilidade na página
-            pública.
-          </p>
-          <SortableList
-            items={sections}
-            keyExtractor={(item: SectionConfigItem) => item.id}
-            onReorder={(reordered: SectionConfigItem[]) =>
-              setFormData({ ...formData, sections_config: reordered })
-            }
-            renderItem={(
-              item: SectionConfigItem,
-              { dragHandle }: { dragHandle: React.ReactNode },
-            ) => (
-              <Card className="p-4 space-y-4 bg-card/50 border-border/50">
-                <div className="flex items-center gap-2">
-                  {dragHandle}
-                  <span className="font-semibold text-sm flex-1">
-                    {TREATMENT_DETAIL_SECTION_LABELS[item.id] || item.id}
-                  </span>
-                  <Switch
-                    checked={item.visible}
-                    onCheckedChange={() => handleToggleSectionVisible(item.id)}
-                  />
-                </div>
-                {item.visible && renderSectionContent(item.id)}
-              </Card>
-            )}
+        <FormSection title="3. Resultados Respaldados Pela Ciência" defaultOpen>
+          <div className="space-y-2">
+            <Label>Título</Label>
+            <Input
+              value={formData.resultados_title || ''}
+              onChange={(e) => setFormData({ ...formData, resultados_title: e.target.value })}
+              placeholder="Resultados Respaldados Pela Ciência"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>Conteúdo</Label>
+            <RichTextEditor
+              value={formData.resultados_text || ''}
+              onChange={(html) => setFormData({ ...formData, resultados_text: html })}
+            />
+          </div>
+          <FileUploadField
+            label="Imagem"
+            currentSrc={getExistingImageSrc('resultados_image', resultadosImageFile)}
+            file={resultadosImageFile}
+            onChange={setResultadosImageFile}
+            accept="image/jpeg,image/png,image/webp,image/svg+xml"
+            error={fieldErrors.resultados_image}
           />
+        </FormSection>
+
+        <FormSection title="4. Sintomas" defaultOpen>
+          <div className="space-y-2">
+            <Label>Título</Label>
+            <Input
+              value={formData.sintomas_title || ''}
+              onChange={(e) => setFormData({ ...formData, sintomas_title: e.target.value })}
+              placeholder="Sintomas"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>Conteúdo</Label>
+            <RichTextEditor
+              value={formData.sintomas_text || ''}
+              onChange={(html) => setFormData({ ...formData, sintomas_text: html })}
+            />
+          </div>
+          <FileUploadField
+            label="Imagem"
+            currentSrc={getExistingImageSrc('sintomas_image', sintomasImageFile)}
+            file={sintomasImageFile}
+            onChange={setSintomasImageFile}
+            accept="image/jpeg,image/png,image/webp,image/svg+xml"
+            error={fieldErrors.sintomas_image}
+          />
+        </FormSection>
+
+        <FormSection title="5. Outros Tratamentos">
+          <p className="text-sm text-muted-foreground">
+            Esta seção é exibida automaticamente na página pública, mostrando as demais categorias
+            de tratamento. Nenhuma configuração adicional é necessária.
+          </p>
+        </FormSection>
+
+        <FormSection title="6. Depoimentos">
+          <p className="text-sm text-muted-foreground">
+            Esta seção reutiliza o componente de depoimentos existente. Nenhuma configuração
+            adicional é necessária.
+          </p>
+        </FormSection>
+
+        <FormSection title="7. Por que tantas pessoas buscam a Hipnoterapia?" defaultOpen>
+          <div className="space-y-2">
+            <Label>Título</Label>
+            <Input
+              value={formData.por_que_tantas_title || ''}
+              onChange={(e) => setFormData({ ...formData, por_que_tantas_title: e.target.value })}
+              placeholder="Por que tantas pessoas buscam a Hipnoterapia?"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>Conteúdo</Label>
+            <RichTextEditor
+              value={formData.por_que_tantas_content || ''}
+              onChange={(html) => setFormData({ ...formData, por_que_tantas_content: html })}
+            />
+          </div>
+        </FormSection>
+
+        <FormSection
+          title="8. Explicação: Hipnoterapia Clínica Avançada vs Abordagens Tradicionais"
+          defaultOpen
+        >
+          <div className="space-y-2">
+            <Label>Título</Label>
+            <Input
+              value={formData.comparacao_title || ''}
+              onChange={(e) => setFormData({ ...formData, comparacao_title: e.target.value })}
+              placeholder="Hipnoterapia Clínica Avançada vs Abordagens Tradicionais"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>Conteúdo</Label>
+            <RichTextEditor
+              value={formData.comparacao_content || ''}
+              onChange={(html) => setFormData({ ...formData, comparacao_content: html })}
+            />
+          </div>
+        </FormSection>
+
+        <FormSection title="9. Comece sua Jornada">
+          <div className="flex items-start gap-3 p-4 bg-blue-50 rounded-lg">
+            <Info className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+            <p className="text-sm text-muted-foreground">
+              Esta seção reutiliza o mesmo layout e CTA da página de agendamento. Não há campos para
+              configurar — o botão "Agendar Sessão" direciona automaticamente para /agendar.
+            </p>
+          </div>
         </FormSection>
 
         <div className="flex justify-end gap-3">
