@@ -128,9 +128,7 @@ export default function Login() {
             to="/"
             className="mb-8 flex items-center gap-3 transition-opacity hover:opacity-80 group"
           >
-            <div>
-              <p className="text-xs text-blue-200/70 font-medium">Área do Aluno</p>
-            </div>
+            <div></div>
           </Link>
 
           {mode === 'recovery' && recoverySent ? (
