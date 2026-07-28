@@ -293,8 +293,8 @@ export function LandingLayout({
 
       <footer
         className={cn(
-          'text-white pt-16 pb-8 transition-colors duration-300',
-          isDarkPage ? 'bg-transparent border-t border-white/10' : 'royal-gradient-footer',
+          'text-white pt-16 pb-8 transition-colors duration-300 border-none',
+          isDarkPage ? 'bg-transparent' : 'royal-footer-gradient',
         )}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
