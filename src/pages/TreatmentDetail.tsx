@@ -264,47 +264,9 @@ export default function TreatmentDetail() {
         <TestimonialsSection customTitle={settings?.testimonials_section_title} />
       </ScrollFadeIn>
 
-      {hasPorQueTantas && (
-        <ScrollFadeIn>
-          <section className="py-24 bg-white">
-            <div className="max-w-4xl mx-auto px-6">
-              <div
-                className={titleHtmlClass}
-                dangerouslySetInnerHTML={{
-                  __html:
-                    category.por_que_tantas_title ||
-                    'Por que tantas pessoas buscam a Hipnoterapia?',
-                }}
-              />
-              <div
-                className={proseClass}
-                dangerouslySetInnerHTML={{ __html: category.por_que_tantas_content! }}
-              />
-            </div>
-          </section>
-        </ScrollFadeIn>
-      )}
+      {hasPorQueTantas && <ScrollFadeIn></ScrollFadeIn>}
 
-      {hasComparacao && (
-        <ScrollFadeIn>
-          <section className="py-24 bg-slate-50">
-            <div className="max-w-4xl mx-auto px-6">
-              <div
-                className={titleHtmlClass}
-                dangerouslySetInnerHTML={{
-                  __html:
-                    category.comparacao_title ||
-                    'Hipnoterapia Clínica Avançada vs Abordagens Tradicionais',
-                }}
-              />
-              <div
-                className={proseClass}
-                dangerouslySetInnerHTML={{ __html: category.comparacao_content! }}
-              />
-            </div>
-          </section>
-        </ScrollFadeIn>
-      )}
+      {hasComparacao && <ScrollFadeIn></ScrollFadeIn>}
     </LandingLayout>
   )
 }
