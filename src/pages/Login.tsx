@@ -119,25 +119,54 @@ export default function Login() {
     setRecoverySent(false)
   }
 
+  const customBg = loginSettings?.login_gradient
+  const bgStyle = customBg ? { background: customBg } : undefined
+
   return (
-    <div className="flex min-h-screen royal-gradient-bg">
-      <div className="flex w-full flex-col justify-center px-6 py-12 lg:max-w-xl lg:px-12 xl:px-16">
-        <div className="mx-auto w-full max-w-sm">
-          <Link to="/" className="mb-8 flex items-center gap-3 transition-opacity hover:opacity-80">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary">
-              <Brain className="h-6 w-6 text-white" />
+    <div
+      className={cn(
+        'relative min-h-screen w-full flex items-center justify-center p-4 sm:p-6 lg:p-12 overflow-x-hidden text-white',
+        !customBg && 'royal-gradient-bg',
+      )}
+      style={bgStyle}
+    >
+      {/* Soft background ambient glow */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/30 pointer-events-none" />
+      <div className="absolute -top-40 -left-40 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-indigo-600/15 rounded-full blur-3xl pointer-events-none" />
+
+      {/* Main unified grid container over seamless gradient */}
+      <div className="relative z-10 w-full max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+        {/* Left Form Card */}
+        <div className="w-full max-w-md mx-auto lg:max-w-none lg:col-span-6 bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl p-6 sm:p-8 lg:p-10 shadow-2xl">
+          <Link
+            to="/"
+            className="mb-8 flex items-center gap-3 transition-opacity hover:opacity-80 group"
+          >
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[hsl(224,76%,25%)] border border-blue-400/30 text-white shadow-md group-hover:scale-105 transition-transform">
+              {loginSettings && getLogoUrl(loginSettings) ? (
+                <img
+                  src={getLogoUrl(loginSettings)!}
+                  alt="Logo"
+                  className="h-7 w-7 object-contain"
+                />
+              ) : (
+                <Brain className="h-6 w-6 text-white" />
+              )}
             </div>
             <div>
-              <h1 className="text-xl font-bold text-white">Anderson Abreu</h1>
-              <p className="text-sm text-muted-foreground">Área do Aluno</p>
+              <h1 className="text-xl font-bold text-white tracking-tight">
+                {loginSettings?.company_name || 'Anderson Abreu'}
+              </h1>
+              <p className="text-xs text-blue-200/70 font-medium">Área do Aluno</p>
             </div>
           </Link>
 
           {mode === 'recovery' && recoverySent ? (
-            <div className="animate-fade-in-up space-y-6">
+            <div className="animate-fade-in space-y-6">
               <div className="flex flex-col items-center gap-4 text-center">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-500/10">
-                  <CheckCircle2 className="h-8 w-8 text-green-400" />
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                  <CheckCircle2 className="h-8 w-8 text-emerald-400" />
                 </div>
                 <div>
                   <h2 className="text-xl font-semibold text-white">
@@ -151,23 +180,23 @@ export default function Login() {
               </div>
               <Button
                 variant="ghost"
-                className="w-full text-white hover:bg-white/5"
+                className="w-full text-white hover:bg-white/10"
                 onClick={() => switchMode('login')}
               >
                 <ArrowLeft className="mr-2 h-4 w-4" /> Voltar para o login
               </Button>
             </div>
           ) : mode === 'recovery' ? (
-            <div className="animate-fade-in-up space-y-6">
+            <div className="animate-fade-in space-y-6">
               <div>
-                <h2 className="text-2xl font-bold text-white">Recuperar senha</h2>
+                <h2 className="text-2xl font-bold text-white tracking-tight">Recuperar senha</h2>
                 <p className="mt-1 text-sm text-muted-foreground">
                   Digite seu email para receber o link de recuperação
                 </p>
               </div>
               <form onSubmit={handleRecovery} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="recovery-email" className="text-white">
+                  <Label htmlFor="recovery-email" className="text-white text-sm font-medium">
                     Email
                   </Label>
                   <Input
@@ -177,13 +206,13 @@ export default function Login() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="border-white/10 bg-white/5 text-white placeholder:text-white/30"
+                    className="border-white/15 bg-white/5 text-white placeholder:text-white/30 h-11 rounded-xl focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
                   />
                   {fieldErrors.email && <p className="text-sm text-red-400">{fieldErrors.email}</p>}
                 </div>
                 <Button
                   type="submit"
-                  className="w-full bg-primary hover:bg-primary/90"
+                  className="w-full bg-[hsl(224,76%,25%)] hover:bg-[hsl(224,76%,32%)] text-white shadow-[0_0_15px_rgba(14,37,117,0.5)] border border-blue-400/20 font-semibold h-11 rounded-xl transition-all duration-200"
                   disabled={submitting}
                 >
                   {submitting ? 'Enviando...' : 'Enviar link de recuperação'}
@@ -191,16 +220,16 @@ export default function Login() {
               </form>
               <Button
                 variant="ghost"
-                className="w-full text-white hover:bg-white/5"
+                className="w-full text-white hover:bg-white/10"
                 onClick={() => switchMode('login')}
               >
                 <ArrowLeft className="mr-2 h-4 w-4" /> Voltar para o login
               </Button>
             </div>
           ) : (
-            <div className="animate-fade-in-up space-y-6">
+            <div className="animate-fade-in space-y-6">
               <div>
-                <h2 className="text-2xl font-bold text-white">
+                <h2 className="text-2xl font-bold text-white tracking-tight">
                   {mode === 'login' ? 'Bem-vindo de volta' : 'Criar sua conta'}
                 </h2>
                 <p className="mt-1 text-sm text-muted-foreground">
@@ -209,10 +238,11 @@ export default function Login() {
                     : 'Comece sua jornada de aprendizado'}
                 </p>
               </div>
+
               <form onSubmit={mode === 'login' ? handleLogin : handleSignUp} className="space-y-4">
                 {mode === 'signup' && (
                   <div className="space-y-2">
-                    <Label htmlFor="name" className="text-white">
+                    <Label htmlFor="name" className="text-white text-sm font-medium">
                       Nome completo
                     </Label>
                     <Input
@@ -221,13 +251,14 @@ export default function Login() {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       required
-                      className="border-white/10 bg-white/5 text-white placeholder:text-white/30"
+                      className="border-white/15 bg-white/5 text-white placeholder:text-white/30 h-11 rounded-xl focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
                     />
                     {fieldErrors.name && <p className="text-sm text-red-400">{fieldErrors.name}</p>}
                   </div>
                 )}
+
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-white">
+                  <Label htmlFor="email" className="text-white text-sm font-medium">
                     Email
                   </Label>
                   <Input
@@ -237,12 +268,13 @@ export default function Login() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="border-white/10 bg-white/5 text-white placeholder:text-white/30"
+                    className="border-white/15 bg-white/5 text-white placeholder:text-white/30 h-11 rounded-xl focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
                   />
                   {fieldErrors.email && <p className="text-sm text-red-400">{fieldErrors.email}</p>}
                 </div>
+
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="text-white">
+                  <Label htmlFor="password" className="text-white text-sm font-medium">
                     Senha
                   </Label>
                   <div className="relative">
@@ -253,12 +285,13 @@ export default function Login() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
-                      className="border-white/10 bg-white/5 pr-10 text-white placeholder:text-white/30"
+                      className="border-white/15 bg-white/5 pr-10 text-white placeholder:text-white/30 h-11 rounded-xl focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/80 transition-colors p-1"
+                      aria-label={showPassword ? 'Ocultar senha' : 'Exibir senha'}
                     >
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
@@ -267,9 +300,10 @@ export default function Login() {
                     <p className="text-sm text-red-400">{fieldErrors.password}</p>
                   )}
                 </div>
+
                 {mode === 'signup' && (
                   <div className="space-y-2">
-                    <Label htmlFor="confirmPassword" className="text-white">
+                    <Label htmlFor="confirmPassword" className="text-white text-sm font-medium">
                       Confirmar senha
                     </Label>
                     <Input
@@ -279,59 +313,64 @@ export default function Login() {
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       required
-                      className="border-white/10 bg-white/5 text-white placeholder:text-white/30"
+                      className="border-white/15 bg-white/5 text-white placeholder:text-white/30 h-11 rounded-xl focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
                     />
                     {fieldErrors.confirmPassword && (
                       <p className="text-sm text-red-400">{fieldErrors.confirmPassword}</p>
                     )}
                   </div>
                 )}
+
                 {mode === 'login' && (
                   <div className="flex justify-end">
                     <button
                       type="button"
                       onClick={() => switchMode('recovery')}
-                      className="text-sm text-primary hover:text-primary/80"
+                      className="text-sm text-blue-300 hover:text-white transition-colors"
                     >
                       Esqueci minha senha
                     </button>
                   </div>
                 )}
+
                 <Button
                   type="submit"
-                  className="w-full bg-royal hover:bg-royal-hover text-white shadow-[0px_0px_6px_0px_#ffffff]"
+                  className="w-full bg-[hsl(224,76%,25%)] hover:bg-[hsl(224,76%,32%)] text-white shadow-[0_0_15px_rgba(14,37,117,0.5)] border border-blue-400/20 font-semibold h-11 rounded-xl transition-all duration-200 active:scale-[0.99]"
                   disabled={submitting}
                 >
                   {submitting ? 'Aguarde...' : mode === 'login' ? 'Entrar' : 'Criar Conta'}
                 </Button>
               </form>
-              <div className="relative">
+
+              <div className="relative my-4">
                 <div className="absolute inset-0 flex items-center">
                   <span className="w-full border-t border-white/10" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-transparent px-2 text-muted-foreground">ou</span>
+                  <span className="bg-transparent px-3 text-white/50 font-medium">ou</span>
                 </div>
               </div>
+
               <Button
                 variant="outline"
                 type="button"
                 onClick={() => handleOAuth('google')}
                 disabled={oauthLoading !== null}
-                className="w-full border-white/15 bg-white/5 text-white hover:bg-white/10 hover:text-white"
+                className="w-full border-white/15 bg-white/5 text-white hover:bg-white/10 hover:text-white h-11 rounded-xl font-medium transition-all"
               >
                 {oauthLoading === 'google' ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin text-blue-400" />
                 ) : (
                   <GoogleIcon className="mr-2" />
                 )}
                 Entrar com Google
               </Button>
-              <p className="text-center text-sm text-muted-foreground">
+
+              <p className="text-center text-sm text-muted-foreground pt-2">
                 {mode === 'login' ? 'Não tem conta? ' : 'Já tem conta? '}
                 <button
                   onClick={() => switchMode(mode === 'login' ? 'signup' : 'login')}
-                  className="font-medium text-primary hover:text-primary/80"
+                  className="font-medium text-blue-300 hover:text-white transition-colors underline-offset-4 hover:underline"
                 >
                   {mode === 'login' ? 'Criar conta' : 'Entrar'}
                 </button>
@@ -339,13 +378,12 @@ export default function Login() {
             </div>
           )}
         </div>
-      </div>
-      <div className="relative hidden items-center justify-center overflow-hidden lg:flex lg:flex-1 royal-gradient-bg">
-        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(var(--royal-blue))]/40 via-transparent to-black/60" />
-        <div className="relative z-10 flex flex-col items-center gap-8 px-12 text-center">
+
+        {/* Right Info Section (Seamlessly blended over the continuous gradient) */}
+        <div className="hidden lg:flex lg:col-span-6 flex-col items-center justify-center text-center p-6 lg:p-8 space-y-8">
           <Link
             to="/"
-            className="flex h-24 w-24 items-center justify-center rounded-3xl border border-white/10 bg-white/5 backdrop-blur-sm transition-opacity hover:opacity-80"
+            className="flex h-24 w-24 items-center justify-center rounded-3xl border border-white/15 bg-white/10 backdrop-blur-md shadow-2xl transition-transform hover:scale-105"
           >
             {loginSettings && getLogoUrl(loginSettings) ? (
               <img
@@ -354,30 +392,38 @@ export default function Login() {
                 className="h-16 w-16 object-contain"
               />
             ) : (
-              <Brain className="h-12 w-12 text-white" />
+              <Brain className="h-12 w-12 text-blue-300" />
             )}
           </Link>
-          <Link to="/" className="space-y-3 transition-opacity hover:opacity-80">
-            <h2 className="text-3xl font-bold text-white">
+
+          <div className="space-y-3 max-w-lg">
+            <h2 className="text-3xl font-extrabold text-white tracking-tight">
               {loginSettings?.company_name || 'Anderson Abreu'}
             </h2>
-            <p className="max-w-md text-lg text-white/60">
+            <p className="text-base text-blue-100/70 leading-relaxed">
               {loginSettings?.login_text ||
                 'Hipnose, inteligência emocional e mentoria de alta performance'}
             </p>
-          </Link>
-          <div className="flex gap-8 pt-4">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-white">+10k</div>
-              <div className="text-sm text-white/50">Alunos</div>
+          </div>
+
+          <div className="grid grid-cols-3 gap-6 pt-4 w-full max-w-md">
+            <div className="flex flex-col items-center p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm shadow-inner">
+              <div className="text-2xl font-bold text-white tracking-tight">
+                +{loginSettings?.stats_students ? loginSettings.stats_students : '10k'}
+              </div>
+              <div className="text-xs text-blue-200/70 font-medium mt-0.5">Alunos</div>
             </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-white">+50</div>
-              <div className="text-sm text-white/50">Cursos</div>
+            <div className="flex flex-col items-center p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm shadow-inner">
+              <div className="text-2xl font-bold text-white tracking-tight">
+                +{loginSettings?.stats_courses ? loginSettings.stats_courses : '50'}
+              </div>
+              <div className="text-xs text-blue-200/70 font-medium mt-0.5">Cursos</div>
             </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-white">+8 anos</div>
-              <div className="text-sm text-white/50">Experiência</div>
+            <div className="flex flex-col items-center p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm shadow-inner">
+              <div className="text-2xl font-bold text-white tracking-tight">
+                +{loginSettings?.stats_years ? `${loginSettings.stats_years} anos` : '8 anos'}
+              </div>
+              <div className="text-xs text-blue-200/70 font-medium mt-0.5">Experiência</div>
             </div>
           </div>
         </div>
