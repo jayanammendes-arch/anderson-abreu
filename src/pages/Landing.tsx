@@ -322,7 +322,7 @@ export default function Landing() {
             </p>
             <Button
               size="lg"
-              className="bg-[#00A3C4] hover:bg-[#008ca8] text-white rounded-full px-10 py-6 text-lg font-medium shadow-lg transition-all hover:scale-105"
+              className="royal-btn-gradient text-white rounded-full px-10 py-6 text-lg font-medium shadow-lg transition-all hover:scale-105"
               onClick={() => navigate('/agendar')}
             >
               <Calendar className="mr-2 h-5 w-5" />

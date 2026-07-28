@@ -233,4 +233,15 @@
   .royal-footer-gradient {
     background: linear-gradient(180deg, #0e2575 0%, #0a1a5e 35%, #051030 70%, #020412 100%);
   }
+
+  .royal-btn-gradient {
+    background: linear-gradient(135deg, #020412 0%, #0a1a5e 45%, #1a3fa8 100%);
+    transition:
+      background 0.3s ease,
+      transform 0.2s ease;
+  }
+
+  .royal-btn-gradient:hover {
+    background: linear-gradient(135deg, #010308 0%, #06113e 45%, #15317d 100%);
+  }
 }
