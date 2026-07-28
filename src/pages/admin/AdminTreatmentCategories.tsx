@@ -37,6 +37,8 @@ import { toast } from 'sonner'
 import { Pencil, Trash2, Plus, Loader2, Save } from 'lucide-react'
 import { Switch } from '@/components/ui/switch'
 import { ImagePositionSelector } from '@/components/admin/ImagePositionSelector'
+import { SectionCustomization } from '@/components/admin/SectionCustomization'
+import { DEFAULT_SECTIONS_CONFIG, getSectionsConfig } from '@/lib/treatment-sections'
 
 const emptyForm: Partial<TreatmentCategory> = {
   name: '',
@@ -51,6 +53,11 @@ const emptyForm: Partial<TreatmentCategory> = {
   order: 0,
   is_active: true,
   image_position: 'center',
+  como_funciona_title: '',
+  resultados_title: '',
+  sintomas_title: '',
+  cta_title: '',
+  sections_config: DEFAULT_SECTIONS_CONFIG,
 }
 
 function slugify(text: string): string {
@@ -136,7 +143,7 @@ export default function AdminTreatmentCategories() {
   }
 
   const handleEdit = (cat: TreatmentCategory) => {
-    setFormData({ ...cat })
+    setFormData({ ...cat, sections_config: getSectionsConfig(cat.sections_config) })
     setImageFile(null)
     setFieldErrors({})
     resetMultiImages()
@@ -174,6 +181,14 @@ export default function AdminTreatmentCategories() {
       fd.append('cta_text', formData.cta_text || '')
       fd.append('is_active', String(formData.is_active ?? true))
       fd.append('image_position', formData.image_position || 'center')
+      fd.append('como_funciona_title', formData.como_funciona_title || '')
+      fd.append('resultados_title', formData.resultados_title || '')
+      fd.append('sintomas_title', formData.sintomas_title || '')
+      fd.append('cta_title', formData.cta_title || '')
+      fd.append(
+        'sections_config',
+        JSON.stringify(formData.sections_config || DEFAULT_SECTIONS_CONFIG),
+      )
 
       if (imageFile) fd.append('image', imageFile)
 
@@ -490,6 +505,18 @@ export default function AdminTreatmentCategories() {
                 />
               )}
             </div>
+
+            <SectionCustomization
+              comoFuncionaTitle={formData.como_funciona_title || ''}
+              resultadosTitle={formData.resultados_title || ''}
+              sintomasTitle={formData.sintomas_title || ''}
+              ctaTitle={formData.cta_title || ''}
+              onTitleChange={(field, value) => setFormData({ ...formData, [field]: value })}
+              sectionsConfig={formData.sections_config}
+              onSectionsConfigChange={(config) =>
+                setFormData({ ...formData, sections_config: config })
+              }
+            />
 
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-28T14:14:33.147Z",
+  "generatedAt": "2026-07-28T14:36:20.308Z",
   "collections": [
     {
       "name": "users",
@@ -2104,6 +2104,36 @@
             "center-left",
             "center-right"
           ]
+        },
+        {
+          "name": "como_funciona_title",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "resultados_title",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "sintomas_title",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "cta_title",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "sections_config",
+          "type": "json",
+          "required": false,
+          "system": false
         }
       ],
       "indexes": [

@@ -396,10 +396,15 @@ export interface TreatmentCategory {
   is_active?: boolean
   como_funciona_text?: string
   como_funciona_images?: string[]
+  como_funciona_title?: string
   resultados_text?: string
   resultados_images?: string[]
+  resultados_title?: string
   cta_text?: string
   cta_images?: string[]
+  cta_title?: string
+  sintomas_title?: string
+  sections_config?: Array<{ id: string; visible: boolean }>
   created: string
   updated: string
 }
