@@ -75,6 +75,7 @@ export default function TreatmentDetail() {
   const comoFuncionaImg = getTreatmentCategoryImageUrls(category, 'como_funciona_images')[0]
   const resultadosImg = getTreatmentCategoryImageUrls(category, 'resultados_images')[0]
   const sintomasImg = getTreatmentCategorySintomasImageUrl(category)
+  const ctaImg = getTreatmentCategoryImageUrls(category, 'cta_images')[0]
 
   const sectionsConfig = getTreatmentDetailConfig(
     category.sections_config as SectionConfigItem[] | undefined,
@@ -173,6 +174,44 @@ export default function TreatmentDetail() {
               <p className="text-2xl md:text-3xl font-bold text-white">{category.faixa_text}</p>
             </div>
           </section>
+        )
+      }
+      case 'detailed_content': {
+        if (!category.detailed_content?.trim()) return null
+        return (
+          <section className="py-24 bg-white">
+            <div className="max-w-4xl mx-auto px-6">
+              <div
+                className="prose prose-lg max-w-none text-slate-600 [&_h2]:text-slate-900 [&_h2]:font-bold [&_ul]:list-disc [&_ul]:pl-6 [&_li]:mb-2"
+                dangerouslySetInnerHTML={{ __html: category.detailed_content! }}
+              />
+            </div>
+          </section>
+        )
+      }
+      case 'cta': {
+        const hasCtaText = category.cta_text?.trim()
+        if (!hasCtaText && !ctaImg) return null
+        return (
+          <AccordionSection
+            title={category.cta_title || 'Pronto para começar?'}
+            accordionEnabled={accordionEnabled}
+            className="py-24 bg-slate-50"
+          >
+            {hasCtaText && (
+              <div
+                className="prose prose-lg max-w-none text-slate-600 [&_h2]:text-slate-900 [&_h2]:font-bold [&_ul]:list-disc [&_ul]:pl-6 [&_li]:mb-2"
+                dangerouslySetInnerHTML={{ __html: category.cta_text! }}
+              />
+            )}
+            {ctaImg && (
+              <img
+                src={ctaImg}
+                alt="CTA"
+                className="rounded-xl shadow-md w-full h-64 object-cover mt-6"
+              />
+            )}
+          </AccordionSection>
         )
       }
       default:

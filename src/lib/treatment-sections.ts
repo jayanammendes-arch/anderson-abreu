@@ -33,27 +33,33 @@ export function getSectionsConfig(config?: SectionConfigItem[] | null): SectionC
 }
 
 export const TREATMENT_DETAIL_SECTIONS = [
+  { id: 'detailed_content', label: 'Conteúdo Detalhado' },
   { id: 'como_funciona', label: 'Como Funciona' },
   { id: 'sintomas', label: 'Sintomas' },
   { id: 'sintomas_imagem', label: 'Imagem de Sintomas' },
   { id: 'resultados', label: 'Resultados' },
   { id: 'faixa_destaque', label: 'Faixa de Destaque' },
+  { id: 'cta', label: 'CTA Final' },
 ] as const
 
 export const TREATMENT_DETAIL_SECTION_LABELS: Record<string, string> = {
+  detailed_content: 'Conteúdo Detalhado',
   como_funciona: 'Como Funciona',
   sintomas: 'Sintomas',
   sintomas_imagem: 'Imagem de Sintomas',
   resultados: 'Resultados',
   faixa_destaque: 'Faixa de Destaque',
+  cta: 'CTA Final',
 }
 
 export const DEFAULT_TREATMENT_DETAIL_CONFIG: SectionConfigItem[] = [
+  { id: 'detailed_content', visible: true },
   { id: 'como_funciona', visible: true },
   { id: 'sintomas', visible: true },
   { id: 'sintomas_imagem', visible: true },
   { id: 'resultados', visible: true },
   { id: 'faixa_destaque', visible: true },
+  { id: 'cta', visible: true },
 ]
 
 export function getTreatmentDetailConfig(config?: SectionConfigItem[] | null): SectionConfigItem[] {
