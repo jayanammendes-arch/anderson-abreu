@@ -166,12 +166,7 @@ export function LandingLayout({
             {isCursosPage ? (
               <Button
                 size="sm"
-                className={cn(
-                  'rounded-full px-6 shadow-sm',
-                  isDarkPage
-                    ? 'bg-white text-slate-900 hover:bg-white/90'
-                    : 'bg-slate-900 text-white hover:bg-slate-800',
-                )}
+                className="royal-btn-gradient text-white rounded-full px-6 shadow-sm hover:opacity-90"
                 onClick={handleAreaAlunoClick}
               >
                 <GraduationCap className="mr-1.5 h-4 w-4" />
@@ -265,7 +260,7 @@ export function LandingLayout({
           })}
           {isCursosPage ? (
             <Button
-              className="mt-6 bg-slate-900 text-white hover:bg-slate-800 rounded-full h-12 text-base"
+              className="mt-6 royal-btn-gradient text-white hover:opacity-90 rounded-full h-12 text-base"
               onClick={() => {
                 setIsMenuOpen(false)
                 navigate(areaAlunoHref)
