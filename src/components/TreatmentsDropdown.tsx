@@ -3,13 +3,13 @@ import { Link } from 'react-router-dom'
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { getAllTreatments } from '@/services/treatments'
-import type { Treatment } from '@/types'
+import { getTreatmentCategories } from '@/services/treatment-categories'
+import { getTreatmentIcon } from '@/lib/treatment-icons'
+import type { TreatmentCategory } from '@/types'
 
 export function TreatmentsDropdown({
   children,
@@ -18,11 +18,11 @@ export function TreatmentsDropdown({
   children: ReactNode
   isDark?: boolean
 }) {
-  const [treatments, setTreatments] = useState<Treatment[]>([])
+  const [categories, setCategories] = useState<TreatmentCategory[]>([])
 
   useEffect(() => {
-    getAllTreatments()
-      .then(setTreatments)
+    getTreatmentCategories()
+      .then(setCategories)
       .catch(() => {})
   }, [])
 
@@ -41,18 +41,26 @@ export function TreatmentsDropdown({
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="start"
-        className="w-56 p-2 rounded-xl shadow-lg border-slate-100 bg-white"
+        className="w-[480px] p-4 rounded-xl shadow-lg border-slate-100 bg-white"
       >
-        {treatments.map((treatment) => (
-          <DropdownMenuItem key={treatment.id} asChild>
-            <Link
-              to={`/tratamentos/${treatment.slug}`}
-              className="w-full cursor-pointer rounded-lg px-3 py-2 text-sm text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition-colors"
-            >
-              {treatment.name}
-            </Link>
-          </DropdownMenuItem>
-        ))}
+        <div className="grid grid-cols-2 gap-1">
+          {categories.slice(0, 12).map((category) => {
+            const Icon = getTreatmentIcon(category.icon)
+            return (
+              <DropdownMenuItem key={category.id} asChild className="p-0">
+                <Link
+                  to={`/tratamentos/${category.slug}`}
+                  className="group flex items-center gap-3 w-full cursor-pointer rounded-lg px-3 py-2.5 text-sm text-slate-700 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                >
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-50 group-hover:bg-blue-100 transition-colors">
+                    <Icon className="h-[18px] w-[18px] text-blue-500" strokeWidth={2} />
+                  </span>
+                  <span className="font-medium leading-snug line-clamp-2">{category.name}</span>
+                </Link>
+              </DropdownMenuItem>
+            )
+          })}
+        </div>
       </DropdownMenuContent>
     </DropdownMenu>
   )
