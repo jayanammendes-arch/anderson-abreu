@@ -87,6 +87,8 @@ interface FormState {
   about_cta_button_text: string
   about_cta_button_link: string
   about_cta_visible: boolean
+  global_blue_band_title: string
+  global_blue_band_text: string
 }
 
 const emptyForm: FormState = {
@@ -159,6 +161,8 @@ const emptyForm: FormState = {
   about_cta_button_text: '',
   about_cta_button_link: '',
   about_cta_visible: true,
+  global_blue_band_title: '',
+  global_blue_band_text: '',
 }
 
 function FieldLabel({ label, description }: { label: string; description?: string }) {
@@ -373,6 +377,8 @@ export default function AdminPageConfig() {
             about_cta_button_text: data.about_cta_button_text || '',
             about_cta_button_link: data.about_cta_button_link || '',
             about_cta_visible: data.about_cta_visible !== false,
+            global_blue_band_title: data.global_blue_band_title || '',
+            global_blue_band_text: data.global_blue_band_text || '',
           })
         }
       } catch {
@@ -460,6 +466,34 @@ export default function AdminPageConfig() {
                     value={form.primary_color}
                     onChange={(v) => set('primary_color', v)}
                   />
+                  <div className="pt-4 border-t border-border/50 space-y-4">
+                    <div className="space-y-1">
+                      <Label className="text-base font-semibold">
+                        Faixa Azul ("O que é Hipnose?")
+                      </Label>
+                      <p className="text-sm text-muted-foreground">
+                        Configurações da seção global de explicação da hipnose exibida na Landing
+                        Page e nas páginas de Tratamento.
+                      </p>
+                    </div>
+                    <LabeledInput
+                      label="Título da Faixa"
+                      description="Título principal exibido na faixa azul"
+                      value={form.global_blue_band_title}
+                      onChange={(v) => set('global_blue_band_title', v)}
+                      placeholder="Ex: O que é Hipnose?"
+                    />
+                    <div className="space-y-2">
+                      <FieldLabel
+                        label="Texto Explicativo da Faixa"
+                        description="Texto explicativo. Deixe em branco para usar o texto padrão estruturado em 2 parágrafos."
+                      />
+                      <RichTextEditor
+                        value={form.global_blue_band_text}
+                        onChange={(html) => set('global_blue_band_text', html)}
+                      />
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>

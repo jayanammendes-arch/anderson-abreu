@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-28T17:34:44.294Z",
+  "generatedAt": "2026-07-28T17:45:59.935Z",
   "collections": [
     {
       "name": "users",
@@ -1111,6 +1111,12 @@
         },
         {
           "name": "global_blue_band_text",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "global_blue_band_title",
           "type": "text",
           "required": false,
           "system": false

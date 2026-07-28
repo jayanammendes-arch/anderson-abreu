@@ -16,6 +16,7 @@ import { TestimonialsSection } from '@/components/TestimonialsSection'
 import { getTreatmentIcon } from '@/lib/treatment-icons'
 import { Loader2, ArrowRight } from 'lucide-react'
 import { ScrollFadeIn } from '@/components/ScrollFadeIn'
+import { GlobalBlueBand } from '@/components/GlobalBlueBand'
 import { getCropPositionCss } from '@/lib/image-position'
 import { cn } from '@/lib/utils'
 
@@ -145,13 +146,9 @@ export default function TreatmentDetail() {
         </section>
       </ScrollFadeIn>
 
-      <section className="w-full bg-blue-800 py-5">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <p className="text-white text-sm md:text-base font-medium leading-relaxed">
-            {globalBlueBandText}
-          </p>
-        </div>
-      </section>
+      <ScrollFadeIn>
+        <GlobalBlueBand settings={settings} />
+      </ScrollFadeIn>
 
       {hasComoFunciona && (
         <ScrollFadeIn>

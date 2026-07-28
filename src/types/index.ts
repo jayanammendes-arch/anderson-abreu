@@ -352,6 +352,7 @@ export interface PlatformSettings {
   about_cta_background_image?: string
   about_cta_visible?: boolean
   treatments_accordion_enabled?: boolean
+  global_blue_band_title?: string
   global_blue_band_text?: string
   created: string
   updated: string
