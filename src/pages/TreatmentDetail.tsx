@@ -14,7 +14,7 @@ import { LandingLayout } from '@/components/LandingLayout'
 import { Button } from '@/components/ui/button'
 import { TestimonialsSection } from '@/components/TestimonialsSection'
 import { getTreatmentIcon } from '@/lib/treatment-icons'
-import { Loader2, ArrowRight } from 'lucide-react'
+import { Loader2, ArrowRight, Calendar } from 'lucide-react'
 import { ScrollFadeIn } from '@/components/ScrollFadeIn'
 import { GlobalBlueBand } from '@/components/GlobalBlueBand'
 import { HypnotherapyComparisonSection } from '@/components/HypnotherapyComparisonSection'
@@ -179,11 +179,19 @@ export default function TreatmentDetail() {
       )}
 
       {category.faixa_azul_frase?.trim() && (
-        <section className="w-full bg-blue-700 py-5">
-          <div className="max-w-7xl mx-auto px-6 text-center">
+        <section className="w-full royal-cta-gradient py-8 md:py-10">
+          <div className="max-w-7xl mx-auto px-6 text-center flex flex-col items-center gap-6">
             <p className="text-white text-base md:text-lg font-semibold leading-relaxed">
               {category.faixa_azul_frase}
             </p>
+            <Button
+              size="lg"
+              className="bg-[#22C55E] hover:bg-[#1ea34d] text-white rounded-full px-10 py-6 text-lg font-medium shadow-lg transition-all hover:scale-105 border-none"
+              onClick={() => navigate('/agendar')}
+            >
+              <Calendar className="mr-2 h-5 w-5" />
+              {agendarText}
+            </Button>
           </div>
         </section>
       )}
