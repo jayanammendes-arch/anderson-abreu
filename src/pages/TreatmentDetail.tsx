@@ -5,19 +5,18 @@ import {
   getTreatmentCategories,
   getTreatmentCategoryImageUrl,
   getTreatmentCategoryImageUrls,
+  getTreatmentCategorySintomasImageUrl,
 } from '@/services/treatment-categories'
 import { getPlatformSettingsPublic } from '@/services/landing'
 import type { TreatmentCategory, PlatformSettings } from '@/types'
 import { LandingLayout } from '@/components/LandingLayout'
 import { Button } from '@/components/ui/button'
 import { TestimonialsSection } from '@/components/TestimonialsSection'
-import { ComparisonTable } from '@/components/treatment/ComparisonTable'
-import { RichSection } from '@/components/treatment/RichSection'
+import { AccordionSection } from '@/components/treatment/AccordionSection'
 import { getTreatmentIcon } from '@/lib/treatment-icons'
 import { Loader2, ArrowLeft } from 'lucide-react'
 import { ScrollFadeIn } from '@/components/ScrollFadeIn'
 import { getImagePositionCss } from '@/lib/image-position'
-import { getSectionsConfig } from '@/lib/treatment-sections'
 
 export default function TreatmentDetail() {
   const { slug } = useParams<{ slug: string }>()
@@ -70,154 +69,11 @@ export default function TreatmentDetail() {
   const Icon = getTreatmentIcon(category.icon)
   const otherCategories = allCategories.filter((c) => c.slug !== slug)
   const agendarText = settings?.agendar_sessao_text || 'Agendar Sessão'
-
-  const comoFuncionaImages = getTreatmentCategoryImageUrls(category, 'como_funciona_images')
-  const resultadosImages = getTreatmentCategoryImageUrls(category, 'resultados_images')
-  const ctaImages = getTreatmentCategoryImageUrls(category, 'cta_images')
-
-  const hasComoFunciona = !!(category.como_funciona_text?.trim() || comoFuncionaImages.length > 0)
-  const hasResultados = !!(category.resultados_text?.trim() || resultadosImages.length > 0)
-  const hasCta = !!(category.cta_text?.trim() || ctaImages.length > 0)
-  const hasSintomas = !!category.symptoms_list?.trim()
-
-  const sections = getSectionsConfig(category.sections_config).filter((s) => s.visible)
-
-  const renderSection = (sectionId: string) => {
-    switch (sectionId) {
-      case 'introducao':
-        return (
-          <ScrollFadeIn key="introducao">
-            <section id="o-que-e" className="py-24 bg-white">
-              <div className="max-w-4xl mx-auto px-6">
-                <h2 className="text-3xl font-bold text-slate-900 mb-6">O que é {category.name}</h2>
-                <div
-                  className="prose prose-lg max-w-none text-slate-600 [&_h2]:text-slate-900 [&_h2]:font-bold"
-                  dangerouslySetInnerHTML={{ __html: category.detailed_content }}
-                />
-              </div>
-            </section>
-          </ScrollFadeIn>
-        )
-      case 'como_funciona':
-        if (!hasComoFunciona) return null
-        return (
-          <ScrollFadeIn key="como_funciona">
-            <RichSection
-              title={category.como_funciona_title || 'Como Funciona'}
-              html={category.como_funciona_text}
-              images={comoFuncionaImages}
-              className="py-24 bg-slate-50"
-            />
-          </ScrollFadeIn>
-        )
-      case 'resultados':
-        if (!hasResultados) return null
-        return (
-          <ScrollFadeIn key="resultados">
-            <RichSection
-              title={category.resultados_title || 'Resultados'}
-              html={category.resultados_text}
-              images={resultadosImages}
-              className="py-24 bg-white"
-            />
-          </ScrollFadeIn>
-        )
-      case 'sintomas':
-        if (!hasSintomas) return null
-        return (
-          <ScrollFadeIn key="sintomas">
-            <section className="py-24 bg-slate-50">
-              <div className="max-w-4xl mx-auto px-6">
-                <h2 className="text-3xl font-bold text-slate-900 mb-6">
-                  {category.sintomas_title || 'Sintomas'}
-                </h2>
-                <div
-                  className="prose prose-lg max-w-none text-slate-600 [&_ul]:list-disc [&_ul]:pl-6 [&_li]:mb-2"
-                  dangerouslySetInnerHTML={{ __html: category.symptoms_list }}
-                />
-              </div>
-            </section>
-          </ScrollFadeIn>
-        )
-      case 'outros_tratamentos':
-        if (otherCategories.length === 0) return null
-        return (
-          <ScrollFadeIn key="outros_tratamentos">
-            <section className="py-24 bg-white">
-              <div className="max-w-7xl mx-auto px-6">
-                <h2 className="text-3xl font-bold text-slate-900 mb-8 text-center">
-                  Outros Tratamentos
-                </h2>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {otherCategories.map((cat) => {
-                    const CatIcon = getTreatmentIcon(cat.icon)
-                    return (
-                      <Link
-                        key={cat.id}
-                        to={`/tratamentos/${cat.slug}`}
-                        className="group flex flex-col items-center gap-2 p-4 bg-white rounded-xl border border-slate-100 hover:border-blue-200 hover:shadow-md transition-all"
-                      >
-                        <CatIcon className="h-8 w-8 text-blue-500" strokeWidth={1.5} />
-                        <span className="text-sm font-medium text-slate-700 group-hover:text-blue-600 text-center">
-                          {cat.name}
-                        </span>
-                      </Link>
-                    )
-                  })}
-                </div>
-              </div>
-            </section>
-          </ScrollFadeIn>
-        )
-      case 'depoimentos':
-        return (
-          <div key="depoimentos">
-            <ScrollFadeIn>
-              <TestimonialsSection customTitle={settings?.testimonials_section_title} />
-            </ScrollFadeIn>
-            <ScrollFadeIn>
-              <ComparisonTable />
-            </ScrollFadeIn>
-          </div>
-        )
-      case 'cta':
-        if (hasCta) {
-          return (
-            <ScrollFadeIn key="cta">
-              <RichSection
-                title={category.cta_title || 'Pronto para começar?'}
-                html={category.cta_text}
-                images={ctaImages}
-                className="py-24 bg-slate-50"
-              />
-            </ScrollFadeIn>
-          )
-        }
-        return (
-          <ScrollFadeIn key="cta">
-            <section className="py-24 royal-gradient-bg">
-              <div className="max-w-3xl mx-auto px-6 text-center">
-                <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-                  {category.cta_title || 'Pronto para começar?'}
-                </h2>
-                <p className="text-white/60 text-lg mb-10">
-                  Dê o primeiro passo rumo à transformação. Agende sua sessão de hipnose clínica.
-                </p>
-                <Button
-                  size="lg"
-                  className="bg-[#22C55E] hover:bg-[#1ea34d] text-white rounded-full px-10 py-6 text-lg font-medium shadow-lg transition-all hover:scale-105 border-none"
-                  onClick={() => navigate('/agendar')}
-                >
-                  {agendarText}
-                </Button>
-              </div>
-            </section>
-          </ScrollFadeIn>
-        )
-      default:
-        return null
-    }
-  }
+  const saibaText = settings?.saiba_mais_text || 'Saiba Mais'
+  const accordionEnabled = settings?.treatments_accordion_enabled ?? false
+  const comoFuncionaImg = getTreatmentCategoryImageUrls(category, 'como_funciona_images')[0]
+  const resultadosImg = getTreatmentCategoryImageUrls(category, 'resultados_images')[0]
+  const sintomasImg = getTreatmentCategorySintomasImageUrl(category)
 
   return (
     <LandingLayout settings={settings}>
@@ -249,13 +105,13 @@ export default function TreatmentDetail() {
                 >
                   {agendarText}
                 </Button>
-                <a href="#o-que-e">
+                <a href="#como-funciona">
                   <Button
                     variant="outline"
                     size="lg"
                     className="rounded-full border-white/30 text-white hover:bg-white/10 hover:text-white"
                   >
-                    Saiba Mais
+                    {saibaText}
                   </Button>
                 </a>
               </div>
@@ -264,7 +120,107 @@ export default function TreatmentDetail() {
         </section>
       </ScrollFadeIn>
 
-      {sections.map((s) => renderSection(s.id))}
+      <AccordionSection
+        id="como-funciona"
+        title={category.como_funciona_title || 'Como Funciona'}
+        accordionEnabled={accordionEnabled}
+        className="py-24 bg-slate-50"
+      >
+        {category.como_funciona_text?.trim() && (
+          <div
+            className="prose prose-lg max-w-none text-slate-600 [&_h2]:text-slate-900 [&_h2]:font-bold [&_ul]:list-disc [&_ul]:pl-6 [&_li]:mb-2"
+            dangerouslySetInnerHTML={{ __html: category.como_funciona_text }}
+          />
+        )}
+        {comoFuncionaImg && (
+          <img
+            src={comoFuncionaImg}
+            alt="Como Funciona"
+            className="rounded-xl shadow-md w-full h-64 object-cover mt-6"
+          />
+        )}
+      </AccordionSection>
+
+      <AccordionSection
+        title={category.resultados_title || 'Resultados'}
+        accordionEnabled={accordionEnabled}
+        className="py-24 bg-white"
+      >
+        {category.resultados_text?.trim() && (
+          <div
+            className="prose prose-lg max-w-none text-slate-600 [&_h2]:text-slate-900 [&_h2]:font-bold [&_ul]:list-disc [&_ul]:pl-6 [&_li]:mb-2"
+            dangerouslySetInnerHTML={{ __html: category.resultados_text }}
+          />
+        )}
+        {resultadosImg && (
+          <img
+            src={resultadosImg}
+            alt="Resultados"
+            className="rounded-xl shadow-md w-full h-64 object-cover mt-6"
+          />
+        )}
+      </AccordionSection>
+
+      {category.faixa_text?.trim() && (
+        <section className="py-12 bg-gradient-to-r from-blue-600 to-blue-800">
+          <div className="max-w-4xl mx-auto px-6 text-center">
+            <p className="text-2xl md:text-3xl font-bold text-white">{category.faixa_text}</p>
+          </div>
+        </section>
+      )}
+
+      <AccordionSection
+        title={category.sintomas_title || 'Sintomas'}
+        accordionEnabled={accordionEnabled}
+        className="py-24 bg-slate-50"
+      >
+        {category.sintomas_text?.trim() && (
+          <div
+            className="prose prose-lg max-w-none text-slate-600 [&_h2]:text-slate-900 [&_h2]:font-bold [&_ul]:list-disc [&_ul]:pl-6 [&_li]:mb-2"
+            dangerouslySetInnerHTML={{ __html: category.sintomas_text }}
+          />
+        )}
+        {sintomasImg && (
+          <img
+            src={sintomasImg}
+            alt="Sintomas"
+            className="rounded-xl shadow-md w-full h-64 object-cover mt-6"
+          />
+        )}
+      </AccordionSection>
+
+      <ScrollFadeIn>
+        <TestimonialsSection customTitle={settings?.testimonials_section_title} />
+      </ScrollFadeIn>
+
+      {otherCategories.length > 0 && (
+        <ScrollFadeIn>
+          <section className="py-24 bg-white">
+            <div className="max-w-7xl mx-auto px-6">
+              <h2 className="text-3xl font-bold text-slate-900 mb-8 text-center">
+                Outros Tratamentos
+              </h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {otherCategories.map((cat) => {
+                  const CatIcon = getTreatmentIcon(cat.icon)
+                  return (
+                    <Link
+                      key={cat.id}
+                      to={`/tratamentos/${cat.slug}`}
+                      className="group flex flex-col items-center gap-2 p-4 bg-white rounded-xl border border-slate-100 hover:border-blue-200 hover:shadow-md transition-all"
+                    >
+                      <CatIcon className="h-8 w-8 text-blue-500" strokeWidth={1.5} />
+                      <span className="text-sm font-medium text-slate-700 group-hover:text-blue-600 text-center">
+                        {cat.name}
+                      </span>
+                    </Link>
+                  )
+                })}
+              </div>
+            </div>
+          </section>
+        </ScrollFadeIn>
+      )}
     </LandingLayout>
   )
 }

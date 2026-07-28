@@ -22,6 +22,11 @@ export function getTreatmentCategoryImageUrls(
   return files.map((f) => `${base}/${f}`)
 }
 
+export function getTreatmentCategorySintomasImageUrl(category: TreatmentCategory): string | null {
+  if (!category.sintomas_image) return null
+  return `${import.meta.env.VITE_POCKETBASE_URL}/api/files/treatment_categories/${category.id}/${category.sintomas_image}`
+}
+
 export const adminGetTreatmentCategories = (): Promise<TreatmentCategory[]> =>
   pb.collection('treatment_categories').getFullList({ sort: 'order' })
 

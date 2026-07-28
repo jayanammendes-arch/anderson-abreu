@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-28T14:36:20.308Z",
+  "generatedAt": "2026-07-28T15:00:31.586Z",
   "collections": [
     {
       "name": "users",
@@ -1102,6 +1102,12 @@
           "type": "json",
           "required": false,
           "system": false
+        },
+        {
+          "name": "treatments_accordion_enabled",
+          "type": "bool",
+          "required": false,
+          "system": false
         }
       ],
       "indexes": []
@@ -2132,6 +2138,24 @@
         {
           "name": "sections_config",
           "type": "json",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "faixa_text",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "sintomas_text",
+          "type": "editor",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "sintomas_image",
+          "type": "file",
           "required": false,
           "system": false
         }

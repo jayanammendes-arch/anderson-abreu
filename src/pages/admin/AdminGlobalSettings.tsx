@@ -6,6 +6,8 @@ import { useToast } from '@/hooks/use-toast'
 import { useFormValidation, type ValidationRule } from '@/hooks/use-form-validation'
 import { ValidatedInput } from '@/components/admin/ValidatedInput'
 import { FileUploadField } from '@/components/admin/FileUploadField'
+import { Switch } from '@/components/ui/switch'
+import { Label } from '@/components/ui/label'
 import { getFileUrl } from '@/lib/pocketbase/files'
 import pb from '@/lib/pocketbase/client'
 
@@ -13,7 +15,7 @@ interface FieldDef {
   key: string
   label: string
   required?: boolean
-  type?: 'email' | 'url'
+  type?: 'email' | 'url' | 'boolean'
   placeholder?: string
 }
 
@@ -84,6 +86,16 @@ const SECTIONS: Array<{
       { key: 'youtube_url', label: 'YouTube', type: 'url', placeholder: 'https://youtube.com/...' },
     ],
   },
+  {
+    title: 'Configurações de Tratamentos',
+    fields: [
+      {
+        key: 'treatments_accordion_enabled',
+        label: 'Ativar Acordeão nos Tratamentos',
+        type: 'boolean' as const,
+      },
+    ],
+  },
 ]
 
 const ALL_FIELDS = SECTIONS.flatMap((s) => s.fields)
@@ -129,7 +141,10 @@ export default function AdminGlobalSettings() {
 
     setSaving(true)
     const formData = new FormData()
-    ALL_FIELDS.forEach((f) => formData.append(f.key, settings?.[f.key] || ''))
+    ALL_FIELDS.forEach((f) => {
+      const val = settings?.[f.key]
+      formData.append(f.key, f.type === 'boolean' ? (val ? 'true' : 'false') : val || '')
+    })
     ALL_FILE_FIELDS.forEach((f) => {
       if (files[f.key]) formData.append(f.key, files[f.key]!)
     })
@@ -175,18 +190,31 @@ export default function AdminGlobalSettings() {
               <CardTitle>{section.title}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {section.fields.map((field) => (
-                <ValidatedInput
-                  key={field.key}
-                  label={field.label}
-                  required={field.required}
-                  type={field.type}
-                  placeholder={field.placeholder}
-                  value={settings?.[field.key] || ''}
-                  onChange={(e) => updateField(field.key, e.target.value)}
-                  error={errors[field.key]}
-                />
-              ))}
+              {section.fields.map((field) =>
+                field.type === 'boolean' ? (
+                  <div key={field.key} className="flex items-center justify-between">
+                    <Label>{field.label}</Label>
+                    <Switch
+                      checked={Boolean(settings?.[field.key])}
+                      onCheckedChange={(checked) => {
+                        setSettings((prev) => ({ ...prev, [field.key]: checked }))
+                        clearFieldError(field.key)
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <ValidatedInput
+                    key={field.key}
+                    label={field.label}
+                    required={field.required}
+                    type={field.type}
+                    placeholder={field.placeholder}
+                    value={settings?.[field.key] || ''}
+                    onChange={(e) => updateField(field.key, e.target.value)}
+                    error={errors[field.key]}
+                  />
+                ),
+              )}
               {section.fileFields?.map((f) => (
                 <FileUploadField
                   key={f.key}

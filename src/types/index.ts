@@ -351,6 +351,7 @@ export interface PlatformSettings {
   about_cta_button_link?: string
   about_cta_background_image?: string
   about_cta_visible?: boolean
+  treatments_accordion_enabled?: boolean
   created: string
   updated: string
 }
@@ -404,6 +405,9 @@ export interface TreatmentCategory {
   cta_images?: string[]
   cta_title?: string
   sintomas_title?: string
+  faixa_text?: string
+  sintomas_text?: string
+  sintomas_image?: string
   sections_config?: Array<{ id: string; visible: boolean }>
   created: string
   updated: string
