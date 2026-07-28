@@ -24,6 +24,7 @@ import { CredentialsMarquee } from '@/components/CredentialsMarquee'
 import { HomeCredentialSection } from '@/components/HomeCredentialSection'
 import { ScrollFadeIn } from '@/components/ScrollFadeIn'
 import { GlobalBlueBand } from '@/components/GlobalBlueBand'
+import { HypnotherapyComparisonSection } from '@/components/HypnotherapyComparisonSection'
 import { cn } from '@/lib/utils'
 
 function ParallaxCTASection({ settings }: { settings: PlatformSettings }) {
@@ -260,6 +261,11 @@ export default function Landing() {
             </div>
           </div>
         </section>
+      </ScrollFadeIn>
+
+      {/* Por que tantas pessoas buscam a Hipnoterapia? (Comparison Section) */}
+      <ScrollFadeIn>
+        <HypnotherapyComparisonSection />
       </ScrollFadeIn>
 
       {/* Parallax CTA Section */}
