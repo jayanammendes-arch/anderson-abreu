@@ -14,6 +14,11 @@ export function ScrollFadeIn({ children, className }: ScrollFadeInProps) {
     const el = ref.current
     if (!el) return
 
+    if (typeof IntersectionObserver === 'undefined') {
+      setVisible(true)
+      return
+    }
+
     let fallbackTimer: ReturnType<typeof setTimeout> | undefined
 
     const observer = new IntersectionObserver(
@@ -24,10 +29,11 @@ export function ScrollFadeIn({ children, className }: ScrollFadeInProps) {
           if (fallbackTimer) clearTimeout(fallbackTimer)
         }
       },
-      { threshold: 0.3 },
+      { threshold: 0.2, rootMargin: '0px 0px -20px 0px' },
     )
     observer.observe(el)
 
+    // Safety fallback: force visibility after maximum 2 seconds once mounted
     fallbackTimer = setTimeout(() => {
       setVisible(true)
       observer.disconnect()

@@ -22,10 +22,24 @@ import { getCropPositionCss } from '@/lib/image-position'
 import { cn } from '@/lib/utils'
 
 const proseClass =
-  'prose prose-lg max-w-none text-slate-600 [&_h1]:text-slate-900 [&_h1]:font-bold [&_h1]:text-3xl [&_h1]:mb-4 [&_h2]:text-slate-900 [&_h2]:font-bold [&_h3]:text-slate-800 [&_h3]:font-semibold [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mb-2 [&_a]:text-blue-600'
+  'prose prose-lg max-w-none text-slate-600 [&_h1]:text-slate-900 [&_h1]:font-bold [&_h1]:text-3xl [&_h1]:mb-4 [&_h2]:text-slate-900 [&_h2]:font-bold [&_h3]:text-slate-800 [&_h3]:font-semibold [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mb-2 [&_a]:text-blue-600 [&_span]:!bg-transparent'
 
-const titleHtmlClass =
-  'mb-6 [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:text-slate-900 [&_h2]:text-3xl [&_h2]:font-bold [&_h2]:text-slate-900 [&_h3]:text-2xl [&_h3]:font-semibold [&_h3]:text-slate-800 [&_p]:text-3xl [&_p]:font-bold [&_p]:text-slate-900 [&_p]:mb-0'
+function SectionTitle({ title, defaultTitle }: { title?: string; defaultTitle: string }) {
+  const content = title?.trim() || defaultTitle
+  if (content.includes('<')) {
+    return (
+      <div
+        className="text-3xl md:text-4xl font-bold text-slate-900 mb-6 leading-snug py-1 [&_span]:!bg-transparent [&_p]:text-3xl [&_p]:md:text-4xl [&_p]:font-bold [&_p]:text-slate-900 [&_p]:mb-0"
+        dangerouslySetInnerHTML={{ __html: content }}
+      />
+    )
+  }
+  return (
+    <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6 leading-snug py-1">
+      {content}
+    </h2>
+  )
+}
 
 function FramedImage({
   src,
@@ -102,15 +116,10 @@ export default function TreatmentDetail() {
   const comoFuncionaImg = getTreatmentCategoryComoFuncionaImageUrl(category)
   const resultadosImg = getTreatmentCategoryResultadosImageUrl(category)
   const sintomasImg = getTreatmentCategorySintomasImageUrl(category)
-  const globalBlueBandText =
-    settings?.global_blue_band_text ||
-    'A hipnose clínica é uma terapia cientificamente comprovada que acessa o subconsciente para promover mudanças duradouras e profundas.'
 
   const hasComoFunciona = category.como_funciona_text?.trim()
   const hasResultados = category.resultados_text?.trim()
   const hasSintomas = category.sintomas_text?.trim()
-  const hasPorQueTantas = category.por_que_tantas_content?.trim()
-  const hasComparacao = category.comparacao_content?.trim()
 
   return (
     <LandingLayout settings={settings}>
@@ -156,15 +165,10 @@ export default function TreatmentDetail() {
 
       {hasComoFunciona && (
         <ScrollFadeIn>
-          <section className="py-24 bg-white">
-            <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
+          <section className="py-24 bg-white overflow-visible">
+            <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center overflow-visible">
               <div>
-                <div
-                  className={titleHtmlClass}
-                  dangerouslySetInnerHTML={{
-                    __html: category.como_funciona_title || 'Como Funciona',
-                  }}
-                />
+                <SectionTitle title={category.como_funciona_title} defaultTitle="Como Funciona" />
                 <div
                   className={proseClass}
                   dangerouslySetInnerHTML={{ __html: category.como_funciona_text! }}
@@ -198,17 +202,15 @@ export default function TreatmentDetail() {
 
       {hasResultados && (
         <ScrollFadeIn>
-          <section className="py-24 bg-slate-50">
-            <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
+          <section className="py-24 bg-slate-50 overflow-visible">
+            <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center overflow-visible">
               {resultadosImg && (
                 <FramedImage src={resultadosImg} alt="Resultados" position="left" />
               )}
               <div className={resultadosImg ? 'md:col-span-1' : 'md:col-span-2'}>
-                <div
-                  className={titleHtmlClass}
-                  dangerouslySetInnerHTML={{
-                    __html: category.resultados_title || 'Resultados Respaldados Pela Ciência',
-                  }}
+                <SectionTitle
+                  title={category.resultados_title}
+                  defaultTitle="Resultados Respaldados Pela Ciência"
                 />
                 <div
                   className={proseClass}
@@ -222,13 +224,10 @@ export default function TreatmentDetail() {
 
       {hasSintomas && (
         <ScrollFadeIn>
-          <section className="py-24 bg-white">
-            <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
+          <section className="py-24 bg-white overflow-visible">
+            <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center overflow-visible">
               <div>
-                <div
-                  className={titleHtmlClass}
-                  dangerouslySetInnerHTML={{ __html: category.sintomas_title || 'Sintomas' }}
-                />
+                <SectionTitle title={category.sintomas_title} defaultTitle="Sintomas" />
                 <div
                   className={proseClass}
                   dangerouslySetInnerHTML={{ __html: category.sintomas_text! }}
@@ -242,8 +241,8 @@ export default function TreatmentDetail() {
 
       {otherCategories.length > 0 && (
         <ScrollFadeIn>
-          <section className="py-24 bg-slate-50">
-            <div className="max-w-7xl mx-auto px-6">
+          <section className="py-24 bg-slate-50 overflow-visible">
+            <div className="max-w-7xl mx-auto px-6 overflow-visible">
               <h2 className="text-3xl font-bold text-slate-900 mb-8 text-center">
                 Outros Tratamentos
               </h2>

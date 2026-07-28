@@ -57,17 +57,24 @@ export function HypnotherapyComparisonSection({ settings }: { settings: Platform
     '* As abordagens convencionais são igualmente importantes e complementares. O objetivo não é substituir, mas apresentar uma alternativa natural eficaz.'
 
   return (
-    <section className="py-20 md:py-28 bg-gradient-to-b from-white to-slate-50">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center max-w-3xl mx-auto mb-12 md:mb-16">
+    <section className="py-20 md:py-28 bg-gradient-to-b from-white to-slate-50 overflow-visible">
+      <div className="max-w-7xl mx-auto px-6 overflow-visible">
+        <div className="text-center max-w-3xl mx-auto mb-12 md:mb-16 overflow-visible py-1">
           <div className="inline-block w-12 h-1 bg-gradient-to-r from-[#00A3C4] to-[#026aa2] rounded-full mb-6" />
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight mb-4 leading-tight">
-            {title}
-          </h2>
+          {title.includes('<') ? (
+            <div
+              className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-normal mb-4 leading-snug py-1 [&_span]:!bg-transparent [&_p]:text-3xl [&_p]:md:text-4xl [&_p]:lg:text-5xl [&_p]:font-extrabold [&_p]:text-slate-900"
+              dangerouslySetInnerHTML={{ __html: title }}
+            />
+          ) : (
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-normal mb-4 leading-snug py-1">
+              {title}
+            </h2>
+          )}
           <p className="text-slate-500 text-base md:text-lg leading-relaxed">{subtitle}</p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6 lg:gap-8 items-stretch">
+        <div className="grid md:grid-cols-2 gap-6 lg:gap-8 items-stretch overflow-visible">
           <div className="relative bg-gradient-to-br from-[#026aa2] to-[#014a75] text-white rounded-3xl p-6 sm:p-8 lg:p-10 shadow-2xl overflow-hidden">
             <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#38bdf8] via-[#00A3C4] to-[#38bdf8]" />
             <div className="absolute -top-20 -right-20 w-40 h-40 bg-white/5 rounded-full blur-2xl" />
