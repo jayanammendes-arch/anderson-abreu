@@ -89,6 +89,14 @@ interface FormState {
   about_cta_visible: boolean
   global_blue_band_title: string
   global_blue_band_text: string
+  blue_band_phrase: string
+  blue_band_whatsapp_text: string
+  blue_band_whatsapp_enabled: boolean
+  journey_title: string
+  journey_text: string
+  journey_button_text: string
+  journey_button_link: string
+  journey_button_type: string
 }
 
 const emptyForm: FormState = {
@@ -163,6 +171,14 @@ const emptyForm: FormState = {
   about_cta_visible: true,
   global_blue_band_title: '',
   global_blue_band_text: '',
+  blue_band_phrase: '',
+  blue_band_whatsapp_text: '',
+  blue_band_whatsapp_enabled: false,
+  journey_title: '',
+  journey_text: '',
+  journey_button_text: '',
+  journey_button_link: '',
+  journey_button_type: 'whatsapp',
 }
 
 function FieldLabel({ label, description }: { label: string; description?: string }) {
@@ -379,6 +395,14 @@ export default function AdminPageConfig() {
             about_cta_visible: data.about_cta_visible !== false,
             global_blue_band_title: data.global_blue_band_title || '',
             global_blue_band_text: data.global_blue_band_text || '',
+            blue_band_phrase: data.blue_band_phrase || '',
+            blue_band_whatsapp_text: data.blue_band_whatsapp_text || '',
+            blue_band_whatsapp_enabled: data.blue_band_whatsapp_enabled || false,
+            journey_title: data.journey_title || '',
+            journey_text: data.journey_text || '',
+            journey_button_text: data.journey_button_text || '',
+            journey_button_link: data.journey_button_link || '',
+            journey_button_type: data.journey_button_type || 'whatsapp',
           })
         }
       } catch {
@@ -491,6 +515,78 @@ export default function AdminPageConfig() {
                       <RichTextEditor
                         value={form.global_blue_band_text}
                         onChange={(html) => set('global_blue_band_text', html)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <FieldLabel
+                        label="Frase da Faixa (Rich Text)"
+                        description="Frase editável exibida na faixa azul com formatação rica (fontes, gradientes, alinhamento)"
+                      />
+                      <RichTextEditor
+                        value={form.blue_band_phrase}
+                        onChange={(html) => set('blue_band_phrase', html)}
+                      />
+                    </div>
+                    <LabeledInput
+                      label="Texto do Botão WhatsApp"
+                      description="Texto do botão verde exibido abaixo da frase"
+                      value={form.blue_band_whatsapp_text}
+                      onChange={(v) => set('blue_band_whatsapp_text', v)}
+                      placeholder="Ex: Fale Conosco"
+                    />
+                    <div className="flex items-center justify-between">
+                      <Label>Exibir Botão WhatsApp na Faixa</Label>
+                      <Switch
+                        checked={form.blue_band_whatsapp_enabled}
+                        onCheckedChange={(checked) => set('blue_band_whatsapp_enabled', checked)}
+                      />
+                    </div>
+                    <div className="pt-4 border-t border-border/50 space-y-4">
+                      <div className="space-y-1">
+                        <Label className="text-base font-semibold">
+                          Seção "Comece sua Jornada" (CTA)
+                        </Label>
+                        <p className="text-sm text-muted-foreground">
+                          Configurações da seção CTA exibida no final da landing page.
+                        </p>
+                      </div>
+                      <div className="space-y-2">
+                        <FieldLabel label="Título (Rich Text)" />
+                        <RichTextEditor
+                          value={form.journey_title}
+                          onChange={(html) => set('journey_title', html)}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <FieldLabel label="Texto (Rich Text)" />
+                        <RichTextEditor
+                          value={form.journey_text}
+                          onChange={(html) => set('journey_text', html)}
+                        />
+                      </div>
+                      <LabeledInput
+                        label="Texto do Botão"
+                        value={form.journey_button_text}
+                        onChange={(v) => set('journey_button_text', v)}
+                        placeholder="Ex: Agendar Sessão"
+                      />
+                      <div className="space-y-2">
+                        <FieldLabel label="Tipo do Botão" />
+                        <select
+                          className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm outline-none cursor-pointer"
+                          value={form.journey_button_type}
+                          onChange={(e) => set('journey_button_type', e.target.value)}
+                        >
+                          <option value="whatsapp">WhatsApp</option>
+                          <option value="internal">Link Interno</option>
+                        </select>
+                      </div>
+                      <LabeledInput
+                        label="Link Interno do Botão"
+                        description="Caminho relativo (ex: /agendar) — usado quando o tipo é Link Interno"
+                        value={form.journey_button_link}
+                        onChange={(v) => set('journey_button_link', v)}
+                        placeholder="/agendar"
                       />
                     </div>
                   </div>

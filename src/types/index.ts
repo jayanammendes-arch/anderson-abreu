@@ -354,6 +354,14 @@ export interface PlatformSettings {
   treatments_accordion_enabled?: boolean
   global_blue_band_title?: string
   global_blue_band_text?: string
+  blue_band_phrase?: string
+  blue_band_whatsapp_text?: string
+  blue_band_whatsapp_enabled?: boolean
+  journey_title?: string
+  journey_text?: string
+  journey_button_text?: string
+  journey_button_link?: string
+  journey_button_type?: 'whatsapp' | 'internal'
   created: string
   updated: string
 }

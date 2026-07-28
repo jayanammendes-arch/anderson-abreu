@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback } from 'react'
+import { useRef, useEffect, useCallback, useState } from 'react'
 import {
   Bold,
   Italic,
@@ -10,6 +10,12 @@ import {
   Heading3,
   Palette,
   Pilcrow,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  AlignJustify,
+  Sparkles,
+  Type,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -20,10 +26,30 @@ interface RichTextEditorProps {
   className?: string
 }
 
+const FONT_FAMILIES = [
+  { value: 'Arial', label: 'Arial' },
+  { value: 'Georgia', label: 'Georgia' },
+  { value: 'Verdana', label: 'Verdana' },
+  { value: 'Times New Roman', label: 'Times New Roman' },
+  { value: 'Courier New', label: 'Courier New' },
+]
+
+const FONT_SIZES = [
+  { value: '2', label: 'Pequeno' },
+  { value: '3', label: 'Normal' },
+  { value: '4', label: 'Médio' },
+  { value: '5', label: 'Grande' },
+  { value: '6', label: 'Maior' },
+  { value: '7', label: 'Enorme' },
+]
+
 export function RichTextEditor({ value, onChange, className }: RichTextEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null)
   const isInternal = useRef(false)
   const savedRange = useRef<Range | null>(null)
+  const [gradStart, setGradStart] = useState('#3b82f6')
+  const [gradEnd, setGradEnd] = useState('#22c55e')
+  const [showGradient, setShowGradient] = useState(false)
 
   useEffect(() => {
     if (editorRef.current && !isInternal.current) {
@@ -32,20 +58,24 @@ export function RichTextEditor({ value, onChange, className }: RichTextEditorPro
     isInternal.current = false
   }, [value])
 
-  const exec = useCallback(
-    (command: string, val?: string) => {
-      if (savedRange.current && editorRef.current) {
-        editorRef.current.focus()
-        const sel = window.getSelection()
-        if (sel) {
-          sel.removeAllRanges()
-          try {
-            sel.addRange(savedRange.current)
-          } catch {
-            savedRange.current = null
-          }
+  const restoreSelection = () => {
+    if (savedRange.current && editorRef.current) {
+      editorRef.current.focus()
+      const sel = window.getSelection()
+      if (sel) {
+        sel.removeAllRanges()
+        try {
+          sel.addRange(savedRange.current)
+        } catch {
+          savedRange.current = null
         }
       }
+    }
+  }
+
+  const exec = useCallback(
+    (command: string, val?: string) => {
+      restoreSelection()
       document.execCommand(command, false, val)
       if (editorRef.current) {
         isInternal.current = true
@@ -55,6 +85,25 @@ export function RichTextEditor({ value, onChange, className }: RichTextEditorPro
     },
     [onChange],
   )
+
+  const applyGradient = () => {
+    restoreSelection()
+    const sel = window.getSelection()
+    if (!sel || sel.rangeCount === 0 || sel.isCollapsed || !editorRef.current) return
+    const range = sel.getRangeAt(0)
+    const span = document.createElement('span')
+    span.style.cssText = `background: linear-gradient(135deg, ${gradStart}, ${gradEnd}); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;`
+    try {
+      span.appendChild(range.extractContents())
+      range.insertNode(span)
+      isInternal.current = true
+      onChange(editorRef.current.innerHTML)
+    } catch {
+      /* selection spans incompatible nodes */
+    }
+    sel.removeAllRanges()
+    editorRef.current.focus()
+  }
 
   const handleInput = () => {
     if (editorRef.current) {
@@ -70,16 +119,7 @@ export function RichTextEditor({ value, onChange, className }: RichTextEditorPro
     }
   }
 
-  const fontSizes = [
-    { value: '2', label: 'Pequeno' },
-    { value: '3', label: 'Normal' },
-    { value: '4', label: 'Médio' },
-    { value: '5', label: 'Grande' },
-    { value: '6', label: 'Maior' },
-    { value: '7', label: 'Enorme' },
-  ]
-
-  const btnClass = 'h-7 w-7'
+  const btn = 'h-7 w-7'
 
   return (
     <div className={cn('rounded-md border border-input overflow-hidden', className)}>
@@ -88,7 +128,7 @@ export function RichTextEditor({ value, onChange, className }: RichTextEditorPro
           type="button"
           variant="ghost"
           size="icon"
-          className={btnClass}
+          className={btn}
           onClick={() => exec('formatBlock', '<h1>')}
           title="Título 1"
         >
@@ -98,7 +138,7 @@ export function RichTextEditor({ value, onChange, className }: RichTextEditorPro
           type="button"
           variant="ghost"
           size="icon"
-          className={btnClass}
+          className={btn}
           onClick={() => exec('formatBlock', '<h2>')}
           title="Título 2"
         >
@@ -108,7 +148,7 @@ export function RichTextEditor({ value, onChange, className }: RichTextEditorPro
           type="button"
           variant="ghost"
           size="icon"
-          className={btnClass}
+          className={btn}
           onClick={() => exec('formatBlock', '<h3>')}
           title="Título 3"
         >
@@ -118,7 +158,7 @@ export function RichTextEditor({ value, onChange, className }: RichTextEditorPro
           type="button"
           variant="ghost"
           size="icon"
-          className={btnClass}
+          className={btn}
           onClick={() => exec('formatBlock', '<p>')}
           title="Parágrafo"
         >
@@ -129,7 +169,7 @@ export function RichTextEditor({ value, onChange, className }: RichTextEditorPro
           type="button"
           variant="ghost"
           size="icon"
-          className={btnClass}
+          className={btn}
           onClick={() => exec('bold')}
           title="Negrito"
         >
@@ -139,7 +179,7 @@ export function RichTextEditor({ value, onChange, className }: RichTextEditorPro
           type="button"
           variant="ghost"
           size="icon"
-          className={btnClass}
+          className={btn}
           onClick={() => exec('italic')}
           title="Itálico"
         >
@@ -149,13 +189,34 @@ export function RichTextEditor({ value, onChange, className }: RichTextEditorPro
           type="button"
           variant="ghost"
           size="icon"
-          className={btnClass}
+          className={btn}
           onClick={() => exec('underline')}
           title="Sublinhado"
         >
           <Underline className="h-3.5 w-3.5" />
         </Button>
         <div className="w-px h-5 bg-border mx-1" />
+        <div className="flex items-center gap-1">
+          <Type className="h-3.5 w-3.5 text-muted-foreground" />
+          <select
+            className="h-7 rounded border border-input bg-background text-xs px-1 outline-none cursor-pointer"
+            defaultValue=""
+            onChange={(e) => {
+              if (e.target.value) {
+                exec('fontName', e.target.value)
+                e.target.value = ''
+              }
+            }}
+            title="Fonte"
+          >
+            <option value="">Fonte</option>
+            {FONT_FAMILIES.map((f) => (
+              <option key={f.value} value={f.value}>
+                {f.label}
+              </option>
+            ))}
+          </select>
+        </div>
         <select
           className="h-7 rounded border border-input bg-background text-xs px-1 outline-none cursor-pointer"
           defaultValue=""
@@ -168,12 +229,53 @@ export function RichTextEditor({ value, onChange, className }: RichTextEditorPro
           title="Tamanho da fonte"
         >
           <option value="">Tamanho</option>
-          {fontSizes.map((s) => (
+          {FONT_SIZES.map((s) => (
             <option key={s.value} value={s.value}>
               {s.label}
             </option>
           ))}
         </select>
+        <div className="w-px h-5 bg-border mx-1" />
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className={btn}
+          onClick={() => exec('justifyLeft')}
+          title="Alinhar à esquerda"
+        >
+          <AlignLeft className="h-3.5 w-3.5" />
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className={btn}
+          onClick={() => exec('justifyCenter')}
+          title="Centralizar"
+        >
+          <AlignCenter className="h-3.5 w-3.5" />
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className={btn}
+          onClick={() => exec('justifyRight')}
+          title="Alinhar à direita"
+        >
+          <AlignRight className="h-3.5 w-3.5" />
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className={btn}
+          onClick={() => exec('justifyFull')}
+          title="Justificar"
+        >
+          <AlignJustify className="h-3.5 w-3.5" />
+        </Button>
         <div className="w-px h-5 bg-border mx-1" />
         <label
           className="h-7 w-7 flex items-center justify-center cursor-pointer rounded hover:bg-accent relative"
@@ -186,12 +288,49 @@ export function RichTextEditor({ value, onChange, className }: RichTextEditorPro
             onChange={(e) => exec('foreColor', e.target.value)}
           />
         </label>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className={cn(btn, showGradient && 'bg-accent')}
+          onClick={() => setShowGradient(!showGradient)}
+          title="Texto com gradiente"
+        >
+          <Sparkles className="h-3.5 w-3.5" />
+        </Button>
+        {showGradient && (
+          <div className="flex items-center gap-1 ml-1">
+            <input
+              type="color"
+              value={gradStart}
+              onChange={(e) => setGradStart(e.target.value)}
+              className="h-7 w-7 rounded border border-input cursor-pointer"
+              title="Cor inicial"
+            />
+            <input
+              type="color"
+              value={gradEnd}
+              onChange={(e) => setGradEnd(e.target.value)}
+              className="h-7 w-7 rounded border border-input cursor-pointer"
+              title="Cor final"
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="h-7 text-xs"
+              onClick={applyGradient}
+            >
+              Aplicar
+            </Button>
+          </div>
+        )}
         <div className="w-px h-5 bg-border mx-1" />
         <Button
           type="button"
           variant="ghost"
           size="icon"
-          className={btnClass}
+          className={btn}
           onClick={() => exec('insertUnorderedList')}
           title="Lista com marcadores"
         >
@@ -201,7 +340,7 @@ export function RichTextEditor({ value, onChange, className }: RichTextEditorPro
           type="button"
           variant="ghost"
           size="icon"
-          className={btnClass}
+          className={btn}
           onClick={() => exec('insertOrderedList')}
           title="Lista numerada"
         >

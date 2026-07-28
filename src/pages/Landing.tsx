@@ -320,20 +320,56 @@ export default function Landing() {
       <ScrollFadeIn>
         <section className="py-24 royal-cta-gradient">
           <div className="max-w-3xl mx-auto px-6 text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-              Pronto para transformar sua vida?
-            </h2>
-            <p className="text-white/80 text-lg mb-10 leading-relaxed">
-              Agende sua sessão de hipnose clínica e dê o primeiro passo rumo ao bem-estar.
-            </p>
-            <Button
-              size="lg"
-              className="bg-[#22C55E] hover:bg-[#1ea34d] text-white rounded-full px-10 py-6 text-lg font-medium shadow-lg transition-all hover:scale-105 border-none"
-              onClick={() => navigate('/agendar')}
-            >
-              <Calendar className="mr-2 h-5 w-5" />
-              {agendarText}
-            </Button>
+            {settings?.journey_title ? (
+              <div
+                className="text-3xl md:text-4xl font-bold text-white mb-6 [&_h1]:text-3xl [&_h1]:md:text-4xl [&_h1]:font-bold [&_h1]:text-white [&_h2]:text-3xl [&_h2]:md:text-4xl [&_h2]:font-bold [&_h2]:text-white [&_h3]:text-2xl [&_h3]:font-semibold [&_h3]:text-white [&_p]:text-white [&_p]:mb-0"
+                dangerouslySetInnerHTML={{ __html: settings.journey_title }}
+              />
+            ) : (
+              <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+                Pronto para transformar sua vida?
+              </h2>
+            )}
+            {settings?.journey_text ? (
+              <div
+                className="text-white/80 text-lg mb-10 leading-relaxed [&_p]:text-white/80 [&_p]:text-lg [&_p]:leading-relaxed [&_p]:mb-4"
+                dangerouslySetInnerHTML={{ __html: settings.journey_text }}
+              />
+            ) : (
+              <p className="text-white/80 text-lg mb-10 leading-relaxed">
+                Agende sua sessão de hipnose clínica e dê o primeiro passo rumo ao bem-estar.
+              </p>
+            )}
+            {(() => {
+              const btnText = settings?.journey_button_text || agendarText
+              const btnType = settings?.journey_button_type || 'internal'
+              const btnLink = settings?.journey_button_link || '/agendar'
+              if (btnType === 'whatsapp') {
+                const waNum = (settings?.whatsapp_number || '').replace(/\D/g, '')
+                return (
+                  <Button
+                    size="lg"
+                    className="bg-[#22C55E] hover:bg-[#1ea34d] text-white rounded-full px-10 py-6 text-lg font-medium shadow-lg transition-all hover:scale-105 border-none"
+                    asChild
+                  >
+                    <a href={`https://wa.me/${waNum}`} target="_blank" rel="noopener noreferrer">
+                      <Calendar className="mr-2 h-5 w-5" />
+                      {btnText}
+                    </a>
+                  </Button>
+                )
+              }
+              return (
+                <Button
+                  size="lg"
+                  className="bg-[#22C55E] hover:bg-[#1ea34d] text-white rounded-full px-10 py-6 text-lg font-medium shadow-lg transition-all hover:scale-105 border-none"
+                  onClick={() => navigate(btnLink)}
+                >
+                  <Calendar className="mr-2 h-5 w-5" />
+                  {btnText}
+                </Button>
+              )
+            })()}
           </div>
         </section>
       </ScrollFadeIn>

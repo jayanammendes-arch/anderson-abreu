@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-28T17:59:07.960Z",
+  "generatedAt": "2026-07-28T18:15:03.413Z",
   "collections": [
     {
       "name": "users",
@@ -1110,16 +1110,65 @@
           "system": false
         },
         {
-          "name": "global_blue_band_text",
+          "name": "global_blue_band_title",
           "type": "text",
           "required": false,
           "system": false
         },
         {
-          "name": "global_blue_band_title",
+          "name": "global_blue_band_text",
+          "type": "editor",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "blue_band_phrase",
+          "type": "editor",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "blue_band_whatsapp_text",
           "type": "text",
           "required": false,
           "system": false
+        },
+        {
+          "name": "blue_band_whatsapp_enabled",
+          "type": "bool",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "journey_title",
+          "type": "editor",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "journey_text",
+          "type": "editor",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "journey_button_text",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "journey_button_link",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "journey_button_type",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": ["whatsapp", "internal"]
         }
       ],
       "indexes": []
