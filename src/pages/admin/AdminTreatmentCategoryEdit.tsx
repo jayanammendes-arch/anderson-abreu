@@ -236,29 +236,9 @@ export default function AdminTreatmentCategoryEdit() {
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label>Ordem</Label>
-              <Input
-                type="number"
-                value={formData.order ?? 0}
-                onChange={(e) => setFormData({ ...formData, order: Number(e.target.value) })}
-              />
-            </div>
-            <div className="flex items-center gap-3 pt-6">
-              <Switch
-                checked={formData.is_active ?? true}
-                onCheckedChange={(c) => setFormData({ ...formData, is_active: c })}
-              />
-              <Label>Ativo</Label>
-            </div>
+            <div className="space-y-2"></div>
           </div>
-          <div className="flex items-center gap-3">
-            <Switch
-              checked={formData.hide_icon ?? false}
-              onCheckedChange={(c) => setFormData({ ...formData, hide_icon: c })}
-            />
-            <Label>Ocultar ícone no Conteúdo Detalhado</Label>
-          </div>
+
           <div className="space-y-2">
             <div className="flex items-center gap-3">
               <Switch checked={showIconPicker} onCheckedChange={setShowIconPicker} />
