@@ -1,9 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import {
-  getPlatformSettingsPublic,
-  submitContact,
-  getAgendarBackgroundImageUrl,
-} from '@/services/landing'
+import { getPlatformSettingsPublic, submitContact } from '@/services/landing'
 import type { PlatformSettings } from '@/types'
 import { LandingLayout } from '@/components/LandingLayout'
 import { Button } from '@/components/ui/button'
@@ -71,7 +67,6 @@ export default function Agendar() {
       .finally(() => setLoading(false))
   }, [])
 
-  const bgUrl = settings ? getAgendarBackgroundImageUrl(settings) : null
   const headline = settings?.agendar_headline || 'Agende sua Sessão'
   const subheadline = settings?.agendar_subheadline || 'Resultados em 2 Sessões'
   const benefits = parseBenefits(settings?.agendar_benefits)
@@ -123,8 +118,8 @@ export default function Agendar() {
   if (loading) {
     return (
       <LandingLayout settings={settings}>
-        <div className="flex h-screen items-center justify-center pt-20">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <div className="royal-gradient-bg flex h-screen items-center justify-center pt-20">
+          <Loader2 className="h-8 w-8 animate-spin text-white" />
         </div>
       </LandingLayout>
     )
@@ -132,15 +127,10 @@ export default function Agendar() {
 
   return (
     <LandingLayout settings={settings}>
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+      <section className="royal-gradient-bg relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
         <div className="absolute inset-0 z-0">
-          {bgUrl ? (
-            <img src={bgUrl} alt="Sessão de Hipnose" className="h-full w-full object-cover" />
-          ) : (
-            <div className="h-full w-full royal-gradient-bg" />
-          )}
-          <div className="absolute inset-0 bg-black/60" />
-          <div className="absolute inset-0 bg-gradient-to-b from-[hsl(var(--royal-blue))]/50 via-black/60 to-black/80" />
+          <div className="absolute inset-0 bg-black/20" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[hsl(var(--royal-blue))]/20 via-transparent to-black/40" />
         </div>
 
         <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 py-12 md:py-20">
@@ -154,7 +144,7 @@ export default function Agendar() {
                   </span>
                 </div>
 
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-4">
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-4 drop-shadow-lg">
                   {headline}
                 </h1>
                 <p className="text-xl sm:text-2xl font-semibold text-white/90 mb-8 flex items-center gap-2">
