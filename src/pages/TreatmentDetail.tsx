@@ -17,9 +17,31 @@ import { getTreatmentIcon } from '@/lib/treatment-icons'
 import { Loader2, ArrowRight } from 'lucide-react'
 import { ScrollFadeIn } from '@/components/ScrollFadeIn'
 import { getCropPositionCss } from '@/lib/image-position'
+import { cn } from '@/lib/utils'
 
 const proseClass =
-  'prose prose-lg max-w-none text-slate-600 [&_h2]:text-slate-900 [&_h2]:font-bold [&_ul]:list-disc [&_ul]:pl-6 [&_li]:mb-2 [&_a]:text-blue-600'
+  'prose prose-lg max-w-none text-slate-600 [&_h1]:text-slate-900 [&_h1]:font-bold [&_h1]:text-3xl [&_h1]:mb-4 [&_h2]:text-slate-900 [&_h2]:font-bold [&_h3]:text-slate-800 [&_h3]:font-semibold [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mb-2 [&_a]:text-blue-600'
+
+function FramedImage({
+  src,
+  alt,
+  position,
+}: {
+  src: string
+  alt: string
+  position: 'left' | 'right'
+}) {
+  return (
+    <div
+      className={cn(
+        'overflow-hidden rounded-lg shadow-xl border-blue-600',
+        position === 'right' ? 'border-l-4' : 'border-r-4',
+      )}
+    >
+      <img src={src} alt={alt} className="w-full h-96 object-cover" />
+    </div>
+  )
+}
 
 export default function TreatmentDetail() {
   const { slug } = useParams<{ slug: string }>()
@@ -145,11 +167,7 @@ export default function TreatmentDetail() {
                 />
               </div>
               {comoFuncionaImg && (
-                <img
-                  src={comoFuncionaImg}
-                  alt="Como Funciona"
-                  className="rounded-2xl shadow-xl w-full h-80 object-cover"
-                />
+                <FramedImage src={comoFuncionaImg} alt="Como Funciona" position="right" />
               )}
             </div>
           </section>
@@ -171,13 +189,9 @@ export default function TreatmentDetail() {
           <section className="py-24 bg-slate-50">
             <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
               {resultadosImg && (
-                <img
-                  src={resultadosImg}
-                  alt="Resultados"
-                  className="rounded-2xl shadow-xl w-full h-80 object-cover md:order-2"
-                />
+                <FramedImage src={resultadosImg} alt="Resultados" position="left" />
               )}
-              <div className={resultadosImg ? 'md:order-1' : 'md:col-span-2'}>
+              <div className={resultadosImg ? 'md:col-span-1' : 'md:col-span-2'}>
                 <h2 className="text-3xl font-bold text-slate-900 mb-6">
                   {category.resultados_title || 'Resultados Respaldados Pela Ciência'}
                 </h2>
@@ -204,13 +218,7 @@ export default function TreatmentDetail() {
                   dangerouslySetInnerHTML={{ __html: category.sintomas_text! }}
                 />
               </div>
-              {sintomasImg && (
-                <img
-                  src={sintomasImg}
-                  alt="Sintomas"
-                  className="rounded-2xl shadow-xl w-full h-80 object-cover"
-                />
-              )}
+              {sintomasImg && <FramedImage src={sintomasImg} alt="Sintomas" position="right" />}
             </div>
           </section>
         </ScrollFadeIn>

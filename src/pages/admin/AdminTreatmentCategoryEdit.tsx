@@ -18,7 +18,7 @@ import { FileUploadField } from '@/components/admin/FileUploadField'
 import { CropImageUploader } from '@/components/admin/CropImageUploader'
 import { extractFieldErrors, type FieldErrors } from '@/lib/pocketbase/errors'
 import { toast } from 'sonner'
-import { ArrowLeft, Save, Loader2, ChevronDown, Info } from 'lucide-react'
+import { ArrowLeft, Save, Loader2, ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const emptyForm: Partial<TreatmentCategory> = {
@@ -359,21 +359,7 @@ export default function AdminTreatmentCategoryEdit() {
           />
         </FormSection>
 
-        <FormSection title="5. Outros Tratamentos">
-          <p className="text-sm text-muted-foreground">
-            Esta seção é exibida automaticamente na página pública, mostrando as demais categorias
-            de tratamento. Nenhuma configuração adicional é necessária.
-          </p>
-        </FormSection>
-
-        <FormSection title="6. Depoimentos">
-          <p className="text-sm text-muted-foreground">
-            Esta seção reutiliza o componente de depoimentos existente. Nenhuma configuração
-            adicional é necessária.
-          </p>
-        </FormSection>
-
-        <FormSection title="7. Por que tantas pessoas buscam a Hipnoterapia?" defaultOpen>
+        <FormSection title="5. Por que tantas pessoas buscam a Hipnoterapia?" defaultOpen>
           <div className="space-y-2">
             <Label>Título</Label>
             <Input
@@ -388,37 +374,6 @@ export default function AdminTreatmentCategoryEdit() {
               value={formData.por_que_tantas_content || ''}
               onChange={(html) => setFormData({ ...formData, por_que_tantas_content: html })}
             />
-          </div>
-        </FormSection>
-
-        <FormSection
-          title="8. Explicação: Hipnoterapia Clínica Avançada vs Abordagens Tradicionais"
-          defaultOpen
-        >
-          <div className="space-y-2">
-            <Label>Título</Label>
-            <Input
-              value={formData.comparacao_title || ''}
-              onChange={(e) => setFormData({ ...formData, comparacao_title: e.target.value })}
-              placeholder="Hipnoterapia Clínica Avançada vs Abordagens Tradicionais"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>Conteúdo</Label>
-            <RichTextEditor
-              value={formData.comparacao_content || ''}
-              onChange={(html) => setFormData({ ...formData, comparacao_content: html })}
-            />
-          </div>
-        </FormSection>
-
-        <FormSection title="9. Comece sua Jornada">
-          <div className="flex items-start gap-3 p-4 bg-blue-50 rounded-lg">
-            <Info className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
-            <p className="text-sm text-muted-foreground">
-              Esta seção reutiliza o mesmo layout e CTA da página de agendamento. Não há campos para
-              configurar — o botão "Agendar Sessão" direciona automaticamente para /agendar.
-            </p>
           </div>
         </FormSection>
 
