@@ -142,9 +142,29 @@ export default function TreatmentDetail() {
       </AccordionSection>
 
       <AccordionSection
-        title={category.resultados_title || 'Resultados'}
+        title={category.sintomas_title || 'Sintomas'}
         accordionEnabled={accordionEnabled}
         className="py-24 bg-white"
+      >
+        {category.sintomas_text?.trim() && (
+          <div
+            className="prose prose-lg max-w-none text-slate-600 [&_h2]:text-slate-900 [&_h2]:font-bold [&_ul]:list-disc [&_ul]:pl-6 [&_li]:mb-2"
+            dangerouslySetInnerHTML={{ __html: category.sintomas_text }}
+          />
+        )}
+        {sintomasImg && (
+          <img
+            src={sintomasImg}
+            alt="Sintomas"
+            className="rounded-xl shadow-md w-full h-64 object-cover mt-6"
+          />
+        )}
+      </AccordionSection>
+
+      <AccordionSection
+        title={category.resultados_title || 'Resultados'}
+        accordionEnabled={accordionEnabled}
+        className="py-24 bg-slate-50"
       >
         {category.resultados_text?.trim() && (
           <div
@@ -168,26 +188,6 @@ export default function TreatmentDetail() {
           </div>
         </section>
       )}
-
-      <AccordionSection
-        title={category.sintomas_title || 'Sintomas'}
-        accordionEnabled={accordionEnabled}
-        className="py-24 bg-slate-50"
-      >
-        {category.sintomas_text?.trim() && (
-          <div
-            className="prose prose-lg max-w-none text-slate-600 [&_h2]:text-slate-900 [&_h2]:font-bold [&_ul]:list-disc [&_ul]:pl-6 [&_li]:mb-2"
-            dangerouslySetInnerHTML={{ __html: category.sintomas_text }}
-          />
-        )}
-        {sintomasImg && (
-          <img
-            src={sintomasImg}
-            alt="Sintomas"
-            className="rounded-xl shadow-md w-full h-64 object-cover mt-6"
-          />
-        )}
-      </AccordionSection>
 
       <ScrollFadeIn>
         <TestimonialsSection customTitle={settings?.testimonials_section_title} />
