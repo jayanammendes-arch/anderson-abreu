@@ -13,17 +13,30 @@ export function ScrollFadeIn({ children, className }: ScrollFadeInProps) {
   useEffect(() => {
     const el = ref.current
     if (!el) return
+
+    let fallbackTimer: ReturnType<typeof setTimeout> | undefined
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setVisible(true)
           observer.disconnect()
+          if (fallbackTimer) clearTimeout(fallbackTimer)
         }
       },
-      { threshold: 0.1 },
+      { threshold: 0.3 },
     )
     observer.observe(el)
-    return () => observer.disconnect()
+
+    fallbackTimer = setTimeout(() => {
+      setVisible(true)
+      observer.disconnect()
+    }, 2000)
+
+    return () => {
+      observer.disconnect()
+      if (fallbackTimer) clearTimeout(fallbackTimer)
+    }
   }, [])
 
   return (
