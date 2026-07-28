@@ -26,9 +26,6 @@ const proseClass =
 const titleHtmlClass =
   'mb-6 [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:text-slate-900 [&_h2]:text-3xl [&_h2]:font-bold [&_h2]:text-slate-900 [&_h3]:text-2xl [&_h3]:font-semibold [&_h3]:text-slate-800 [&_p]:text-3xl [&_p]:font-bold [&_p]:text-slate-900 [&_p]:mb-0'
 
-const ctaTitleHtmlClass =
-  'mb-4 [&_h1]:text-3xl [&_h1]:md:text-4xl [&_h1]:font-bold [&_h1]:text-white [&_h2]:text-3xl [&_h2]:md:text-4xl [&_h2]:font-bold [&_h2]:text-white [&_h3]:text-2xl [&_h3]:font-semibold [&_h3]:text-white [&_p]:text-3xl [&_p]:md:text-4xl [&_p]:font-bold [&_p]:text-white [&_p]:mb-0'
-
 function FramedImage({
   src,
   alt,
@@ -308,28 +305,6 @@ export default function TreatmentDetail() {
           </section>
         </ScrollFadeIn>
       )}
-
-      <ScrollFadeIn>
-        <section className="py-24 bg-gradient-to-br from-blue-900 to-blue-700">
-          <div className="max-w-4xl mx-auto px-6 text-center">
-            <div
-              className={ctaTitleHtmlClass}
-              dangerouslySetInnerHTML={{ __html: category.cta_title || 'Comece sua Jornada' }}
-            />
-            <p className="text-lg text-white/80 mb-8">
-              Agende sua sessão de hipnose clínica e dê o primeiro passo para uma vida mais
-              equilibrada e plena.
-            </p>
-            <Button
-              size="lg"
-              className="rounded-full px-8 bg-white text-blue-900 hover:bg-white/90"
-              onClick={() => navigate('/agendar')}
-            >
-              {agendarText}
-            </Button>
-          </div>
-        </section>
-      </ScrollFadeIn>
     </LandingLayout>
   )
 }
