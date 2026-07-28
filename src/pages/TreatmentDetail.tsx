@@ -17,6 +17,7 @@ import { getTreatmentIcon } from '@/lib/treatment-icons'
 import { Loader2, ArrowRight } from 'lucide-react'
 import { ScrollFadeIn } from '@/components/ScrollFadeIn'
 import { GlobalBlueBand } from '@/components/GlobalBlueBand'
+import { HypnotherapyComparisonSection } from '@/components/HypnotherapyComparisonSection'
 import { getCropPositionCss } from '@/lib/image-position'
 import { cn } from '@/lib/utils'
 
@@ -260,13 +261,15 @@ export default function TreatmentDetail() {
         </ScrollFadeIn>
       )}
 
+      {settings && (
+        <ScrollFadeIn>
+          <HypnotherapyComparisonSection settings={settings} />
+        </ScrollFadeIn>
+      )}
+
       <ScrollFadeIn>
         <TestimonialsSection customTitle={settings?.testimonials_section_title} />
       </ScrollFadeIn>
-
-      {hasPorQueTantas && <ScrollFadeIn></ScrollFadeIn>}
-
-      {hasComparacao && <ScrollFadeIn></ScrollFadeIn>}
     </LandingLayout>
   )
 }
