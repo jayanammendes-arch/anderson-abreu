@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button'
 import { TestimonialsSection } from '@/components/TestimonialsSection'
 import { AccordionSection } from '@/components/treatment/AccordionSection'
 import { getTreatmentIcon } from '@/lib/treatment-icons'
+import { getTreatmentDetailConfig, type SectionConfigItem } from '@/lib/treatment-sections'
 import { Loader2, ArrowLeft } from 'lucide-react'
 import { ScrollFadeIn } from '@/components/ScrollFadeIn'
 import { getImagePositionCss } from '@/lib/image-position'
@@ -75,6 +76,110 @@ export default function TreatmentDetail() {
   const resultadosImg = getTreatmentCategoryImageUrls(category, 'resultados_images')[0]
   const sintomasImg = getTreatmentCategorySintomasImageUrl(category)
 
+  const sectionsConfig = getTreatmentDetailConfig(
+    category.sections_config as SectionConfigItem[] | undefined,
+  )
+
+  const renderDynamicSection = (section: SectionConfigItem) => {
+    if (!section.visible) return null
+
+    switch (section.id) {
+      case 'como_funciona': {
+        const hasText = category.como_funciona_text?.trim()
+        if (!hasText && !comoFuncionaImg) return null
+        return (
+          <AccordionSection
+            id="como-funciona"
+            title={category.como_funciona_title || 'Como Funciona'}
+            accordionEnabled={accordionEnabled}
+            className="py-24 bg-slate-50"
+          >
+            {hasText && (
+              <div
+                className="prose prose-lg max-w-none text-slate-600 [&_h2]:text-slate-900 [&_h2]:font-bold [&_ul]:list-disc [&_ul]:pl-6 [&_li]:mb-2"
+                dangerouslySetInnerHTML={{ __html: category.como_funciona_text! }}
+              />
+            )}
+            {comoFuncionaImg && (
+              <img
+                src={comoFuncionaImg}
+                alt="Como Funciona"
+                className="rounded-xl shadow-md w-full h-64 object-cover mt-6"
+              />
+            )}
+          </AccordionSection>
+        )
+      }
+      case 'sintomas': {
+        const hasText = category.sintomas_text?.trim()
+        if (!hasText) return null
+        return (
+          <AccordionSection
+            title={category.sintomas_title || 'Sintomas'}
+            accordionEnabled={accordionEnabled}
+            className="py-24 bg-white"
+          >
+            <div
+              className="prose prose-lg max-w-none text-slate-600 [&_h2]:text-slate-900 [&_h2]:font-bold [&_ul]:list-disc [&_ul]:pl-6 [&_li]:mb-2"
+              dangerouslySetInnerHTML={{ __html: category.sintomas_text! }}
+            />
+          </AccordionSection>
+        )
+      }
+      case 'sintomas_imagem': {
+        if (!sintomasImg) return null
+        return (
+          <section className="py-24 bg-white">
+            <div className="max-w-4xl mx-auto px-6">
+              <img
+                src={sintomasImg}
+                alt="Sintomas"
+                className="rounded-xl shadow-md w-full h-64 object-cover"
+              />
+            </div>
+          </section>
+        )
+      }
+      case 'resultados': {
+        const hasText = category.resultados_text?.trim()
+        if (!hasText && !resultadosImg) return null
+        return (
+          <AccordionSection
+            title={category.resultados_title || 'Resultados'}
+            accordionEnabled={accordionEnabled}
+            className="py-24 bg-slate-50"
+          >
+            {hasText && (
+              <div
+                className="prose prose-lg max-w-none text-slate-600 [&_h2]:text-slate-900 [&_h2]:font-bold [&_ul]:list-disc [&_ul]:pl-6 [&_li]:mb-2"
+                dangerouslySetInnerHTML={{ __html: category.resultados_text! }}
+              />
+            )}
+            {resultadosImg && (
+              <img
+                src={resultadosImg}
+                alt="Resultados"
+                className="rounded-xl shadow-md w-full h-64 object-cover mt-6"
+              />
+            )}
+          </AccordionSection>
+        )
+      }
+      case 'faixa_destaque': {
+        if (!category.faixa_text?.trim()) return null
+        return (
+          <section className="py-12 bg-gradient-to-r from-blue-600 to-blue-800">
+            <div className="max-w-4xl mx-auto px-6 text-center">
+              <p className="text-2xl md:text-3xl font-bold text-white">{category.faixa_text}</p>
+            </div>
+          </section>
+        )
+      }
+      default:
+        return null
+    }
+  }
+
   return (
     <LandingLayout settings={settings}>
       <ScrollFadeIn>
@@ -94,7 +199,9 @@ export default function TreatmentDetail() {
           )}
           <div className="relative z-10 max-w-7xl mx-auto px-6 py-20 w-full">
             <div className="max-w-2xl">
-              <Icon className="h-12 w-12 text-white/80 mb-6" strokeWidth={1.5} />
+              {!category.hide_icon && (
+                <Icon className="h-12 w-12 text-white/80 mb-6" strokeWidth={1.5} />
+              )}
               <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">{category.name}</h1>
               <p className="text-lg md:text-xl text-white/80 mb-8">{category.short_description}</p>
               <div className="flex flex-wrap gap-4">
@@ -120,74 +227,9 @@ export default function TreatmentDetail() {
         </section>
       </ScrollFadeIn>
 
-      <AccordionSection
-        id="como-funciona"
-        title={category.como_funciona_title || 'Como Funciona'}
-        accordionEnabled={accordionEnabled}
-        className="py-24 bg-slate-50"
-      >
-        {category.como_funciona_text?.trim() && (
-          <div
-            className="prose prose-lg max-w-none text-slate-600 [&_h2]:text-slate-900 [&_h2]:font-bold [&_ul]:list-disc [&_ul]:pl-6 [&_li]:mb-2"
-            dangerouslySetInnerHTML={{ __html: category.como_funciona_text }}
-          />
-        )}
-        {comoFuncionaImg && (
-          <img
-            src={comoFuncionaImg}
-            alt="Como Funciona"
-            className="rounded-xl shadow-md w-full h-64 object-cover mt-6"
-          />
-        )}
-      </AccordionSection>
-
-      <AccordionSection
-        title={category.sintomas_title || 'Sintomas'}
-        accordionEnabled={accordionEnabled}
-        className="py-24 bg-white"
-      >
-        {category.sintomas_text?.trim() && (
-          <div
-            className="prose prose-lg max-w-none text-slate-600 [&_h2]:text-slate-900 [&_h2]:font-bold [&_ul]:list-disc [&_ul]:pl-6 [&_li]:mb-2"
-            dangerouslySetInnerHTML={{ __html: category.sintomas_text }}
-          />
-        )}
-        {sintomasImg && (
-          <img
-            src={sintomasImg}
-            alt="Sintomas"
-            className="rounded-xl shadow-md w-full h-64 object-cover mt-6"
-          />
-        )}
-      </AccordionSection>
-
-      <AccordionSection
-        title={category.resultados_title || 'Resultados'}
-        accordionEnabled={accordionEnabled}
-        className="py-24 bg-slate-50"
-      >
-        {category.resultados_text?.trim() && (
-          <div
-            className="prose prose-lg max-w-none text-slate-600 [&_h2]:text-slate-900 [&_h2]:font-bold [&_ul]:list-disc [&_ul]:pl-6 [&_li]:mb-2"
-            dangerouslySetInnerHTML={{ __html: category.resultados_text }}
-          />
-        )}
-        {resultadosImg && (
-          <img
-            src={resultadosImg}
-            alt="Resultados"
-            className="rounded-xl shadow-md w-full h-64 object-cover mt-6"
-          />
-        )}
-      </AccordionSection>
-
-      {category.faixa_text?.trim() && (
-        <section className="py-12 bg-gradient-to-r from-blue-600 to-blue-800">
-          <div className="max-w-4xl mx-auto px-6 text-center">
-            <p className="text-2xl md:text-3xl font-bold text-white">{category.faixa_text}</p>
-          </div>
-        </section>
-      )}
+      {sectionsConfig.map((section) => (
+        <div key={section.id}>{renderDynamicSection(section)}</div>
+      ))}
 
       <ScrollFadeIn>
         <TestimonialsSection customTitle={settings?.testimonials_section_title} />

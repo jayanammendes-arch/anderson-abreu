@@ -408,6 +408,7 @@ export interface TreatmentCategory {
   faixa_text?: string
   sintomas_text?: string
   sintomas_image?: string
+  hide_icon?: boolean
   sections_config?: Array<{ id: string; visible: boolean }>
   created: string
   updated: string

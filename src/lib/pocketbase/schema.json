@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-28T15:58:16.562Z",
+  "generatedAt": "2026-07-28T16:12:00.802Z",
   "collections": [
     {
       "name": "users",
@@ -2156,6 +2156,12 @@
         {
           "name": "sintomas_image",
           "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "hide_icon",
+          "type": "bool",
           "required": false,
           "system": false
         }
