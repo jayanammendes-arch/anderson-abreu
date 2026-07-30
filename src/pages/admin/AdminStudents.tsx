@@ -5,6 +5,7 @@ import {
   adminGrantAccess,
   adminRevokeAccess,
   adminToggleHypnosis,
+  adminUpdateStudent,
 } from '@/services/admin-students'
 import { getCourses } from '@/services/courses'
 import { Button } from '@/components/ui/button'
@@ -27,6 +28,8 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Switch } from '@/components/ui/switch'
+import { useAuth } from '@/hooks/use-auth'
+import { extractFieldErrors, type FieldErrors } from '@/lib/pocketbase/errors'
 import type { Course, UserAccess } from '@/types'
 
 function formatDate(dateStr: string): string {
@@ -39,6 +42,7 @@ function formatDate(dateStr: string): string {
 }
 
 export default function AdminStudents() {
+  const { isAdmin } = useAuth()
   const [students, setStudents] = useState<any[]>([])
   const [courses, setCourses] = useState<Course[]>([])
   const [access, setAccess] = useState<UserAccess[]>([])
@@ -46,6 +50,13 @@ export default function AdminStudents() {
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(true)
   const [accessLoading, setAccessLoading] = useState(false)
+  const [editName, setEditName] = useState('')
+  const [editEmail, setEditEmail] = useState('')
+  const [editPhone, setEditPhone] = useState('')
+  const [editInstagram, setEditInstagram] = useState('')
+  const [editBirthDate, setEditBirthDate] = useState('')
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
+  const [savingProfile, setSavingProfile] = useState(false)
 
   const loadStudents = useCallback(async () => {
     setLoading(true)
@@ -69,6 +80,12 @@ export default function AdminStudents() {
 
   const openStudent = async (student: any) => {
     setSelected(student)
+    setFieldErrors({})
+    setEditName(student.name || '')
+    setEditEmail(student.email || '')
+    setEditPhone(student.phone || '')
+    setEditInstagram(student.instagram_handle || '')
+    setEditBirthDate(student.birth_date ? student.birth_date.split(' ')[0] : '')
     setAccessLoading(true)
     try {
       setAccess(await adminGetStudentAccess(student.id))
@@ -76,6 +93,31 @@ export default function AdminStudents() {
       setAccess([])
     } finally {
       setAccessLoading(false)
+    }
+  }
+
+  const handleSaveProfile = async () => {
+    if (!selected) return
+    setSavingProfile(true)
+    setFieldErrors({})
+    try {
+      const updated = await adminUpdateStudent(selected.id, {
+        name: editName,
+        email: editEmail,
+        phone: editPhone,
+        instagram_handle: editInstagram,
+        birth_date: editBirthDate || undefined,
+      })
+      setSelected({ ...selected, ...updated })
+      toast.success('Dados atualizados com sucesso!')
+    } catch (err) {
+      const errors = extractFieldErrors(err)
+      if (Object.keys(errors).length > 0) {
+        setFieldErrors(errors)
+      }
+      toast.error('Erro ao atualizar dados do aluno')
+    } finally {
+      setSavingProfile(false)
     }
   }
 
@@ -125,33 +167,94 @@ export default function AdminStudents() {
 
         <Card className="bg-card/50 border-border/50">
           <CardContent className="p-4 space-y-3">
-            <h3 className="font-semibold text-foreground flex items-center gap-2">
-              <UserCircle className="h-4 w-4 text-primary" /> Dados de Cadastro
-            </h3>
+            <div className="flex items-center justify-between">
+              <h3 className="font-semibold text-foreground flex items-center gap-2">
+                <UserCircle className="h-4 w-4 text-primary" /> Dados de Cadastro
+              </h3>
+              {isAdmin && (
+                <Button size="sm" onClick={handleSaveProfile} disabled={savingProfile}>
+                  {savingProfile && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  Salvar
+                </Button>
+              )}
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className="flex items-center gap-2 text-sm">
-                <Mail className="h-4 w-4 text-muted-foreground shrink-0" />
-                <span className="text-muted-foreground">Email:</span>
-                <span className="text-foreground font-medium">{selected.email || '—'}</span>
+              <div className="space-y-1">
+                <label className="text-xs text-muted-foreground">Nome</label>
+                {isAdmin ? (
+                  <>
+                    <Input
+                      value={editName}
+                      onChange={(e) => setEditName(e.target.value)}
+                      className="h-9"
+                    />
+                    {fieldErrors.name && (
+                      <p className="text-xs text-destructive">{fieldErrors.name}</p>
+                    )}
+                  </>
+                ) : (
+                  <p className="text-sm text-foreground font-medium">{selected.name || '—'}</p>
+                )}
               </div>
-              <div className="flex items-center gap-2 text-sm">
-                <Phone className="h-4 w-4 text-muted-foreground shrink-0" />
-                <span className="text-muted-foreground">Telefone:</span>
-                <span className="text-foreground font-medium">{selected.phone || '—'}</span>
+              <div className="space-y-1">
+                <label className="text-xs text-muted-foreground">Email</label>
+                {isAdmin ? (
+                  <>
+                    <Input
+                      type="email"
+                      value={editEmail}
+                      onChange={(e) => setEditEmail(e.target.value)}
+                      className="h-9"
+                    />
+                    {fieldErrors.email && (
+                      <p className="text-xs text-destructive">{fieldErrors.email}</p>
+                    )}
+                  </>
+                ) : (
+                  <p className="text-sm text-foreground font-medium">{selected.email || '—'}</p>
+                )}
               </div>
-              <div className="flex items-center gap-2 text-sm">
-                <Instagram className="h-4 w-4 text-muted-foreground shrink-0" />
-                <span className="text-muted-foreground">Instagram:</span>
-                <span className="text-foreground font-medium">
-                  {selected.instagram_handle ? `@${selected.instagram_handle}` : '—'}
-                </span>
+              <div className="space-y-1">
+                <label className="text-xs text-muted-foreground">Telefone</label>
+                {isAdmin ? (
+                  <Input
+                    value={editPhone}
+                    onChange={(e) => setEditPhone(e.target.value)}
+                    className="h-9"
+                  />
+                ) : (
+                  <p className="text-sm text-foreground font-medium">{selected.phone || '—'}</p>
+                )}
               </div>
-              <div className="flex items-center gap-2 text-sm">
-                <Calendar className="h-4 w-4 text-muted-foreground shrink-0" />
-                <span className="text-muted-foreground">Nascimento:</span>
-                <span className="text-foreground font-medium">
-                  {formatDate(selected.birth_date)}
-                </span>
+              <div className="space-y-1">
+                <label className="text-xs text-muted-foreground">Instagram</label>
+                {isAdmin ? (
+                  <Input
+                    value={editInstagram}
+                    onChange={(e) => setEditInstagram(e.target.value)}
+                    className="h-9"
+                    placeholder="@usuario"
+                  />
+                ) : (
+                  <p className="text-sm text-foreground font-medium">
+                    {selected.instagram_handle ? `@${selected.instagram_handle}` : '—'}
+                  </p>
+                )}
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs text-muted-foreground">Nascimento</label>
+                {isAdmin ? (
+                  <Input
+                    type="date"
+                    value={editBirthDate}
+                    onChange={(e) => setEditBirthDate(e.target.value)}
+                    className="h-9"
+                  />
+                ) : (
+                  <p className="text-sm text-foreground font-medium">
+                    {formatDate(selected.birth_date)}
+                  </p>
+                )}
               </div>
               <div className="flex items-center gap-2 text-sm">
                 <Calendar className="h-4 w-4 text-muted-foreground shrink-0" />

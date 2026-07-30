@@ -22,3 +22,14 @@ export const adminGetHypnosisUsers = () =>
 
 export const adminToggleHypnosis = (userId: string, value: boolean) =>
   pb.collection('users').update(userId, { is_hypnosis: value })
+
+export const adminUpdateStudent = (
+  userId: string,
+  data: {
+    name?: string
+    email?: string
+    phone?: string
+    instagram_handle?: string
+    birth_date?: string
+  },
+) => pb.collection('users').update(userId, data)
