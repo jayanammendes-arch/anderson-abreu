@@ -44,14 +44,11 @@ migrate(
       new Collection({
         name: 'pre_hypnosis_forms',
         type: 'base',
-        listRule:
-          "@request.auth.id != '' && (user = @request.auth.id || @request.auth.is_admin = true)",
-        viewRule:
-          "@request.auth.id != '' && (user = @request.auth.id || @request.auth.is_admin = true)",
-        createRule: "@request.auth.id != '' && user = @request.auth.id",
-        updateRule:
-          "@request.auth.id != '' && (user = @request.auth.id || @request.auth.is_admin = true)",
-        deleteRule: '@request.auth.is_admin = true',
+        listRule: '@request.auth.is_admin = true',
+        viewRule: '@request.auth.id = user || @request.auth.is_admin = true',
+        createRule: "@request.auth.id != ''",
+        updateRule: null,
+        deleteRule: null,
         fields: [
           {
             name: 'user',
@@ -61,8 +58,12 @@ migrate(
             maxSelect: 1,
             cascadeDelete: true,
           },
-          { name: 'responses', type: 'json', required: false },
-          { name: 'completed', type: 'bool', required: false },
+          { name: 'nome', type: 'text', required: true },
+          { name: 'telefone', type: 'text', required: false },
+          { name: 'motivo_da_busca', type: 'text', required: true },
+          { name: 'informacoes_de_saude', type: 'text', required: false },
+          { name: 'medicamentos', type: 'text', required: false },
+          { name: 'expectativas', type: 'text', required: false },
           { name: 'created', type: 'autodate', onCreate: true, onUpdate: false },
           { name: 'updated', type: 'autodate', onCreate: true, onUpdate: true },
         ],

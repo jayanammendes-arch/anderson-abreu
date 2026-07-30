@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-30T17:35:12.345Z",
+  "generatedAt": "2026-07-30T17:53:32.500Z",
   "collections": [
     {
       "name": "users",
@@ -57,12 +57,6 @@
           "system": false
         },
         {
-          "name": "is_hypnosis",
-          "type": "bool",
-          "required": false,
-          "system": false
-        },
-        {
           "name": "birth_date",
           "type": "date",
           "required": false,
@@ -79,12 +73,18 @@
           "type": "text",
           "required": false,
           "system": false
+        },
+        {
+          "name": "level",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": ["Prata", "Ouro", "Diamante"]
         }
       ],
       "indexes": [
         "CREATE UNIQUE INDEX `idx_tokenKey__pb_users_auth_` ON `users` (`tokenKey`)",
-        "CREATE UNIQUE INDEX `idx_email__pb_users_auth_` ON `users` (`email`) WHERE `email` != ''",
-        "CREATE INDEX `idx_users_is_hypnosis` ON `users` (is_hypnosis)"
+        "CREATE UNIQUE INDEX `idx_email__pb_users_auth_` ON `users` (`email`) WHERE `email` != ''"
       ]
     },
     {
@@ -233,6 +233,13 @@
           "type": "file",
           "required": false,
           "system": false
+        },
+        {
+          "name": "level",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": ["Prata", "Ouro", "Diamante", "all"]
         }
       ],
       "indexes": [
@@ -2875,6 +2882,12 @@
           "required": false,
           "system": false,
           "selectValues": ["site", "social"]
+        },
+        {
+          "name": "treatments",
+          "type": "json",
+          "required": false,
+          "system": false
         }
       ],
       "indexes": [
@@ -3004,6 +3017,77 @@
         }
       ],
       "indexes": ["CREATE INDEX idx_crm_purchases_lead ON crm_purchases (lead)"]
+    },
+    {
+      "name": "pre_hypnosis_forms",
+      "type": "base",
+      "apiRules": {
+        "list": "@request.auth.is_admin = true",
+        "view": "@request.auth.id = user || @request.auth.is_admin = true",
+        "create": "@request.auth.id != ''",
+        "update": null,
+        "delete": null
+      },
+      "fields": [
+        {
+          "name": "user",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "users"
+        },
+        {
+          "name": "nome",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "telefone",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "motivo_da_busca",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "informacoes_de_saude",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "medicamentos",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "expectativas",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": ["CREATE INDEX idx_pre_hypnosis_forms_user ON pre_hypnosis_forms (user)"]
     }
   ]
 }

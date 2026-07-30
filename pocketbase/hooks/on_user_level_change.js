@@ -8,16 +8,7 @@ onRecordAfterUpdateSuccess((e) => {
   var userId = e.record.id
   var userName = e.record.getString('name') || 'Aluno'
 
-  var message = ''
-  if (newLevel === 'Ouro') {
-    message = 'Parabéns! Seu nível foi elevado para Ouro. Você agora tem acesso à comunidade!'
-  } else if (newLevel === 'Diamante') {
-    message = 'Parabéns! Seu nível foi elevado para Diamante. Aproveite todos os benefícios!'
-  } else if (newLevel === 'Prata') {
-    message = 'Seu nível foi alterado para Prata.'
-  } else {
-    message = 'Seu nível foi atualizado para ' + newLevel + '.'
-  }
+  var message = 'Parabéns! Seu nível foi atualizado para ' + newLevel + '.'
 
   try {
     var notifCol = $app.findCollectionByNameOrId('notifications')

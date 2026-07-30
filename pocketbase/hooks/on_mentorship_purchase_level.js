@@ -19,11 +19,7 @@ onRecordAfterCreateSuccess((e) => {
     var user = $app.findRecordById('users', userId)
     var currentLevel = user.getString('level') || 'Prata'
 
-    if (currentLevel === 'Prata') {
-      user.set('level', 'Ouro')
-      $app.saveNoValidate(user)
-      $app.logger().info('User level upgraded to Ouro via mentorship purchase', 'userId', userId)
-    } else if (currentLevel === 'Ouro') {
+    if (currentLevel === 'Ouro') {
       user.set('level', 'Diamante')
       $app.saveNoValidate(user)
       $app
