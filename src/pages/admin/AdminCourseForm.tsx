@@ -40,6 +40,7 @@ const emptyForm = {
   category: '',
   order: 0,
   access_type: 'paid',
+  level: 'all',
   catchy_title: '',
   public_description: '',
   buy_button_text: '',
@@ -105,6 +106,7 @@ export default function AdminCourseForm() {
         category: c.category || '',
         order: c.order || 0,
         access_type: c.access_type || 'paid',
+        level: c.level || 'all',
         catchy_title: c.catchy_title || '',
         public_description: c.public_description || '',
         buy_button_text: c.buy_button_text || '',
@@ -148,6 +150,7 @@ export default function AdminCourseForm() {
       fd.append('is_available', String(form.is_available))
       fd.append('category', form.category)
       fd.append('access_type', form.access_type)
+      fd.append('level', form.level)
       fd.append('catchy_title', form.catchy_title)
       fd.append('public_description', form.public_description)
       fd.append('buy_button_text', form.buy_button_text)
@@ -234,6 +237,22 @@ export default function AdminCourseForm() {
                   <SelectItem value="free">Livre</SelectItem>
                   <SelectItem value="paid">Pago</SelectItem>
                   <SelectItem value="hypnosis">Exclusivo hipnose</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Nível de Acesso</Label>
+              <Select value={form.level} onValueChange={(v) => setForm({ ...form, level: v })}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos os níveis</SelectItem>
+                  <SelectItem value="Prata">Prata</SelectItem>
+                  <SelectItem value="Ouro">Ouro</SelectItem>
+                  <SelectItem value="Diamante">Diamante</SelectItem>
                 </SelectContent>
               </Select>
             </div>

@@ -1,3 +1,14 @@
+export type UserLevel = 'Prata' | 'Ouro' | 'Diamante'
+
+export interface PreHypnosisForm {
+  id: string
+  user: string
+  responses: Record<string, string>
+  completed: boolean
+  created: string
+  updated: string
+}
+
 export interface CrmLead {
   id: string
   name: string
@@ -8,6 +19,7 @@ export interface CrmLead {
   source?: 'site' | 'social'
   notes: string
   linked_user: string
+  treatments?: string[]
   created: string
   updated: string
   expand?: {
@@ -18,6 +30,7 @@ export interface CrmLead {
       phone?: string
       birth_date?: string
       instagram_handle?: string
+      level?: string
     }
   }
 }

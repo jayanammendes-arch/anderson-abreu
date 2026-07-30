@@ -20,6 +20,7 @@ import {
 } from '@/components/ui/select'
 import { CRM_STAGES, createCrmLead } from '@/services/crm'
 import { getErrorMessage } from '@/lib/pocketbase/errors'
+import { TreatmentMultiSelect } from '@/components/crm/TreatmentMultiSelect'
 
 interface CrmLeadFormDialogProps {
   open: boolean
@@ -35,6 +36,7 @@ export function CrmLeadFormDialog({ open, onOpenChange, onCreated }: CrmLeadForm
   const [stage, setStage] = useState<string>(CRM_STAGES[0])
   const [notes, setNotes] = useState('')
   const [source, setSource] = useState<'social' | 'site'>('social')
+  const [treatments, setTreatments] = useState<string[]>([])
   const [submitting, setSubmitting] = useState(false)
 
   const handleSubmit = async (e: FormEvent) => {
@@ -53,6 +55,7 @@ export function CrmLeadFormDialog({ open, onOpenChange, onCreated }: CrmLeadForm
         stage,
         notes,
         source,
+        treatments,
       })
       toast.success('Lead criado com sucesso!')
       setName('')
@@ -168,6 +171,9 @@ export function CrmLeadFormDialog({ open, onOpenChange, onCreated }: CrmLeadForm
               rows={3}
               className="bg-background border-border text-foreground"
             />
+          </div>
+          <div className="pt-2">
+            <TreatmentMultiSelect values={treatments} onChange={setTreatments} />
           </div>
           <DialogFooter>
             <Button

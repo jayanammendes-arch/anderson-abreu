@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Send, Loader2 } from 'lucide-react'
 import type { CommunityInteraction } from '@/types'
+import { LevelBadge } from '@/components/LevelBadge'
 
 export function CommentList({
   postId,
@@ -49,6 +50,7 @@ export function CommentList({
             <div className="flex-1 rounded-lg bg-muted/50 px-3 py-2">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-medium">{u?.name || 'Usuário'}</span>
+                {u?.level && <LevelBadge level={u.level} size="sm" />}
                 <span className="text-xs text-muted-foreground">
                   {new Date(c.created).toLocaleDateString('pt-BR')}
                 </span>

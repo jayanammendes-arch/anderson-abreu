@@ -4,7 +4,7 @@ import {
   adminGetStudentAccess,
   adminGrantAccess,
   adminRevokeAccess,
-  adminToggleHypnosis,
+  adminUpdateLevel,
   adminUpdateStudent,
 } from '@/services/admin-students'
 import { getCourses } from '@/services/courses'
@@ -19,7 +19,6 @@ import {
   Lock,
   Unlock,
   Loader2,
-  Sparkles,
   Phone,
   Instagram,
   Calendar,
@@ -27,8 +26,26 @@ import {
   UserCircle,
 } from 'lucide-react'
 import { toast } from 'sonner'
-import { Switch } from '@/components/ui/switch'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { useAuth } from '@/hooks/use-auth'
+import { useRealtime } from '@/hooks/use-realtime'
+import { LevelBadge } from '@/components/LevelBadge'
 import { extractFieldErrors, type FieldErrors } from '@/lib/pocketbase/errors'
 import type { Course, UserAccess } from '@/types'
 
@@ -57,6 +74,7 @@ export default function AdminStudents() {
   const [editBirthDate, setEditBirthDate] = useState('')
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [savingProfile, setSavingProfile] = useState(false)
+  const [pendingLevel, setPendingLevel] = useState<string | null>(null)
 
   const loadStudents = useCallback(async () => {
     setLoading(true)
@@ -72,6 +90,21 @@ export default function AdminStudents() {
   useEffect(() => {
     loadStudents()
   }, [loadStudents])
+
+  useRealtime('users', () => loadStudents())
+
+  const handleLevelChange = async () => {
+    if (!selected || !pendingLevel) return
+    try {
+      await adminUpdateLevel(selected.id, pendingLevel)
+      setSelected({ ...selected, level: pendingLevel })
+      toast.success(`Nível alterado para ${pendingLevel}`)
+    } catch {
+      toast.error('Erro ao alterar nível')
+    } finally {
+      setPendingLevel(null)
+    }
+  }
   useEffect(() => {
     getCourses()
       .then(setCourses)
@@ -155,11 +188,7 @@ export default function AdminStudents() {
           <div>
             <h1 className="text-2xl font-bold flex items-center gap-2 text-foreground">
               {selected.name || 'Aluno'}
-              {selected.is_hypnosis && (
-                <Badge className="bg-purple-500/90 text-white">
-                  <Sparkles className="mr-1 h-3 w-3" /> Hipnose
-                </Badge>
-              )}
+              {selected.level && <LevelBadge level={selected.level} size="md" />}
             </h1>
             <p className="text-sm text-muted-foreground">{selected.email}</p>
           </div>
@@ -268,27 +297,41 @@ export default function AdminStudents() {
         <Card className="bg-card/50 border-border/50 p-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="font-semibold flex items-center gap-2 text-foreground">
-                <Sparkles className="h-4 w-4 text-purple-500" /> Tag Hipnose
-              </h3>
+              <h3 className="font-semibold text-foreground">Nível do Aluno</h3>
               <p className="text-sm text-muted-foreground">
-                Permite acesso a cursos Exclusivo Hipnose
+                Define o acesso do aluno na plataforma
               </p>
             </div>
-            <Switch
-              checked={!!selected.is_hypnosis}
-              onCheckedChange={async (checked) => {
-                try {
-                  await adminToggleHypnosis(selected.id, checked)
-                  setSelected({ ...selected, is_hypnosis: checked })
-                  toast.success(checked ? 'Tag Hipnose ativada' : 'Tag Hipnose desativada')
-                } catch {
-                  toast.error('Erro ao atualizar tag')
-                }
-              }}
-            />
+            {isAdmin && (
+              <Select value={selected.level || 'Prata'} onValueChange={(v) => setPendingLevel(v)}>
+                <SelectTrigger className="w-36">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Prata">Prata</SelectItem>
+                  <SelectItem value="Ouro">Ouro</SelectItem>
+                  <SelectItem value="Diamante">Diamante</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
           </div>
         </Card>
+
+        <AlertDialog open={!!pendingLevel} onOpenChange={(open) => !open && setPendingLevel(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Confirmar alteração de nível</AlertDialogTitle>
+              <AlertDialogDescription>
+                Deseja alterar o nível do aluno para {pendingLevel}? Esta ação pode afetar o acesso
+                a conteúdos da plataforma.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction onClick={handleLevelChange}>Confirmar</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
 
         {accessLoading ? (
           <div className="flex justify-center py-8">
@@ -379,15 +422,15 @@ export default function AdminStudents() {
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1">
-                <h3 className="font-semibold flex items-center gap-2 text-foreground">
-                  {s.name || 'Sem nome'}
-                  {s.is_hypnosis && (
-                    <Badge className="bg-purple-500/90 text-white text-xs">
-                      <Sparkles className="mr-1 h-3 w-3" /> Hipnose
-                    </Badge>
-                  )}
-                </h3>
-                <p className="text-sm text-muted-foreground">{s.email}</p>
+                <div>
+                  <h3 className="font-semibold flex items-center gap-2 text-foreground">
+                    {s.name || 'Sem nome'}
+                  </h3>
+                  <div className="mt-0.5">
+                    <LevelBadge level={s.level || 'Prata'} size="sm" />
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-0.5">{s.email}</p>
+                </div>
               </div>
             </Card>
           ))

@@ -28,6 +28,7 @@ export const createCrmLead = (data: {
   stage: string
   notes?: string
   source?: CrmSource
+  treatments?: string[]
 }) => pb.collection('crm_leads').create(data)
 
 export const updateCrmLeadStage = (id: string, stage: string) =>

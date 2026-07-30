@@ -43,6 +43,8 @@ import AdminTreatmentCategoryEdit from '@/pages/admin/AdminTreatmentCategoryEdit
 import AdminBlog from '@/pages/admin/AdminBlog'
 import CourseDetail from '@/pages/CourseDetail'
 import CourseDetailsPage from '@/pages/CourseDetailsPage'
+import ComecePorAqui from '@/pages/ComecePorAqui'
+import PreHypnosisForm from '@/pages/PreHypnosisForm'
 import CursosPage from '@/pages/CursosPage'
 import Profile from '@/pages/Profile'
 import Certificates from '@/pages/Certificates'
@@ -112,6 +114,8 @@ const App = () => (
               <Route path="profile" element={<Profile />} />
               <Route path="certificates" element={<Certificates />} />
               <Route path="roda-da-vida" element={<RodaDaVida />} />
+              <Route path="comece-por-aqui" element={<ComecePorAqui />} />
+              <Route path="pre-hipnose" element={<PreHypnosisForm />} />
               <Route path="curso/:courseId" element={<CourseDetail />} />
             </Route>
             <Route path="*" element={<NotFound />} />

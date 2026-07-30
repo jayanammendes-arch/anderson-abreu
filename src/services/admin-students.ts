@@ -17,11 +17,11 @@ export const adminGrantAccess = (userId: string, courseId: string) =>
 
 export const adminRevokeAccess = (accessId: string) => pb.collection('user_access').delete(accessId)
 
-export const adminGetHypnosisUsers = () =>
-  pb.collection('users').getFullList({ filter: 'is_hypnosis = true', sort: '-created' })
+export const adminUpdateLevel = (userId: string, level: string) =>
+  pb.collection('users').update(userId, { level })
 
-export const adminToggleHypnosis = (userId: string, value: boolean) =>
-  pb.collection('users').update(userId, { is_hypnosis: value })
+export const adminGetUsersByLevel = (level: string) =>
+  pb.collection('users').getFullList({ filter: `level = "${level}"`, sort: '-created' })
 
 export const adminUpdateStudent = (
   userId: string,

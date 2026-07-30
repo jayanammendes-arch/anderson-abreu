@@ -32,6 +32,8 @@ import {
 import { getLifeWheelCategories, getLifeWheelAssessments } from '@/services/life-wheel'
 import { getCertificates } from '@/services/certificates'
 import { CrmDetailInteractions } from '@/components/crm/CrmDetailInteractions'
+import { CrmPreHypnosisForm } from '@/components/crm/CrmPreHypnosisForm'
+import { CrmLeadTreatments } from '@/components/crm/CrmLeadTreatments'
 import { CrmDetailLifeWheel } from '@/components/crm/CrmDetailLifeWheel'
 import { CrmLinkedUserData } from '@/components/crm/CrmLinkedUserData'
 import { CrmLeadTimeline } from '@/components/crm/CrmLeadTimeline'
@@ -252,6 +254,14 @@ export default function CrmLeadDetailPage() {
       </div>
       {lead.linked_user && (
         <>
+          <section>
+            <h3 className="font-semibold text-foreground mb-2">Formulário Pré-Hipnose</h3>
+            <CrmPreHypnosisForm userId={lead.linked_user} />
+          </section>
+          <section>
+            <h3 className="font-semibold text-foreground mb-2">Tratamentos de Interesse</h3>
+            <CrmLeadTreatments treatments={lead.treatments} />
+          </section>
           <section>
             <h3 className="font-semibold text-foreground mb-2">Cursos &amp; Progresso</h3>
             {courses.length === 0 ? (

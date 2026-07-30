@@ -37,6 +37,7 @@ import {
 } from 'lucide-react'
 import type { CommunityPost, CommunityInteraction } from '@/types'
 import { cn } from '@/lib/utils'
+import { LevelBadge } from '@/components/LevelBadge'
 
 interface PostCardProps {
   post: CommunityPost
@@ -131,6 +132,7 @@ export function PostCard({ post, likes, comments, followId, onRefresh }: PostCar
             <button onClick={openProfile} className="font-medium hover:underline truncate">
               {author?.name || 'Usuário'}
             </button>
+            {author?.level && <LevelBadge level={author.level} size="sm" />}
             {authorIsAdmin && (
               <Badge variant="default" className="text-xs gap-1">
                 <Shield className="h-3 w-3" /> Admin
