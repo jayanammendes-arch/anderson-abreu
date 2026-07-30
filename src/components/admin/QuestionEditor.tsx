@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Save, Loader2, Trash2, Copy } from 'lucide-react'
+import { Trash2, Copy } from 'lucide-react'
 import { QUESTION_TYPES, OPTIONS_TYPES, SCALE_TYPES } from '@/lib/question-types'
 import { QuestionOptionsEditor } from './QuestionOptionsEditor'
 import { QuestionScaleEditor } from './QuestionScaleEditor'
@@ -19,22 +19,12 @@ import type { ReactNode } from 'react'
 interface Props {
   question: FormQuestion
   onChange: (patch: Partial<FormQuestion>) => void
-  onSave: () => void
   onDelete: () => void
-  onDuplicate: () => void
-  saving?: boolean
+  onDuplicate?: () => void
   dragHandle?: ReactNode
 }
 
-export function QuestionEditor({
-  question,
-  onChange,
-  onSave,
-  onDelete,
-  onDuplicate,
-  saving,
-  dragHandle,
-}: Props) {
+export function QuestionEditor({ question, onChange, onDelete, onDuplicate, dragHandle }: Props) {
   const showOptions = OPTIONS_TYPES.includes(question.question_type)
   const showScale = SCALE_TYPES.includes(question.question_type)
 
@@ -93,22 +83,14 @@ export function QuestionEditor({
         </div>
       )}
       <div className="md:col-span-2 flex items-center justify-between pt-1">
-        <Button type="button" size="sm" variant="ghost" onClick={onDuplicate}>
-          <Copy className="mr-1 h-3 w-3" /> Duplicar
+        {onDuplicate && (
+          <Button type="button" size="sm" variant="ghost" onClick={onDuplicate}>
+            <Copy className="mr-1 h-3 w-3" /> Duplicar
+          </Button>
+        )}
+        <Button type="button" size="sm" variant="ghost" onClick={onDelete} className="ml-auto">
+          <Trash2 className="h-3 w-3 text-destructive" />
         </Button>
-        <div className="flex gap-2">
-          <Button type="button" size="sm" variant="outline" onClick={onSave} disabled={saving}>
-            {saving ? (
-              <Loader2 className="mr-1 h-3 w-3 animate-spin" />
-            ) : (
-              <Save className="mr-1 h-3 w-3" />
-            )}
-            Salvar
-          </Button>
-          <Button type="button" size="sm" variant="ghost" onClick={onDelete}>
-            <Trash2 className="h-3 w-3 text-destructive" />
-          </Button>
-        </div>
       </div>
     </div>
   )

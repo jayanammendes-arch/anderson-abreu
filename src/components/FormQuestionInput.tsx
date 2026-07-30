@@ -155,10 +155,6 @@ export function FormQuestionInput({
       )}
       {q.question_type === 'linear_scale' && (
         <div className="space-y-2">
-          <div className="flex justify-between text-xs text-muted-foreground">
-            <span>{q.scale_label_left || ''}</span>
-            <span>{q.scale_label_right || ''}</span>
-          </div>
           <RadioGroup
             value={answer != null ? String(answer) : ''}
             onValueChange={(v) => onAnswer(Number(v))}
@@ -171,6 +167,12 @@ export function FormQuestionInput({
               </div>
             ))}
           </RadioGroup>
+          {(q.scale_label_left || q.scale_label_right) && (
+            <div className="flex justify-between text-xs text-muted-foreground">
+              <span>{q.scale_label_left}</span>
+              <span>{q.scale_label_right}</span>
+            </div>
+          )}
         </div>
       )}
       {q.question_type === 'date' && (

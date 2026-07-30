@@ -5,9 +5,7 @@ import {
   createForm,
   updateForm,
   getFormQuestions,
-  createFormQuestion,
-  updateFormQuestion,
-  deleteFormQuestion,
+  bulkSaveFormQuestions,
 } from '@/services/forms'
 import { QuestionEditor } from '@/components/admin/QuestionEditor'
 import { SortableList } from '@/components/admin/SortableList'
@@ -17,7 +15,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
 import { Card, CardContent } from '@/components/ui/card'
-import { ArrowLeft, Save, Loader2, Plus } from 'lucide-react'
+import { ArrowLeft, Save, Loader2, Plus, SaveAll } from 'lucide-react'
 import { toast } from 'sonner'
 import type { FormQuestion } from '@/types'
 
@@ -29,7 +27,7 @@ export default function AdminFormEdit() {
   const isEdit = !!formId
   const [loading, setLoading] = useState(isEdit)
   const [savingForm, setSavingForm] = useState(false)
-  const [savingQuestionId, setSavingQuestionId] = useState<string | null>(null)
+  const [savingAll, setSavingAll] = useState(false)
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [isActive, setIsActive] = useState(true)
@@ -88,76 +86,76 @@ export default function AdminFormEdit() {
         id: genId(),
         form: formId || '',
         question_text: '',
-        question_type: 'open_text',
+        question_type: 'short_text',
         options: [],
         order: prev.length,
         required: true,
+        description: '',
+        shuffle_options: false,
+        scale_min: 1,
+        scale_max: 5,
+        scale_label_left: '',
+        scale_label_right: '',
+        has_other: false,
         created: '',
         updated: '',
       },
     ])
 
-  const saveQuestion = async (q: FormQuestion) => {
-    if (!q.question_text.trim()) {
-      toast.error('Texto da pergunta é obrigatório')
-      return
-    }
+  const duplicateQuestion = (q: FormQuestion) =>
+    setQuestions((prev) => {
+      const idx = prev.findIndex((p) => p.id === q.id)
+      const copy: FormQuestion = {
+        ...q,
+        id: genId(),
+        question_text: `${q.question_text} (cópia)`,
+        created: '',
+        updated: '',
+      }
+      const next = [...prev]
+      next.splice(idx + 1, 0, copy)
+      return next.map((p, i) => ({ ...p, order: i }))
+    })
+
+  const removeQuestion = (q: FormQuestion) => {
+    if (!confirm('Excluir esta pergunta?')) return
+    setQuestions((prev) => prev.filter((p) => p.id !== q.id))
+    toast.success('Pergunta removida. Clique em "Salvar Tudo" para confirmar.')
+  }
+
+  const handleReorder = (reordered: FormQuestion[]) => {
+    setQuestions(reordered.map((q, i) => ({ ...q, order: i })))
+  }
+
+  const handleSaveAll = async () => {
     if (!formId) {
       toast.error('Salve o formulário primeiro')
       return
     }
-    setSavingQuestionId(q.id)
-    try {
-      if (q.id.startsWith('temp-')) {
-        const created = await createFormQuestion({
-          form: formId,
-          question_text: q.question_text,
-          question_type: q.question_type,
-          options: q.options || [],
-          order: q.order,
-          required: q.required,
-        })
-        setQuestions((prev) =>
-          prev.map((p) => (p.id === q.id ? { ...p, ...(created as FormQuestion) } : p)),
-        )
-      } else {
-        await updateFormQuestion(q.id, {
-          question_text: q.question_text,
-          question_type: q.question_type,
-          options: q.options || [],
-          order: q.order,
-          required: q.required,
-        })
-      }
-      toast.success('Pergunta salva!')
-    } catch {
-      toast.error('Erro ao salvar pergunta')
-    } finally {
-      setSavingQuestionId(null)
-    }
-  }
-
-  const removeQuestion = async (q: FormQuestion) => {
-    if (!confirm('Excluir esta pergunta?')) return
-    if (!q.id.startsWith('temp-')) {
-      try {
-        await deleteFormQuestion(q.id)
-      } catch {
-        toast.error('Erro ao excluir')
+    for (const q of questions) {
+      if (!q.question_text.trim()) {
+        toast.error('Todas as perguntas devem ter texto')
         return
       }
-    }
-    setQuestions((prev) => prev.filter((p) => p.id !== q.id))
-    toast.success('Pergunta excluída')
-  }
-
-  const handleReorder = (reordered: FormQuestion[]) => {
-    setQuestions(reordered)
-    reordered.forEach((q, i) => {
-      if (!q.id.startsWith('temp-')) {
-        updateFormQuestion(q.id, { order: i }).catch(() => {})
+      if (q.question_type === 'linear_scale') {
+        const sMin = q.scale_min ?? 1
+        const sMax = q.scale_max ?? 5
+        if (sMin >= sMax) {
+          toast.error('Escala linear: mínimo deve ser menor que máximo')
+          return
+        }
       }
-    })
+    }
+    setSavingAll(true)
+    try {
+      const result = await bulkSaveFormQuestions(formId, questions)
+      setQuestions(result.questions as FormQuestion[])
+      toast.success('Todas as perguntas salvas!')
+    } catch {
+      toast.error('Erro ao salvar perguntas')
+    } finally {
+      setSavingAll(false)
+    }
   }
 
   if (loading)
@@ -216,11 +214,21 @@ export default function AdminFormEdit() {
       {isEdit && (
         <Card className="bg-card/50 border-border/50">
           <CardContent className="space-y-4 pt-6">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-2">
               <Label className="text-base font-semibold">Perguntas</Label>
-              <Button type="button" variant="outline" size="sm" onClick={addQuestion}>
-                <Plus className="mr-1 h-4 w-4" /> Adicionar Pergunta
-              </Button>
+              <div className="flex gap-2">
+                <Button type="button" variant="outline" size="sm" onClick={addQuestion}>
+                  <Plus className="mr-1 h-4 w-4" /> Adicionar
+                </Button>
+                <Button type="button" size="sm" onClick={handleSaveAll} disabled={savingAll}>
+                  {savingAll ? (
+                    <Loader2 className="mr-1 h-4 w-4 animate-spin" />
+                  ) : (
+                    <SaveAll className="mr-1 h-4 w-4" />
+                  )}
+                  Salvar Tudo
+                </Button>
+              </div>
             </div>
             <SortableList
               items={questions}
@@ -232,9 +240,8 @@ export default function AdminFormEdit() {
                   <QuestionEditor
                     question={q}
                     onChange={(patch) => updateQuestion(q.id, patch)}
-                    onSave={() => saveQuestion(q)}
                     onDelete={() => removeQuestion(q)}
-                    saving={savingQuestionId === q.id}
+                    onDuplicate={() => duplicateQuestion(q)}
                   />
                 </div>
               )}

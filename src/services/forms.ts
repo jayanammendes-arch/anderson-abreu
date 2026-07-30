@@ -24,6 +24,16 @@ export const updateFormQuestion = (id: string, data: Partial<FormQuestion>) =>
 
 export const deleteFormQuestion = (id: string) => pb.collection('form_questions').delete(id)
 
+export const bulkSaveFormQuestions = (
+  formId: string,
+  questions: Partial<FormQuestion>[],
+): Promise<{ questions: FormQuestion[] }> =>
+  pb.send(`/backend/v1/forms/${formId}/questions/bulk`, {
+    method: 'POST',
+    body: JSON.stringify({ questions }),
+    headers: { 'Content-Type': 'application/json' },
+  })
+
 export async function getFormSubmission(
   userId: string,
   formId: string,
