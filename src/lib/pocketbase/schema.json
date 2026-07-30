@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-30T18:28:27.934Z",
+  "generatedAt": "2026-07-30T18:49:31.499Z",
   "collections": [
     {
       "name": "users",
@@ -3189,6 +3189,30 @@
           "required": false,
           "system": false,
           "autodateTriggers": ["onCreate", "onUpdate"]
+        },
+        {
+          "name": "color_theme",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "header_image",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "confirmation_message",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "one_submission_message",
+          "type": "text",
+          "required": false,
+          "system": false
         }
       ],
       "indexes": []
@@ -3216,13 +3240,6 @@
           "type": "text",
           "required": true,
           "system": false
-        },
-        {
-          "name": "question_type",
-          "type": "select",
-          "required": true,
-          "system": false,
-          "selectValues": ["multiple_choice", "open_text"]
         },
         {
           "name": "options",
@@ -3255,6 +3272,64 @@
           "required": false,
           "system": false,
           "autodateTriggers": ["onCreate", "onUpdate"]
+        },
+        {
+          "name": "question_type",
+          "type": "select",
+          "required": true,
+          "system": false,
+          "selectValues": [
+            "short_text",
+            "paragraph",
+            "multiple_choice",
+            "checkboxes",
+            "dropdown",
+            "linear_scale",
+            "date",
+            "time"
+          ]
+        },
+        {
+          "name": "description",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "shuffle_options",
+          "type": "bool",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "scale_min",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "scale_max",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "scale_label_left",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "scale_label_right",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "has_other",
+          "type": "bool",
+          "required": false,
+          "system": false
         }
       ],
       "indexes": ["CREATE INDEX idx_form_questions_form ON form_questions (form)"]
