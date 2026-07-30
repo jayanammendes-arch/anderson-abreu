@@ -19,8 +19,8 @@ export interface QuestionTypeMeta {
 export const QUESTION_TYPES: QuestionTypeMeta[] = [
   { value: 'short_text', label: 'Texto curto', icon: Type },
   { value: 'paragraph', label: 'Parágrafo', icon: AlignLeft },
-  { value: 'multiple_choice', label: 'Múltipla escolha', icon: List },
-  { value: 'checkboxes', label: 'Caixas de seleção', icon: CheckSquare },
+  { value: 'multiple_choice', label: 'Escolha única', icon: List },
+  { value: 'checkboxes', label: 'Múltipla escolha', icon: CheckSquare },
   { value: 'dropdown', label: 'Dropdown', icon: ChevronDown },
   { value: 'linear_scale', label: 'Escala linear', icon: SlidersHorizontal },
   { value: 'date', label: 'Data', icon: Calendar },

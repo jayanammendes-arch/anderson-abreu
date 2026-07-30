@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Trash2, Copy } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import { QUESTION_TYPES, OPTIONS_TYPES, SCALE_TYPES } from '@/lib/question-types'
 import { QuestionOptionsEditor } from './QuestionOptionsEditor'
 import { QuestionScaleEditor } from './QuestionScaleEditor'
@@ -68,7 +69,12 @@ export function QuestionEditor({ question, onChange, onDelete, onDuplicate, drag
           </SelectContent>
         </Select>
       </div>
-      <div className="flex items-end gap-2 pb-1">
+      <div
+        className={cn(
+          'flex items-end gap-2 pb-1 px-3 py-1.5 rounded-md border transition-colors',
+          question.required ? 'border-primary bg-primary/10' : 'border-transparent bg-muted/40',
+        )}
+      >
         <Switch checked={question.required} onCheckedChange={(c) => onChange({ required: c })} />
         <Label className="text-xs">Obrigatória</Label>
       </div>
