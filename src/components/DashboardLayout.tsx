@@ -1,11 +1,9 @@
 import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/hooks/use-auth'
-import { useTheme } from '@/hooks/use-theme'
 import { AppSidebar } from '@/components/AppSidebar'
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar'
 import { Separator } from '@/components/ui/separator'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Switch } from '@/components/ui/switch'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { LogOut, Loader2, User, Award, ShoppingBag, LifeBuoy, Moon } from 'lucide-react'
+import { LogOut, Loader2, User, Award, ShoppingBag, LifeBuoy } from 'lucide-react'
 import { NotificationBell } from '@/components/community/NotificationBell'
 import { LevelBadge } from '@/components/LevelBadge'
 
@@ -33,7 +31,6 @@ const pageTitles: Record<string, string> = {
 
 export function DashboardLayout() {
   const { isAuthenticated, loading, user, signOut } = useAuth()
-  const { theme, setTheme } = useTheme()
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -106,15 +103,6 @@ export function DashboardLayout() {
                 >
                   <Award className="mr-2 h-4 w-4" />
                   Certificados
-                </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer" onSelect={(e) => e.preventDefault()}>
-                  <Moon className="mr-2 h-4 w-4" />
-                  <span className="flex-1">Tema escuro</span>
-                  <Switch
-                    checked={theme === 'dark'}
-                    onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
-                    onClick={(e) => e.stopPropagation()}
-                  />
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   className="cursor-pointer"

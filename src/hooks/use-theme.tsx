@@ -17,23 +17,17 @@ export const useTheme = () => {
 }
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-  const [theme, setThemeState] = useState<Theme>(() => {
-    const stored = localStorage.getItem('theme') as Theme | null
-    return stored || 'dark'
-  })
+  const [theme] = useState<Theme>('dark')
 
   useEffect(() => {
     const root = document.documentElement
-    if (theme === 'light') {
-      root.classList.add('light')
-    } else {
-      root.classList.remove('light')
-    }
-    localStorage.setItem('theme', theme)
-  }, [theme])
+    root.classList.remove('light')
+    root.classList.add('dark')
+    localStorage.removeItem('theme')
+  }, [])
 
-  const setTheme = (t: Theme) => setThemeState(t)
-  const toggleTheme = () => setThemeState((prev) => (prev === 'dark' ? 'light' : 'dark'))
+  const toggleTheme = () => {}
+  const setTheme = () => {}
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme, setTheme }}>
