@@ -69,6 +69,7 @@ export interface OnboardingStep {
   label: string
   courseId?: string
   lessonId?: string
+  form_id?: string
 }
 
 export interface OnboardingConfig {
@@ -80,4 +81,42 @@ export interface OnboardingConfig {
   is_active: boolean
   created: string
   updated: string
+}
+
+export interface FormConfig {
+  id: string
+  title: string
+  description: string
+  is_active: boolean
+  created: string
+  updated: string
+}
+
+export interface FormQuestion {
+  id: string
+  form: string
+  question_text: string
+  question_type: 'multiple_choice' | 'open_text'
+  options: string[] | null
+  order: number
+  required: boolean
+  created: string
+  updated: string
+}
+
+export interface FormAnswer {
+  question_id: string
+  question_text: string
+  answer_text?: string
+  selected_options?: string[]
+}
+
+export interface FormSubmission {
+  id: string
+  user: string
+  form: string
+  answers: FormAnswer[]
+  created: string
+  updated: string
+  expand?: { form?: FormConfig }
 }

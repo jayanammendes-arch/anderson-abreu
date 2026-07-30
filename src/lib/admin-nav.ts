@@ -19,6 +19,7 @@ import {
   Radar,
   Contact,
   Sparkles,
+  ClipboardList,
 } from 'lucide-react'
 
 export interface AdminNavItem {
@@ -105,6 +106,12 @@ export const adminNavGroups: AdminNavGroup[] = [
         href: '/admin/crm',
         icon: Contact,
         description: 'Gestão de leads e funil de vendas',
+      },
+      {
+        title: 'Formulários',
+        href: '/admin/forms',
+        icon: ClipboardList,
+        description: 'Criar e gerenciar formulários dinâmicos',
       },
       {
         title: 'Comece por Aqui',

@@ -7,6 +7,8 @@ import { getPreHypnosisForm } from '@/services/pre-hypnosis-forms'
 import { getLifeWheelAssessments } from '@/services/life-wheel'
 import { getCoursesWithProgress } from '@/services/courses'
 import { getUserProgress, isLessonCompleted } from '@/services/user-progress'
+import { getFormSubmission } from '@/services/forms'
+import { DynamicForm } from '@/components/DynamicForm'
 import { LevelBadge } from '@/components/LevelBadge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -73,22 +75,29 @@ export default function ComecePorAqui() {
   const [preAssessmentDone, setPreAssessmentDone] = useState(false)
   const [progress, setProgress] = useState<UserProgress[]>([])
   const [courses, setCourses] = useState<CourseWithProgress[]>([])
+  const [activeFormId, setActiveFormId] = useState<string | null>(null)
 
   const loadData = useCallback(async () => {
     if (!user) return
     try {
-      const [cfg, form, assmts, crs, prog] = await Promise.all([
+      const [cfg, assmts, crs, prog] = await Promise.all([
         getOnboardingConfig(),
-        getPreHypnosisForm(user.id),
         getLifeWheelAssessments(user.id),
         getCoursesWithProgress(user.id),
         getUserProgress(user.id),
       ])
       setConfig(cfg)
-      setFormDone(!!form)
       setPreAssessmentDone(assmts.some((a: LifeWheelAssessment) => a.type === 'pre'))
       setCourses(crs)
       setProgress(prog)
+      const formStep = (cfg?.steps || DEFAULT_STEPS).find((s) => s.type === 'form')
+      if (formStep?.form_id) {
+        const submission = await getFormSubmission(user.id, formStep.form_id)
+        setFormDone(!!submission)
+      } else {
+        const form = await getPreHypnosisForm(user.id)
+        setFormDone(!!form)
+      }
     } catch {
       /* ignore */
     } finally {
@@ -103,6 +112,7 @@ export default function ComecePorAqui() {
   useRealtime('life_wheel_assessments', () => loadData())
   useRealtime('user_progress', () => loadData())
   useRealtime('onboarding_config', () => loadData())
+  useRealtime('form_submissions', () => loadData())
 
   if (loading) {
     return (
@@ -189,8 +199,10 @@ export default function ComecePorAqui() {
       unlocked,
       canAct,
       action: () => {
-        if (step.type === 'form') navigate('/dashboard/pre-hipnose')
-        else if (step.type === 'life_wheel') navigate('/dashboard/roda-da-vida')
+        if (step.type === 'form') {
+          if (step.form_id) setActiveFormId(step.form_id)
+          else navigate('/dashboard/pre-hipnose')
+        } else if (step.type === 'life_wheel') navigate('/dashboard/roda-da-vida')
         else if (lessonRef)
           navigate(`/dashboard/curso/${lessonRef.courseId}?lesson=${lessonRef.id}`)
       },
@@ -257,7 +269,11 @@ export default function ComecePorAqui() {
                 <Button
                   size="sm"
                   variant={isLocked ? 'secondary' : 'default'}
-                  disabled={isLocked || step.done || !step.canAct}
+                  disabled={
+                    isLocked ||
+                    (step.done && !(step.type === 'form' && step.form_id)) ||
+                    !step.canAct
+                  }
                   onClick={step.action}
                   className="w-full"
                 >
@@ -267,7 +283,8 @@ export default function ComecePorAqui() {
                     </>
                   ) : step.done ? (
                     <>
-                      <CheckCircle2 className="mr-1 h-3 w-3" /> Concluído
+                      <CheckCircle2 className="mr-1 h-3 w-3" />{' '}
+                      {step.type === 'form' && step.form_id ? 'Ver Resumo' : 'Concluído'}
                     </>
                   ) : (
                     <>
@@ -288,6 +305,10 @@ export default function ComecePorAqui() {
           automaticamente.
         </p>
       </div>
+
+      {activeFormId && user && (
+        <DynamicForm formId={activeFormId} userId={user.id} onSubmitted={() => loadData()} />
+      )}
     </div>
   )
 }

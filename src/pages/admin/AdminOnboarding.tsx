@@ -21,7 +21,8 @@ import { SortableList } from '@/components/admin/SortableList'
 import { Save, Loader2, Plus, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import pb from '@/lib/pocketbase/client'
-import type { OnboardingConfig, OnboardingStep, Course, Module, Lesson } from '@/types'
+import { getForms } from '@/services/forms'
+import type { OnboardingConfig, OnboardingStep, Course, Module, Lesson, FormConfig } from '@/types'
 
 const STEP_TYPES = [
   { value: 'form', label: 'Formulário Pré-Hipnose' },
@@ -47,19 +48,22 @@ export default function AdminOnboarding() {
   const [courses, setCourses] = useState<Course[]>([])
   const [modules, setModules] = useState<Module[]>([])
   const [lessons, setLessons] = useState<Lesson[]>([])
+  const [forms, setForms] = useState<FormConfig[]>([])
 
   useEffect(() => {
     const load = async () => {
       try {
-        const [cfg, c, m, l] = await Promise.all([
+        const [cfg, c, m, l, f] = await Promise.all([
           getOnboardingConfig(),
           pb.collection('courses').getFullList({ sort: 'order' }),
           pb.collection('modules').getFullList({ sort: 'order' }),
           pb.collection('lessons').getFullList({ sort: 'order' }),
+          getForms(),
         ])
         setCourses(c as Course[])
         setModules(m as Module[])
         setLessons(l as Lesson[])
+        setForms(f as FormConfig[])
         if (cfg) {
           setConfig(cfg)
           setTitle(cfg.title || '')
@@ -234,6 +238,26 @@ export default function AdminOnboarding() {
                       onChange={(e) => updateStep(step.id!, { label: e.target.value })}
                     />
                   </div>
+                  {step.type === 'form' && (
+                    <div className="space-y-1">
+                      <Label className="text-xs">Formulário</Label>
+                      <Select
+                        value={step.form_id || ''}
+                        onValueChange={(v) => updateStep(step.id!, { form_id: v })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecionar formulário" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {forms.map((f) => (
+                            <SelectItem key={f.id} value={f.id}>
+                              {f.title}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
                   {(step.type === 'lesson' || step.type === 'audio') && (
                     <>
                       <div className="space-y-1">

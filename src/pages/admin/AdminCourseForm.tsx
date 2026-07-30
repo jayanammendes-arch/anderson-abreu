@@ -236,7 +236,6 @@ export default function AdminCourseForm() {
                 <SelectContent>
                   <SelectItem value="free">Livre</SelectItem>
                   <SelectItem value="paid">Pago</SelectItem>
-                  <SelectItem value="hypnosis">Exclusivo hipnose</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -310,48 +309,54 @@ export default function AdminCourseForm() {
           </div>{' '}
         </Section>
 
-        <Section title="Preços">
-          <div className="grid grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <Label>Preço (R$)</Label>
-              <Input
-                type="number"
-                step="0.01"
-                value={form.price}
-                onChange={(e) => setForm({ ...form, price: Number(e.target.value) })}
-              />
+        {form.access_type !== 'free' && (
+          <Section title="Preços">
+            <div className="grid grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label>Preço (R$)</Label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={form.price}
+                  onChange={(e) => setForm({ ...form, price: Number(e.target.value) })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Preço c/ Desconto</Label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={form.discount_price}
+                  onChange={(e) => setForm({ ...form, discount_price: Number(e.target.value) })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>% Desconto</Label>
+                <Input
+                  type="number"
+                  value={form.discount_percentage}
+                  onChange={(e) =>
+                    setForm({ ...form, discount_percentage: Number(e.target.value) })
+                  }
+                />
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label>Preço c/ Desconto</Label>
-              <Input
-                type="number"
-                step="0.01"
-                value={form.discount_price}
-                onChange={(e) => setForm({ ...form, discount_price: Number(e.target.value) })}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>% Desconto</Label>
-              <Input
-                type="number"
-                value={form.discount_percentage}
-                onChange={(e) => setForm({ ...form, discount_percentage: Number(e.target.value) })}
-              />
-            </div>
-          </div>
-        </Section>
+          </Section>
+        )}
 
-        <Section title="Link de Pagamento">
-          <div className="space-y-2">
-            <Label>URL de Compra Externa</Label>
-            <Input
-              type="url"
-              value={form.external_buy_url}
-              onChange={(e) => setForm({ ...form, external_buy_url: e.target.value })}
-              placeholder="https://..."
-            />
-          </div>
-        </Section>
+        {form.access_type !== 'free' && (
+          <Section title="Link de Pagamento">
+            <div className="space-y-2">
+              <Label>URL de Compra Externa</Label>
+              <Input
+                type="url"
+                value={form.external_buy_url}
+                onChange={(e) => setForm({ ...form, external_buy_url: e.target.value })}
+                placeholder="https://..."
+              />
+            </div>
+          </Section>
+        )}
 
         <Section title="Certificado">
           <div className="space-y-2">

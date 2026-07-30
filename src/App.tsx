@@ -52,6 +52,8 @@ import RodaDaVida from '@/pages/RodaDaVida'
 import AdminLifeWheelCategories from '@/pages/admin/AdminLifeWheelCategories'
 import AdminLifeWheelQuestions from '@/pages/admin/AdminLifeWheelQuestions'
 import AdminOnboarding from '@/pages/admin/AdminOnboarding'
+import AdminForms from '@/pages/admin/AdminForms'
+import AdminFormEdit from '@/pages/admin/AdminFormEdit'
 import NotFound from '@/pages/NotFound'
 
 const App = () => (
@@ -98,6 +100,9 @@ const App = () => (
               <Route path="roda-da-vida-categorias" element={<AdminLifeWheelCategories />} />
               <Route path="roda-da-vida-perguntas" element={<AdminLifeWheelQuestions />} />
               <Route path="comece-por-aqui" element={<AdminOnboarding />} />
+              <Route path="forms" element={<AdminForms />} />
+              <Route path="forms/novo" element={<AdminFormEdit />} />
+              <Route path="forms/:formId" element={<AdminFormEdit />} />
               <Route path="comunidade" element={<AdminCommunity />} />
               <Route path="certificados" element={<AdminCertificates />} />
               <Route path="contatos" element={<AdminContacts />} />

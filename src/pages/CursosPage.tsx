@@ -142,7 +142,7 @@ export default function CursosPage() {
                             <PlayCircle className="mr-2 h-4 w-4" /> Acessar Curso
                           </Link>
                         </Button>
-                      ) : course.external_buy_url ? (
+                      ) : !isFree && course.external_buy_url ? (
                         <Button
                           className="w-full bg-slate-900 text-white hover:bg-slate-800"
                           asChild

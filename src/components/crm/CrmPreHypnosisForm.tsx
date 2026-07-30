@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
 import { Loader2, FileText } from 'lucide-react'
 import { getPreHypnosisFormByUserId } from '@/services/pre-hypnosis-forms'
-import type { PreHypnosisForm } from '@/types'
+import { getOnboardingConfig } from '@/services/onboarding'
+import { getFormSubmission, getFormQuestions } from '@/services/forms'
+import type { PreHypnosisForm, FormQuestion, FormSubmission } from '@/types'
 
 const FORM_FIELDS: ReadonlyArray<{ key: keyof PreHypnosisForm; label: string }> = [
   { key: 'nome', label: 'Nome' },
@@ -13,15 +15,42 @@ const FORM_FIELDS: ReadonlyArray<{ key: keyof PreHypnosisForm; label: string }> 
 ]
 
 export function CrmPreHypnosisForm({ userId }: { userId: string }) {
-  const [form, setForm] = useState<PreHypnosisForm | null>(null)
   const [loading, setLoading] = useState(true)
+  const [oldForm, setOldForm] = useState<PreHypnosisForm | null>(null)
+  const [questions, setQuestions] = useState<FormQuestion[]>([])
+  const [submission, setSubmission] = useState<FormSubmission | null>(null)
 
   useEffect(() => {
-    setLoading(true)
-    getPreHypnosisFormByUserId(userId)
-      .then(setForm)
-      .catch(() => setForm(null))
-      .finally(() => setLoading(false))
+    const load = async () => {
+      setLoading(true)
+      try {
+        const cfg = await getOnboardingConfig()
+        const formStep = (cfg?.steps || []).find((s: any) => s.type === 'form')
+        if (formStep?.form_id) {
+          const [sub, qs] = await Promise.all([
+            getFormSubmission(userId, formStep.form_id),
+            getFormQuestions(formStep.form_id),
+          ])
+          if (sub) {
+            setSubmission(sub as FormSubmission)
+            setQuestions(qs as FormQuestion[])
+            return
+          }
+        }
+        const form = await getPreHypnosisFormByUserId(userId)
+        setOldForm(form)
+      } catch {
+        try {
+          const form = await getPreHypnosisFormByUserId(userId)
+          setOldForm(form)
+        } catch {
+          /* ignore */
+        }
+      } finally {
+        setLoading(false)
+      }
+    }
+    load()
   }, [userId])
 
   if (loading)
@@ -31,7 +60,30 @@ export function CrmPreHypnosisForm({ userId }: { userId: string }) {
       </div>
     )
 
-  if (!form) return <p className="text-sm text-muted-foreground">Nenhum formulário enviado.</p>
+  if (submission && questions.length > 0) {
+    return (
+      <div className="space-y-2 rounded-lg bg-muted/50 p-3">
+        <div className="flex items-center gap-2 mb-2">
+          <FileText className="h-4 w-4 text-primary" />
+          <span className="text-sm font-medium">Formulário enviado</span>
+        </div>
+        <div className="space-y-1.5">
+          {questions.map((q) => {
+            const answer = submission.answers?.find((a) => a.question_id === q.id)
+            const text = answer?.answer_text || (answer?.selected_options || []).join(', ') || '—'
+            return (
+              <div key={q.id} className="border border-border rounded p-2 text-xs bg-background">
+                <span className="font-medium text-foreground">{q.question_text}:</span>
+                <p className="text-muted-foreground mt-0.5 whitespace-pre-wrap">{text}</p>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    )
+  }
+
+  if (!oldForm) return <p className="text-sm text-muted-foreground">Nenhum formulário enviado.</p>
 
   return (
     <div className="space-y-2 rounded-lg bg-muted/50 p-3">
@@ -44,7 +96,7 @@ export function CrmPreHypnosisForm({ userId }: { userId: string }) {
           <div key={key} className="border border-border rounded p-2 text-xs bg-background">
             <span className="font-medium text-foreground">{label}:</span>
             <p className="text-muted-foreground mt-0.5 whitespace-pre-wrap">
-              {(form[key] as string) || '—'}
+              {(oldForm[key] as string) || '—'}
             </p>
           </div>
         ))}

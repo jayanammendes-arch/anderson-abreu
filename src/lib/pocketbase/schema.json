@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-30T18:14:00.518Z",
+  "generatedAt": "2026-07-30T18:28:27.934Z",
   "collections": [
     {
       "name": "users",
@@ -186,13 +186,6 @@
           "selectValues": ["home", "templates", "both"]
         },
         {
-          "name": "access_type",
-          "type": "select",
-          "required": false,
-          "system": false,
-          "selectValues": ["free", "paid", "hypnosis"]
-        },
-        {
           "name": "footer_banner",
           "type": "file",
           "required": false,
@@ -240,6 +233,13 @@
           "required": false,
           "system": false,
           "selectValues": ["Prata", "Ouro", "Diamante", "all"]
+        },
+        {
+          "name": "access_type",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": ["free", "paid"]
         }
       ],
       "indexes": [
@@ -3146,6 +3146,169 @@
         }
       ],
       "indexes": []
+    },
+    {
+      "name": "forms",
+      "type": "base",
+      "apiRules": {
+        "list": "is_active = true || @request.auth.is_admin = true",
+        "view": "is_active = true || @request.auth.is_admin = true",
+        "create": "@request.auth.is_admin = true",
+        "update": "@request.auth.is_admin = true",
+        "delete": "@request.auth.is_admin = true"
+      },
+      "fields": [
+        {
+          "name": "title",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "description",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "is_active",
+          "type": "bool",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "name": "form_questions",
+      "type": "base",
+      "apiRules": {
+        "list": "@request.auth.id != ''",
+        "view": "@request.auth.id != ''",
+        "create": "@request.auth.is_admin = true",
+        "update": "@request.auth.is_admin = true",
+        "delete": "@request.auth.is_admin = true"
+      },
+      "fields": [
+        {
+          "name": "form",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "forms"
+        },
+        {
+          "name": "question_text",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "question_type",
+          "type": "select",
+          "required": true,
+          "system": false,
+          "selectValues": ["multiple_choice", "open_text"]
+        },
+        {
+          "name": "options",
+          "type": "json",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "order",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "required",
+          "type": "bool",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": ["CREATE INDEX idx_form_questions_form ON form_questions (form)"]
+    },
+    {
+      "name": "form_submissions",
+      "type": "base",
+      "apiRules": {
+        "list": "@request.auth.id = user || @request.auth.is_admin = true",
+        "view": "@request.auth.id = user || @request.auth.is_admin = true",
+        "create": "@request.auth.id != '' && user = @request.auth.id",
+        "update": null,
+        "delete": "@request.auth.is_admin = true"
+      },
+      "fields": [
+        {
+          "name": "user",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "users"
+        },
+        {
+          "name": "form",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "forms"
+        },
+        {
+          "name": "answers",
+          "type": "json",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": [
+        "CREATE INDEX idx_form_submissions_user ON form_submissions (user)",
+        "CREATE INDEX idx_form_submissions_form ON form_submissions (form)"
+      ]
     }
   ]
 }
