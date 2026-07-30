@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -7,14 +8,13 @@ import { Search, Download, Loader2, ChevronRight } from 'lucide-react'
 import { useRealtime } from '@/hooks/use-realtime'
 import { useAuth } from '@/hooks/use-auth'
 import { getSiteLeadsWithSummary, exportSiteLeadsToCsv, type SiteLeadSummary } from '@/services/crm'
-import { CrmStudentDetailSheet } from '@/components/crm/CrmStudentDetailSheet'
 
 export function CrmSiteStudentList() {
   const { isAdmin } = useAuth()
   const [leads, setLeads] = useState<SiteLeadSummary[]>([])
   const [search, setSearch] = useState('')
-  const [selectedLead, setSelectedLead] = useState<SiteLeadSummary | null>(null)
   const [loading, setLoading] = useState(true)
+  const navigate = useNavigate()
 
   const loadLeads = useCallback(async () => {
     try {
@@ -139,7 +139,7 @@ export function CrmSiteStudentList() {
                       className="text-muted-foreground hover:text-foreground"
                       onClick={(e) => {
                         e.stopPropagation()
-                        setSelectedLead(lead)
+                        navigate(`/admin/crm/aluno/${lead.id}`)
                       }}
                     >
                       Detalhes <ChevronRight className="ml-1 h-4 w-4" />
@@ -151,12 +151,6 @@ export function CrmSiteStudentList() {
           </tbody>
         </table>
       </div>
-
-      <CrmStudentDetailSheet
-        lead={selectedLead}
-        open={!!selectedLead}
-        onOpenChange={(o) => !o && setSelectedLead(null)}
-      />
     </div>
   )
 }

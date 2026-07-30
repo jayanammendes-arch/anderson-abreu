@@ -1,20 +1,14 @@
 import { useState, useEffect, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Loader2, Plus, Search, Download } from 'lucide-react'
 import { useRealtime } from '@/hooks/use-realtime'
-import {
-  CRM_STAGES,
-  getCrmLeads,
-  updateCrmLeadStage,
-  updateCrmLeadField,
-  exportLeadsToCsv,
-} from '@/services/crm'
+import { CRM_STAGES, getCrmLeads, updateCrmLeadStage, exportLeadsToCsv } from '@/services/crm'
 import { filterLeadsByTab, type CrmTab } from '@/lib/crm-utils'
 import { CrmKanbanBoard } from '@/components/crm/CrmKanbanBoard'
-import { CrmLeadDetailSheet } from '@/components/crm/CrmLeadDetailSheet'
 import { CrmLeadFormDialog } from '@/components/crm/CrmLeadFormDialog'
 import { CrmSiteStudentList } from '@/components/crm/CrmSiteStudentList'
 import type { CrmLead } from '@/types'
@@ -23,8 +17,8 @@ export default function CrmPage() {
   const [leads, setLeads] = useState<CrmLead[]>([])
   const [search, setSearch] = useState('')
   const [activeTab, setActiveTab] = useState<CrmTab>('social')
-  const [selectedLead, setSelectedLead] = useState<CrmLead | null>(null)
   const [showForm, setShowForm] = useState(false)
+  const navigate = useNavigate()
   const [loading, setLoading] = useState(true)
 
   const loadLeads = useCallback(async () => {
@@ -47,15 +41,18 @@ export default function CrmPage() {
 
   const filteredByTab = filterLeadsByTab(leads, activeTab)
 
-  const filteredLeads = filteredByTab.filter((l) => {
-    const s = search.toLowerCase()
-    if (!s) return true
-    return (
-      l.name.toLowerCase().includes(s) ||
-      l.email.toLowerCase().includes(s) ||
-      (l.instagram_handle || '').toLowerCase().includes(s)
-    )
-  })
+  const filteredLeads = filteredByTab
+    .filter((l) => {
+      const s = search.toLowerCase()
+      if (!s) return true
+      return (
+        l.name.toLowerCase().includes(s) ||
+        l.email.toLowerCase().includes(s) ||
+        (l.phone || '').toLowerCase().includes(s) ||
+        (l.instagram_handle || '').toLowerCase().includes(s)
+      )
+    })
+    .sort((a, b) => a.name.localeCompare(b.name))
 
   const handleMoveNext = async (lead: CrmLead) => {
     const idx = CRM_STAGES.indexOf(lead.stage as (typeof CRM_STAGES)[number])
@@ -131,23 +128,8 @@ export default function CrmPage() {
           <CrmKanbanBoard
             leads={filteredLeads}
             stages={CRM_STAGES}
-            onLeadClick={setSelectedLead}
+            onLeadClick={(lead) => navigate(`/admin/crm/aluno/${lead.id}`)}
             onMoveNext={handleMoveNext}
-          />
-
-          <CrmLeadDetailSheet
-            lead={selectedLead}
-            open={!!selectedLead}
-            onOpenChange={(o) => !o && setSelectedLead(null)}
-            onUpdateField={async (id, data) => {
-              try {
-                await updateCrmLeadField(id, data)
-                toast.success('Lead atualizado!')
-                loadLeads()
-              } catch {
-                toast.error('Erro ao atualizar lead')
-              }
-            }}
           />
 
           <CrmLeadFormDialog open={showForm} onOpenChange={setShowForm} onCreated={loadLeads} />

@@ -36,6 +36,7 @@ import AdminContacts from '@/pages/admin/AdminContacts'
 import AdminCertifications from '@/pages/admin/AdminCertifications'
 import AdminAboutContent from '@/pages/admin/AdminAboutContent'
 import CrmPage from '@/pages/admin/CrmPage'
+import CrmLeadDetailPage from '@/pages/admin/CrmLeadDetailPage'
 import AdminTreatments from '@/pages/admin/AdminTreatments'
 import AdminTreatmentCategories from '@/pages/admin/AdminTreatmentCategories'
 import AdminTreatmentCategoryEdit from '@/pages/admin/AdminTreatmentCategoryEdit'
@@ -99,6 +100,7 @@ const App = () => (
               <Route path="certificacoes" element={<AdminCertifications />} />
               <Route path="sobre-conteudo" element={<AdminAboutContent />} />
               <Route path="crm" element={<CrmPage />} />
+              <Route path="crm/aluno/:leadId" element={<CrmLeadDetailPage />} />
             </Route>
             <Route path="/crm" element={<Navigate to="/admin/crm" replace />} />
             <Route path="/dashboard" element={<DashboardLayout />}>

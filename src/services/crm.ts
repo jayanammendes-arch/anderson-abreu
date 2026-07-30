@@ -17,6 +17,9 @@ export type CrmSource = 'site' | 'social'
 export const getCrmLeads = (): Promise<CrmLead[]> =>
   pb.collection('crm_leads').getFullList({ sort: '-created', expand: 'linked_user' })
 
+export const getCrmLeadById = (id: string): Promise<CrmLead> =>
+  pb.collection('crm_leads').getOne(id, { expand: 'linked_user' })
+
 export const createCrmLead = (data: {
   name: string
   email: string

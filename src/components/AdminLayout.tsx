@@ -48,7 +48,9 @@ export function AdminLayout() {
         ? 'Nova Categoria de Tratamento'
         : location.pathname.match(/^\/admin\/categorias-tratamentos\/[^/]+\/editar$/)
           ? 'Editar Categoria de Tratamento'
-          : 'Admin')
+          : location.pathname.match(/^\/admin\/crm\/aluno\/[^/]+$/)
+            ? 'CRM — Detalhes do Lead'
+            : 'Admin')
 
   return (
     <SidebarProvider>
