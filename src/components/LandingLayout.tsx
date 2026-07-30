@@ -72,6 +72,11 @@ export function LandingLayout({
   }, [])
 
   useEffect(() => {
+    setIsMenuOpen(false)
+    setMobileTreatmentsOpen(false)
+  }, [location.pathname])
+
+  useEffect(() => {
     if (settings?.primary_color) applyBrandColor(settings.primary_color)
   }, [settings?.primary_color])
 

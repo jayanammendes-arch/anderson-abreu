@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '@/hooks/use-auth'
 import {
@@ -11,6 +12,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from '@/components/ui/sidebar'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
@@ -40,7 +42,14 @@ const adminNavItems = [{ title: 'Configurações', href: '/admin/configuracoes',
 export function AppSidebar() {
   const { user } = useAuth()
   const location = useLocation()
+  const { setOpenMobile, isMobile } = useSidebar()
   const isAdmin = Boolean(user?.is_admin)
+
+  useEffect(() => {
+    if (isMobile) {
+      setOpenMobile(false)
+    }
+  }, [location.pathname, isMobile, setOpenMobile])
 
   const getInitials = (name: string) => {
     if (!name) return 'AA'
