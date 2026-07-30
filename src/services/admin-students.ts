@@ -23,6 +23,9 @@ export const adminUpdateLevel = (userId: string, level: string) =>
 export const adminGetUsersByLevel = (level: string) =>
   pb.collection('users').getFullList({ filter: `level = "${level}"`, sort: '-created' })
 
+export const adminGetHypnosisUsers = () =>
+  pb.collection('users').getFullList({ filter: `is_patient = true`, sort: '-created' })
+
 export const adminUpdateStudent = (
   userId: string,
   data: {
