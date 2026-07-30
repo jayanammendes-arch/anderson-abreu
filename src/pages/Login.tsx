@@ -136,6 +136,12 @@ export default function Login() {
 
           {mode === 'recovery' && recoverySent ? (
             <div className="animate-fade-in space-y-6">
+              <Link
+                to="/"
+                className="inline-flex items-center gap-1.5 text-sm text-white/50 hover:text-white transition-colors hover:underline underline-offset-4"
+              >
+                <ArrowLeft className="h-4 w-4" /> Voltar ao início
+              </Link>
               <div className="flex flex-col items-center gap-4 text-center">
                 <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/10 border border-emerald-500/20">
                   <CheckCircle2 className="h-8 w-8 text-emerald-400" />
@@ -160,6 +166,12 @@ export default function Login() {
             </div>
           ) : mode === 'recovery' ? (
             <div className="animate-fade-in space-y-6">
+              <Link
+                to="/"
+                className="inline-flex items-center gap-1.5 text-sm text-white/50 hover:text-white transition-colors hover:underline underline-offset-4"
+              >
+                <ArrowLeft className="h-4 w-4" /> Voltar ao início
+              </Link>
               <div>
                 <h2 className="text-2xl font-bold text-white tracking-tight">Recuperar senha</h2>
                 <p className="mt-1 text-sm text-muted-foreground">
@@ -200,6 +212,12 @@ export default function Login() {
             </div>
           ) : (
             <div className="animate-fade-in space-y-6">
+              <Link
+                to="/"
+                className="inline-flex items-center gap-1.5 text-sm text-white/50 hover:text-white transition-colors hover:underline underline-offset-4"
+              >
+                <ArrowLeft className="h-4 w-4" /> Voltar ao início
+              </Link>
               <div>
                 <h2 className="text-2xl font-bold text-white tracking-tight">
                   {mode === 'login' ? 'Bem-vindo de volta' : 'Criar sua conta'}
