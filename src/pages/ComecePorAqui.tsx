@@ -132,9 +132,7 @@ export default function ComecePorAqui() {
     )
   }
 
-  const steps = (config?.steps || DEFAULT_STEPS).filter(
-    (s) => !(s.type === 'form' && !s.form_id),
-  )
+  const steps = (config?.steps || DEFAULT_STEPS).filter((s) => !(s.type === 'form' && !s.form_id))
 
   let prevDone = true
   const displaySteps = steps.map((step, index) => {
@@ -202,7 +200,8 @@ export default function ComecePorAqui() {
       action: () => {
         if (step.type === 'form') {
           if (step.form_id) setActiveFormId(step.form_id)
-        } else if (step.type === 'life_wheel') navigate('/dashboard/roda-da-vida')        else if (lessonRef)
+        } else if (step.type === 'life_wheel') navigate('/dashboard/roda-da-vida')
+        else if (lessonRef)
           navigate(`/dashboard/curso/${lessonRef.courseId}?lesson=${lessonRef.id}`)
       },
     }
