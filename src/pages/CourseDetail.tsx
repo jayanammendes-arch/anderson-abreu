@@ -29,10 +29,12 @@ import {
   Minimize2,
   Radio,
   Lock,
+  WifiOff,
 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import type { CourseDetailData } from '@/types'
 import { cn } from '@/lib/utils'
+import { markLessonViewed, isLessonViewed } from '@/lib/offline-cache'
 
 export default function CourseDetail() {
   const { courseId } = useParams<{ courseId: string }>()
@@ -76,6 +78,12 @@ export default function CourseDetail() {
       setSelectedLessonId(lessonFromParam?.id || firstIncomplete?.id || data.lessons[0].id)
     }
   }, [data, selectedLessonId, searchParams])
+
+  useEffect(() => {
+    if (selectedLessonId) {
+      markLessonViewed(selectedLessonId)
+    }
+  }, [selectedLessonId])
 
   const handleToggleComplete = async () => {
     if (!user || !selectedLessonId) return
@@ -265,9 +273,16 @@ export default function CourseDetail() {
 
               {selectedLesson.content && (
                 <div className="rounded-xl border border-border/50 p-5 bg-card/50">
-                  <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground mb-3">
-                    Conteúdo da Aula
-                  </h3>
+                  <div className="flex items-center gap-2 mb-3">
+                    <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                      Conteúdo da Aula
+                    </h3>
+                    {selectedLesson && isLessonViewed(selectedLesson.id) && (
+                      <Badge variant="secondary" className="gap-1 text-xs">
+                        <WifiOff className="h-3 w-3" /> Offline
+                      </Badge>
+                    )}
+                  </div>
                   <div
                     className="max-w-none text-sm leading-relaxed text-muted-foreground [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:text-foreground [&_ul]:list-disc [&_ul]:pl-5 [&_p]:mb-3 [&_li]:mb-1"
                     dangerouslySetInnerHTML={{ __html: selectedLesson.content }}

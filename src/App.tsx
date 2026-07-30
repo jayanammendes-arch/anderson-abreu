@@ -3,6 +3,7 @@ import { Toaster } from '@/components/ui/toaster'
 import { Toaster as Sonner } from '@/components/ui/sonner'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { ScrollToTop } from '@/components/ScrollToTop'
+import { PWAInstallPrompt } from '@/components/PWAInstallPrompt'
 import { AuthProvider } from '@/hooks/use-auth'
 import { ThemeProvider } from '@/hooks/use-theme'
 import { DashboardLayout } from '@/components/DashboardLayout'
@@ -64,6 +65,7 @@ const App = () => (
         <TooltipProvider>
           <Toaster />
           <Sonner />
+          <PWAInstallPrompt />
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
