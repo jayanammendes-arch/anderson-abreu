@@ -96,6 +96,129 @@ export function exportLeadsToCsv(leads: CrmLead[]): void {
   URL.revokeObjectURL(url)
 }
 
+export interface IntegratedLead {
+  socialLead: CrmLead
+  siteLead: CrmLead | null
+  user: {
+    id: string
+    name: string
+    email: string
+    created: string
+    phone?: string
+    instagram_handle?: string
+  }
+  purchases: CrmPurchase[]
+}
+
+export async function getIntegratedLeads(): Promise<IntegratedLead[]> {
+  const leads = await pb.collection('crm_leads').getFullList({
+    filter: 'linked_user != ""',
+    expand: 'linked_user',
+    sort: '-created',
+  })
+
+  const byUser = new Map<string, { social?: CrmLead; site?: CrmLead; user?: any }>()
+  for (const lead of leads as unknown as CrmLead[]) {
+    const userId = lead.linked_user
+    if (!userId) continue
+    if (!byUser.has(userId)) byUser.set(userId, {})
+    const group = byUser.get(userId)!
+    const source = lead.source || 'social'
+    const expand = (lead as any).expand
+    if (source === 'social') {
+      group.social = lead
+      if (expand?.linked_user) group.user = expand.linked_user
+    } else {
+      group.site = lead
+      if (expand?.linked_user && !group.user) group.user = expand.linked_user
+    }
+  }
+
+  const integrated: IntegratedLead[] = []
+  for (const [, group] of byUser) {
+    if (!group.social || !group.user) continue
+    const leadIds = [group.social.id, group.site?.id].filter(Boolean) as string[]
+    let purchases: CrmPurchase[] = []
+    if (leadIds.length > 0) {
+      try {
+        const filter = leadIds.map((id) => `lead = "${id}"`).join(' || ')
+        purchases = await pb.collection('crm_purchases').getFullList({
+          filter,
+          expand: 'course',
+          sort: '-created',
+        })
+      } catch {
+        /* intentionally ignored */
+      }
+    }
+    integrated.push({
+      socialLead: group.social,
+      siteLead: group.site || null,
+      user: {
+        id: group.user.id,
+        name: group.user.name || '',
+        email: group.user.email || '',
+        created: group.user.created || '',
+        phone: group.user.phone || '',
+        instagram_handle: group.user.instagram_handle || '',
+      },
+      purchases,
+    })
+  }
+
+  return integrated.sort(
+    (a, b) => new Date(b.user.created).getTime() - new Date(a.user.created).getTime(),
+  )
+}
+
+export async function getCounterpartLead(
+  linkedUserId: string,
+  currentLeadId: string,
+): Promise<CrmLead | null> {
+  try {
+    const leads = await pb.collection('crm_leads').getFullList({
+      filter: `linked_user = "${linkedUserId}" && id != "${currentLeadId}"`,
+    })
+    return (leads[0] as unknown as CrmLead) || null
+  } catch {
+    return null
+  }
+}
+
+export function exportIntegratedLeadsToCsv(leads: IntegratedLead[]): void {
+  const headers = [
+    'Nome',
+    'Email',
+    'Telefone',
+    'Instagram',
+    'Estágio (Social Seller)',
+    'Data Registro (Plataforma)',
+    'Cursos/Compras',
+  ]
+  const rows = leads.map((l) => [
+    l.socialLead.name || '',
+    l.socialLead.email || '',
+    l.socialLead.phone || '',
+    l.socialLead.instagram_handle || '',
+    l.socialLead.stage || '',
+    l.user.created ? new Date(l.user.created).toLocaleDateString('pt-BR') : '',
+    l.purchases
+      .map((p) => p.expand?.course?.title || p.mentorship_service || '—')
+      .filter(Boolean)
+      .join('; '),
+  ])
+  const csv = [headers, ...rows]
+    .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(';'))
+    .join('\n')
+  const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = `integrados-${new Date().toISOString().slice(0, 10)}.csv`
+  link.click()
+  URL.revokeObjectURL(url)
+}
+
 export interface SiteLeadSummary extends CrmLead {
   courseCount: number
   lastAssessmentDate: string | null

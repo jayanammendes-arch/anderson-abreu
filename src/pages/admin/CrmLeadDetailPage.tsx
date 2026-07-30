@@ -25,13 +25,16 @@ import {
   updateCrmLeadField,
   getStudentCoursesWithProgress,
   getStudentMentorship,
+  getCounterpartLead,
   type StudentCourseProgress,
   type StudentMentorship,
 } from '@/services/crm'
 import { getLifeWheelCategories, getLifeWheelAssessments } from '@/services/life-wheel'
+import { getCertificates } from '@/services/certificates'
 import { CrmDetailInteractions } from '@/components/crm/CrmDetailInteractions'
 import { CrmDetailLifeWheel } from '@/components/crm/CrmDetailLifeWheel'
 import { CrmLinkedUserData } from '@/components/crm/CrmLinkedUserData'
+import { CrmLeadTimeline } from '@/components/crm/CrmLeadTimeline'
 import type {
   CrmLead,
   CrmInteraction,
@@ -56,6 +59,9 @@ export default function CrmLeadDetailPage() {
   const [phone, setPhone] = useState('')
   const [instagram, setInstagram] = useState('')
   const [saving, setSaving] = useState(false)
+  const [socialLead, setSocialLead] = useState<CrmLead | null>(null)
+  const [socialInteractions, setSocialInteractions] = useState<CrmInteraction[]>([])
+  const [certificates, setCertificates] = useState<any[]>([])
 
   useEffect(() => {
     if (!leadId) return
@@ -76,14 +82,22 @@ export default function CrmLeadDetailPage() {
         setPurchases(purs as CrmPurchase[])
         setCategories(cats as LifeWheelCategory[])
         if (l.linked_user) {
-          const [crs, ment, assmts] = await Promise.all([
+          const [crs, ment, assmts, counterpart, certs] = await Promise.all([
             getStudentCoursesWithProgress(l.linked_user).catch(() => []),
             getStudentMentorship(l.id).catch(() => null),
             getLifeWheelAssessments(l.linked_user).catch(() => []),
+            getCounterpartLead(l.linked_user, l.id).catch(() => null),
+            getCertificates(l.linked_user).catch(() => []),
           ])
           setCourses(crs)
           setMentorship(ment)
           setAssessments(assmts as LifeWheelAssessment[])
+          setSocialLead(counterpart)
+          setCertificates(certs)
+          if (counterpart) {
+            const sInts = await getCrmInteractions(counterpart.id).catch(() => [])
+            setSocialInteractions(sInts as CrmInteraction[])
+          }
         }
       })
       .catch(() => toast.error('Lead não encontrado'))
@@ -285,6 +299,23 @@ export default function CrmLeadDetailPage() {
             <CrmLinkedUserData userId={lead.linked_user} purchases={purchases} />
           </section>
         </>
+      )}
+      {socialLead && (
+        <section>
+          <h3 className="font-semibold text-foreground mb-3">Linha do Tempo da Jornada</h3>
+          <CrmLeadTimeline
+            socialLead={socialLead}
+            socialInteractions={socialInteractions}
+            userCreated={
+              lead.expand?.linked_user?.created || (lead as any).expand?.linked_user?.created || ''
+            }
+            courses={courses}
+            certificates={certificates}
+            assessments={assessments}
+            categories={categories}
+            purchases={purchases}
+          />
+        </section>
       )}
       <section>
         <h3 className="font-semibold text-foreground mb-2">Interações</h3>

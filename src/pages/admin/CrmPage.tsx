@@ -11,6 +11,7 @@ import { filterLeadsByTab, type CrmTab } from '@/lib/crm-utils'
 import { CrmKanbanBoard } from '@/components/crm/CrmKanbanBoard'
 import { CrmLeadFormDialog } from '@/components/crm/CrmLeadFormDialog'
 import { CrmSiteStudentList } from '@/components/crm/CrmSiteStudentList'
+import { CrmIntegradosList } from '@/components/crm/CrmIntegradosList'
 import type { CrmLead } from '@/types'
 
 export default function CrmPage() {
@@ -98,6 +99,8 @@ export default function CrmPage() {
 
       {activeTab === 'site' ? (
         <CrmSiteStudentList />
+      ) : activeTab === 'integrados' ? (
+        <CrmIntegradosList />
       ) : (
         <>
           <div className="flex flex-col sm:flex-row gap-3 mb-6">
