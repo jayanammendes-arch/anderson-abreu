@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/hooks/use-auth'
 import { useRealtime } from '@/hooks/use-realtime'
 import { getOnboardingConfig } from '@/services/onboarding'
-import { getPreHypnosisForm } from '@/services/pre-hypnosis-forms'
 import { getLifeWheelAssessments } from '@/services/life-wheel'
 import { getCoursesWithProgress } from '@/services/courses'
 import { getUserProgress, isLessonCompleted } from '@/services/user-progress'
@@ -95,8 +94,7 @@ export default function ComecePorAqui() {
         const submission = await getFormSubmission(user.id, formStep.form_id)
         setFormDone(!!submission)
       } else {
-        const form = await getPreHypnosisForm(user.id)
-        setFormDone(!!form)
+        setFormDone(false)
       }
     } catch {
       /* ignore */
@@ -108,7 +106,6 @@ export default function ComecePorAqui() {
   useEffect(() => {
     loadData()
   }, [loadData])
-  useRealtime('pre_hypnosis_forms', () => loadData())
   useRealtime('life_wheel_assessments', () => loadData())
   useRealtime('user_progress', () => loadData())
   useRealtime('onboarding_config', () => loadData())
@@ -135,7 +132,9 @@ export default function ComecePorAqui() {
     )
   }
 
-  const steps = config?.steps || DEFAULT_STEPS
+  const steps = (config?.steps || DEFAULT_STEPS).filter(
+    (s) => !(s.type === 'form' && !s.form_id),
+  )
 
   let prevDone = true
   const displaySteps = steps.map((step, index) => {
@@ -191,19 +190,19 @@ export default function ComecePorAqui() {
 
     return {
       num: index + 1,
-      title: step.label,
+      title: step.title,
       icon: Icon,
       desc,
       cta: STEP_CTAS[step.type] || 'Iniciar',
       done,
       unlocked,
       canAct,
+      type: step.type,
+      form_id: step.form_id,
       action: () => {
         if (step.type === 'form') {
           if (step.form_id) setActiveFormId(step.form_id)
-          else navigate('/dashboard/pre-hipnose')
-        } else if (step.type === 'life_wheel') navigate('/dashboard/roda-da-vida')
-        else if (lessonRef)
+        } else if (step.type === 'life_wheel') navigate('/dashboard/roda-da-vida')        else if (lessonRef)
           navigate(`/dashboard/curso/${lessonRef.courseId}?lesson=${lessonRef.id}`)
       },
     }

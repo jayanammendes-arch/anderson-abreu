@@ -83,11 +83,25 @@ export interface OnboardingConfig {
   updated: string
 }
 
+export type FormQuestionType =
+  | 'short_text'
+  | 'paragraph'
+  | 'multiple_choice'
+  | 'checkboxes'
+  | 'dropdown'
+  | 'linear_scale'
+  | 'date'
+  | 'time'
+
 export interface FormConfig {
   id: string
   title: string
   description: string
   is_active: boolean
+  color_theme: string
+  header_image: string
+  confirmation_message: string
+  one_submission_message: string
   created: string
   updated: string
 }
@@ -96,26 +110,28 @@ export interface FormQuestion {
   id: string
   form: string
   question_text: string
-  question_type: 'multiple_choice' | 'open_text'
+  question_type: FormQuestionType
   options: string[] | null
   order: number
   required: boolean
+  description: string
+  shuffle_options: boolean
+  scale_min: number
+  scale_max: number
+  scale_label_left: string
+  scale_label_right: string
+  has_other: boolean
   created: string
   updated: string
 }
 
-export interface FormAnswer {
-  question_id: string
-  question_text: string
-  answer_text?: string
-  selected_options?: string[]
-}
+export type FormAnswers = Record<string, string | string[] | number>
 
 export interface FormSubmission {
   id: string
   user: string
   form: string
-  answers: FormAnswer[]
+  answers: FormAnswers
   created: string
   updated: string
   expand?: { form?: FormConfig }

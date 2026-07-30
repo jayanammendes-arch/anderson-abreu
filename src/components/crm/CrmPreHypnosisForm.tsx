@@ -61,6 +61,7 @@ export function CrmPreHypnosisForm({ userId }: { userId: string }) {
     )
 
   if (submission && questions.length > 0) {
+    const answers = (submission.answers || {}) as Record<string, string | string[] | number>
     return (
       <div className="space-y-2 rounded-lg bg-muted/50 p-3">
         <div className="flex items-center gap-2 mb-2">
@@ -69,8 +70,8 @@ export function CrmPreHypnosisForm({ userId }: { userId: string }) {
         </div>
         <div className="space-y-1.5">
           {questions.map((q) => {
-            const answer = submission.answers?.find((a) => a.question_id === q.id)
-            const text = answer?.answer_text || (answer?.selected_options || []).join(', ') || '—'
+            const ans = answers[q.id]
+            const text = Array.isArray(ans) ? ans.join(', ') : String(ans || '—')
             return (
               <div key={q.id} className="border border-border rounded p-2 text-xs bg-background">
                 <span className="font-medium text-foreground">{q.question_text}:</span>

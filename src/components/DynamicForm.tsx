@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent } from '@/components/ui/card'
-import { Loader2, Save, CheckCircle2 } from 'lucide-react'
+import { Loader2, Save, CheckCircle2, ChevronLeft, ChevronRight, AlertCircle } from 'lucide-react'
 import { toast } from 'sonner'
 import {
   getForm,
@@ -29,6 +29,8 @@ export function DynamicForm({ formId, userId, onSubmitted }: Props) {
   const [justSubmitted, setJustSubmitted] = useState(false)
   const [answers, setAnswers] = useState<FormAnswers>({})
   const [otherValues, setOtherValues] = useState<Record<string, string>>({})
+  const [currentStep, setCurrentStep] = useState(0)
+  const [stepError, setStepError] = useState<string | null>(null)
 
   useEffect(() => {
     const load = async () => {
@@ -51,17 +53,44 @@ export function DynamicForm({ formId, userId, onSubmitted }: Props) {
     load()
   }, [formId, userId])
 
-  const setAnswer = (qId: string, val: string | string[] | number) =>
+  const setAnswer = (qId: string, val: string | string[] | number) => {
     setAnswers((prev) => ({ ...prev, [qId]: val }))
+    setStepError(null)
+  }
+
+  const validateQuestion = (q: FormQuestion): boolean => {
+    if (!q.required) return true
+    const val = answers[q.id]
+    if (val == null || val === '' || (Array.isArray(val) && val.length === 0)) {
+      return false
+    }
+    return true
+  }
+
+  const handleNext = () => {
+    const q = questions[currentStep]
+    if (!q) return
+    if (!validateQuestion(q)) {
+      setStepError('Esta pergunta é obrigatória')
+      return
+    }
+    setStepError(null)
+    setCurrentStep((prev) => Math.min(prev + 1, questions.length - 1))
+  }
+
+  const handleBack = () => {
+    setStepError(null)
+    setCurrentStep((prev) => Math.max(prev - 1, 0))
+  }
 
   const handleSubmit = async () => {
-    for (const q of questions) {
-      if (q.required) {
-        const val = answers[q.id]
-        if (val == null || val === '' || (Array.isArray(val) && val.length === 0)) {
-          toast.error(`Pergunta obrigatória: ${q.question_text}`)
-          return
-        }
+    for (let i = 0; i < questions.length; i++) {
+      const q = questions[i]
+      if (!validateQuestion(q)) {
+        toast.error(`Pergunta obrigatória: ${q.question_text}`)
+        setCurrentStep(i)
+        setStepError('Esta pergunta é obrigatória')
+        return
       }
     }
     setSubmitting(true)
@@ -114,6 +143,20 @@ export function DynamicForm({ formId, userId, onSubmitted }: Props) {
     )
   }
 
+  if (questions.length === 0) {
+    return (
+      <Card className="border-border/50">
+        <CardContent className="p-6 text-center text-muted-foreground">
+          Nenhuma pergunta disponível neste formulário.
+        </CardContent>
+      </Card>
+    )
+  }
+
+  const currentQuestion = questions[currentStep]
+  const isLastStep = currentStep === questions.length - 1
+  const progress = ((currentStep + 1) / questions.length) * 100
+
   return (
     <Card className="border-border/50 overflow-hidden">
       {headerImg && (
@@ -123,31 +166,69 @@ export function DynamicForm({ formId, userId, onSubmitted }: Props) {
         />
       )}
       <CardContent className="p-6 space-y-5">
-        {questions.map((q) => (
-          <FormQuestionInput
-            key={q.id}
-            question={q}
-            answer={answers[q.id]}
-            otherValue={otherValues[q.id]}
-            onAnswer={(v) => setAnswer(q.id, v)}
-            onOtherChange={(v) => setOtherValues((p) => ({ ...p, [q.id]: v }))}
-          />
-        ))}
-        {questions.length > 0 && (
-          <Button
-            onClick={handleSubmit}
-            disabled={submitting}
-            className="w-full text-white"
-            style={{ backgroundColor: themeColor }}
-          >
-            {submitting ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <Save className="mr-2 h-4 w-4" />
-            )}{' '}
-            Enviar Formulário
-          </Button>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between text-sm">
+            <span className="font-medium text-muted-foreground">
+              Pergunta {currentStep + 1} de {questions.length}
+            </span>
+            <span className="text-xs text-muted-foreground">{Math.round(progress)}%</span>
+          </div>
+          <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
+            <div
+              className="h-full rounded-full transition-all duration-300"
+              style={{ width: `${progress}%`, backgroundColor: themeColor }}
+            />
+          </div>
+        </div>
+
+        <FormQuestionInput
+          key={currentQuestion.id}
+          question={currentQuestion}
+          answer={answers[currentQuestion.id]}
+          otherValue={otherValues[currentQuestion.id]}
+          onAnswer={(v) => setAnswer(currentQuestion.id, v)}
+          onOtherChange={(v) => setOtherValues((p) => ({ ...p, [currentQuestion.id]: v }))}
+        />
+
+        {stepError && (
+          <div className="flex items-center gap-2 text-sm text-red-500">
+            <AlertCircle className="h-4 w-4" />
+            {stepError}
+          </div>
         )}
+
+        <div className="flex items-center justify-between gap-3">
+          {currentStep > 0 ? (
+            <Button variant="outline" onClick={handleBack} disabled={submitting}>
+              <ChevronLeft className="mr-1 h-4 w-4" /> Voltar
+            </Button>
+          ) : (
+            <div />
+          )}
+          {isLastStep ? (
+            <Button
+              onClick={handleSubmit}
+              disabled={submitting}
+              className="text-white"
+              style={{ backgroundColor: themeColor }}
+            >
+              {submitting ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Save className="mr-2 h-4 w-4" />
+              )}
+              Enviar Formulário
+            </Button>
+          ) : (
+            <Button
+              onClick={handleNext}
+              className="text-white"
+              style={{ backgroundColor: themeColor }}
+            >
+              Avançar <ChevronRight className="ml-1 h-4 w-4" />
+            </Button>
+          )}
+        </div>
       </CardContent>
     </Card>
   )
