@@ -7,6 +7,7 @@ import { getLifeWheelAssessments } from '@/services/life-wheel'
 import { getCoursesWithProgress } from '@/services/courses'
 import { getUserProgress, isLessonCompleted } from '@/services/user-progress'
 import { getFormSubmission } from '@/services/forms'
+import { getPreHypnosisForm } from '@/services/pre-hypnosis-forms'
 import { DynamicForm } from '@/components/DynamicForm'
 import { LevelBadge } from '@/components/LevelBadge'
 import { Button } from '@/components/ui/button'
@@ -71,6 +72,7 @@ export default function ComecePorAqui() {
   const [loading, setLoading] = useState(true)
   const [config, setConfig] = useState<OnboardingConfig | null>(null)
   const [formDone, setFormDone] = useState(false)
+  const [preHypnosisDone, setPreHypnosisDone] = useState(false)
   const [preAssessmentDone, setPreAssessmentDone] = useState(false)
   const [progress, setProgress] = useState<UserProgress[]>([])
   const [courses, setCourses] = useState<CourseWithProgress[]>([])
@@ -89,12 +91,22 @@ export default function ComecePorAqui() {
       setPreAssessmentDone(assmts.some((a: LifeWheelAssessment) => a.type === 'pre'))
       setCourses(crs)
       setProgress(prog)
-      const formStep = (cfg?.steps || DEFAULT_STEPS).find((s) => s.type === 'form')
-      if (formStep?.form_id) {
-        const submission = await getFormSubmission(user.id, formStep.form_id)
+      const formSteps = (cfg?.steps || DEFAULT_STEPS).filter((s) => s.type === 'form')
+      const stepsWithFormId = formSteps.filter((s) => s.form_id)
+      const stepsWithoutFormId = formSteps.filter((s) => !s.form_id)
+
+      if (stepsWithFormId.length > 0) {
+        const submission = await getFormSubmission(user.id, stepsWithFormId[0].form_id!)
         setFormDone(!!submission)
       } else {
         setFormDone(false)
+      }
+
+      if (stepsWithoutFormId.length > 0) {
+        const preHypnosisForm = await getPreHypnosisForm(user.id)
+        setPreHypnosisDone(!!preHypnosisForm)
+      } else {
+        setPreHypnosisDone(false)
       }
     } catch {
       /* ignore */
@@ -110,6 +122,7 @@ export default function ComecePorAqui() {
   useRealtime('user_progress', () => loadData())
   useRealtime('onboarding_config', () => loadData())
   useRealtime('form_submissions', () => loadData())
+  useRealtime('pre_hypnosis_forms', () => loadData())
 
   if (loading) {
     return (
@@ -143,7 +156,7 @@ export default function ComecePorAqui() {
     let lessonRef: LessonRef | null = null
 
     if (step.type === 'form') {
-      done = formDone
+      done = step.form_id ? formDone : preHypnosisDone
     } else if (step.type === 'life_wheel') {
       done = preAssessmentDone
     } else if (step.type === 'lesson' || step.type === 'audio') {
@@ -200,6 +213,7 @@ export default function ComecePorAqui() {
       action: () => {
         if (step.type === 'form') {
           if (step.form_id) setActiveFormId(step.form_id)
+          else navigate('/dashboard/pre-hipnose')
         } else if (step.type === 'life_wheel') navigate('/dashboard/roda-da-vida')
         else if (lessonRef)
           navigate(`/dashboard/curso/${lessonRef.courseId}?lesson=${lessonRef.id}`)
