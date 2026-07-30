@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils'
 const LEVEL_CONFIG: Record<string, { icon: typeof Crown; gradient: string }> = {
   Prata: { icon: Shield, gradient: 'from-[#C0C0C0] to-[#A8A8A8]' },
   Ouro: { icon: Crown, gradient: 'from-[#FFD700] to-[#FFA500]' },
-  Diamante: { icon: Diamond, gradient: 'from-[#1E90FF] to-[#0047AB]' },
+  Diamante: { icon: Diamond, gradient: 'from-[#4F46E5] to-[#3B82F6]' },
 }
 
 interface LevelBadgeProps {

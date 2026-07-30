@@ -12,6 +12,7 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Loader2, UserPlus, UserCheck } from 'lucide-react'
+import { LevelBadge } from '@/components/LevelBadge'
 import type { CommunityUser } from '@/types'
 
 export function MiniProfile({
@@ -85,6 +86,7 @@ export function MiniProfile({
             <div>
               <div className="flex items-center justify-center gap-2">
                 <h3 className="font-semibold">{profile.name || 'Usuário'}</h3>
+                {profile.level && <LevelBadge level={profile.level} size="sm" />}
                 {profile.is_admin && (
                   <Badge variant="default" className="text-xs">
                     Admin

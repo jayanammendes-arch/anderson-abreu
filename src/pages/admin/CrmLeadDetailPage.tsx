@@ -34,6 +34,7 @@ import { getCertificates } from '@/services/certificates'
 import { CrmDetailInteractions } from '@/components/crm/CrmDetailInteractions'
 import { CrmPreHypnosisForm } from '@/components/crm/CrmPreHypnosisForm'
 import { CrmLeadTreatments } from '@/components/crm/CrmLeadTreatments'
+import { TreatmentMultiSelect } from '@/components/crm/TreatmentMultiSelect'
 import { CrmDetailLifeWheel } from '@/components/crm/CrmDetailLifeWheel'
 import { CrmLinkedUserData } from '@/components/crm/CrmLinkedUserData'
 import { CrmLeadTimeline } from '@/components/crm/CrmLeadTimeline'
@@ -60,7 +61,9 @@ export default function CrmLeadDetailPage() {
   const [stage, setStage] = useState('')
   const [phone, setPhone] = useState('')
   const [instagram, setInstagram] = useState('')
+  const [treatments, setTreatments] = useState<string[]>([])
   const [saving, setSaving] = useState(false)
+  const [savingTreatments, setSavingTreatments] = useState(false)
   const [socialLead, setSocialLead] = useState<CrmLead | null>(null)
   const [socialInteractions, setSocialInteractions] = useState<CrmInteraction[]>([])
   const [certificates, setCertificates] = useState<any[]>([])
@@ -75,6 +78,7 @@ export default function CrmLeadDetailPage() {
         setStage(l.stage)
         setPhone(l.phone || '')
         setInstagram(l.instagram_handle || '')
+        setTreatments(l.treatments || [])
         const [ints, purs, cats] = await Promise.all([
           getCrmInteractions(l.id).catch(() => []),
           getCrmPurchases(l.id).catch(() => []),
@@ -139,6 +143,20 @@ export default function CrmLeadDetailPage() {
       toast.error('Erro ao salvar')
     } finally {
       setSaving(false)
+    }
+  }
+
+  const handleSaveTreatments = async () => {
+    if (!lead) return
+    setSavingTreatments(true)
+    try {
+      await updateCrmLeadField(lead.id, { treatments })
+      setLead({ ...lead, treatments })
+      toast.success('Tratamentos salvos!')
+    } catch {
+      toast.error('Erro ao salvar tratamentos')
+    } finally {
+      setSavingTreatments(false)
     }
   }
 
@@ -260,7 +278,23 @@ export default function CrmLeadDetailPage() {
           </section>
           <section>
             <h3 className="font-semibold text-foreground mb-2">Tratamentos de Interesse</h3>
-            <CrmLeadTreatments treatments={lead.treatments} />
+            <div className="space-y-2">
+              <TreatmentMultiSelect values={treatments} onChange={setTreatments} />
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleSaveTreatments}
+                disabled={savingTreatments}
+                className="border-border text-foreground hover:bg-muted"
+              >
+                {savingTreatments ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Save className="mr-2 h-4 w-4" />
+                )}
+                Salvar tratamentos
+              </Button>
+            </div>
           </section>
           <section>
             <h3 className="font-semibold text-foreground mb-2">Cursos &amp; Progresso</h3>

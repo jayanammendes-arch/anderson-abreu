@@ -18,8 +18,7 @@ export default function Community() {
           <Lock className="h-12 w-12 mx-auto text-muted-foreground" />
           <p className="text-lg font-semibold">Acesso Restrito</p>
           <p className="text-muted-foreground">
-            A comunidade está disponível para alunos nível Ouro e Diamante. Adquira um curso para
-            elevar seu nível e desbloquear a comunidade.
+            Acesso restrito. A comunidade está disponível apenas para alunos nível Ouro ou superior.
           </p>
           <Button asChild>
             <Link to="/dashboard">Ver cursos disponíveis</Link>

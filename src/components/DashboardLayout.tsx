@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { LogOut, Loader2, User, Award, ShoppingBag, LifeBuoy, Moon } from 'lucide-react'
 import { NotificationBell } from '@/components/community/NotificationBell'
+import { LevelBadge } from '@/components/LevelBadge'
 
 const pageTitles: Record<string, string> = {
   '/dashboard': 'Dashboard',
@@ -75,12 +76,18 @@ export function DashboardLayout() {
                     {initials}
                   </AvatarFallback>
                 </Avatar>
-                <span className="text-sm font-medium text-foreground">{userName}</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-foreground">{userName}</span>
+                  {user?.level && <LevelBadge level={user.level} size="sm" />}
+                </div>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56 border-border bg-popover">
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">{userName}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-medium leading-none">{userName}</p>
+                      {user?.level && <LevelBadge level={user.level} size="sm" />}
+                    </div>
                     <p className="text-xs leading-none text-muted-foreground">{user?.email}</p>
                   </div>
                 </DropdownMenuLabel>

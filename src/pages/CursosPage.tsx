@@ -8,6 +8,7 @@ import { LandingLayout } from '@/components/LandingLayout'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { ExternalLink, PlayCircle, Lock, Loader2 } from 'lucide-react'
+import { canAccessCourse } from '@/lib/level-access'
 import type { Course, PlatformSettings } from '@/types'
 
 export default function CursosPage() {
@@ -23,7 +24,10 @@ export default function CursosPage() {
         getAllAvailableCourses(),
         getPlatformSettingsPublic().catch(() => null),
       ])
-      setCourses(coursesData)
+      const filteredCourses = coursesData.filter((c) =>
+        canAccessCourse(c.level, user?.level || 'Prata'),
+      )
+      setCourses(filteredCourses)
       setSettings(settingsData as PlatformSettings | null)
       if (user) {
         const access = await getUserAccess(user.id)
