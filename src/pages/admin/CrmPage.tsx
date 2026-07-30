@@ -16,6 +16,7 @@ import { filterLeadsByTab, type CrmTab } from '@/lib/crm-utils'
 import { CrmKanbanBoard } from '@/components/crm/CrmKanbanBoard'
 import { CrmLeadDetailSheet } from '@/components/crm/CrmLeadDetailSheet'
 import { CrmLeadFormDialog } from '@/components/crm/CrmLeadFormDialog'
+import { CrmSiteStudentList } from '@/components/crm/CrmSiteStudentList'
 import type { CrmLead } from '@/types'
 
 export default function CrmPage() {
@@ -96,54 +97,60 @@ export default function CrmPage() {
         </Tabs>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-3 mb-6">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <Input
-            placeholder="Buscar por nome, email ou Instagram..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 bg-white border-gray-200"
+      {activeTab === 'site' ? (
+        <CrmSiteStudentList />
+      ) : (
+        <>
+          <div className="flex flex-col sm:flex-row gap-3 mb-6">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Input
+                placeholder="Buscar por nome, email ou Instagram..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-9 bg-white border-gray-200"
+              />
+            </div>
+            <Button
+              onClick={() => setShowForm(true)}
+              className="bg-gray-900 hover:bg-gray-800 text-white"
+            >
+              <Plus className="mr-2 h-4 w-4" /> Novo Lead
+            </Button>
+            <Button
+              onClick={handleExportCsv}
+              variant="outline"
+              className="border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+            >
+              <Download className="mr-2 h-4 w-4" /> Exportar CSV
+            </Button>
+          </div>
+
+          <CrmKanbanBoard
+            leads={filteredLeads}
+            stages={CRM_STAGES}
+            onLeadClick={setSelectedLead}
+            onMoveNext={handleMoveNext}
           />
-        </div>
-        <Button
-          onClick={() => setShowForm(true)}
-          className="bg-gray-900 hover:bg-gray-800 text-white"
-        >
-          <Plus className="mr-2 h-4 w-4" /> Novo Lead
-        </Button>
-        <Button
-          onClick={handleExportCsv}
-          variant="outline"
-          className="border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
-        >
-          <Download className="mr-2 h-4 w-4" /> Exportar CSV
-        </Button>
-      </div>
 
-      <CrmKanbanBoard
-        leads={filteredLeads}
-        stages={CRM_STAGES}
-        onLeadClick={setSelectedLead}
-        onMoveNext={handleMoveNext}
-      />
+          <CrmLeadDetailSheet
+            lead={selectedLead}
+            open={!!selectedLead}
+            onOpenChange={(o) => !o && setSelectedLead(null)}
+            onUpdateField={async (id, data) => {
+              try {
+                await updateCrmLeadField(id, data)
+                toast.success('Lead atualizado!')
+                loadLeads()
+              } catch {
+                toast.error('Erro ao atualizar lead')
+              }
+            }}
+          />
 
-      <CrmLeadDetailSheet
-        lead={selectedLead}
-        open={!!selectedLead}
-        onOpenChange={(o) => !o && setSelectedLead(null)}
-        onUpdateField={async (id, data) => {
-          try {
-            await updateCrmLeadField(id, data)
-            toast.success('Lead atualizado!')
-            loadLeads()
-          } catch {
-            toast.error('Erro ao atualizar lead')
-          }
-        }}
-      />
-
-      <CrmLeadFormDialog open={showForm} onOpenChange={setShowForm} onCreated={loadLeads} />
+          <CrmLeadFormDialog open={showForm} onOpenChange={setShowForm} onCreated={loadLeads} />
+        </>
+      )}
     </div>
   )
 }
