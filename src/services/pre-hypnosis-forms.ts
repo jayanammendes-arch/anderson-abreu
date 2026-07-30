@@ -13,17 +13,14 @@ export async function getPreHypnosisForm(userId: string): Promise<PreHypnosisFor
 
 export function createPreHypnosisForm(data: {
   user: string
-  responses: Record<string, string>
-  completed: boolean
+  nome: string
+  telefone: string
+  motivo_da_busca: string
+  informacoes_de_saude: string
+  medicamentos: string
+  expectativas: string
 }) {
   return pb.collection('pre_hypnosis_forms').create(data)
-}
-
-export function updatePreHypnosisForm(
-  id: string,
-  data: Partial<{ responses: Record<string, string>; completed: boolean }>,
-) {
-  return pb.collection('pre_hypnosis_forms').update(id, data)
 }
 
 export async function getPreHypnosisFormByUserId(userId: string): Promise<PreHypnosisForm | null> {

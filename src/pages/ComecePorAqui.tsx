@@ -1,14 +1,14 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/hooks/use-auth'
+import { useRealtime } from '@/hooks/use-realtime'
 import { getPreHypnosisForm } from '@/services/pre-hypnosis-forms'
 import { getLifeWheelAssessments } from '@/services/life-wheel'
 import { getCoursesWithProgress } from '@/services/courses'
-import { isLessonCompleted } from '@/services/user-progress'
+import { getUserProgress, isLessonCompleted } from '@/services/user-progress'
 import { LevelBadge } from '@/components/LevelBadge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { Progress } from '@/components/ui/progress'
 import {
   Loader2,
   Lock,
@@ -21,33 +21,62 @@ import {
   ChevronRight,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import type { CourseWithProgress, LifeWheelAssessment } from '@/types'
+import type { CourseWithProgress, LifeWheelAssessment, UserProgress } from '@/types'
 
-interface StepState {
-  unlocked: boolean
-  completed: boolean
-  progress: number
+interface LessonRef {
+  id: string
+  title: string
+  courseId: string
 }
 
 export default function ComecePorAqui() {
   const { user } = useAuth()
   const navigate = useNavigate()
   const [loading, setLoading] = useState(true)
-  const [formCompleted, setFormCompleted] = useState(false)
-  const [assessments, setAssessments] = useState<LifeWheelAssessment[]>([])
-  const [prataCourses, setPrataCourses] = useState<CourseWithProgress[]>([])
+  const [formDone, setFormDone] = useState(false)
+  const [preAssessmentDone, setPreAssessmentDone] = useState(false)
+  const [progress, setProgress] = useState<UserProgress[]>([])
+  const [firstLesson, setFirstLesson] = useState<LessonRef | null>(null)
+  const [firstAudio, setFirstAudio] = useState<LessonRef | null>(null)
 
   const loadData = useCallback(async () => {
     if (!user) return
     try {
-      const [form, assmts, courses] = await Promise.all([
+      const [form, assmts, courses, prog] = await Promise.all([
         getPreHypnosisForm(user.id),
         getLifeWheelAssessments(user.id),
         getCoursesWithProgress(user.id),
+        getUserProgress(user.id),
       ])
-      setFormCompleted(!!form?.completed)
-      setAssessments(assmts)
-      setPrataCourses(courses.filter((c) => c.level === 'Prata'))
+      setFormDone(!!form)
+      setPreAssessmentDone(assmts.some((a: LifeWheelAssessment) => a.type === 'pre'))
+      setProgress(prog)
+
+      const sortedCourses = [...courses].sort((a, b) => (a.order || 0) - (b.order || 0))
+      const firstCourse = sortedCourses.find((c) => c.lessons?.length > 0)
+      if (firstCourse) {
+        const sortedModules = [...firstCourse.modules].sort(
+          (a, b) => (a.order || 0) - (b.order || 0),
+        )
+        const firstModule = sortedModules[0]
+        if (firstModule) {
+          const moduleLessons = firstCourse.lessons
+            .filter((l) => l.module === firstModule.id)
+            .sort((a, b) => (a.order || 0) - (b.order || 0))
+          if (moduleLessons[0])
+            setFirstLesson({
+              id: moduleLessons[0].id,
+              title: moduleLessons[0].title,
+              courseId: firstCourse.id,
+            })
+          if (moduleLessons[1])
+            setFirstAudio({
+              id: moduleLessons[1].id,
+              title: moduleLessons[1].title,
+              courseId: firstCourse.id,
+            })
+        }
+      }
     } catch {
       /* ignore */
     } finally {
@@ -58,6 +87,9 @@ export default function ComecePorAqui() {
   useEffect(() => {
     loadData()
   }, [loadData])
+  useRealtime('pre_hypnosis_forms', () => loadData())
+  useRealtime('life_wheel_assessments', () => loadData())
+  useRealtime('user_progress', () => loadData())
 
   if (loading) {
     return (
@@ -67,64 +99,62 @@ export default function ComecePorAqui() {
     )
   }
 
-  const step1: StepState = {
-    unlocked: true,
-    completed: formCompleted,
-    progress: formCompleted ? 100 : 0,
-  }
-  const step2: StepState = {
-    unlocked: step1.completed,
-    completed: assessments.length >= 1,
-    progress: Math.min((assessments.length / 2) * 100, 100),
-  }
-  const totalPrataLessons = prataCourses.reduce((sum, c) => sum + c.totalLessons, 0)
-  const completedPrataLessons = prataCourses.reduce((sum, c) => sum + c.completedCount, 0)
-  const step3: StepState = {
-    unlocked: step2.completed,
-    completed: totalPrataLessons > 0 && completedPrataLessons === totalPrataLessons,
-    progress:
-      totalPrataLessons > 0 ? Math.round((completedPrataLessons / totalPrataLessons) * 100) : 0,
-  }
-  const step4: StepState = { unlocked: step3.completed, completed: false, progress: 0 }
+  const step1Done = formDone
+  const step2Done = preAssessmentDone
+  const step3Done = firstLesson ? isLessonCompleted(progress, firstLesson.id) : false
+  const step4Done = firstAudio ? isLessonCompleted(progress, firstAudio.id) : false
 
   const steps = [
     {
       num: 1,
       title: 'Formulário Pré-Hipnose',
       icon: ClipboardList,
-      state: step1,
       desc: 'Preencha o formulário inicial',
-      cta: step1.completed ? 'Editar formulário' : 'Preencher formulário',
+      cta: 'Preencher formulário',
+      done: step1Done,
+      unlocked: true,
+      canAct: true,
       action: () => navigate('/dashboard/pre-hipnose'),
     },
     {
       num: 2,
       title: 'Roda da Vida',
       icon: CircleDot,
-      state: step2,
-      desc: `Avaliações: ${assessments.length}/2`,
+      desc: 'Complete a avaliação pré-tratamento',
       cta: 'Fazer avaliação',
+      done: step2Done,
+      unlocked: step1Done,
+      canAct: true,
       action: () => navigate('/dashboard/roda-da-vida'),
     },
     {
       num: 3,
-      title: 'Aulas',
+      title: 'Primeira Aula',
       icon: PlayCircle,
-      state: step3,
-      desc: `${completedPrataLessons}/${totalPrataLessons} aulas concluídas`,
-      cta: prataCourses.length > 0 ? 'Assistir aulas' : 'Em breve',
-      action: () => prataCourses[0] && navigate(`/dashboard/curso/${prataCourses[0].id}`),
+      desc: firstLesson?.title || 'Nenhuma aula disponível',
+      cta: 'Assistir aula',
+      done: step3Done,
+      unlocked: step2Done,
+      canAct: !!firstLesson,
+      action: () =>
+        firstLesson &&
+        navigate(`/dashboard/curso/${firstLesson.courseId}?lesson=${firstLesson.id}`),
     },
     {
       num: 4,
-      title: 'Áudios',
+      title: 'Primeiro Áudio',
       icon: Headphones,
-      state: step4,
-      desc: 'Materiais de áudio finais',
-      cta: 'Em breve',
-      action: () => {},
+      desc: firstAudio?.title || 'Nenhum áudio disponível',
+      cta: 'Ouvir áudio',
+      done: step4Done,
+      unlocked: step3Done,
+      canAct: !!firstAudio,
+      action: () =>
+        firstAudio && navigate(`/dashboard/curso/${firstAudio.courseId}?lesson=${firstAudio.id}`),
     },
   ]
+
+  const activeStepNum = steps.find((s) => s.unlocked && !s.done)?.num
 
   return (
     <div className="space-y-6 animate-fade-in pb-10">
@@ -141,14 +171,16 @@ export default function ComecePorAqui() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {steps.map((step) => {
           const Icon = step.icon
-          const isLocked = !step.state.unlocked
+          const isLocked = !step.unlocked
+          const isActive = step.num === activeStepNum
           return (
             <Card
               key={step.num}
               className={cn(
                 'border-border/50 transition-all',
                 isLocked && 'opacity-60',
-                step.state.completed && 'border-green-500/30 bg-green-500/5',
+                step.done && 'border-green-500/30 bg-green-500/5',
+                isActive && !step.done && 'border-primary/50 ring-2 ring-primary/20',
               )}
             >
               <CardContent className="p-5 space-y-3">
@@ -156,14 +188,14 @@ export default function ComecePorAqui() {
                   <div
                     className={cn(
                       'flex h-10 w-10 items-center justify-center rounded-full',
-                      step.state.completed
+                      step.done
                         ? 'bg-green-500/20 text-green-600'
                         : isLocked
                           ? 'bg-muted text-muted-foreground'
                           : 'bg-primary/10 text-primary',
                     )}
                   >
-                    {step.state.completed ? (
+                    {step.done ? (
                       <CheckCircle2 className="h-5 w-5" />
                     ) : isLocked ? (
                       <Lock className="h-4 w-4" />
@@ -179,19 +211,20 @@ export default function ComecePorAqui() {
                   <h3 className="font-semibold text-sm">{step.title}</h3>
                   <p className="text-xs text-muted-foreground mt-0.5">{step.desc}</p>
                 </div>
-                {step.state.unlocked && !step.state.completed && step.state.progress > 0 && (
-                  <Progress value={step.state.progress} className="h-1.5" />
-                )}
                 <Button
                   size="sm"
                   variant={isLocked ? 'secondary' : 'default'}
-                  disabled={isLocked || step.num === 4}
+                  disabled={isLocked || step.done || !step.canAct}
                   onClick={step.action}
                   className="w-full"
                 >
                   {isLocked ? (
                     <>
                       <Lock className="mr-1 h-3 w-3" /> Bloqueado
+                    </>
+                  ) : step.done ? (
+                    <>
+                      <CheckCircle2 className="mr-1 h-3 w-3" /> Concluído
                     </>
                   ) : (
                     <>

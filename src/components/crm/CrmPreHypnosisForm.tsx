@@ -1,17 +1,16 @@
 import { useState, useEffect } from 'react'
 import { Loader2, FileText } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
 import { getPreHypnosisFormByUserId } from '@/services/pre-hypnosis-forms'
 import type { PreHypnosisForm } from '@/types'
 
-const FIELD_LABELS: Record<string, string> = {
-  name: 'Nome',
-  phone: 'Telefone',
-  reason: 'Motivo da busca',
-  healthInfo: 'Informações de saúde',
-  medications: 'Medicamentos',
-  expectations: 'Expectativas',
-}
+const FORM_FIELDS: ReadonlyArray<{ key: keyof PreHypnosisForm; label: string }> = [
+  { key: 'nome', label: 'Nome' },
+  { key: 'telefone', label: 'Telefone' },
+  { key: 'motivo_da_busca', label: 'Motivo da busca' },
+  { key: 'informacoes_de_saude', label: 'Informações de saúde' },
+  { key: 'medicamentos', label: 'Medicamentos' },
+  { key: 'expectativas', label: 'Expectativas' },
+]
 
 export function CrmPreHypnosisForm({ userId }: { userId: string }) {
   const [form, setForm] = useState<PreHypnosisForm | null>(null)
@@ -32,30 +31,24 @@ export function CrmPreHypnosisForm({ userId }: { userId: string }) {
       </div>
     )
 
-  if (!form) return <p className="text-sm text-muted-foreground">Nenhum formulário preenchido.</p>
-
-  const entries = Object.entries(form.responses || {})
+  if (!form) return <p className="text-sm text-muted-foreground">Nenhum formulário enviado.</p>
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 rounded-lg bg-muted/50 p-3">
       <div className="flex items-center gap-2 mb-2">
         <FileText className="h-4 w-4 text-primary" />
-        <Badge variant={form.completed ? 'default' : 'secondary'}>
-          {form.completed ? 'Completo' : 'Em andamento'}
-        </Badge>
+        <span className="text-sm font-medium">Formulário enviado</span>
       </div>
-      {entries.length === 0 ? (
-        <p className="text-sm text-muted-foreground">Sem respostas.</p>
-      ) : (
-        <div className="space-y-1.5">
-          {entries.map(([key, value]) => (
-            <div key={key} className="border border-border rounded p-2 text-xs bg-background">
-              <span className="font-medium text-foreground">{FIELD_LABELS[key] || key}:</span>
-              <p className="text-muted-foreground mt-0.5 whitespace-pre-wrap">{value || '—'}</p>
-            </div>
-          ))}
-        </div>
-      )}
+      <div className="space-y-1.5">
+        {FORM_FIELDS.map(({ key, label }) => (
+          <div key={key} className="border border-border rounded p-2 text-xs bg-background">
+            <span className="font-medium text-foreground">{label}:</span>
+            <p className="text-muted-foreground mt-0.5 whitespace-pre-wrap">
+              {(form[key] as string) || '—'}
+            </p>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }

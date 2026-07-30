@@ -20,6 +20,7 @@ import { LevelBadge } from '@/components/LevelBadge'
 
 const pageTitles: Record<string, string> = {
   '/dashboard': 'Dashboard',
+  '/dashboard/comece-por-aqui': 'Comece por Aqui',
   '/dashboard/produtos': 'Produtos',
   '/dashboard/compras': 'Compras',
   '/dashboard/comunidade': 'Comunidade',

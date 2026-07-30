@@ -22,10 +22,12 @@ import {
   Settings,
   Users,
   Radar,
+  Sparkles,
 } from 'lucide-react'
 
 const studentNavItems = [
   { title: 'Início', href: '/dashboard', icon: Home },
+  { title: 'Comece por Aqui', href: '/dashboard/comece-por-aqui', icon: Sparkles },
   { title: 'Roda da Vida', href: '/dashboard/roda-da-vida', icon: Radar },
   { title: 'Produtos', href: '/dashboard/produtos', icon: Package },
   { title: 'Compras', href: '/dashboard/compras', icon: ShoppingBag },

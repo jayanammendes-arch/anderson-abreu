@@ -3,8 +3,12 @@ export type UserLevel = 'Prata' | 'Ouro' | 'Diamante'
 export interface PreHypnosisForm {
   id: string
   user: string
-  responses: Record<string, string>
-  completed: boolean
+  nome: string
+  telefone: string
+  motivo_da_busca: string
+  informacoes_de_saude: string
+  medicamentos: string
+  expectativas: string
   created: string
   updated: string
 }

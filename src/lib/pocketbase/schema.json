@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-30T17:54:57.586Z",
+  "generatedAt": "2026-07-30T18:04:47.923Z",
   "collections": [
     {
       "name": "users",
@@ -3022,9 +3022,9 @@
       "name": "pre_hypnosis_forms",
       "type": "base",
       "apiRules": {
-        "list": "@request.auth.is_admin = true",
+        "list": "@request.auth.id = user || @request.auth.is_admin = true",
         "view": "@request.auth.id = user || @request.auth.is_admin = true",
-        "create": "@request.auth.id != ''",
+        "create": "@request.auth.id != '' && user = @request.auth.id",
         "update": null,
         "delete": null
       },
