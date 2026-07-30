@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-28T20:51:02.427Z",
+  "generatedAt": "2026-07-30T13:27:35.561Z",
   "collections": [
     {
       "name": "users",
@@ -59,6 +59,18 @@
         {
           "name": "is_hypnosis",
           "type": "bool",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "birth_date",
+          "type": "date",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "phone",
+          "type": "text",
           "required": false,
           "system": false
         }
@@ -2773,6 +2785,210 @@
       "indexes": [
         "CREATE INDEX `idx_life_wheel_assessments_user` ON `life_wheel_assessments` (user)"
       ]
+    },
+    {
+      "name": "crm_leads",
+      "type": "base",
+      "apiRules": {
+        "list": "@request.auth.is_admin = true",
+        "view": "@request.auth.is_admin = true",
+        "create": "@request.auth.is_admin = true",
+        "update": "@request.auth.is_admin = true",
+        "delete": "@request.auth.is_admin = true"
+      },
+      "fields": [
+        {
+          "name": "name",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "email",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "phone",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "instagram_handle",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "stage",
+          "type": "select",
+          "required": true,
+          "system": false,
+          "selectValues": [
+            "Leads externos",
+            "Novos Seguidores",
+            "Base",
+            "No Show",
+            "Conexao",
+            "Wtz ok Anderson",
+            "Fechado"
+          ]
+        },
+        {
+          "name": "notes",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "linked_user",
+          "type": "relation",
+          "required": false,
+          "system": false,
+          "collectionRef": "users"
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": [
+        "CREATE INDEX idx_crm_leads_stage ON crm_leads (stage)",
+        "CREATE INDEX idx_crm_leads_email ON crm_leads (email)"
+      ]
+    },
+    {
+      "name": "crm_interactions",
+      "type": "base",
+      "apiRules": {
+        "list": "@request.auth.is_admin = true",
+        "view": "@request.auth.is_admin = true",
+        "create": "@request.auth.is_admin = true",
+        "update": "@request.auth.is_admin = true",
+        "delete": "@request.auth.is_admin = true"
+      },
+      "fields": [
+        {
+          "name": "lead",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "crm_leads"
+        },
+        {
+          "name": "user",
+          "type": "relation",
+          "required": false,
+          "system": false,
+          "collectionRef": "users"
+        },
+        {
+          "name": "type",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "content",
+          "type": "editor",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": ["CREATE INDEX idx_crm_interactions_lead ON crm_interactions (lead)"]
+    },
+    {
+      "name": "crm_purchases",
+      "type": "base",
+      "apiRules": {
+        "list": "@request.auth.is_admin = true",
+        "view": "@request.auth.is_admin = true",
+        "create": "@request.auth.is_admin = true",
+        "update": "@request.auth.is_admin = true",
+        "delete": "@request.auth.is_admin = true"
+      },
+      "fields": [
+        {
+          "name": "lead",
+          "type": "relation",
+          "required": false,
+          "system": false,
+          "collectionRef": "crm_leads"
+        },
+        {
+          "name": "user",
+          "type": "relation",
+          "required": false,
+          "system": false,
+          "collectionRef": "users"
+        },
+        {
+          "name": "course",
+          "type": "relation",
+          "required": false,
+          "system": false,
+          "collectionRef": "courses"
+        },
+        {
+          "name": "mentorship_service",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "purchase_date",
+          "type": "date",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "amount",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": ["CREATE INDEX idx_crm_purchases_lead ON crm_purchases (lead)"]
     }
   ]
 }

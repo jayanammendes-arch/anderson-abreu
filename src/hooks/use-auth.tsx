@@ -5,12 +5,23 @@ interface AuthContextType {
   user: any
   isAuthenticated: boolean
   isAdmin: boolean
-  signUp: (name: string, email: string, password: string) => Promise<{ error: any }>
+  signUp: (
+    name: string,
+    email: string,
+    password: string,
+    phone: string,
+    birth_date: string,
+  ) => Promise<{ error: any }>
   signIn: (email: string, password: string) => Promise<{ error: any }>
   signInWithOAuth: (provider: 'google') => Promise<{ error: any }>
   signOut: () => void
   requestPasswordReset: (email: string) => Promise<{ error: any }>
-  updateProfile: (data: { name?: string; avatar?: File }) => Promise<{ error: any }>
+  updateProfile: (data: {
+    name?: string
+    avatar?: File
+    phone?: string
+    birth_date?: string
+  }) => Promise<{ error: any }>
   updatePassword: (currentPassword: string, newPassword: string) => Promise<{ error: any }>
   loading: boolean
 }
@@ -49,9 +60,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [])
 
-  const signUp = async (name: string, email: string, password: string) => {
+  const signUp = async (
+    name: string,
+    email: string,
+    password: string,
+    phone: string,
+    birth_date: string,
+  ) => {
     try {
-      await pb.collection('users').create({ name, email, password, passwordConfirm: password })
+      await pb
+        .collection('users')
+        .create({ name, email, password, passwordConfirm: password, phone, birth_date })
       await pb.collection('users').authWithPassword(email, password)
       return { error: null }
     } catch (error) {
@@ -115,17 +134,30 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     pb.authStore.clear()
   }
 
-  const updateProfile = async (data: { name?: string; avatar?: File }) => {
+  const updateProfile = async (data: {
+    name?: string
+    avatar?: File
+    phone?: string
+    birth_date?: string
+  }) => {
     try {
       const userId = pb.authStore.record?.id
       if (!userId) return { error: new Error('Não autenticado') }
       if (data.avatar) {
         const formData = new FormData()
         if (data.name) formData.append('name', data.name)
+        if (data.phone) formData.append('phone', data.phone)
+        if (data.birth_date) formData.append('birth_date', data.birth_date)
         formData.append('avatar', data.avatar)
         await pb.collection('users').update(userId, formData)
-      } else if (data.name) {
-        await pb.collection('users').update(userId, { name: data.name })
+      } else {
+        const updateData: Record<string, string> = {}
+        if (data.name) updateData.name = data.name
+        if (data.phone) updateData.phone = data.phone
+        if (data.birth_date) updateData.birth_date = data.birth_date
+        if (Object.keys(updateData).length > 0) {
+          await pb.collection('users').update(userId, updateData)
+        }
       }
       try {
         await pb.collection('users').authRefresh()

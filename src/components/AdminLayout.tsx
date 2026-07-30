@@ -22,6 +22,7 @@ const adminPageTitles: Record<string, string> = {
   '/admin/comunidade': 'Gerenciar Comunidade',
   '/admin/certificados': 'Gerenciar Certificados',
   '/admin/contatos': 'Mensagens de Contato',
+  '/admin/crm': 'CRM — Gestão de Leads',
 }
 
 export function AdminLayout() {

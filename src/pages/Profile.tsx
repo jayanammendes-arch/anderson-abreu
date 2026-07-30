@@ -14,6 +14,10 @@ export default function Profile() {
   const { user, updateProfile, updatePassword } = useAuth()
 
   const [name, setName] = useState(user?.name || '')
+  const [phone, setPhone] = useState(user?.phone || '')
+  const [birthDate, setBirthDate] = useState(
+    user?.birth_date ? user.birth_date.substring(0, 10) : '',
+  )
   const [avatarFile, setAvatarFile] = useState<File | null>(null)
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
   const [currentPassword, setCurrentPassword] = useState('')
@@ -47,7 +51,12 @@ export default function Profile() {
     e.preventDefault()
     setSavingProfile(true)
     setFieldErrors({})
-    const { error } = await updateProfile({ name, avatar: avatarFile || undefined })
+    const { error } = await updateProfile({
+      name,
+      phone,
+      birth_date: birthDate,
+      avatar: avatarFile || undefined,
+    })
     if (error) {
       setFieldErrors(extractFieldErrors(error))
       toast.error(getErrorMessage(error))
@@ -127,6 +136,32 @@ export default function Profile() {
               <Label htmlFor="name">Nome completo</Label>
               <Input id="name" value={name} onChange={(e) => setName(e.target.value)} required />
               {fieldErrors.name && <p className="text-sm text-destructive">{fieldErrors.name}</p>}
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="phone">Telefone</Label>
+                <Input
+                  id="phone"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="(11) 99999-9999"
+                />
+                {fieldErrors.phone && (
+                  <p className="text-sm text-destructive">{fieldErrors.phone}</p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="birthDate">Data de Nascimento</Label>
+                <Input
+                  id="birthDate"
+                  type="date"
+                  value={birthDate}
+                  onChange={(e) => setBirthDate(e.target.value)}
+                />
+                {fieldErrors.birth_date && (
+                  <p className="text-sm text-destructive">{fieldErrors.birth_date}</p>
+                )}
+              </div>
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>

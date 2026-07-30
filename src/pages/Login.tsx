@@ -29,6 +29,8 @@ export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [phone, setPhone] = useState('')
+  const [birthDate, setBirthDate] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [submitting, setSubmitting] = useState(false)
@@ -89,7 +91,7 @@ export default function Login() {
     }
     setSubmitting(true)
     setFieldErrors({})
-    const { error } = await signUp(name, email, password)
+    const { error } = await signUp(name, email, password, phone, birthDate)
     if (error) {
       setFieldErrors(extractFieldErrors(error))
       toast.error(getErrorMessage(error))
@@ -223,6 +225,43 @@ export default function Login() {
                       className="border-white/15 bg-white/5 text-white placeholder:text-white/30 h-11 rounded-xl focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
                     />
                     {fieldErrors.name && <p className="text-sm text-red-400">{fieldErrors.name}</p>}
+                  </div>
+                )}
+
+                {mode === 'signup' && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="space-y-2">
+                      <Label htmlFor="phone" className="text-white text-sm font-medium">
+                        Telefone *
+                      </Label>
+                      <Input
+                        id="phone"
+                        placeholder="(11) 99999-9999"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        required
+                        className="border-white/15 bg-white/5 text-white placeholder:text-white/30 h-11 rounded-xl focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
+                      />
+                      {fieldErrors.phone && (
+                        <p className="text-sm text-red-400">{fieldErrors.phone}</p>
+                      )}
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="birthDate" className="text-white text-sm font-medium">
+                        Data de Nascimento *
+                      </Label>
+                      <Input
+                        id="birthDate"
+                        type="date"
+                        value={birthDate}
+                        onChange={(e) => setBirthDate(e.target.value)}
+                        required
+                        className="border-white/15 bg-white/5 text-white placeholder:text-white/30 h-11 rounded-xl focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
+                      />
+                      {fieldErrors.birth_date && (
+                        <p className="text-sm text-red-400">{fieldErrors.birth_date}</p>
+                      )}
+                    </div>
                   </div>
                 )}
 

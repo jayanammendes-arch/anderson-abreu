@@ -17,6 +17,7 @@ import {
   BadgeCheck,
   Images,
   Radar,
+  Contact,
 } from 'lucide-react'
 
 export interface AdminNavItem {
@@ -97,6 +98,12 @@ export const adminNavGroups: AdminNavGroup[] = [
         href: '/admin/roda-da-vida-perguntas',
         icon: Radar,
         description: 'Gerenciar perguntas da Roda da Vida',
+      },
+      {
+        title: 'CRM',
+        href: '/admin/crm',
+        icon: Contact,
+        description: 'Gestão de leads e funil de vendas',
       },
     ],
   },

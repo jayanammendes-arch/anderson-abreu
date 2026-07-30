@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from '@/components/ui/toaster'
 import { Toaster as Sonner } from '@/components/ui/sonner'
 import { TooltipProvider } from '@/components/ui/tooltip'
@@ -35,6 +35,7 @@ import AdminCertificates from '@/pages/admin/AdminCertificates'
 import AdminContacts from '@/pages/admin/AdminContacts'
 import AdminCertifications from '@/pages/admin/AdminCertifications'
 import AdminAboutContent from '@/pages/admin/AdminAboutContent'
+import CrmPage from '@/pages/admin/CrmPage'
 import AdminTreatments from '@/pages/admin/AdminTreatments'
 import AdminTreatmentCategories from '@/pages/admin/AdminTreatmentCategories'
 import AdminTreatmentCategoryEdit from '@/pages/admin/AdminTreatmentCategoryEdit'
@@ -97,7 +98,9 @@ const App = () => (
               <Route path="contatos" element={<AdminContacts />} />
               <Route path="certificacoes" element={<AdminCertifications />} />
               <Route path="sobre-conteudo" element={<AdminAboutContent />} />
+              <Route path="crm" element={<CrmPage />} />
             </Route>
+            <Route path="/crm" element={<Navigate to="/admin/crm" replace />} />
             <Route path="/dashboard" element={<DashboardLayout />}>
               <Route index element={<Index />} />
               <Route path="produtos" element={<Products />} />
