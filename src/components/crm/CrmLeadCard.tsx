@@ -1,4 +1,4 @@
-import { ChevronRight } from 'lucide-react'
+import { ChevronRight, Globe, Users } from 'lucide-react'
 import type { CrmLead } from '@/types'
 
 interface CrmLeadCardProps {
@@ -16,7 +16,14 @@ export function CrmLeadCard({ lead, onClick, onMoveNext, isLastStage }: CrmLeadC
     >
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
-          <p className="font-medium text-sm text-gray-900 truncate">{lead.name}</p>
+          <div className="flex items-center gap-1.5">
+            <p className="font-medium text-sm text-gray-900 truncate">{lead.name}</p>
+            {lead.source === 'site' ? (
+              <Globe className="h-3 w-3 text-blue-500 flex-shrink-0" />
+            ) : (
+              <Users className="h-3 w-3 text-purple-500 flex-shrink-0" />
+            )}
+          </div>
           <p className="text-xs text-gray-500 truncate">{lead.email}</p>
           {lead.instagram_handle && (
             <p className="text-xs text-gray-400 truncate">@{lead.instagram_handle}</p>

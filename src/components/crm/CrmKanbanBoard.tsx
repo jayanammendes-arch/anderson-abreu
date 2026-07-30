@@ -1,6 +1,5 @@
 import { Badge } from '@/components/ui/badge'
 import { CrmLeadCard } from '@/components/crm/CrmLeadCard'
-import { CRM_STAGES } from '@/services/crm'
 import type { CrmLead } from '@/types'
 
 interface CrmKanbanBoardProps {
@@ -11,7 +10,7 @@ interface CrmKanbanBoardProps {
 }
 
 export function CrmKanbanBoard({ leads, stages, onLeadClick, onMoveNext }: CrmKanbanBoardProps) {
-  const lastStage = CRM_STAGES[CRM_STAGES.length - 1]
+  const lastStage = stages[stages.length - 1]
 
   return (
     <div className="flex gap-4 overflow-x-auto pb-4 min-h-[400px]">

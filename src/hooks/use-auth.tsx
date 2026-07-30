@@ -11,6 +11,7 @@ interface AuthContextType {
     password: string,
     phone: string,
     birth_date: string,
+    instagram_handle?: string,
   ) => Promise<{ error: any }>
   signIn: (email: string, password: string) => Promise<{ error: any }>
   signInWithOAuth: (provider: 'google') => Promise<{ error: any }>
@@ -66,11 +67,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     password: string,
     phone: string,
     birth_date: string,
+    instagram_handle?: string,
   ) => {
     try {
-      await pb
-        .collection('users')
-        .create({ name, email, password, passwordConfirm: password, phone, birth_date })
+      await pb.collection('users').create({
+        name,
+        email,
+        password,
+        passwordConfirm: password,
+        phone,
+        birth_date,
+        instagram_handle: instagram_handle || undefined,
+      })
       await pb.collection('users').authWithPassword(email, password)
       return { error: null }
     } catch (error) {
@@ -139,6 +147,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     avatar?: File
     phone?: string
     birth_date?: string
+    instagram_handle?: string
   }) => {
     try {
       const userId = pb.authStore.record?.id
@@ -148,6 +157,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (data.name) formData.append('name', data.name)
         if (data.phone) formData.append('phone', data.phone)
         if (data.birth_date) formData.append('birth_date', data.birth_date)
+        if (data.instagram_handle !== undefined)
+          formData.append('instagram_handle', data.instagram_handle)
         formData.append('avatar', data.avatar)
         await pb.collection('users').update(userId, formData)
       } else {
@@ -155,6 +166,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (data.name) updateData.name = data.name
         if (data.phone) updateData.phone = data.phone
         if (data.birth_date) updateData.birth_date = data.birth_date
+        if (data.instagram_handle !== undefined) updateData.instagram_handle = data.instagram_handle
         if (Object.keys(updateData).length > 0) {
           await pb.collection('users').update(userId, updateData)
         }

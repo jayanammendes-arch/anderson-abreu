@@ -49,10 +49,10 @@ export function CrmLinkedUserData({ userId, purchases }: CrmLinkedUserDataProps)
           {items.map((item) => (
             <div
               key={item.id}
-              className="flex items-center justify-between border border-gray-200 rounded p-2 text-xs"
+              className="flex items-center justify-between border border-gray-200 rounded p-2 text-xs bg-white"
             >
               <span className="text-gray-700">{item.left}</span>
-              <Badge variant="secondary" className="text-xs">
+              <Badge variant="secondary" className="text-xs bg-gray-100 text-gray-600">
                 {item.right}
               </Badge>
             </div>

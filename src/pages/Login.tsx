@@ -31,6 +31,7 @@ export default function Login() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [phone, setPhone] = useState('')
   const [birthDate, setBirthDate] = useState('')
+  const [instagram, setInstagram] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [submitting, setSubmitting] = useState(false)
@@ -91,7 +92,7 @@ export default function Login() {
     }
     setSubmitting(true)
     setFieldErrors({})
-    const { error } = await signUp(name, email, password, phone, birthDate)
+    const { error } = await signUp(name, email, password, phone, birthDate, instagram)
     if (error) {
       setFieldErrors(extractFieldErrors(error))
       toast.error(getErrorMessage(error))
@@ -262,6 +263,21 @@ export default function Login() {
                         <p className="text-sm text-red-400">{fieldErrors.birth_date}</p>
                       )}
                     </div>
+                  </div>
+                )}
+
+                {mode === 'signup' && (
+                  <div className="space-y-2">
+                    <Label htmlFor="instagram" className="text-white text-sm font-medium">
+                      Instagram
+                    </Label>
+                    <Input
+                      id="instagram"
+                      placeholder="@seuusuario"
+                      value={instagram}
+                      onChange={(e) => setInstagram(e.target.value)}
+                      className="border-white/15 bg-white/5 text-white placeholder:text-white/30 h-11 rounded-xl focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
+                    />
                   </div>
                 )}
 

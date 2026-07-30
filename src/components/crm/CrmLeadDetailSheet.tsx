@@ -36,15 +36,25 @@ interface CrmLeadDetailSheetProps {
   lead: CrmLead | null
   open: boolean
   onOpenChange: (open: boolean) => void
+  readOnlyFields?: boolean
+  onUpdateField?: (id: string, data: Record<string, unknown>) => Promise<void>
 }
 
-export function CrmLeadDetailSheet({ lead, open, onOpenChange }: CrmLeadDetailSheetProps) {
+export function CrmLeadDetailSheet({
+  lead,
+  open,
+  onOpenChange,
+  readOnlyFields = false,
+  onUpdateField,
+}: CrmLeadDetailSheetProps) {
   const [interactions, setInteractions] = useState<CrmInteraction[]>([])
   const [purchases, setPurchases] = useState<CrmPurchase[]>([])
   const [linkedUserId, setLinkedUserId] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [notes, setNotes] = useState('')
   const [stage, setStage] = useState('')
+  const [phone, setPhone] = useState('')
+  const [instagram, setInstagram] = useState('')
   const [newIntType, setNewIntType] = useState('')
   const [newIntContent, setNewIntContent] = useState('')
   const [saving, setSaving] = useState(false)
@@ -53,6 +63,8 @@ export function CrmLeadDetailSheet({ lead, open, onOpenChange }: CrmLeadDetailSh
     if (!lead) return
     setNotes(lead.notes || '')
     setStage(lead.stage)
+    setPhone(lead.phone || '')
+    setInstagram(lead.instagram_handle || '')
     setLinkedUserId(lead.linked_user || null)
     setLoading(true)
     Promise.all([
@@ -89,6 +101,16 @@ export function CrmLeadDetailSheet({ lead, open, onOpenChange }: CrmLeadDetailSh
     }
   }
 
+  const handleSaveContactFields = async () => {
+    if (!lead || !onUpdateField) return
+    setSaving(true)
+    try {
+      await onUpdateField(lead.id, { phone, instagram_handle: instagram })
+    } finally {
+      setSaving(false)
+    }
+  }
+
   const handleAddInteraction = async () => {
     if (!lead || !newIntContent.trim()) return
     try {
@@ -112,22 +134,65 @@ export function CrmLeadDetailSheet({ lead, open, onOpenChange }: CrmLeadDetailSh
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="w-full sm:max-w-2xl overflow-y-auto bg-white">
         <SheetHeader>
-          <SheetTitle className="text-xl">{lead.name}</SheetTitle>
-          <SheetDescription>{lead.email}</SheetDescription>
+          <SheetTitle className="text-xl text-gray-900">{lead.name}</SheetTitle>
+          <SheetDescription className="text-gray-500">{lead.email}</SheetDescription>
         </SheetHeader>
+
+        <div className="mt-4 flex items-center gap-2">
+          <Badge variant="secondary" className="bg-gray-100 text-gray-600">
+            {lead.source === 'site' ? 'Site' : 'Social Seller'}
+          </Badge>
+          {linkedUserId && (
+            <Badge variant="outline" className="text-blue-600 border-blue-200">
+              Usuário vinculado
+            </Badge>
+          )}
+        </div>
+
         <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
           <div>
-            <span className="text-gray-500">Telefone:</span> {lead.phone || '—'}
+            <Label className="text-xs text-gray-500">Telefone</Label>
+            <Input
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              disabled={readOnlyFields}
+              placeholder="—"
+              className="mt-1 bg-white border-gray-200 disabled:bg-gray-50 disabled:text-gray-500"
+            />
           </div>
           <div>
-            <span className="text-gray-500">Instagram:</span>{' '}
-            {lead.instagram_handle ? `@${lead.instagram_handle}` : '—'}
+            <Label className="text-xs text-gray-500">Instagram</Label>
+            <Input
+              value={instagram}
+              onChange={(e) => setInstagram(e.target.value)}
+              disabled={readOnlyFields}
+              placeholder="—"
+              className="mt-1 bg-white border-gray-200 disabled:bg-gray-50 disabled:text-gray-500"
+            />
           </div>
         </div>
+
+        {!readOnlyFields && onUpdateField && (
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={handleSaveContactFields}
+            disabled={saving}
+            className="mt-2 border-gray-200"
+          >
+            {saving ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Save className="mr-2 h-4 w-4" />
+            )}
+            Salvar contato
+          </Button>
+        )}
+
         <div className="mt-3">
           <Label className="text-xs text-gray-500">Estágio</Label>
           <Select value={stage} onValueChange={handleStageChange}>
-            <SelectTrigger className="mt-1">
+            <SelectTrigger className="mt-1 bg-white border-gray-200">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -139,8 +204,9 @@ export function CrmLeadDetailSheet({ lead, open, onOpenChange }: CrmLeadDetailSh
             </SelectContent>
           </Select>
         </div>
+
         <Tabs defaultValue="notes" className="mt-6">
-          <TabsList>
+          <TabsList className="bg-gray-100">
             <TabsTrigger value="notes">Notas</TabsTrigger>
             <TabsTrigger value="interactions">Interações ({interactions.length})</TabsTrigger>
             {linkedUserId && <TabsTrigger value="linked">Aluno</TabsTrigger>}
@@ -151,8 +217,14 @@ export function CrmLeadDetailSheet({ lead, open, onOpenChange }: CrmLeadDetailSh
               onChange={(e) => setNotes(e.target.value)}
               rows={5}
               placeholder="Adicione notas sobre este lead..."
+              className="bg-white border-gray-200"
             />
-            <Button size="sm" onClick={handleSaveNotes} disabled={saving}>
+            <Button
+              size="sm"
+              onClick={handleSaveNotes}
+              disabled={saving}
+              className="bg-gray-900 hover:bg-gray-800"
+            >
               {saving ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : (
@@ -167,16 +239,21 @@ export function CrmLeadDetailSheet({ lead, open, onOpenChange }: CrmLeadDetailSh
                 placeholder="Tipo (ex: Ligação, WhatsApp)"
                 value={newIntType}
                 onChange={(e) => setNewIntType(e.target.value)}
-                className="h-8 text-sm"
+                className="h-8 text-sm bg-white border-gray-200"
               />
               <Textarea
                 placeholder="Conteúdo da interação..."
                 value={newIntContent}
                 onChange={(e) => setNewIntContent(e.target.value)}
                 rows={2}
-                className="text-sm"
+                className="text-sm bg-white border-gray-200"
               />
-              <Button size="sm" onClick={handleAddInteraction} disabled={!newIntContent.trim()}>
+              <Button
+                size="sm"
+                onClick={handleAddInteraction}
+                disabled={!newIntContent.trim()}
+                className="bg-gray-900 hover:bg-gray-800"
+              >
                 <Send className="mr-2 h-3 w-3" /> Registrar
               </Button>
             </div>
@@ -184,9 +261,11 @@ export function CrmLeadDetailSheet({ lead, open, onOpenChange }: CrmLeadDetailSh
               <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
             ) : (
               interactions.map((i) => (
-                <div key={i.id} className="border border-gray-200 rounded-lg p-3 text-sm">
+                <div key={i.id} className="border border-gray-200 rounded-lg p-3 text-sm bg-white">
                   <div className="flex items-center justify-between mb-1">
-                    <Badge variant="secondary">{i.type}</Badge>
+                    <Badge variant="secondary" className="bg-gray-100 text-gray-600">
+                      {i.type}
+                    </Badge>
                     <span className="text-xs text-gray-400">
                       {new Date(i.created).toLocaleDateString('pt-BR')}
                     </span>

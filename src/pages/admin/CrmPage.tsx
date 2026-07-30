@@ -2,16 +2,17 @@ import { useState, useEffect, useCallback } from 'react'
 import { toast } from 'sonner'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { Loader2, Plus, Search } from 'lucide-react'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Loader2, Plus, Search, Download } from 'lucide-react'
 import { useRealtime } from '@/hooks/use-realtime'
-import { CRM_STAGES, getCrmLeads, updateCrmLeadStage } from '@/services/crm'
+import {
+  CRM_STAGES,
+  getCrmLeads,
+  updateCrmLeadStage,
+  updateCrmLeadField,
+  exportLeadsToCsv,
+} from '@/services/crm'
+import { filterLeadsByTab, type CrmTab } from '@/lib/crm-utils'
 import { CrmKanbanBoard } from '@/components/crm/CrmKanbanBoard'
 import { CrmLeadDetailSheet } from '@/components/crm/CrmLeadDetailSheet'
 import { CrmLeadFormDialog } from '@/components/crm/CrmLeadFormDialog'
@@ -20,7 +21,7 @@ import type { CrmLead } from '@/types'
 export default function CrmPage() {
   const [leads, setLeads] = useState<CrmLead[]>([])
   const [search, setSearch] = useState('')
-  const [stageFilter, setStageFilter] = useState('all')
+  const [activeTab, setActiveTab] = useState<CrmTab>('social')
   const [selectedLead, setSelectedLead] = useState<CrmLead | null>(null)
   const [showForm, setShowForm] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -43,18 +44,17 @@ export default function CrmPage() {
     loadLeads()
   })
 
-  const filteredLeads = leads.filter((l) => {
+  const filteredByTab = filterLeadsByTab(leads, activeTab)
+
+  const filteredLeads = filteredByTab.filter((l) => {
     const s = search.toLowerCase()
-    const matchSearch =
-      !s ||
+    if (!s) return true
+    return (
       l.name.toLowerCase().includes(s) ||
       l.email.toLowerCase().includes(s) ||
       (l.instagram_handle || '').toLowerCase().includes(s)
-    return matchSearch
+    )
   })
-
-  const visibleStages =
-    stageFilter === 'all' ? CRM_STAGES : [stageFilter as (typeof CRM_STAGES)[number]]
 
   const handleMoveNext = async (lead: CrmLead) => {
     const idx = CRM_STAGES.indexOf(lead.stage as (typeof CRM_STAGES)[number])
@@ -66,6 +66,13 @@ export default function CrmPage() {
       }
     }
   }
+
+  const handleExportCsv = () => {
+    exportLeadsToCsv(filteredLeads)
+    toast.success('CSV exportado com sucesso!')
+  }
+
+  const isReadOnlyFields = activeTab === 'site' || activeTab === 'integrados'
 
   if (loading)
     return (
@@ -81,6 +88,16 @@ export default function CrmPage() {
         <p className="text-sm text-gray-500">Gerencie leads e acompanhe o funil de vendas</p>
       </div>
 
+      <div className="mb-4">
+        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as CrmTab)}>
+          <TabsList className="bg-gray-100">
+            <TabsTrigger value="site">Site</TabsTrigger>
+            <TabsTrigger value="social">Social Seller</TabsTrigger>
+            <TabsTrigger value="integrados">Integrados</TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </div>
+
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -91,30 +108,24 @@ export default function CrmPage() {
             className="pl-9 bg-white border-gray-200"
           />
         </div>
-        <Select value={stageFilter} onValueChange={setStageFilter}>
-          <SelectTrigger className="w-full sm:w-48 bg-white border-gray-200">
-            <SelectValue placeholder="Filtrar por estágio" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Todos os estágios</SelectItem>
-            {CRM_STAGES.map((s) => (
-              <SelectItem key={s} value={s}>
-                {s}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
         <Button
           onClick={() => setShowForm(true)}
           className="bg-gray-900 hover:bg-gray-800 text-white"
         >
           <Plus className="mr-2 h-4 w-4" /> Novo Lead
         </Button>
+        <Button
+          onClick={handleExportCsv}
+          variant="outline"
+          className="border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+        >
+          <Download className="mr-2 h-4 w-4" /> Exportar CSV
+        </Button>
       </div>
 
       <CrmKanbanBoard
         leads={filteredLeads}
-        stages={visibleStages}
+        stages={CRM_STAGES}
         onLeadClick={setSelectedLead}
         onMoveNext={handleMoveNext}
       />
@@ -123,6 +134,16 @@ export default function CrmPage() {
         lead={selectedLead}
         open={!!selectedLead}
         onOpenChange={(o) => !o && setSelectedLead(null)}
+        readOnlyFields={isReadOnlyFields}
+        onUpdateField={async (id, data) => {
+          try {
+            await updateCrmLeadField(id, data)
+            toast.success('Lead atualizado!')
+            loadLeads()
+          } catch {
+            toast.error('Erro ao atualizar lead')
+          }
+        }}
       />
 
       <CrmLeadFormDialog open={showForm} onOpenChange={setShowForm} onCreated={loadLeads} />

@@ -15,6 +15,7 @@ export default function Profile() {
 
   const [name, setName] = useState(user?.name || '')
   const [phone, setPhone] = useState(user?.phone || '')
+  const [instagram, setInstagram] = useState(user?.instagram_handle || '')
   const [birthDate, setBirthDate] = useState(
     user?.birth_date ? user.birth_date.substring(0, 10) : '',
   )
@@ -55,6 +56,7 @@ export default function Profile() {
       name,
       phone,
       birth_date: birthDate,
+      instagram_handle: instagram,
       avatar: avatarFile || undefined,
     })
     if (error) {
@@ -137,7 +139,7 @@ export default function Profile() {
               <Input id="name" value={name} onChange={(e) => setName(e.target.value)} required />
               {fieldErrors.name && <p className="text-sm text-destructive">{fieldErrors.name}</p>}
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="phone">Telefone</Label>
                 <Input
@@ -148,6 +150,18 @@ export default function Profile() {
                 />
                 {fieldErrors.phone && (
                   <p className="text-sm text-destructive">{fieldErrors.phone}</p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="instagram">Instagram</Label>
+                <Input
+                  id="instagram"
+                  value={instagram}
+                  onChange={(e) => setInstagram(e.target.value)}
+                  placeholder="@seuusuario"
+                />
+                {fieldErrors.instagram_handle && (
+                  <p className="text-sm text-destructive">{fieldErrors.instagram_handle}</p>
                 )}
               </div>
               <div className="space-y-2">
