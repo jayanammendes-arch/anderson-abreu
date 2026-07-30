@@ -5,10 +5,11 @@ import { useRealtime } from '@/hooks/use-realtime'
 import { getCoursesWithProgress } from '@/services/courses'
 import { getLastUpdatedProgress } from '@/services/user-progress'
 import { getUserAccess } from '@/services/user-access'
+import { getOnboardingConfig, getCoverImageUrl } from '@/services/onboarding'
 import { CourseCard } from '@/components/CourseCard'
 import { Button } from '@/components/ui/button'
 import { PlayCircle, Star, Loader2, Sparkles, Radar } from 'lucide-react'
-import type { CourseWithProgress } from '@/types'
+import type { CourseWithProgress, OnboardingConfig } from '@/types'
 
 export default function Index() {
   const { user } = useAuth()
@@ -17,16 +18,19 @@ export default function Index() {
   const [resumeUrl, setResumeUrl] = useState<string | null>(null)
   const [hasProgress, setHasProgress] = useState(false)
   const [accessCourseIds, setAccessCourseIds] = useState<Set<string>>(new Set())
+  const [onboardingConfig, setOnboardingConfig] = useState<OnboardingConfig | null>(null)
 
   const loadData = useCallback(async () => {
     if (!user) return
     try {
-      const [data, accessRecords] = await Promise.all([
+      const [data, accessRecords, config] = await Promise.all([
         getCoursesWithProgress(user.id),
         getUserAccess(user.id),
+        getOnboardingConfig(),
       ])
       setCourses(data)
       setAccessCourseIds(new Set(accessRecords.map((a) => a.course)))
+      setOnboardingConfig(config)
     } catch {
       setCourses([])
       setAccessCourseIds(new Set())
@@ -104,26 +108,35 @@ export default function Index() {
   )
   return (
     <div className="space-y-10 animate-fade-in pb-10">
-      <section className="relative overflow-hidden rounded-3xl border border-primary/20 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-6 sm:p-8 shadow-elevation">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary/15">
-            <Radar className="h-7 w-7 text-primary" />
+      {onboardingConfig?.is_active && (
+        <section className="relative overflow-hidden rounded-3xl border border-primary/20 shadow-elevation min-h-[280px]">
+          {getCoverImageUrl(onboardingConfig) ? (
+            <>
+              <img
+                src={getCoverImageUrl(onboardingConfig)!}
+                alt={onboardingConfig.title}
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30" />
+            </>
+          ) : (
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent" />
+          )}
+          <div className="relative z-10 flex flex-col items-center justify-center text-center p-8 sm:p-12 min-h-[280px]">
+            <Sparkles className="h-10 w-10 text-primary mb-4" />
+            <h2 className="text-2xl font-bold tracking-tight sm:text-3xl mb-2">
+              {onboardingConfig.title}
+            </h2>
+            <p className="text-muted-foreground mb-6 max-w-md">{onboardingConfig.subtitle}</p>
+            <Button size="lg" className="shadow-glow" asChild>
+              <Link to="/dashboard/comece-por-aqui">
+                <Sparkles className="mr-2 h-4 w-4" />
+                Começar
+              </Link>
+            </Button>
           </div>
-          <div className="flex-1">
-            <h2 className="text-xl font-bold tracking-tight sm:text-2xl">Roda da Vida</h2>
-            <p className="text-sm text-muted-foreground mt-1">
-              Avalie sua vida antes e depois do tratamento. Visualize sua evolução em um gráfico
-              interativo.
-            </p>
-          </div>
-          <Button asChild className="shrink-0 shadow-glow">
-            <Link to="/dashboard/roda-da-vida">
-              <Radar className="mr-2 h-4 w-4" />
-              Iniciar Avaliação
-            </Link>
-          </Button>
-        </div>
-      </section>
+        </section>
+      )}
 
       <section className="relative overflow-hidden rounded-3xl bg-gradient-brand p-8 sm:p-12 border border-white/5 shadow-elevation">
         <div className="absolute top-0 right-0 -mt-16 -mr-16 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />

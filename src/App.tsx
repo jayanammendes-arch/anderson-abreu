@@ -51,6 +51,7 @@ import Certificates from '@/pages/Certificates'
 import RodaDaVida from '@/pages/RodaDaVida'
 import AdminLifeWheelCategories from '@/pages/admin/AdminLifeWheelCategories'
 import AdminLifeWheelQuestions from '@/pages/admin/AdminLifeWheelQuestions'
+import AdminOnboarding from '@/pages/admin/AdminOnboarding'
 import NotFound from '@/pages/NotFound'
 
 const App = () => (
@@ -96,6 +97,7 @@ const App = () => (
               <Route path="site-faqs" element={<AdminSiteFaqs />} />
               <Route path="roda-da-vida-categorias" element={<AdminLifeWheelCategories />} />
               <Route path="roda-da-vida-perguntas" element={<AdminLifeWheelQuestions />} />
+              <Route path="comece-por-aqui" element={<AdminOnboarding />} />
               <Route path="comunidade" element={<AdminCommunity />} />
               <Route path="certificados" element={<AdminCertificates />} />
               <Route path="contatos" element={<AdminContacts />} />

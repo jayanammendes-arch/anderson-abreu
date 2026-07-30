@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/hooks/use-auth'
 import { useRealtime } from '@/hooks/use-realtime'
+import { getOnboardingConfig } from '@/services/onboarding'
 import { getPreHypnosisForm } from '@/services/pre-hypnosis-forms'
 import { getLifeWheelAssessments } from '@/services/life-wheel'
 import { getCoursesWithProgress } from '@/services/courses'
@@ -21,7 +22,41 @@ import {
   ChevronRight,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import type { CourseWithProgress, LifeWheelAssessment, UserProgress } from '@/types'
+import type {
+  CourseWithProgress,
+  LifeWheelAssessment,
+  UserProgress,
+  OnboardingConfig,
+  OnboardingStep,
+} from '@/types'
+
+const DEFAULT_STEPS: OnboardingStep[] = [
+  { type: 'form', label: 'Formulário Pré-Hipnose' },
+  { type: 'life_wheel', label: 'Roda da Vida' },
+  { type: 'lesson', label: 'Primeira Aula' },
+  { type: 'audio', label: 'Primeiro Áudio' },
+]
+
+const STEP_ICONS: Record<string, typeof ClipboardList> = {
+  form: ClipboardList,
+  life_wheel: CircleDot,
+  lesson: PlayCircle,
+  audio: Headphones,
+}
+
+const STEP_CTAS: Record<string, string> = {
+  form: 'Preencher formulário',
+  life_wheel: 'Fazer avaliação',
+  lesson: 'Assistir aula',
+  audio: 'Ouvir áudio',
+}
+
+const STEP_DESCS: Record<string, string> = {
+  form: 'Preencha o formulário inicial',
+  life_wheel: 'Complete a avaliação pré-tratamento',
+  lesson: 'Assista à primeira aula do curso',
+  audio: 'Ouça o primeiro áudio do curso',
+}
 
 interface LessonRef {
   id: string
@@ -33,50 +68,27 @@ export default function ComecePorAqui() {
   const { user } = useAuth()
   const navigate = useNavigate()
   const [loading, setLoading] = useState(true)
+  const [config, setConfig] = useState<OnboardingConfig | null>(null)
   const [formDone, setFormDone] = useState(false)
   const [preAssessmentDone, setPreAssessmentDone] = useState(false)
   const [progress, setProgress] = useState<UserProgress[]>([])
-  const [firstLesson, setFirstLesson] = useState<LessonRef | null>(null)
-  const [firstAudio, setFirstAudio] = useState<LessonRef | null>(null)
+  const [courses, setCourses] = useState<CourseWithProgress[]>([])
 
   const loadData = useCallback(async () => {
     if (!user) return
     try {
-      const [form, assmts, courses, prog] = await Promise.all([
+      const [cfg, form, assmts, crs, prog] = await Promise.all([
+        getOnboardingConfig(),
         getPreHypnosisForm(user.id),
         getLifeWheelAssessments(user.id),
         getCoursesWithProgress(user.id),
         getUserProgress(user.id),
       ])
+      setConfig(cfg)
       setFormDone(!!form)
       setPreAssessmentDone(assmts.some((a: LifeWheelAssessment) => a.type === 'pre'))
+      setCourses(crs)
       setProgress(prog)
-
-      const sortedCourses = [...courses].sort((a, b) => (a.order || 0) - (b.order || 0))
-      const firstCourse = sortedCourses.find((c) => c.lessons?.length > 0)
-      if (firstCourse) {
-        const sortedModules = [...firstCourse.modules].sort(
-          (a, b) => (a.order || 0) - (b.order || 0),
-        )
-        const firstModule = sortedModules[0]
-        if (firstModule) {
-          const moduleLessons = firstCourse.lessons
-            .filter((l) => l.module === firstModule.id)
-            .sort((a, b) => (a.order || 0) - (b.order || 0))
-          if (moduleLessons[0])
-            setFirstLesson({
-              id: moduleLessons[0].id,
-              title: moduleLessons[0].title,
-              courseId: firstCourse.id,
-            })
-          if (moduleLessons[1])
-            setFirstAudio({
-              id: moduleLessons[1].id,
-              title: moduleLessons[1].title,
-              courseId: firstCourse.id,
-            })
-        }
-      }
     } catch {
       /* ignore */
     } finally {
@@ -90,6 +102,7 @@ export default function ComecePorAqui() {
   useRealtime('pre_hypnosis_forms', () => loadData())
   useRealtime('life_wheel_assessments', () => loadData())
   useRealtime('user_progress', () => loadData())
+  useRealtime('onboarding_config', () => loadData())
 
   if (loading) {
     return (
@@ -99,62 +112,92 @@ export default function ComecePorAqui() {
     )
   }
 
-  const step1Done = formDone
-  const step2Done = preAssessmentDone
-  const step3Done = firstLesson ? isLessonCompleted(progress, firstLesson.id) : false
-  const step4Done = firstAudio ? isLessonCompleted(progress, firstAudio.id) : false
+  if (config && !config.is_active) {
+    return (
+      <div className="flex h-96 items-center justify-center animate-fade-in">
+        <div className="text-center space-y-2">
+          <Lock className="h-12 w-12 text-muted-foreground mx-auto" />
+          <p className="text-muted-foreground">
+            A jornada de onboarding ainda não está disponível.
+          </p>
+        </div>
+      </div>
+    )
+  }
 
-  const steps = [
-    {
-      num: 1,
-      title: 'Formulário Pré-Hipnose',
-      icon: ClipboardList,
-      desc: 'Preencha o formulário inicial',
-      cta: 'Preencher formulário',
-      done: step1Done,
-      unlocked: true,
-      canAct: true,
-      action: () => navigate('/dashboard/pre-hipnose'),
-    },
-    {
-      num: 2,
-      title: 'Roda da Vida',
-      icon: CircleDot,
-      desc: 'Complete a avaliação pré-tratamento',
-      cta: 'Fazer avaliação',
-      done: step2Done,
-      unlocked: step1Done,
-      canAct: true,
-      action: () => navigate('/dashboard/roda-da-vida'),
-    },
-    {
-      num: 3,
-      title: 'Primeira Aula',
-      icon: PlayCircle,
-      desc: firstLesson?.title || 'Nenhuma aula disponível',
-      cta: 'Assistir aula',
-      done: step3Done,
-      unlocked: step2Done,
-      canAct: !!firstLesson,
-      action: () =>
-        firstLesson &&
-        navigate(`/dashboard/curso/${firstLesson.courseId}?lesson=${firstLesson.id}`),
-    },
-    {
-      num: 4,
-      title: 'Primeiro Áudio',
-      icon: Headphones,
-      desc: firstAudio?.title || 'Nenhum áudio disponível',
-      cta: 'Ouvir áudio',
-      done: step4Done,
-      unlocked: step3Done,
-      canAct: !!firstAudio,
-      action: () =>
-        firstAudio && navigate(`/dashboard/curso/${firstAudio.courseId}?lesson=${firstAudio.id}`),
-    },
-  ]
+  const steps = config?.steps || DEFAULT_STEPS
 
-  const activeStepNum = steps.find((s) => s.unlocked && !s.done)?.num
+  let prevDone = true
+  const displaySteps = steps.map((step, index) => {
+    const Icon = STEP_ICONS[step.type] || ClipboardList
+    let done = false
+    let canAct = true
+    let desc = STEP_DESCS[step.type] || ''
+    let lessonRef: LessonRef | null = null
+
+    if (step.type === 'form') {
+      done = formDone
+    } else if (step.type === 'life_wheel') {
+      done = preAssessmentDone
+    } else if (step.type === 'lesson' || step.type === 'audio') {
+      if (step.lessonId) {
+        for (const c of courses) {
+          const found = c.lessons.find((l) => l.id === step.lessonId)
+          if (found) {
+            lessonRef = { id: found.id, title: found.title, courseId: c.id }
+            break
+          }
+        }
+      } else {
+        const sortedCourses = [...courses].sort((a, b) => (a.order || 0) - (b.order || 0))
+        const firstCourse = sortedCourses.find((c) => c.lessons?.length > 0)
+        if (firstCourse) {
+          const sortedModules = [...firstCourse.modules].sort(
+            (a, b) => (a.order || 0) - (b.order || 0),
+          )
+          const firstModule = sortedModules[0]
+          if (firstModule) {
+            const moduleLessons = firstCourse.lessons
+              .filter((l) => l.module === firstModule.id)
+              .sort((a, b) => (a.order || 0) - (b.order || 0))
+            const idx = step.type === 'audio' ? 1 : 0
+            if (moduleLessons[idx]) {
+              lessonRef = {
+                id: moduleLessons[idx].id,
+                title: moduleLessons[idx].title,
+                courseId: firstCourse.id,
+              }
+            }
+          }
+        }
+      }
+      done = lessonRef ? isLessonCompleted(progress, lessonRef.id) : false
+      canAct = !!lessonRef
+      desc = lessonRef?.title || 'Nenhuma aula disponível'
+    }
+
+    const unlocked = prevDone
+    prevDone = done
+
+    return {
+      num: index + 1,
+      title: step.label,
+      icon: Icon,
+      desc,
+      cta: STEP_CTAS[step.type] || 'Iniciar',
+      done,
+      unlocked,
+      canAct,
+      action: () => {
+        if (step.type === 'form') navigate('/dashboard/pre-hipnose')
+        else if (step.type === 'life_wheel') navigate('/dashboard/roda-da-vida')
+        else if (lessonRef)
+          navigate(`/dashboard/curso/${lessonRef.courseId}?lesson=${lessonRef.id}`)
+      },
+    }
+  })
+
+  const activeStepNum = displaySteps.find((s) => s.unlocked && !s.done)?.num
 
   return (
     <div className="space-y-6 animate-fade-in pb-10">
@@ -169,7 +212,7 @@ export default function ComecePorAqui() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {steps.map((step) => {
+        {displaySteps.map((step) => {
           const Icon = step.icon
           const isLocked = !step.unlocked
           const isActive = step.num === activeStepNum

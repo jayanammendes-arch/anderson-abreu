@@ -62,3 +62,22 @@ export interface CrmPurchase {
   updated: string
   expand?: { course?: Course; user?: { id: string; name: string } }
 }
+
+export interface OnboardingStep {
+  id?: string
+  type: 'form' | 'life_wheel' | 'lesson' | 'audio'
+  label: string
+  courseId?: string
+  lessonId?: string
+}
+
+export interface OnboardingConfig {
+  id: string
+  cover_image: string
+  title: string
+  subtitle: string
+  steps: OnboardingStep[]
+  is_active: boolean
+  created: string
+  updated: string
+}

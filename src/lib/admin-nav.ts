@@ -18,6 +18,7 @@ import {
   Images,
   Radar,
   Contact,
+  Sparkles,
 } from 'lucide-react'
 
 export interface AdminNavItem {
@@ -104,6 +105,12 @@ export const adminNavGroups: AdminNavGroup[] = [
         href: '/admin/crm',
         icon: Contact,
         description: 'Gestão de leads e funil de vendas',
+      },
+      {
+        title: 'Comece por Aqui',
+        href: '/admin/comece-por-aqui',
+        icon: Sparkles,
+        description: 'Configurar jornada de onboarding dos alunos',
       },
     ],
   },
