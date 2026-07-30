@@ -12,11 +12,31 @@ import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { Search, ArrowLeft, Lock, Unlock, Loader2, Sparkles } from 'lucide-react'
+import {
+  Search,
+  ArrowLeft,
+  Lock,
+  Unlock,
+  Loader2,
+  Sparkles,
+  Phone,
+  Instagram,
+  Calendar,
+  Mail,
+  UserCircle,
+} from 'lucide-react'
 import { toast } from 'sonner'
 import { Switch } from '@/components/ui/switch'
 import type { Course, UserAccess } from '@/types'
-import { AdminStudentLifeWheel } from '@/components/life-wheel/AdminStudentLifeWheel'
+
+function formatDate(dateStr: string): string {
+  if (!dateStr) return '—'
+  return new Date(dateStr).toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  })
+}
 
 export default function AdminStudents() {
   const [students, setStudents] = useState<any[]>([])
@@ -91,7 +111,7 @@ export default function AdminStudents() {
             <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
           </Button>
           <div>
-            <h1 className="text-2xl font-bold flex items-center gap-2">
+            <h1 className="text-2xl font-bold flex items-center gap-2 text-foreground">
               {selected.name || 'Aluno'}
               {selected.is_hypnosis && (
                 <Badge className="bg-purple-500/90 text-white">
@@ -102,10 +122,50 @@ export default function AdminStudents() {
             <p className="text-sm text-muted-foreground">{selected.email}</p>
           </div>
         </div>
+
+        <Card className="bg-card/50 border-border/50">
+          <CardContent className="p-4 space-y-3">
+            <h3 className="font-semibold text-foreground flex items-center gap-2">
+              <UserCircle className="h-4 w-4 text-primary" /> Dados de Cadastro
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="flex items-center gap-2 text-sm">
+                <Mail className="h-4 w-4 text-muted-foreground shrink-0" />
+                <span className="text-muted-foreground">Email:</span>
+                <span className="text-foreground font-medium">{selected.email || '—'}</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <Phone className="h-4 w-4 text-muted-foreground shrink-0" />
+                <span className="text-muted-foreground">Telefone:</span>
+                <span className="text-foreground font-medium">{selected.phone || '—'}</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <Instagram className="h-4 w-4 text-muted-foreground shrink-0" />
+                <span className="text-muted-foreground">Instagram:</span>
+                <span className="text-foreground font-medium">
+                  {selected.instagram_handle ? `@${selected.instagram_handle}` : '—'}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <Calendar className="h-4 w-4 text-muted-foreground shrink-0" />
+                <span className="text-muted-foreground">Nascimento:</span>
+                <span className="text-foreground font-medium">
+                  {formatDate(selected.birth_date)}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <Calendar className="h-4 w-4 text-muted-foreground shrink-0" />
+                <span className="text-muted-foreground">Cadastro:</span>
+                <span className="text-foreground font-medium">{formatDate(selected.created)}</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         <Card className="bg-card/50 border-border/50 p-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="font-semibold flex items-center gap-2">
+              <h3 className="font-semibold flex items-center gap-2 text-foreground">
                 <Sparkles className="h-4 w-4 text-purple-500" /> Tag Hipnose
               </h3>
               <p className="text-sm text-muted-foreground">
@@ -126,6 +186,7 @@ export default function AdminStudents() {
             />
           </div>
         </Card>
+
         {accessLoading ? (
           <div className="flex justify-center py-8">
             <Loader2 className="h-6 w-6 animate-spin text-primary" />
@@ -140,7 +201,7 @@ export default function AdminStudents() {
                   className="flex items-center justify-between p-4 bg-card/50 border-border/50"
                 >
                   <div>
-                    <h3 className="font-semibold">{course.title}</h3>
+                    <h3 className="font-semibold text-foreground">{course.title}</h3>
                     <p className="text-sm text-muted-foreground">
                       {course.category || 'Sem categoria'}
                     </p>
@@ -174,18 +235,13 @@ export default function AdminStudents() {
             })}
           </div>
         )}
-
-        <div className="space-y-4">
-          <h2 className="text-xl font-bold">Roda da Vida</h2>
-          <AdminStudentLifeWheel userId={selected.id} />
-        </div>
       </div>
     )
   }
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <h1 className="text-2xl font-bold">Alunos</h1>
+      <h1 className="text-2xl font-bold text-foreground">Alunos</h1>
       <div className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
@@ -220,7 +276,7 @@ export default function AdminStudents() {
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1">
-                <h3 className="font-semibold flex items-center gap-2">
+                <h3 className="font-semibold flex items-center gap-2 text-foreground">
                   {s.name || 'Sem nome'}
                   {s.is_hypnosis && (
                     <Badge className="bg-purple-500/90 text-white text-xs">

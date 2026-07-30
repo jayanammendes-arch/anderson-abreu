@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { toast } from 'sonner'
 import {
   Sheet,
@@ -12,6 +12,13 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Loader2, Send, Download, BarChart3 } from 'lucide-react'
 import {
   getStudentCoursesWithProgress,
@@ -23,11 +30,13 @@ import {
   type StudentMentorship,
 } from '@/services/crm'
 import {
+  getLifeWheelCategories,
   getLifeWheelAssessments,
   downloadLifeWheelPdf,
   downloadLifeWheelComparisonPdf,
 } from '@/services/life-wheel'
-import type { LifeWheelAssessment, CrmInteraction } from '@/types'
+import { LifeWheelChart, type ChartData } from '@/components/life-wheel/LifeWheelChart'
+import type { LifeWheelAssessment, LifeWheelCategory, CrmInteraction } from '@/types'
 
 interface Props {
   lead: SiteLeadSummary | null
@@ -35,15 +44,27 @@ interface Props {
   onOpenChange: (open: boolean) => void
 }
 
+function formatDate(dateStr: string): string {
+  if (!dateStr) return ''
+  return new Date(dateStr).toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  })
+}
+
 export function CrmStudentDetailSheet({ lead, open, onOpenChange }: Props) {
   const [courses, setCourses] = useState<StudentCourseProgress[]>([])
   const [mentorship, setMentorship] = useState<StudentMentorship | null>(null)
   const [assessments, setAssessments] = useState<LifeWheelAssessment[]>([])
+  const [categories, setCategories] = useState<LifeWheelCategory[]>([])
   const [interactions, setInteractions] = useState<CrmInteraction[]>([])
   const [loading, setLoading] = useState(false)
   const [newType, setNewType] = useState('')
   const [newContent, setNewContent] = useState('')
   const [saving, setSaving] = useState(false)
+  const [preId, setPreId] = useState('')
+  const [postId, setPostId] = useState('')
 
   useEffect(() => {
     if (!lead) return
@@ -53,16 +74,36 @@ export function CrmStudentDetailSheet({ lead, open, onOpenChange }: Props) {
       userId ? getStudentCoursesWithProgress(userId).catch(() => []) : Promise.resolve([]),
       getStudentMentorship(lead.id).catch(() => null),
       userId ? getLifeWheelAssessments(userId).catch(() => []) : Promise.resolve([]),
+      getLifeWheelCategories().catch(() => []),
       getCrmInteractions(lead.id).catch(() => []),
     ])
-      .then(([c, m, a, i]) => {
+      .then(([c, m, a, cats, i]) => {
         setCourses(c)
         setMentorship(m)
         setAssessments(a as LifeWheelAssessment[])
+        setCategories(cats as LifeWheelCategory[])
         setInteractions(i as CrmInteraction[])
+        const preItems = (a as LifeWheelAssessment[]).filter((x) => x.type === 'pre')
+        const postItems = (a as LifeWheelAssessment[]).filter((x) => x.type === 'post')
+        setPreId(preItems[0]?.id ?? '')
+        setPostId(postItems[0]?.id ?? '')
       })
       .finally(() => setLoading(false))
   }, [lead])
+
+  const comparisonData = useMemo((): ChartData[] => {
+    const pre = assessments.find((a) => a.id === preId)
+    const post = assessments.find((a) => a.id === postId)
+    return categories.map((cat) => ({
+      category: cat.name,
+      pre: pre?.scores?.[cat.id] ?? 0,
+      post: post?.scores?.[cat.id] ?? 0,
+    }))
+  }, [assessments, categories, preId, postId])
+
+  const preAssessments = assessments.filter((a) => a.type === 'pre')
+  const postAssessments = assessments.filter((a) => a.type === 'post')
+  const canCompare = !!(preId && postId)
 
   const handleAddInteraction = async () => {
     if (!lead || !newContent.trim()) return
@@ -85,10 +126,6 @@ export function CrmStudentDetailSheet({ lead, open, onOpenChange }: Props) {
   }
 
   if (!lead) return null
-
-  const preAssessment = assessments.find((a) => a.type === 'pre')
-  const postAssessment = assessments.find((a) => a.type === 'post')
-  const canCompare = !!(preAssessment && postAssessment)
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -149,7 +186,7 @@ export function CrmStudentDetailSheet({ lead, open, onOpenChange }: Props) {
               {assessments.length === 0 ? (
                 <p className="text-sm text-muted-foreground">Nenhuma avaliação realizada</p>
               ) : (
-                <div className="space-y-2">
+                <div className="space-y-3">
                   {assessments.map((a) => (
                     <div
                       key={a.id}
@@ -166,7 +203,7 @@ export function CrmStudentDetailSheet({ lead, open, onOpenChange }: Props) {
                           {a.type === 'pre' ? 'Pré' : 'Pós'}
                         </Badge>
                         <span className="text-xs text-muted-foreground">
-                          {new Date(a.date || a.created).toLocaleDateString('pt-BR')}
+                          {formatDate(a.date || a.created)}
                         </span>
                         <span className="text-xs text-muted-foreground">
                           Média: {a.scores?.overall_average?.toFixed(1) || '—'}
@@ -183,19 +220,92 @@ export function CrmStudentDetailSheet({ lead, open, onOpenChange }: Props) {
                       </Button>
                     </div>
                   ))}
-                  {canCompare && preAssessment && postAssessment && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="w-full"
-                      onClick={() =>
-                        downloadLifeWheelComparisonPdf(preAssessment.id, postAssessment.id).catch(
-                          () => toast.error('Erro ao baixar PDF comparativo'),
-                        )
-                      }
-                    >
-                      <BarChart3 className="mr-2 h-4 w-4" /> Comparar Evolução
-                    </Button>
+
+                  {preAssessments.length > 0 && postAssessments.length > 0 && (
+                    <div className="border border-border rounded-lg p-3 space-y-3 bg-muted/30">
+                      <h4 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                        <BarChart3 className="h-4 w-4 text-primary" /> Comparação Pré x Pós
+                      </h4>
+                      <div className="flex gap-3 flex-wrap">
+                        <div className="space-y-1 flex-1 min-w-[140px]">
+                          <label className="text-xs text-muted-foreground">Avaliação Pré</label>
+                          <Select value={preId} onValueChange={setPreId}>
+                            <SelectTrigger className="bg-background border-border text-foreground">
+                              <SelectValue placeholder="Selecione..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {preAssessments.map((a) => (
+                                <SelectItem key={a.id} value={a.id}>
+                                  Pré — {formatDate(a.date || a.created)}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-1 flex-1 min-w-[140px]">
+                          <label className="text-xs text-muted-foreground">Avaliação Pós</label>
+                          <Select value={postId} onValueChange={setPostId}>
+                            <SelectTrigger className="bg-background border-border text-foreground">
+                              <SelectValue placeholder="Selecione..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {postAssessments.map((a) => (
+                                <SelectItem key={a.id} value={a.id}>
+                                  Pós — {formatDate(a.date || a.created)}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+
+                      {canCompare && (
+                        <>
+                          <div className="w-full">
+                            <LifeWheelChart data={comparisonData} showComparison />
+                          </div>
+                          <div className="flex gap-2 flex-wrap">
+                            {preId && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() =>
+                                  downloadLifeWheelPdf(preId).catch(() =>
+                                    toast.error('Erro ao baixar PDF'),
+                                  )
+                                }
+                              >
+                                <Download className="mr-1 h-3 w-3" /> PDF Pré
+                              </Button>
+                            )}
+                            {postId && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() =>
+                                  downloadLifeWheelPdf(postId).catch(() =>
+                                    toast.error('Erro ao baixar PDF'),
+                                  )
+                                }
+                              >
+                                <Download className="mr-1 h-3 w-3" /> PDF Pós
+                              </Button>
+                            )}
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() =>
+                                downloadLifeWheelComparisonPdf(preId, postId).catch(() =>
+                                  toast.error('Erro ao baixar PDF comparativo'),
+                                )
+                              }
+                            >
+                              <BarChart3 className="mr-1 h-3 w-3" /> PDF Comparativo
+                            </Button>
+                          </div>
+                        </>
+                      )}
+                    </div>
                   )}
                 </div>
               )}
