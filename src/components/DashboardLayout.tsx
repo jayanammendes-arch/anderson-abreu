@@ -15,6 +15,10 @@ import {
 import { LogOut, Loader2, User, Award, ShoppingBag, LifeBuoy } from 'lucide-react'
 import { NotificationBell } from '@/components/community/NotificationBell'
 import { LevelBadge } from '@/components/LevelBadge'
+import { useState, useEffect } from 'react'
+import { getPlatformSettingsPublic, getLogoUrl } from '@/services/landing'
+import { useRealtime } from '@/hooks/use-realtime'
+import type { PlatformSettings } from '@/types'
 
 const pageTitles: Record<string, string> = {
   '/dashboard': 'Dashboard',
@@ -33,6 +37,24 @@ export function DashboardLayout() {
   const { isAuthenticated, loading, user, signOut } = useAuth()
   const location = useLocation()
   const navigate = useNavigate()
+  const [platformSettings, setPlatformSettings] = useState<PlatformSettings | null>(null)
+
+  useEffect(() => {
+    if (!isAuthenticated) return
+    getPlatformSettingsPublic()
+      .then(setPlatformSettings)
+      .catch(() => {})
+  }, [isAuthenticated])
+
+  useRealtime(
+    'platform_settings',
+    () => {
+      getPlatformSettingsPublic()
+        .then(setPlatformSettings)
+        .catch(() => {})
+    },
+    isAuthenticated,
+  )
 
   if (loading) {
     return (
@@ -63,6 +85,15 @@ export function DashboardLayout() {
         <header className="flex h-16 items-center gap-3 border-b border-border bg-background px-6">
           <SidebarTrigger className="-ml-1 text-foreground hover:bg-muted" />
           <Separator orientation="vertical" className="h-5 bg-border" />
+          {platformSettings &&
+            (platformSettings as any).show_logo !== false &&
+            getLogoUrl(platformSettings) && (
+              <img
+                src={getLogoUrl(platformSettings)!}
+                alt="Logo"
+                className="h-8 w-auto object-contain"
+              />
+            )}
           <h1 className="text-lg font-semibold text-foreground">{pageTitle}</h1>
           <div className="ml-auto flex items-center gap-4">
             <NotificationBell />

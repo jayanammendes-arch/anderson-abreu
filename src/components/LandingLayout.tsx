@@ -4,10 +4,11 @@ import { Button } from '@/components/ui/button'
 import { Menu, X, Calendar, ChevronDown, GraduationCap } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { PlatformSettings, Treatment } from '@/types'
-import { getLogoUrl, applyBrandColor } from '@/services/landing'
+import { getLogoUrl, applyBrandColor, getPlatformSettingsPublic } from '@/services/landing'
 import { getAllTreatments } from '@/services/treatments'
 import { TreatmentsDropdown } from '@/components/TreatmentsDropdown'
 import { useAuth } from '@/hooks/use-auth'
+import { useRealtime } from '@/hooks/use-realtime'
 
 const navLinks = [
   { name: 'Home', href: '/', type: 'route' as const },
@@ -52,6 +53,7 @@ export function LandingLayout({
   const [isScrolled, setIsScrolled] = useState(false)
   const [mobileTreatmentsOpen, setMobileTreatmentsOpen] = useState(false)
   const [treatments, setTreatments] = useState<Treatment[]>([])
+  const [currentSettings, setCurrentSettings] = useState(settings)
 
   const isLanding = location.pathname === '/'
   const isCursosPage = location.pathname === '/cursos'
@@ -81,6 +83,16 @@ export function LandingLayout({
   }, [settings?.primary_color])
 
   useEffect(() => {
+    setCurrentSettings(settings)
+  }, [settings])
+
+  useRealtime('platform_settings', () => {
+    getPlatformSettingsPublic()
+      .then(setCurrentSettings)
+      .catch(() => {})
+  })
+
+  useEffect(() => {
     if (isLanding && window.location.hash) {
       setTimeout(() => scrollToSection(window.location.hash), 100)
     }
@@ -107,7 +119,10 @@ export function LandingLayout({
     }
   }
 
-  const logoUrl = settings ? getLogoUrl(settings) : null
+  const logoUrl =
+    currentSettings && (currentSettings as any).show_logo !== false
+      ? getLogoUrl(currentSettings)
+      : null
   const brandGradientImage =
     settings?.login_gradient ||
     (settings?.primary_color

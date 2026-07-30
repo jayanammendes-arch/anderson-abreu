@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-30T20:48:54.890Z",
+  "generatedAt": "2026-07-30T21:03:36.496Z",
   "collections": [
     {
       "name": "users",
@@ -1222,6 +1222,12 @@
         {
           "name": "home_section_footer",
           "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "show_logo",
+          "type": "bool",
           "required": false,
           "system": false
         }

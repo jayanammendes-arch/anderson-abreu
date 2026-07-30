@@ -2,6 +2,7 @@ import { useState, useEffect, type FormEvent } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { useAuth } from '@/hooks/use-auth'
+import { useRealtime } from '@/hooks/use-realtime'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -44,6 +45,12 @@ export default function Login() {
       .then(setLoginSettings)
       .catch(() => {})
   }, [])
+
+  useRealtime('platform_settings', () => {
+    getPlatformSettingsPublic()
+      .then(setLoginSettings)
+      .catch(() => {})
+  })
 
   useEffect(() => {
     if (loginSettings?.primary_color) applyBrandColor(loginSettings.primary_color)
@@ -427,7 +434,9 @@ export default function Login() {
             to="/"
             className="flex h-24 w-24 items-center justify-center rounded-3xl border border-white/15 bg-white/10 backdrop-blur-md shadow-2xl transition-transform hover:scale-105"
           >
-            {loginSettings && getLogoUrl(loginSettings) ? (
+            {loginSettings &&
+            (loginSettings as any).show_logo !== false &&
+            getLogoUrl(loginSettings) ? (
               <img
                 src={getLogoUrl(loginSettings)!}
                 alt="Logo"
