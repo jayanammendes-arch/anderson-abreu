@@ -72,8 +72,6 @@ export default function CrmPage() {
     toast.success('CSV exportado com sucesso!')
   }
 
-  const isReadOnlyFields = activeTab === 'site' || activeTab === 'integrados'
-
   if (loading)
     return (
       <div className="flex justify-center py-20">
@@ -134,7 +132,6 @@ export default function CrmPage() {
         lead={selectedLead}
         open={!!selectedLead}
         onOpenChange={(o) => !o && setSelectedLead(null)}
-        readOnlyFields={isReadOnlyFields}
         onUpdateField={async (id, data) => {
           try {
             await updateCrmLeadField(id, data)

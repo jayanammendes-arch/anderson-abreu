@@ -26,7 +26,7 @@ export function CrmKanbanBoard({ leads, stages, onLeadClick, onMoveNext }: CrmKa
             </div>
             <div className="space-y-2 bg-gray-50 rounded-lg p-2 min-h-[200px]">
               {stageLeads.length === 0 ? (
-                <p className="text-xs text-gray-400 text-center py-4">Nenhum lead</p>
+                <p className="text-xs text-gray-500 text-center py-4">Nenhum lead</p>
               ) : (
                 stageLeads.map((lead) => (
                   <CrmLeadCard

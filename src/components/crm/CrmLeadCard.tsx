@@ -26,7 +26,7 @@ export function CrmLeadCard({ lead, onClick, onMoveNext, isLastStage }: CrmLeadC
           </div>
           <p className="text-xs text-gray-500 truncate">{lead.email}</p>
           {lead.instagram_handle && (
-            <p className="text-xs text-gray-400 truncate">@{lead.instagram_handle}</p>
+            <p className="text-xs text-gray-500 truncate">@{lead.instagram_handle}</p>
           )}
         </div>
         {!isLastStage && (

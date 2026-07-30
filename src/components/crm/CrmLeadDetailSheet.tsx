@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
-import { Loader2, Save, Send } from 'lucide-react'
+import { Loader2, Save, Send, Lock } from 'lucide-react'
 import {
   CRM_STAGES,
   getCrmInteractions,
@@ -58,6 +58,9 @@ export function CrmLeadDetailSheet({
   const [newIntType, setNewIntType] = useState('')
   const [newIntContent, setNewIntContent] = useState('')
   const [saving, setSaving] = useState(false)
+
+  const isSiteLead = lead?.source === 'site'
+  const isReadOnly = readOnlyFields || isSiteLead
 
   useEffect(() => {
     if (!lead) return
@@ -147,6 +150,11 @@ export function CrmLeadDetailSheet({
               Usuário vinculado
             </Badge>
           )}
+          {isSiteLead && (
+            <Badge variant="outline" className="text-gray-500 border-gray-300 gap-1">
+              <Lock className="h-3 w-3" /> Dados sincronizados
+            </Badge>
+          )}
         </div>
 
         <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
@@ -155,9 +163,9 @@ export function CrmLeadDetailSheet({
             <Input
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              disabled={readOnlyFields}
+              disabled={isReadOnly}
               placeholder="—"
-              className="mt-1 bg-white border-gray-200 disabled:bg-gray-50 disabled:text-gray-500"
+              className="mt-1 bg-white border-gray-200 text-gray-900 disabled:bg-gray-50 disabled:text-gray-500"
             />
           </div>
           <div>
@@ -165,20 +173,20 @@ export function CrmLeadDetailSheet({
             <Input
               value={instagram}
               onChange={(e) => setInstagram(e.target.value)}
-              disabled={readOnlyFields}
+              disabled={isReadOnly}
               placeholder="—"
-              className="mt-1 bg-white border-gray-200 disabled:bg-gray-50 disabled:text-gray-500"
+              className="mt-1 bg-white border-gray-200 text-gray-900 disabled:bg-gray-50 disabled:text-gray-500"
             />
           </div>
         </div>
 
-        {!readOnlyFields && onUpdateField && (
+        {!isReadOnly && onUpdateField && (
           <Button
             size="sm"
             variant="outline"
             onClick={handleSaveContactFields}
             disabled={saving}
-            className="mt-2 border-gray-200"
+            className="mt-2 border-gray-200 text-gray-700 hover:bg-gray-50"
           >
             {saving ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -192,7 +200,7 @@ export function CrmLeadDetailSheet({
         <div className="mt-3">
           <Label className="text-xs text-gray-500">Estágio</Label>
           <Select value={stage} onValueChange={handleStageChange}>
-            <SelectTrigger className="mt-1 bg-white border-gray-200">
+            <SelectTrigger className="mt-1 bg-white border-gray-200 text-gray-900">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -207,9 +215,17 @@ export function CrmLeadDetailSheet({
 
         <Tabs defaultValue="notes" className="mt-6">
           <TabsList className="bg-gray-100">
-            <TabsTrigger value="notes">Notas</TabsTrigger>
-            <TabsTrigger value="interactions">Interações ({interactions.length})</TabsTrigger>
-            {linkedUserId && <TabsTrigger value="linked">Aluno</TabsTrigger>}
+            <TabsTrigger value="notes" className="text-gray-700">
+              Notas
+            </TabsTrigger>
+            <TabsTrigger value="interactions" className="text-gray-700">
+              Interações ({interactions.length})
+            </TabsTrigger>
+            {linkedUserId && (
+              <TabsTrigger value="linked" className="text-gray-700">
+                Aluno
+              </TabsTrigger>
+            )}
           </TabsList>
           <TabsContent value="notes" className="space-y-3">
             <Textarea
@@ -217,13 +233,13 @@ export function CrmLeadDetailSheet({
               onChange={(e) => setNotes(e.target.value)}
               rows={5}
               placeholder="Adicione notas sobre este lead..."
-              className="bg-white border-gray-200"
+              className="bg-white border-gray-200 text-gray-900"
             />
             <Button
               size="sm"
               onClick={handleSaveNotes}
               disabled={saving}
-              className="bg-gray-900 hover:bg-gray-800"
+              className="bg-gray-900 hover:bg-gray-800 text-white"
             >
               {saving ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -239,20 +255,20 @@ export function CrmLeadDetailSheet({
                 placeholder="Tipo (ex: Ligação, WhatsApp)"
                 value={newIntType}
                 onChange={(e) => setNewIntType(e.target.value)}
-                className="h-8 text-sm bg-white border-gray-200"
+                className="h-8 text-sm bg-white border-gray-200 text-gray-900"
               />
               <Textarea
                 placeholder="Conteúdo da interação..."
                 value={newIntContent}
                 onChange={(e) => setNewIntContent(e.target.value)}
                 rows={2}
-                className="text-sm bg-white border-gray-200"
+                className="text-sm bg-white border-gray-200 text-gray-900"
               />
               <Button
                 size="sm"
                 onClick={handleAddInteraction}
                 disabled={!newIntContent.trim()}
-                className="bg-gray-900 hover:bg-gray-800"
+                className="bg-gray-900 hover:bg-gray-800 text-white"
               >
                 <Send className="mr-2 h-3 w-3" /> Registrar
               </Button>
@@ -266,11 +282,11 @@ export function CrmLeadDetailSheet({
                     <Badge variant="secondary" className="bg-gray-100 text-gray-600">
                       {i.type}
                     </Badge>
-                    <span className="text-xs text-gray-400">
+                    <span className="text-xs text-gray-500">
                       {new Date(i.created).toLocaleDateString('pt-BR')}
                     </span>
                   </div>
-                  <p className="text-gray-600" dangerouslySetInnerHTML={{ __html: i.content }} />
+                  <p className="text-gray-700" dangerouslySetInnerHTML={{ __html: i.content }} />
                 </div>
               ))
             )}

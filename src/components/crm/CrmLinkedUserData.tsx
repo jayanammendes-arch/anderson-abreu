@@ -43,7 +43,7 @@ export function CrmLinkedUserData({ userId, purchases }: CrmLinkedUserDataProps)
     <div>
       <h4 className="font-semibold text-gray-700 mb-2">{title}</h4>
       {items.length === 0 ? (
-        <p className="text-gray-400 text-xs">Nenhum registro.</p>
+        <p className="text-gray-500 text-xs">Nenhum registro.</p>
       ) : (
         <div className="space-y-1">
           {items.map((item) => (
