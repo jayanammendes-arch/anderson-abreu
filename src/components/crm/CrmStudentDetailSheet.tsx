@@ -92,34 +92,34 @@ export function CrmStudentDetailSheet({ lead, open, onOpenChange }: Props) {
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="w-full sm:max-w-2xl overflow-y-auto bg-white">
+      <SheetContent className="w-full sm:max-w-2xl overflow-y-auto bg-card">
         <SheetHeader>
-          <SheetTitle className="text-xl text-gray-900">{lead.name}</SheetTitle>
-          <SheetDescription className="text-gray-500">{lead.email}</SheetDescription>
+          <SheetTitle className="text-xl text-foreground">{lead.name}</SheetTitle>
+          <SheetDescription className="text-muted-foreground">{lead.email}</SheetDescription>
         </SheetHeader>
 
         {loading ? (
           <div className="flex justify-center py-8">
-            <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
           </div>
         ) : (
           <div className="mt-4 space-y-6">
             <section>
-              <h3 className="font-semibold text-gray-900 mb-2">Cursos &amp; Progresso</h3>
+              <h3 className="font-semibold text-foreground mb-2">Cursos &amp; Progresso</h3>
               {courses.length === 0 ? (
-                <p className="text-sm text-gray-500">Nenhum curso adquirido</p>
+                <p className="text-sm text-muted-foreground">Nenhum curso adquirido</p>
               ) : (
                 <div className="space-y-2">
                   {courses.map((c) => (
-                    <div key={c.id} className="border border-gray-200 rounded-lg p-3">
+                    <div key={c.id} className="border border-border rounded-lg p-3">
                       <div className="flex justify-between mb-1">
-                        <span className="text-sm font-medium text-gray-900">{c.courseTitle}</span>
-                        <span className="text-xs text-gray-500">
+                        <span className="text-sm font-medium text-foreground">{c.courseTitle}</span>
+                        <span className="text-xs text-muted-foreground">
                           {c.completedLessons}/{c.totalLessons} aulas
                         </span>
                       </div>
                       <Progress value={c.progress} className="h-2" />
-                      <span className="text-xs text-gray-500 mt-1 block">
+                      <span className="text-xs text-muted-foreground mt-1 block">
                         {c.progress}% concluído
                       </span>
                     </div>
@@ -129,46 +129,46 @@ export function CrmStudentDetailSheet({ lead, open, onOpenChange }: Props) {
             </section>
 
             <section>
-              <h3 className="font-semibold text-gray-900 mb-2">Mentoria</h3>
+              <h3 className="font-semibold text-foreground mb-2">Mentoria</h3>
               {mentorship ? (
-                <div className="border border-gray-200 rounded-lg p-3">
-                  <p className="text-sm font-medium text-gray-900">{mentorship.service}</p>
+                <div className="border border-border rounded-lg p-3">
+                  <p className="text-sm font-medium text-foreground">{mentorship.service}</p>
                   {mentorship.purchaseDate && (
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-muted-foreground">
                       Data: {new Date(mentorship.purchaseDate).toLocaleDateString('pt-BR')}
                     </p>
                   )}
                 </div>
               ) : (
-                <p className="text-sm text-gray-500">Nenhuma mentoria</p>
+                <p className="text-sm text-muted-foreground">Nenhuma mentoria</p>
               )}
             </section>
 
             <section>
-              <h3 className="font-semibold text-gray-900 mb-2">Roda da Vida</h3>
+              <h3 className="font-semibold text-foreground mb-2">Roda da Vida</h3>
               {assessments.length === 0 ? (
-                <p className="text-sm text-gray-500">Nenhuma avaliação realizada</p>
+                <p className="text-sm text-muted-foreground">Nenhuma avaliação realizada</p>
               ) : (
                 <div className="space-y-2">
                   {assessments.map((a) => (
                     <div
                       key={a.id}
-                      className="flex items-center justify-between border border-gray-200 rounded-lg p-3"
+                      className="flex items-center justify-between border border-border rounded-lg p-3"
                     >
                       <div className="flex items-center gap-2">
                         <Badge
                           className={
                             a.type === 'pre'
-                              ? 'bg-blue-500/90 text-white'
-                              : 'bg-green-500/90 text-white'
+                              ? 'bg-primary text-primary-foreground'
+                              : 'bg-accent text-accent-foreground'
                           }
                         >
                           {a.type === 'pre' ? 'Pré' : 'Pós'}
                         </Badge>
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-muted-foreground">
                           {new Date(a.date || a.created).toLocaleDateString('pt-BR')}
                         </span>
-                        <span className="text-xs text-gray-600">
+                        <span className="text-xs text-muted-foreground">
                           Média: {a.scores?.overall_average?.toFixed(1) || '—'}
                         </span>
                       </div>
@@ -202,26 +202,26 @@ export function CrmStudentDetailSheet({ lead, open, onOpenChange }: Props) {
             </section>
 
             <section>
-              <h3 className="font-semibold text-gray-900 mb-2">Reuniões &amp; Estratégias</h3>
-              <div className="space-y-2 border border-gray-200 rounded-lg p-3 bg-gray-50">
+              <h3 className="font-semibold text-foreground mb-2">Reuniões &amp; Estratégias</h3>
+              <div className="space-y-2 border border-border rounded-lg p-3 bg-muted/50">
                 <Input
                   placeholder="Tipo (ex: Reunião, Estratégia)"
                   value={newType}
                   onChange={(e) => setNewType(e.target.value)}
-                  className="h-8 text-sm bg-white border-gray-200"
+                  className="h-8 text-sm bg-background border-border text-foreground"
                 />
                 <Textarea
                   placeholder="Notas da reunião..."
                   value={newContent}
                   onChange={(e) => setNewContent(e.target.value)}
                   rows={2}
-                  className="text-sm bg-white border-gray-200"
+                  className="text-sm bg-background border-border text-foreground"
                 />
                 <Button
                   size="sm"
                   onClick={handleAddInteraction}
                   disabled={!newContent.trim() || saving}
-                  className="bg-gray-900 hover:bg-gray-800 text-white"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground"
                 >
                   <Send className="mr-2 h-3 w-3" /> Registrar
                 </Button>
@@ -230,17 +230,20 @@ export function CrmStudentDetailSheet({ lead, open, onOpenChange }: Props) {
                 {interactions.map((i) => (
                   <div
                     key={i.id}
-                    className="border border-gray-200 rounded-lg p-3 text-sm bg-white"
+                    className="border border-border rounded-lg p-3 text-sm bg-background"
                   >
                     <div className="flex items-center justify-between mb-1">
-                      <Badge variant="secondary" className="bg-gray-100 text-gray-600">
+                      <Badge variant="secondary" className="bg-muted text-muted-foreground">
                         {i.type}
                       </Badge>
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-muted-foreground">
                         {new Date(i.created).toLocaleDateString('pt-BR')}
                       </span>
                     </div>
-                    <p className="text-gray-700" dangerouslySetInnerHTML={{ __html: i.content }} />
+                    <p
+                      className="text-foreground"
+                      dangerouslySetInnerHTML={{ __html: i.content }}
+                    />
                   </div>
                 ))}
               </div>

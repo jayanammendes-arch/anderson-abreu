@@ -28,10 +28,11 @@ export function CrmLinkedUserData({ userId, purchases }: CrmLinkedUserDataProps)
   if (loading)
     return (
       <div className="flex justify-center py-8">
-        <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
       </div>
     )
-  if (!data) return <p className="text-sm text-gray-500">Não foi possível carregar os dados.</p>
+  if (!data)
+    return <p className="text-sm text-muted-foreground">Não foi possível carregar os dados.</p>
 
   const Section = ({
     title,
@@ -41,20 +42,18 @@ export function CrmLinkedUserData({ userId, purchases }: CrmLinkedUserDataProps)
     items: { id: string; left: string; right: string }[]
   }) => (
     <div>
-      <h4 className="font-semibold text-gray-700 mb-2">{title}</h4>
+      <h4 className="font-semibold text-foreground mb-2">{title}</h4>
       {items.length === 0 ? (
-        <p className="text-gray-500 text-xs">Nenhum registro.</p>
+        <p className="text-muted-foreground text-xs">Nenhum registro.</p>
       ) : (
         <div className="space-y-1">
           {items.map((item) => (
             <div
               key={item.id}
-              className="flex items-center justify-between border border-gray-200 rounded p-2 text-xs bg-white"
+              className="flex items-center justify-between border border-border rounded p-2 text-xs bg-background"
             >
-              <span className="text-gray-700">{item.left}</span>
-              <Badge variant="secondary" className="text-xs bg-gray-100 text-gray-600">
-                {item.right}
-              </Badge>
+              <span className="text-foreground">{item.left}</span>
+              <Badge className="bg-primary text-primary-foreground">{item.right}</Badge>
             </div>
           ))}
         </div>

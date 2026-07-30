@@ -46,7 +46,7 @@ export function CrmSiteStudentList() {
   if (!isAdmin) {
     return (
       <div className="flex justify-center py-20">
-        <p className="text-gray-500">Acesso restrito</p>
+        <p className="text-muted-foreground">Acesso restrito</p>
       </div>
     )
   }
@@ -54,7 +54,7 @@ export function CrmSiteStudentList() {
   if (loading) {
     return (
       <div className="flex justify-center py-20">
-        <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
       </div>
     )
   }
@@ -63,39 +63,39 @@ export function CrmSiteStudentList() {
     <div>
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Buscar por nome ou email..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 bg-white border-gray-200"
+            className="pl-9 bg-card border-border"
           />
         </div>
         <Button
           onClick={handleExport}
           variant="outline"
-          className="border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+          className="border-border bg-card text-foreground hover:bg-muted"
         >
           <Download className="mr-2 h-4 w-4" /> Exportar CSV
         </Button>
       </div>
 
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+      <div className="bg-card rounded-lg border border-border overflow-hidden">
         <table className="w-full text-sm">
-          <thead className="bg-gray-50 border-b border-gray-200">
+          <thead className="bg-muted border-b border-border">
             <tr>
-              <th className="text-left px-4 py-3 font-semibold text-gray-700">Nome</th>
-              <th className="text-left px-4 py-3 font-semibold text-gray-700 hidden sm:table-cell">
+              <th className="text-left px-4 py-3 font-semibold text-foreground">Nome</th>
+              <th className="text-left px-4 py-3 font-semibold text-foreground hidden sm:table-cell">
                 Email
               </th>
-              <th className="text-left px-4 py-3 font-semibold text-gray-700 hidden md:table-cell">
+              <th className="text-left px-4 py-3 font-semibold text-foreground hidden md:table-cell">
                 Telefone
               </th>
-              <th className="text-left px-4 py-3 font-semibold text-gray-700 hidden lg:table-cell">
+              <th className="text-left px-4 py-3 font-semibold text-foreground hidden lg:table-cell">
                 Instagram
               </th>
-              <th className="text-center px-4 py-3 font-semibold text-gray-700">Cursos</th>
-              <th className="text-left px-4 py-3 font-semibold text-gray-700 hidden xl:table-cell">
+              <th className="text-center px-4 py-3 font-semibold text-foreground">Cursos</th>
+              <th className="text-left px-4 py-3 font-semibold text-foreground hidden xl:table-cell">
                 Última Avaliação
               </th>
               <th className="px-4 py-3" />
@@ -104,7 +104,7 @@ export function CrmSiteStudentList() {
           <tbody>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={7} className="text-center py-8 text-gray-500">
+                <td colSpan={7} className="text-center py-8 text-muted-foreground">
                   Nenhum aluno encontrado
                 </td>
               </tr>
@@ -112,23 +112,22 @@ export function CrmSiteStudentList() {
               filtered.map((lead) => (
                 <tr
                   key={lead.id}
-                  className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
-                  onClick={() => setSelectedLead(lead)}
+                  className="border-b border-border/50 hover:bg-muted/50 cursor-pointer"
                 >
-                  <td className="px-4 py-3 font-medium text-gray-900">{lead.name}</td>
-                  <td className="px-4 py-3 text-gray-600 hidden sm:table-cell">{lead.email}</td>
-                  <td className="px-4 py-3 text-gray-600 hidden md:table-cell">
+                  <td className="px-4 py-3 font-medium text-foreground">{lead.name}</td>
+                  <td className="px-4 py-3 text-muted-foreground hidden sm:table-cell">
+                    {lead.email}
+                  </td>
+                  <td className="px-4 py-3 text-muted-foreground hidden md:table-cell">
                     {lead.phone || '—'}
                   </td>
-                  <td className="px-4 py-3 text-gray-600 hidden lg:table-cell">
+                  <td className="px-4 py-3 text-muted-foreground hidden lg:table-cell">
                     {lead.instagram_handle ? `@${lead.instagram_handle}` : '—'}
                   </td>
                   <td className="px-4 py-3 text-center">
-                    <Badge variant="secondary" className="bg-gray-100 text-gray-600">
-                      {lead.courseCount}
-                    </Badge>
+                    <Badge className="bg-primary text-primary-foreground">{lead.courseCount}</Badge>
                   </td>
-                  <td className="px-4 py-3 text-gray-600 hidden xl:table-cell">
+                  <td className="px-4 py-3 text-muted-foreground hidden xl:table-cell">
                     {lead.lastAssessmentDate
                       ? new Date(lead.lastAssessmentDate).toLocaleDateString('pt-BR')
                       : '—'}
@@ -137,7 +136,7 @@ export function CrmSiteStudentList() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="text-gray-500 hover:text-gray-900"
+                      className="text-muted-foreground hover:text-foreground"
                       onClick={(e) => {
                         e.stopPropagation()
                         setSelectedLead(lead)

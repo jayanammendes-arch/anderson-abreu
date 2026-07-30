@@ -19,14 +19,14 @@ export function CrmKanbanBoard({ leads, stages, onLeadClick, onMoveNext }: CrmKa
         return (
           <div key={stage} className="flex-shrink-0 w-72">
             <div className="flex items-center justify-between mb-3 px-1">
-              <h3 className="font-semibold text-sm text-gray-700">{stage}</h3>
-              <Badge variant="secondary" className="bg-gray-100 text-gray-600">
+              <h3 className="font-semibold text-sm text-foreground">{stage}</h3>
+              <Badge variant="secondary" className="bg-muted text-muted-foreground">
                 {stageLeads.length}
               </Badge>
             </div>
-            <div className="space-y-2 bg-gray-50 rounded-lg p-2 min-h-[200px]">
+            <div className="space-y-2 bg-muted/50 rounded-lg p-2 min-h-[200px]">
               {stageLeads.length === 0 ? (
-                <p className="text-xs text-gray-500 text-center py-4">Nenhum lead</p>
+                <p className="text-xs text-muted-foreground text-center py-4">Nenhum lead</p>
               ) : (
                 stageLeads.map((lead) => (
                   <CrmLeadCard

@@ -73,13 +73,13 @@ export function CrmLeadFormDialog({ open, onOpenChange, onCreated }: CrmLeadForm
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-white">
+      <DialogContent className="bg-card">
         <DialogHeader>
-          <DialogTitle className="text-gray-900">Novo Lead</DialogTitle>
+          <DialogTitle className="text-foreground">Novo Lead</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="lead-name" className="text-gray-700">
+            <Label htmlFor="lead-name" className="text-foreground">
               Nome *
             </Label>
             <Input
@@ -87,11 +87,11 @@ export function CrmLeadFormDialog({ open, onOpenChange, onCreated }: CrmLeadForm
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
-              className="bg-white border-gray-200 text-gray-900"
+              className="bg-background border-border text-foreground"
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="lead-email" className="text-gray-700">
+            <Label htmlFor="lead-email" className="text-foreground">
               Email *
             </Label>
             <Input
@@ -100,23 +100,23 @@ export function CrmLeadFormDialog({ open, onOpenChange, onCreated }: CrmLeadForm
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="bg-white border-gray-200 text-gray-900"
+              className="bg-background border-border text-foreground"
             />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
-              <Label htmlFor="lead-phone" className="text-gray-700">
+              <Label htmlFor="lead-phone" className="text-foreground">
                 Telefone
               </Label>
               <Input
                 id="lead-phone"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="bg-white border-gray-200 text-gray-900"
+                className="bg-background border-border text-foreground"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="lead-instagram" className="text-gray-700">
+              <Label htmlFor="lead-instagram" className="text-foreground">
                 Instagram
               </Label>
               <Input
@@ -124,15 +124,15 @@ export function CrmLeadFormDialog({ open, onOpenChange, onCreated }: CrmLeadForm
                 value={instagram}
                 onChange={(e) => setInstagram(e.target.value)}
                 placeholder="@usuario"
-                className="bg-white border-gray-200 text-gray-900"
+                className="bg-background border-border text-foreground"
               />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
-              <Label className="text-gray-700">Estágio</Label>
+              <Label className="text-foreground">Estágio</Label>
               <Select value={stage} onValueChange={setStage}>
-                <SelectTrigger className="bg-white border-gray-200 text-gray-900">
+                <SelectTrigger className="bg-background border-border text-foreground">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -145,9 +145,9 @@ export function CrmLeadFormDialog({ open, onOpenChange, onCreated }: CrmLeadForm
               </Select>
             </div>
             <div className="space-y-2">
-              <Label className="text-gray-700">Origem</Label>
+              <Label className="text-foreground">Origem</Label>
               <Select value={source} onValueChange={(v) => setSource(v as 'social' | 'site')}>
-                <SelectTrigger className="bg-white border-gray-200 text-gray-900">
+                <SelectTrigger className="bg-background border-border text-foreground">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -158,7 +158,7 @@ export function CrmLeadFormDialog({ open, onOpenChange, onCreated }: CrmLeadForm
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="lead-notes" className="text-gray-700">
+            <Label htmlFor="lead-notes" className="text-foreground">
               Notas
             </Label>
             <Textarea
@@ -166,7 +166,7 @@ export function CrmLeadFormDialog({ open, onOpenChange, onCreated }: CrmLeadForm
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={3}
-              className="bg-white border-gray-200 text-gray-900"
+              className="bg-background border-border text-foreground"
             />
           </div>
           <DialogFooter>
@@ -174,14 +174,14 @@ export function CrmLeadFormDialog({ open, onOpenChange, onCreated }: CrmLeadForm
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
-              className="border-gray-200 text-gray-700 hover:bg-gray-50"
+              className="border-border text-foreground hover:bg-muted"
             >
               Cancelar
             </Button>
             <Button
               type="submit"
               disabled={submitting}
-              className="bg-gray-900 hover:bg-gray-800 text-white"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground"
             >
               {submitting ? 'Criando...' : 'Criar Lead'}
             </Button>

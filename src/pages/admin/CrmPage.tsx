@@ -76,20 +76,22 @@ export default function CrmPage() {
   if (loading)
     return (
       <div className="flex justify-center py-20">
-        <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
       </div>
     )
 
   return (
-    <div className="bg-white min-h-[calc(100vh-4rem)] -m-6 p-6">
+    <div className="bg-background min-h-[calc(100vh-4rem)] -m-6 p-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-1">CRM — Gestão de Leads</h1>
-        <p className="text-sm text-gray-500">Gerencie leads e acompanhe o funil de vendas</p>
+        <h1 className="text-2xl font-bold text-foreground mb-1">CRM — Gestão de Leads</h1>
+        <p className="text-sm text-muted-foreground">
+          Gerencie leads e acompanhe o funil de vendas
+        </p>
       </div>
 
       <div className="mb-4">
         <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as CrmTab)}>
-          <TabsList className="bg-gray-100">
+          <TabsList className="bg-muted">
             <TabsTrigger value="site">Site</TabsTrigger>
             <TabsTrigger value="social">Social Seller</TabsTrigger>
             <TabsTrigger value="integrados">Integrados</TabsTrigger>
@@ -103,24 +105,24 @@ export default function CrmPage() {
         <>
           <div className="flex flex-col sm:flex-row gap-3 mb-6">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Buscar por nome, email ou Instagram..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-9 bg-white border-gray-200"
+                className="pl-9 bg-card border-border"
               />
             </div>
             <Button
               onClick={() => setShowForm(true)}
-              className="bg-gray-900 hover:bg-gray-800 text-white"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground"
             >
               <Plus className="mr-2 h-4 w-4" /> Novo Lead
             </Button>
             <Button
               onClick={handleExportCsv}
               variant="outline"
-              className="border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+              className="border-border bg-card text-foreground hover:bg-muted"
             >
               <Download className="mr-2 h-4 w-4" /> Exportar CSV
             </Button>

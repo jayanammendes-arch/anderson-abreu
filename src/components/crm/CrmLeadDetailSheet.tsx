@@ -135,23 +135,23 @@ export function CrmLeadDetailSheet({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="w-full sm:max-w-2xl overflow-y-auto bg-white">
+      <SheetContent className="w-full sm:max-w-2xl overflow-y-auto bg-card">
         <SheetHeader>
-          <SheetTitle className="text-xl text-gray-900">{lead.name}</SheetTitle>
-          <SheetDescription className="text-gray-500">{lead.email}</SheetDescription>
+          <SheetTitle className="text-xl text-foreground">{lead.name}</SheetTitle>
+          <SheetDescription className="text-muted-foreground">{lead.email}</SheetDescription>
         </SheetHeader>
 
         <div className="mt-4 flex items-center gap-2">
-          <Badge variant="secondary" className="bg-gray-100 text-gray-600">
+          <Badge variant="secondary" className="bg-muted text-muted-foreground">
             {lead.source === 'site' ? 'Site' : 'Social Seller'}
           </Badge>
           {linkedUserId && (
-            <Badge variant="outline" className="text-blue-600 border-blue-200">
+            <Badge variant="outline" className="text-primary border-primary/50">
               Usuário vinculado
             </Badge>
           )}
           {isSiteLead && (
-            <Badge variant="outline" className="text-gray-500 border-gray-300 gap-1">
+            <Badge variant="outline" className="text-muted-foreground border-border gap-1">
               <Lock className="h-3 w-3" /> Dados sincronizados
             </Badge>
           )}
@@ -159,23 +159,23 @@ export function CrmLeadDetailSheet({
 
         <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
           <div>
-            <Label className="text-xs text-gray-500">Telefone</Label>
+            <Label className="text-xs text-muted-foreground">Telefone</Label>
             <Input
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               disabled={isReadOnly}
               placeholder="—"
-              className="mt-1 bg-white border-gray-200 text-gray-900 disabled:bg-gray-50 disabled:text-gray-500"
+              className="mt-1 bg-background border-border text-foreground disabled:bg-muted disabled:text-muted-foreground"
             />
           </div>
           <div>
-            <Label className="text-xs text-gray-500">Instagram</Label>
+            <Label className="text-xs text-muted-foreground">Instagram</Label>
             <Input
               value={instagram}
               onChange={(e) => setInstagram(e.target.value)}
               disabled={isReadOnly}
               placeholder="—"
-              className="mt-1 bg-white border-gray-200 text-gray-900 disabled:bg-gray-50 disabled:text-gray-500"
+              className="mt-1 bg-background border-border text-foreground disabled:bg-muted disabled:text-muted-foreground"
             />
           </div>
         </div>
@@ -186,7 +186,7 @@ export function CrmLeadDetailSheet({
             variant="outline"
             onClick={handleSaveContactFields}
             disabled={saving}
-            className="mt-2 border-gray-200 text-gray-700 hover:bg-gray-50"
+            className="mt-2 border-border text-foreground hover:bg-muted"
           >
             {saving ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -198,9 +198,9 @@ export function CrmLeadDetailSheet({
         )}
 
         <div className="mt-3">
-          <Label className="text-xs text-gray-500">Estágio</Label>
+          <Label className="text-xs text-muted-foreground">Estágio</Label>
           <Select value={stage} onValueChange={handleStageChange}>
-            <SelectTrigger className="mt-1 bg-white border-gray-200 text-gray-900">
+            <SelectTrigger className="mt-1 bg-background border-border text-foreground">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -214,15 +214,15 @@ export function CrmLeadDetailSheet({
         </div>
 
         <Tabs defaultValue="notes" className="mt-6">
-          <TabsList className="bg-gray-100">
-            <TabsTrigger value="notes" className="text-gray-700">
+          <TabsList className="bg-muted">
+            <TabsTrigger value="notes" className="text-foreground">
               Notas
             </TabsTrigger>
-            <TabsTrigger value="interactions" className="text-gray-700">
+            <TabsTrigger value="interactions" className="text-foreground">
               Interações ({interactions.length})
             </TabsTrigger>
             {linkedUserId && (
-              <TabsTrigger value="linked" className="text-gray-700">
+              <TabsTrigger value="linked" className="text-foreground">
                 Aluno
               </TabsTrigger>
             )}
@@ -233,13 +233,13 @@ export function CrmLeadDetailSheet({
               onChange={(e) => setNotes(e.target.value)}
               rows={5}
               placeholder="Adicione notas sobre este lead..."
-              className="bg-white border-gray-200 text-gray-900"
+              className="bg-background border-border text-foreground"
             />
             <Button
               size="sm"
               onClick={handleSaveNotes}
               disabled={saving}
-              className="bg-gray-900 hover:bg-gray-800 text-white"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground"
             >
               {saving ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -250,43 +250,46 @@ export function CrmLeadDetailSheet({
             </Button>
           </TabsContent>
           <TabsContent value="interactions" className="space-y-3">
-            <div className="space-y-2 border border-gray-200 rounded-lg p-3 bg-gray-50">
+            <div className="space-y-2 border border-border rounded-lg p-3 bg-muted/50">
               <Input
                 placeholder="Tipo (ex: Ligação, WhatsApp)"
                 value={newIntType}
                 onChange={(e) => setNewIntType(e.target.value)}
-                className="h-8 text-sm bg-white border-gray-200 text-gray-900"
+                className="h-8 text-sm bg-background border-border text-foreground"
               />
               <Textarea
                 placeholder="Conteúdo da interação..."
                 value={newIntContent}
                 onChange={(e) => setNewIntContent(e.target.value)}
                 rows={2}
-                className="text-sm bg-white border-gray-200 text-gray-900"
+                className="text-sm bg-background border-border text-foreground"
               />
               <Button
                 size="sm"
                 onClick={handleAddInteraction}
                 disabled={!newIntContent.trim()}
-                className="bg-gray-900 hover:bg-gray-800 text-white"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground"
               >
                 <Send className="mr-2 h-3 w-3" /> Registrar
               </Button>
             </div>
             {loading ? (
-              <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
+              <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
             ) : (
               interactions.map((i) => (
-                <div key={i.id} className="border border-gray-200 rounded-lg p-3 text-sm bg-white">
+                <div
+                  key={i.id}
+                  className="border border-border rounded-lg p-3 text-sm bg-background"
+                >
                   <div className="flex items-center justify-between mb-1">
-                    <Badge variant="secondary" className="bg-gray-100 text-gray-600">
+                    <Badge variant="secondary" className="bg-muted text-muted-foreground">
                       {i.type}
                     </Badge>
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-muted-foreground">
                       {new Date(i.created).toLocaleDateString('pt-BR')}
                     </span>
                   </div>
-                  <p className="text-gray-700" dangerouslySetInnerHTML={{ __html: i.content }} />
+                  <p className="text-foreground" dangerouslySetInnerHTML={{ __html: i.content }} />
                 </div>
               ))
             )}
