@@ -136,3 +136,174 @@ export interface FormSubmission {
   updated: string
   expand?: { form?: FormConfig }
 }
+
+export interface PlatformSettings {
+  id: string
+  company_name?: string
+  logo?: string
+  primary_color?: string
+  login_image?: string
+  login_text?: string
+  login_gradient?: string
+  whatsapp_number?: string
+  instagram_handle?: string
+  support_email?: string
+  agenda_highlight_title?: string
+  home_hero_image?: string
+  hero_title?: string
+  hero_subtitle?: string
+  hero_cta_text?: string
+  stats_students?: number
+  stats_years?: number
+  stats_courses?: number
+  stats_countries?: number
+  agenda_intro?: string
+  agenda_image?: string
+  courses_title?: string
+  courses_intro?: string
+  contact_title?: string
+  contact_intro?: string
+  contact_phone?: string
+  facebook_url?: string
+  linkedin_url?: string
+  youtube_url?: string
+  courses_section_title?: string
+  courses_section_text?: string
+  courses_section_button?: string
+  saiba_mais_text?: string
+  agendar_sessao_text?: string
+  treatments_section_title?: string
+  treatments_section_intro?: string
+  blog_section_title?: string
+  blog_section_intro?: string
+  testimonials_section_title?: string
+  about_full_bio?: string
+  agendar_background_image?: string
+  agendar_headline?: string
+  agendar_subheadline?: string
+  agendar_benefits?: string | string[]
+  agendar_submit_button_text?: string
+  home_credential_name?: string
+  home_credential_subtitle?: string
+  home_credential_image?: string
+  home_credential_list?: string | string[]
+  home_credential_cta_text?: string
+  home_credential_floating_badge_text?: string
+  parallax_background_image?: string
+  parallax_headline?: string
+  parallax_button_text?: string
+  parallax_button_link?: string
+  faq_section_image?: string
+  about_hero_title?: string
+  about_hero_subtitle?: string
+  about_journey_title?: string
+  about_formations_title?: string
+  about_grand_names_title?: string
+  about_media_title?: string
+  about_recommendations_title?: string
+  about_environment_title?: string
+  about_cta_title?: string
+  about_cta_subtitle?: string
+  about_cta_button_text?: string
+  about_cta_button_link?: string
+  about_hero_visible?: boolean
+  about_credentials_visible?: boolean
+  about_journey_visible?: boolean
+  about_formations_visible?: boolean
+  about_grand_names_visible?: boolean
+  about_media_visible?: boolean
+  about_recommendations_visible?: boolean
+  about_environment_visible?: boolean
+  about_cta_visible?: boolean
+  about_hero_image?: string
+  about_journey_photo?: string
+  about_formations_image?: string
+  about_cta_background_image?: string
+  about_formations_list?: string | string[]
+  treatments_accordion_enabled?: boolean
+  global_blue_band_title?: string
+  global_blue_band_text?: string
+  blue_band_phrase?: string
+  blue_band_whatsapp_text?: string
+  blue_band_whatsapp_enabled?: boolean
+  journey_title?: string
+  journey_text?: string
+  journey_button_text?: string
+  journey_button_link?: string
+  journey_button_type?: 'whatsapp' | 'internal'
+  home_section_title?: string
+  home_section_subtitle?: string
+  home_column1_items?: string | any[]
+  home_column2_items?: string | any[]
+  home_section_footer?: string
+  show_logo?: boolean
+  created?: string
+  updated?: string
+}
+
+export interface AboutGrandName {
+  id: string
+  image: string
+  name: string
+  description?: string
+  order?: number
+  created?: string
+  updated?: string
+}
+
+export interface AboutMediaMention {
+  id: string
+  title: string
+  description?: string
+  link?: string
+  image?: string
+  video_url?: string
+  order?: number
+  created?: string
+  updated?: string
+}
+
+export interface AboutRecommendation {
+  id: string
+  video_url: string
+  description?: string
+  order?: number
+  created?: string
+  updated?: string
+}
+
+export interface AboutEnvironmentImage {
+  id: string
+  image: string
+  caption?: string
+  order?: number
+  created?: string
+  updated?: string
+}
+
+export interface Course {
+  id: string
+  title: string
+  description?: string
+  thumbnail?: string
+  category?: string
+  is_available?: boolean
+  order?: number
+  price?: number
+  discount_price?: number
+  external_buy_url?: string
+  short_description?: string
+  discount_percentage?: number
+  visibility?: 'home' | 'templates' | 'both'
+  footer_banner?: string
+  catchy_title?: string
+  public_description?: string
+  buy_button_text?: string
+  instructor_name?: string
+  manual_workload?: number
+  certificate_template?: string
+  level?: 'Prata' | 'Ouro' | 'Diamante' | 'all'
+  access_type?: 'free' | 'paid'
+  created?: string
+  updated?: string
+}

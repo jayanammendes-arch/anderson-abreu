@@ -217,7 +217,7 @@ export default function Sobre() {
           <section className="py-20 bg-white">
             <div className="max-w-7xl mx-auto px-6">
               <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-12 text-center">
-                {settings?.about_grand_names_title || 'Com Grandes Nomes da Hipnoterapia'}
+                {settings?.about_grand_names_title?.trim() || 'Com Grandes Nomes da Hipnoterapia'}
               </h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                 {grandNames.map((item) => (

@@ -24,6 +24,11 @@ import {
   adminUpdateAboutEnvironmentImage,
   adminDeleteAboutEnvironmentImage,
 } from '@/services/about-collections'
+import {
+  getPlatformSettings,
+  updatePlatformSettings,
+  createPlatformSettings,
+} from '@/services/admin-settings'
 import type {
   AboutGrandName,
   AboutMediaMention,
@@ -36,8 +41,11 @@ export default function AdminAboutContent() {
   const [media, setMedia] = useState<AboutMediaMention[]>([])
   const [recs, setRecs] = useState<AboutRecommendation[]>([])
   const [env, setEnv] = useState<AboutEnvironmentImage[]>([])
+  const [gnTitle, setGnTitle] = useState('')
+  const [settingsId, setSettingsId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [savingTitle, setSavingTitle] = useState(false)
   const [gnName, setGnName] = useState('')
   const [gnDesc, setGnDesc] = useState('')
   const [gnFile, setGnFile] = useState<File | null>(null)
@@ -52,18 +60,40 @@ export default function AdminAboutContent() {
   const [envCaptions, setEnvCaptions] = useState<Record<string, string>>({})
 
   const load = useCallback(async () => {
-    const [gnD, mD, rD, eD] = await Promise.all([
+    const [gnD, mD, rD, eD, settings] = await Promise.all([
       getAboutGrandNames().catch(() => []),
       getAboutMediaMentions().catch(() => []),
       getAboutRecommendations().catch(() => []),
       getAboutEnvironmentImages().catch(() => []),
+      getPlatformSettings().catch(() => null),
     ])
     setGn(gnD as AboutGrandName[])
     setMedia(mD as AboutMediaMention[])
     setRecs(rD as AboutRecommendation[])
     setEnv(eD as AboutEnvironmentImage[])
+    if (settings) {
+      setSettingsId(settings.id)
+      setGnTitle(settings.about_grand_names_title || '')
+    }
     setLoading(false)
   }, [])
+
+  const saveGnTitle = async () => {
+    setSavingTitle(true)
+    try {
+      if (settingsId) {
+        await updatePlatformSettings(settingsId, { about_grand_names_title: gnTitle })
+      } else {
+        const created = await createPlatformSettings({ about_grand_names_title: gnTitle })
+        setSettingsId(created.id)
+      }
+      toast.success('Título da seção atualizado com sucesso!')
+    } catch {
+      toast.error('Erro ao atualizar título da seção')
+    } finally {
+      setSavingTitle(false)
+    }
+  }
 
   useEffect(() => {
     load()
@@ -221,6 +251,19 @@ export default function AdminAboutContent() {
         <TabsContent value="gn">
           <Card className="bg-card/50 border-border/50">
             <CardContent className="space-y-4 pt-6">
+              <div className="flex gap-2 items-end pb-4 border-b border-border/50">
+                <div className="flex-1">
+                  <Label>Título da Seção Grandes Nomes</Label>
+                  <Input
+                    value={gnTitle}
+                    onChange={(e) => setGnTitle(e.target.value)}
+                    placeholder="Com Grandes Nomes da Hipnoterapia"
+                  />
+                </div>
+                <Button onClick={saveGnTitle} disabled={savingTitle} variant="secondary">
+                  {savingTitle ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Salvar Título'}
+                </Button>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-2 items-end">
                 <div className="md:col-span-2">
                   <Label>Nome</Label>

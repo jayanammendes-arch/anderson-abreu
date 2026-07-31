@@ -195,7 +195,7 @@ export function AboutSectionsConfig({
         onToggle={(v) => set('about_grand_names_visible', v)}
       >
         <TextInput
-          label="Título da Seção"
+          label="Título da Seção Grandes Nomes"
           value={form.about_grand_names_title}
           onChange={(v) => set('about_grand_names_title', v)}
           placeholder="Com Grandes Nomes da Hipnoterapia"
