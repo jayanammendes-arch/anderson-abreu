@@ -10,7 +10,6 @@ import {
 } from '@/services/landing'
 import {
   getAboutGrandNames,
-  getAboutGrandNameImageUrl,
   getAboutMediaMentions,
   getAboutMediaMentionImageUrl,
   getAboutRecommendations,
@@ -27,6 +26,7 @@ import type {
 import { LandingLayout } from '@/components/LandingLayout'
 import { Button } from '@/components/ui/button'
 import { CredentialsMarquee } from '@/components/CredentialsMarquee'
+import { GrandNamesCarousel } from '@/components/GrandNamesCarousel'
 import { VideoEmbed } from '@/components/community/VideoEmbed'
 import { ScrollFadeIn } from '@/components/ScrollFadeIn'
 import { Check, Loader2 } from 'lucide-react'
@@ -219,18 +219,7 @@ export default function Sobre() {
               <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-12 text-center">
                 {settings?.about_grand_names_title?.trim() || 'Com Grandes Nomes da Hipnoterapia'}
               </h2>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                {grandNames.map((item) => (
-                  <div key={item.id} className="text-center">
-                    <img
-                      src={getAboutGrandNameImageUrl(item) || ''}
-                      alt={item.name}
-                      className="rounded-xl w-full h-64 object-cover mb-3"
-                    />
-                    <p className="font-semibold text-slate-900">{item.name}</p>
-                  </div>
-                ))}
-              </div>
+              <GrandNamesCarousel items={grandNames} />
             </div>
           </section>
         </ScrollFadeIn>
