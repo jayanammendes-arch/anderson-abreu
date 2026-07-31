@@ -24,6 +24,14 @@ export const adminUpdateAboutGrandName = (id: string, data: Record<string, unkno
 export const adminDeleteAboutGrandName = (id: string) =>
   pb.collection('about_grand_names').delete(id)
 
+export const adminReorderAboutGrandNames = async (items: AboutGrandName[]) => {
+  await Promise.all(
+    items.map((item, index) =>
+      pb.collection('about_grand_names').update(item.id, { order: index }),
+    ),
+  )
+}
+
 export const getAboutMediaMentions = (): Promise<AboutMediaMention[]> =>
   pb.collection('about_media_mentions').getFullList({ sort: 'order' })
 
