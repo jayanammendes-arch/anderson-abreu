@@ -103,6 +103,7 @@ interface FormState {
   home_column1_items: string
   home_column2_items: string
   home_section_footer: string
+  show_logo: boolean
 }
 
 const emptyForm: FormState = {
@@ -190,6 +191,7 @@ const emptyForm: FormState = {
   home_column1_items: '[]',
   home_column2_items: '[]',
   home_section_footer: '',
+  show_logo: true,
 }
 
 function FieldLabel({ label, description }: { label: string; description?: string }) {
@@ -425,6 +427,7 @@ export default function AdminPageConfig() {
                 ? data.home_column2_items
                 : JSON.stringify(data.home_column2_items || []),
             home_section_footer: data.home_section_footer || '',
+            show_logo: data.show_logo !== false,
           })
         }
       } catch {
@@ -502,6 +505,16 @@ export default function AdminPageConfig() {
                     onChange={(v) => set('company_name', v)}
                     placeholder="Anderson Abreu"
                   />
+                  <div className="flex items-center justify-between">
+                    <FieldLabel
+                      label="Exibir Logo"
+                      description="Controla a visibilidade do logo em toda a plataforma"
+                    />
+                    <Switch
+                      checked={form.show_logo}
+                      onCheckedChange={(checked) => set('show_logo', checked)}
+                    />
+                  </div>
                   <ImageUpload
                     label="Logo da Plataforma"
                     helperText="Recomendado: 200×60 px (PNG com fundo transparente)"

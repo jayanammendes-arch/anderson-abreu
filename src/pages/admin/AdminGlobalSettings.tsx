@@ -39,7 +39,6 @@ const SECTIONS: SectionDef[] = [
     title: 'Identidade da Marca',
     fields: [
       { key: 'company_name', label: 'Nome da Empresa', required: true },
-      { key: 'show_logo', label: 'Exibir Logo', type: 'boolean' },
       {
         key: 'primary_color',
         label: 'Cor Primária',
