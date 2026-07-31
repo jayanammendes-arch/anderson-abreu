@@ -348,14 +348,14 @@ export default function AdminAboutContent() {
                 onReorder={handleReorderGn}
                 disabled={gn.length <= 1}
                 renderItem={(item, { dragHandle }) => (
-                  <div className="group flex items-center gap-3 bg-white rounded-lg border border-border/60 p-3 shadow-sm hover:shadow-md transition-shadow">
+                  <div className="group flex items-center gap-3 bg-zinc-900 border border-zinc-800 rounded-xl p-3.5 shadow-sm hover:border-zinc-700 hover:shadow-md transition-all">
                     {dragHandle}
                     <img
                       src={getAboutGrandNameImageUrl(item) || ''}
                       alt={item.name}
-                      className="w-16 h-20 object-cover rounded-md flex-shrink-0 ring-1 ring-border/60"
+                      className="w-16 h-20 object-cover rounded-lg flex-shrink-0 ring-1 ring-zinc-700/80 bg-zinc-800"
                     />
-                    <div className="flex-1 min-w-0">
+                    <div className="flex-1 min-w-0 px-2">
                       {gnEditingId === item.id ? (
                         <div className="space-y-2">
                           <Input
@@ -377,18 +377,18 @@ export default function AdminAboutContent() {
                             maxLength={255}
                             autoFocus
                             className={cn(
-                              'h-9',
+                              'h-9 bg-zinc-800 text-zinc-100 border-zinc-700 focus-visible:ring-primary',
                               gnEditErrors.name && 'border-red-500 ring-1 ring-red-500',
                             )}
                           />
                           {gnEditErrors.name && (
-                            <p className="text-xs text-red-500">{gnEditErrors.name}</p>
+                            <p className="text-xs text-red-400">{gnEditErrors.name}</p>
                           )}
                           <div className="flex gap-2">
                             <Button
                               size="sm"
                               variant="secondary"
-                              className="h-7"
+                              className="h-7 bg-primary text-primary-foreground hover:bg-primary/90"
                               onClick={() => saveGnName(item.id)}
                             >
                               <Check className="h-3.5 w-3.5 mr-1" /> Salvar
@@ -396,7 +396,7 @@ export default function AdminAboutContent() {
                             <Button
                               size="sm"
                               variant="ghost"
-                              className="h-7"
+                              className="h-7 text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800"
                               onClick={cancelEditGnName}
                             >
                               <X className="h-3.5 w-3.5 mr-1" /> Cancelar
@@ -404,31 +404,35 @@ export default function AdminAboutContent() {
                           </div>
                         </div>
                       ) : (
-                        <div className="flex items-center gap-2">
-                          <p className="font-medium text-sm flex-1 truncate">{item.name}</p>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-7 px-2 text-muted-foreground hover:text-foreground flex-shrink-0"
-                            onClick={() => startEditGnName(item)}
-                          >
-                            <Pencil className="h-3.5 w-3.5 mr-1" /> Editar
-                          </Button>
-                        </div>
+                        <p className="font-semibold text-base text-zinc-100 truncate">
+                          {item.name}
+                        </p>
                       )}
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-muted-foreground hover:text-red-500 hover:bg-red-50 transition-colors flex-shrink-0"
-                      onClick={async () => {
-                        await adminDeleteAboutGrandName(item.id)
-                        setGn((prev) => prev.filter((g) => g.id !== item.id))
-                        toast.success('Removido')
-                      }}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    {gnEditingId !== item.id && (
+                      <div className="flex items-center gap-1.5 flex-shrink-0">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 px-2.5 text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800 font-medium"
+                          onClick={() => startEditGnName(item)}
+                        >
+                          <Pencil className="h-3.5 w-3.5 mr-1.5 text-zinc-400" /> Editar
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 px-2.5 text-red-400 hover:text-red-300 hover:bg-red-950/40 font-medium"
+                          onClick={async () => {
+                            await adminDeleteAboutGrandName(item.id)
+                            setGn((prev) => prev.filter((g) => g.id !== item.id))
+                            toast.success('Removido com sucesso')
+                          }}
+                        >
+                          <Trash2 className="h-3.5 w-3.5 mr-1.5" /> Excluir
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 )}
               />
