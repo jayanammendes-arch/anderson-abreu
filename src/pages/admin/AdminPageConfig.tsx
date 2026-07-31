@@ -443,21 +443,50 @@ export default function AdminPageConfig() {
     e.preventDefault()
     setSaving(true)
     try {
-      const fd = new FormData()
-      Object.entries(form).forEach(([key, value]) => fd.append(key, String(value)))
-      if (heroImage) fd.append('home_hero_image', heroImage)
-      if (agendaImage) fd.append('agenda_image', agendaImage)
-      if (logoFile) fd.append('logo', logoFile)
-      if (loginImageFile) fd.append('login_image', loginImageFile)
-      if (agendarBgImage) fd.append('agendar_background_image', agendarBgImage)
-      if (homeCredentialImage) fd.append('home_credential_image', homeCredentialImage)
-      if (parallaxBgImage) fd.append('parallax_background_image', parallaxBgImage)
-      if (aboutHeroImage) fd.append('about_hero_image', aboutHeroImage)
-      if (aboutJourneyPhoto) fd.append('about_journey_photo', aboutJourneyPhoto)
-      if (aboutFormationsImage) fd.append('about_formations_image', aboutFormationsImage)
-      if (aboutCtaBgImage) fd.append('about_cta_background_image', aboutCtaBgImage)
-      if (settings) await updatePlatformSettings(settings.id, fd)
-      else await createPlatformSettings(fd)
+      const data: Record<string, any> = { ...form }
+      const numberFields = ['stats_students', 'stats_years', 'stats_courses', 'stats_countries']
+      numberFields.forEach((field) => {
+        data[field] = data[field] === '' ? null : Number(data[field])
+      })
+
+      let recordId: string
+      if (settings) {
+        await updatePlatformSettings(settings.id, data)
+        recordId = settings.id
+      } else {
+        const created = await createPlatformSettings(data)
+        recordId = created.id
+      }
+
+      const hasFiles =
+        heroImage ||
+        agendaImage ||
+        logoFile ||
+        loginImageFile ||
+        agendarBgImage ||
+        homeCredentialImage ||
+        parallaxBgImage ||
+        aboutHeroImage ||
+        aboutJourneyPhoto ||
+        aboutFormationsImage ||
+        aboutCtaBgImage
+
+      if (hasFiles) {
+        const fd = new FormData()
+        if (heroImage) fd.append('home_hero_image', heroImage)
+        if (agendaImage) fd.append('agenda_image', agendaImage)
+        if (logoFile) fd.append('logo', logoFile)
+        if (loginImageFile) fd.append('login_image', loginImageFile)
+        if (agendarBgImage) fd.append('agendar_background_image', agendarBgImage)
+        if (homeCredentialImage) fd.append('home_credential_image', homeCredentialImage)
+        if (parallaxBgImage) fd.append('parallax_background_image', parallaxBgImage)
+        if (aboutHeroImage) fd.append('about_hero_image', aboutHeroImage)
+        if (aboutJourneyPhoto) fd.append('about_journey_photo', aboutJourneyPhoto)
+        if (aboutFormationsImage) fd.append('about_formations_image', aboutFormationsImage)
+        if (aboutCtaBgImage) fd.append('about_cta_background_image', aboutCtaBgImage)
+        await updatePlatformSettings(recordId, fd)
+      }
+
       toast.success('Configurações salvas com sucesso!')
     } catch {
       toast.error('Erro ao salvar')
