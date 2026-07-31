@@ -4,7 +4,12 @@ import { Button } from '@/components/ui/button'
 import { Menu, X, Calendar, ChevronDown, GraduationCap } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { PlatformSettings, Treatment } from '@/types'
-import { getLogoUrl, applyBrandColor, getPlatformSettingsPublic } from '@/services/landing'
+import {
+  getLogoUrl,
+  applyBrandColor,
+  getPlatformSettingsPublic,
+  shouldShowLogo,
+} from '@/services/landing'
 import { getAllTreatments } from '@/services/treatments'
 import { TreatmentsDropdown } from '@/components/TreatmentsDropdown'
 import { useAuth } from '@/hooks/use-auth'
@@ -120,9 +125,7 @@ export function LandingLayout({
   }
 
   const logoUrl =
-    currentSettings && (currentSettings as any).show_logo !== false
-      ? getLogoUrl(currentSettings)
-      : null
+    currentSettings && shouldShowLogo(currentSettings) ? getLogoUrl(currentSettings) : null
   const brandGradientImage =
     settings?.login_gradient ||
     (settings?.primary_color

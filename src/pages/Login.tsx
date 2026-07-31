@@ -14,6 +14,7 @@ import {
   getLogoUrl,
   getLoginImageUrl,
   applyBrandColor,
+  shouldShowLogo,
 } from '@/services/landing'
 import type { PlatformSettings } from '@/types'
 import { cn } from '@/lib/utils'
@@ -434,9 +435,7 @@ export default function Login() {
             to="/"
             className="flex h-24 w-24 items-center justify-center rounded-3xl border border-white/15 bg-white/10 backdrop-blur-md shadow-2xl transition-transform hover:scale-105"
           >
-            {loginSettings &&
-            (loginSettings as any).show_logo !== false &&
-            getLogoUrl(loginSettings) ? (
+            {loginSettings && shouldShowLogo(loginSettings) && getLogoUrl(loginSettings) ? (
               <img
                 src={getLogoUrl(loginSettings)!}
                 alt="Logo"

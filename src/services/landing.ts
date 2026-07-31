@@ -184,3 +184,11 @@ export function getAboutCtaBackgroundImageUrl(settings: {
 export function applyBrandColor(color: string): void {
   document.documentElement.style.setProperty('--primary', color)
 }
+
+export function shouldShowLogo(
+  settings: { show_logo?: boolean | string } | null | undefined,
+): boolean {
+  if (!settings) return true
+  const val = settings.show_logo
+  return val !== false && val !== 'false'
+}

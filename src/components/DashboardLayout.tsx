@@ -16,7 +16,7 @@ import { LogOut, Loader2, User, Award, ShoppingBag, LifeBuoy } from 'lucide-reac
 import { NotificationBell } from '@/components/community/NotificationBell'
 import { LevelBadge } from '@/components/LevelBadge'
 import { useState, useEffect } from 'react'
-import { getPlatformSettingsPublic, getLogoUrl } from '@/services/landing'
+import { getPlatformSettingsPublic, getLogoUrl, shouldShowLogo } from '@/services/landing'
 import { useRealtime } from '@/hooks/use-realtime'
 import type { PlatformSettings } from '@/types'
 
@@ -85,15 +85,13 @@ export function DashboardLayout() {
         <header className="flex h-16 items-center gap-3 border-b border-border bg-background px-6">
           <SidebarTrigger className="-ml-1 text-foreground hover:bg-muted" />
           <Separator orientation="vertical" className="h-5 bg-border" />
-          {platformSettings &&
-            (platformSettings as any).show_logo !== false &&
-            getLogoUrl(platformSettings) && (
-              <img
-                src={getLogoUrl(platformSettings)!}
-                alt="Logo"
-                className="h-8 w-auto object-contain"
-              />
-            )}
+          {platformSettings && shouldShowLogo(platformSettings) && getLogoUrl(platformSettings) && (
+            <img
+              src={getLogoUrl(platformSettings)!}
+              alt="Logo"
+              className="h-8 w-auto object-contain"
+            />
+          )}
           <h1 className="text-lg font-semibold text-foreground">{pageTitle}</h1>
           <div className="ml-auto flex items-center gap-4">
             <NotificationBell />
