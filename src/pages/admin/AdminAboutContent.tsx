@@ -56,6 +56,7 @@ export default function AdminAboutContent() {
   const [gnEditingId, setGnEditingId] = useState<string | null>(null)
   const [gnEditingName, setGnEditingName] = useState('')
   const [gnEditErrors, setGnEditErrors] = useState<FieldErrors>({})
+  const [gnFileKey, setGnFileKey] = useState(0)
   const [mTitle, setMTitle] = useState('')
   const [mDesc, setMDesc] = useState('')
   const [mLink, setMLink] = useState('')
@@ -122,6 +123,7 @@ export default function AdminAboutContent() {
       setGn((prev) => [...prev, created as unknown as AboutGrandName])
       setGnName('')
       setGnFile(null)
+      setGnFileKey((k) => k + 1)
       toast.success('Adicionado')
     } catch (err) {
       const fieldErrors = extractFieldErrors(err)
@@ -330,6 +332,7 @@ export default function AdminAboutContent() {
                 <div>
                   <Label>Imagem</Label>
                   <Input
+                    key={gnFileKey}
                     type="file"
                     accept="image/*"
                     onChange={(e) => setGnFile(e.target.files?.[0] || null)}
@@ -345,16 +348,16 @@ export default function AdminAboutContent() {
                 onReorder={handleReorderGn}
                 disabled={gn.length <= 1}
                 renderItem={(item, { dragHandle }) => (
-                  <div className="relative group flex items-center gap-3 bg-white rounded-lg border p-3">
+                  <div className="group flex items-center gap-3 bg-white rounded-lg border border-border/60 p-3 shadow-sm hover:shadow-md transition-shadow">
                     {dragHandle}
                     <img
                       src={getAboutGrandNameImageUrl(item) || ''}
                       alt={item.name}
-                      className="w-20 h-20 object-cover rounded-md flex-shrink-0"
+                      className="w-16 h-20 object-cover rounded-md flex-shrink-0 ring-1 ring-border/60"
                     />
                     <div className="flex-1 min-w-0">
                       {gnEditingId === item.id ? (
-                        <div className="space-y-1">
+                        <div className="space-y-2">
                           <Input
                             value={gnEditingName}
                             onChange={(e) => {
@@ -373,54 +376,67 @@ export default function AdminAboutContent() {
                             }}
                             maxLength={255}
                             autoFocus
-                            className={cn('h-8', gnEditErrors.name && 'border-red-500')}
+                            className={cn(
+                              'h-9',
+                              gnEditErrors.name && 'border-red-500 ring-1 ring-red-500',
+                            )}
                           />
                           {gnEditErrors.name && (
                             <p className="text-xs text-red-500">{gnEditErrors.name}</p>
                           )}
-                          <div className="flex gap-1">
+                          <div className="flex gap-2">
                             <Button
                               size="sm"
                               variant="secondary"
-                              className="h-7 px-2"
+                              className="h-7"
                               onClick={() => saveGnName(item.id)}
                             >
-                              <Check className="h-3.5 w-3.5" />
+                              <Check className="h-3.5 w-3.5 mr-1" /> Salvar
                             </Button>
                             <Button
                               size="sm"
                               variant="ghost"
-                              className="h-7 px-2"
+                              className="h-7"
                               onClick={cancelEditGnName}
                             >
-                              <X className="h-3.5 w-3.5" />
+                              <X className="h-3.5 w-3.5 mr-1" /> Cancelar
                             </Button>
                           </div>
                         </div>
                       ) : (
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-2">
                           <p className="font-medium text-sm flex-1 truncate">{item.name}</p>
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-6 w-6 p-0"
+                            className="h-7 px-2 text-muted-foreground hover:text-foreground flex-shrink-0"
                             onClick={() => startEditGnName(item)}
                           >
-                            <Pencil className="h-3 w-3" />
+                            <Pencil className="h-3.5 w-3.5 mr-1" /> Editar
                           </Button>
                         </div>
                       )}
                     </div>
-                    <DelBtn
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-muted-foreground hover:text-red-500 hover:bg-red-50 transition-colors flex-shrink-0"
                       onClick={async () => {
                         await adminDeleteAboutGrandName(item.id)
                         setGn((prev) => prev.filter((g) => g.id !== item.id))
                         toast.success('Removido')
                       }}
-                    />
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </div>
                 )}
               />
+              {gn.length === 0 && (
+                <p className="text-sm text-muted-foreground text-center py-6">
+                  Nenhum grande nome adicionado. Adicione o primeiro acima.
+                </p>
+              )}
             </CardContent>
           </Card>
         </TabsContent>

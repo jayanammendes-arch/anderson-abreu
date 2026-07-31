@@ -162,7 +162,7 @@ export function SortableList<T>({
   const renderHandle = (index: number) => (
     <button
       type="button"
-      className="cursor-grab active:cursor-grabbing touch-none flex items-center text-muted-foreground hover:text-foreground transition-colors py-1"
+      className="cursor-grab active:cursor-grabbing touch-none flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 rounded-md transition-colors py-1 px-1 flex-shrink-0"
       onPointerDown={(e) => handlePointerDown(e, index)}
       onPointerUp={cancelPress}
       onPointerLeave={cancelPress}
