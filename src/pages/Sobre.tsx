@@ -228,9 +228,6 @@ export default function Sobre() {
                       className="rounded-xl w-full h-64 object-cover mb-3"
                     />
                     <p className="font-semibold text-slate-900">{item.name}</p>
-                    {item.description && (
-                      <p className="text-sm text-slate-500">{item.description}</p>
-                    )}
                   </div>
                 ))}
               </div>

@@ -4,13 +4,16 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent } from '@/components/ui/card'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
-import { Plus, Trash2, Loader2, ChevronUp, ChevronDown } from 'lucide-react'
+import { Plus, Trash2, Loader2, ChevronUp, ChevronDown, Check, X, Pencil } from 'lucide-react'
 import { toast } from 'sonner'
 import { useRealtime } from '@/hooks/use-realtime'
+import { extractFieldErrors, type FieldErrors } from '@/lib/pocketbase/errors'
+import { cn } from '@/lib/utils'
 import {
   getAboutGrandNames,
   getAboutGrandNameImageUrl,
   adminCreateAboutGrandName,
+  adminUpdateAboutGrandName,
   adminDeleteAboutGrandName,
   getAboutMediaMentions,
   adminCreateAboutMediaMention,
@@ -47,8 +50,10 @@ export default function AdminAboutContent() {
   const [saving, setSaving] = useState(false)
   const [savingTitle, setSavingTitle] = useState(false)
   const [gnName, setGnName] = useState('')
-  const [gnDesc, setGnDesc] = useState('')
   const [gnFile, setGnFile] = useState<File | null>(null)
+  const [gnEditingId, setGnEditingId] = useState<string | null>(null)
+  const [gnEditingName, setGnEditingName] = useState('')
+  const [gnEditErrors, setGnEditErrors] = useState<FieldErrors>({})
   const [mTitle, setMTitle] = useState('')
   const [mDesc, setMDesc] = useState('')
   const [mLink, setMLink] = useState('')
@@ -110,17 +115,52 @@ export default function AdminAboutContent() {
       const fd = new FormData()
       fd.append('image', gnFile)
       fd.append('name', gnName)
-      fd.append('description', gnDesc)
       fd.append('order', String(gn.length))
       await adminCreateAboutGrandName(fd)
       setGnName('')
-      setGnDesc('')
       setGnFile(null)
       toast.success('Adicionado')
-    } catch {
-      toast.error('Erro')
+    } catch (err) {
+      const fieldErrors = extractFieldErrors(err)
+      if (Object.keys(fieldErrors).length > 0) {
+        toast.error(Object.values(fieldErrors).join(' '))
+      } else {
+        toast.error('Erro')
+      }
     } finally {
       setSaving(false)
+    }
+  }
+
+  const startEditGnName = (item: AboutGrandName) => {
+    setGnEditingId(item.id)
+    setGnEditingName(item.name)
+    setGnEditErrors({})
+  }
+
+  const cancelEditGnName = () => {
+    setGnEditingId(null)
+    setGnEditingName('')
+    setGnEditErrors({})
+  }
+
+  const saveGnName = async (id: string) => {
+    if (!gnEditingName.trim()) {
+      setGnEditErrors({ name: 'Nome é obrigatório' })
+      return
+    }
+    try {
+      await adminUpdateAboutGrandName(id, { name: gnEditingName.trim() })
+      toast.success('Nome atualizado')
+      setGnEditingId(null)
+      setGnEditingName('')
+      setGnEditErrors({})
+    } catch (err) {
+      const fieldErrors = extractFieldErrors(err)
+      setGnEditErrors(fieldErrors)
+      if (Object.keys(fieldErrors).length === 0) {
+        toast.error('Erro ao atualizar nome')
+      }
     }
   }
 
@@ -264,14 +304,10 @@ export default function AdminAboutContent() {
                   {savingTitle ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Salvar Título'}
                 </Button>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-2 items-end">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-2 items-end">
                 <div className="md:col-span-2">
                   <Label>Nome</Label>
                   <Input value={gnName} onChange={(e) => setGnName(e.target.value)} />
-                </div>
-                <div>
-                  <Label>Descrição</Label>
-                  <Input value={gnDesc} onChange={(e) => setGnDesc(e.target.value)} />
                 </div>
                 <div>
                   <Label>Imagem</Label>
@@ -293,7 +329,63 @@ export default function AdminAboutContent() {
                       alt={item.name}
                       className="rounded-lg w-full h-40 object-cover"
                     />
-                    <p className="font-medium text-sm mt-1">{item.name}</p>
+                    {gnEditingId === item.id ? (
+                      <div className="mt-1 space-y-1">
+                        <Input
+                          value={gnEditingName}
+                          onChange={(e) => {
+                            setGnEditingName(e.target.value)
+                            if (gnEditErrors.name) {
+                              setGnEditErrors((prev) => {
+                                const next = { ...prev }
+                                delete next.name
+                                return next
+                              })
+                            }
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') saveGnName(item.id)
+                            if (e.key === 'Escape') cancelEditGnName()
+                          }}
+                          maxLength={255}
+                          autoFocus
+                          className={cn('h-8', gnEditErrors.name && 'border-red-500')}
+                        />
+                        {gnEditErrors.name && (
+                          <p className="text-xs text-red-500">{gnEditErrors.name}</p>
+                        )}
+                        <div className="flex gap-1">
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            className="h-7 px-2"
+                            onClick={() => saveGnName(item.id)}
+                          >
+                            <Check className="h-3.5 w-3.5" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-7 px-2"
+                            onClick={cancelEditGnName}
+                          >
+                            <X className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-1 mt-1">
+                        <p className="font-medium text-sm flex-1 truncate">{item.name}</p>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100"
+                          onClick={() => startEditGnName(item)}
+                        >
+                          <Pencil className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    )}
                     <DelBtn
                       onClick={async () => {
                         await adminDeleteAboutGrandName(item.id)

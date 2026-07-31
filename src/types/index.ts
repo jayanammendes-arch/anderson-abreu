@@ -245,7 +245,6 @@ export interface AboutGrandName {
   id: string
   image: string
   name: string
-  description?: string
   order?: number
   created?: string
   updated?: string

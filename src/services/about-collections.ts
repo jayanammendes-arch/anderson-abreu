@@ -18,6 +18,9 @@ export function getAboutGrandNameImageUrl(item: { id: string; image?: string }):
 export const adminCreateAboutGrandName = (data: FormData) =>
   pb.collection('about_grand_names').create(data)
 
+export const adminUpdateAboutGrandName = (id: string, data: Record<string, unknown>) =>
+  pb.collection('about_grand_names').update(id, data)
+
 export const adminDeleteAboutGrandName = (id: string) =>
   pb.collection('about_grand_names').delete(id)
 
