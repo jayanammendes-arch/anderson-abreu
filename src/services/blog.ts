@@ -2,7 +2,7 @@ import pb from '@/lib/pocketbase/client'
 import type { BlogPost } from '@/types'
 
 export const getBlogPosts = (): Promise<BlogPost[]> =>
-  pb.collection('blog_posts').getFullList({ sort: '-published_at' })
+  pb.collection('blog_posts').getFullList({ sort: 'order,-published_at' })
 
 export const getBlogPostBySlug = (slug: string): Promise<BlogPost> =>
   pb.collection('blog_posts').getFirstListItem(`slug = "${slug}"`)
@@ -13,7 +13,12 @@ export function getBlogImageUrl(post: BlogPost): string | null {
 }
 
 export const adminGetBlogPosts = (): Promise<BlogPost[]> =>
-  pb.collection('blog_posts').getFullList({ sort: '-published_at' })
+  pb.collection('blog_posts').getFullList({ sort: 'order' })
+
+export const adminReorderBlogPosts = (items: { id: string; order: number }[]) =>
+  Promise.all(
+    items.map((item) => pb.collection('blog_posts').update(item.id, { order: item.order })),
+  )
 
 export const adminCreateBlogPost = (data: Record<string, unknown> | FormData) =>
   pb.collection('blog_posts').create(data)

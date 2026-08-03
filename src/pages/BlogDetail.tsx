@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
-import { getBlogPostBySlug, getBlogImageUrl } from '@/services/blog'
+import { getBlogPostBySlug, getBlogPosts, getBlogImageUrl } from '@/services/blog'
 import { getPlatformSettingsPublic } from '@/services/landing'
 import type { BlogPost, PlatformSettings } from '@/types'
 import { LandingLayout } from '@/components/LandingLayout'
+import { BlogCard } from '@/components/BlogCard'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, Calendar, Loader2 } from 'lucide-react'
 
@@ -12,6 +13,7 @@ export default function BlogDetail() {
   const navigate = useNavigate()
   const [post, setPost] = useState<BlogPost | null>(null)
   const [settings, setSettings] = useState<PlatformSettings | null>(null)
+  const [relatedPosts, setRelatedPosts] = useState<BlogPost[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -19,9 +21,13 @@ export default function BlogDetail() {
     Promise.all([
       getBlogPostBySlug(slug).catch(() => null),
       getPlatformSettingsPublic().catch(() => null),
-    ]).then(([data, settingsData]) => {
+      getBlogPosts().catch(() => []),
+    ]).then(([data, settingsData, allPosts]) => {
       setPost(data as BlogPost | null)
       setSettings(settingsData as PlatformSettings | null)
+      const others = (allPosts as BlogPost[]).filter((p) => p.slug !== slug)
+      const shuffled = [...others].sort(() => Math.random() - 0.5)
+      setRelatedPosts(shuffled.slice(0, 3))
       setLoading(false)
     })
   }, [slug])
@@ -104,6 +110,17 @@ export default function BlogDetail() {
               [&_li]:mb-2"
             dangerouslySetInnerHTML={{ __html: post.content }}
           />
+
+          {relatedPosts.length > 0 && (
+            <div className="mt-16 pt-12 border-t border-slate-200">
+              <h2 className="text-2xl font-bold text-slate-900 mb-8">Posts relacionados</h2>
+              <div className="grid md:grid-cols-3 gap-6">
+                {relatedPosts.map((rp) => (
+                  <BlogCard key={rp.id} post={rp} />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </article>
     </LandingLayout>

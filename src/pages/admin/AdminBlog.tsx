@@ -4,6 +4,7 @@ import {
   adminCreateBlogPost,
   adminUpdateBlogPost,
   adminDeleteBlogPost,
+  adminReorderBlogPosts,
   getBlogImageUrl,
 } from '@/services/blog'
 import type { BlogPost } from '@/types'
@@ -29,6 +30,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { SortableList } from '@/components/admin/SortableList'
 import { useRealtime } from '@/hooks/use-realtime'
 import { RichTextEditor } from '@/components/admin/RichTextEditor'
 import { extractFieldErrors, type FieldErrors } from '@/lib/pocketbase/errors'
@@ -41,6 +43,7 @@ const emptyForm: Partial<BlogPost> = {
   excerpt: '',
   content: '',
   author: 'Anderson Abreu',
+  order: 0,
 }
 
 function slugify(text: string): string {
@@ -82,7 +85,7 @@ export default function AdminBlog() {
   useRealtime('blog_posts', () => loadData())
 
   const handleNew = () => {
-    setFormData({ ...emptyForm })
+    setFormData({ ...emptyForm, order: posts.length })
     setImageFile(null)
     setFieldErrors({})
     setDialogOpen(true)
@@ -107,6 +110,7 @@ export default function AdminBlog() {
         excerpt: formData.excerpt || '',
         content: formData.content || '',
         author: formData.author || 'Anderson Abreu',
+        order: Number(formData.order) || 0,
       }
 
       if (imageFile) {
@@ -146,6 +150,22 @@ export default function AdminBlog() {
     }
   }
 
+  const handleReorder = async (reordered: BlogPost[]) => {
+    const updates = reordered.map((item, index) => ({ id: item.id, order: index + 1 }))
+    try {
+      await adminReorderBlogPosts(updates)
+    } catch {
+      toast.error('Erro ao reordenar. Tente novamente.')
+      throw new Error('reorder failed')
+    }
+    const orderMap = new Map(updates.map((u) => [u.id, u.order]))
+    setPosts((prev) =>
+      prev
+        .map((item) => ({ ...item, order: orderMap.get(item.id) ?? item.order }))
+        .sort((a, b) => (a.order ?? 0) - (b.order ?? 0)),
+    )
+  }
+
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="flex justify-between items-center">
@@ -164,14 +184,15 @@ export default function AdminBlog() {
           Nenhum post cadastrado.
         </Card>
       ) : (
-        <div className="grid gap-3">
-          {posts.map((post) => {
+        <SortableList
+          items={posts}
+          keyExtractor={(post) => post.id}
+          onReorder={handleReorder}
+          renderItem={(post, { dragHandle }) => {
             const imgUrl = getBlogImageUrl(post)
             return (
-              <Card
-                key={post.id}
-                className="flex items-center gap-4 p-4 bg-card/50 border-border/50"
-              >
+              <Card className="flex items-center gap-4 p-4 bg-card/50 border-border/50">
+                {dragHandle}
                 {imgUrl ? (
                   <img
                     src={imgUrl}
@@ -205,8 +226,8 @@ export default function AdminBlog() {
                 </div>
               </Card>
             )
-          })}
-        </div>
+          }}
+        />
       )}
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>

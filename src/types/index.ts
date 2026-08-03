@@ -306,3 +306,17 @@ export interface Course {
   created?: string
   updated?: string
 }
+
+export interface BlogPost {
+  id: string
+  title: string
+  slug: string
+  excerpt?: string
+  content: string
+  image?: string
+  author?: string
+  published_at?: string
+  order?: number
+  created?: string
+  updated?: string
+}
