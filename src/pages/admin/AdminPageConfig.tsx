@@ -14,9 +14,11 @@ import { Switch } from '@/components/ui/switch'
 import { RichTextEditor } from '@/components/admin/RichTextEditor'
 import { AboutSectionsConfig } from '@/components/admin/AboutSectionsConfig'
 import { ColumnItemsEditor } from '@/components/admin/ColumnItemsEditor'
-import { Save, Loader2 } from 'lucide-react'
+import { Save, Loader2, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import type { PlatformSettings } from '@/types'
+import { getHypnosisInfoImageUrl } from '@/services/landing'
+import { getErrorMessage } from '@/lib/pocketbase/errors'
 
 interface FormState {
   hero_title: string
@@ -317,6 +319,8 @@ export default function AdminPageConfig() {
   const [aboutJourneyPhoto, setAboutJourneyPhoto] = useState<File | null>(null)
   const [aboutFormationsImage, setAboutFormationsImage] = useState<File | null>(null)
   const [aboutCtaBgImage, setAboutCtaBgImage] = useState<File | null>(null)
+  const [hypnosisInfoImage, setHypnosisInfoImage] = useState<File | null>(null)
+  const [removeHypnosisInfoImage, setRemoveHypnosisInfoImage] = useState(false)
 
   const set = (key: keyof FormState, value: string | boolean) =>
     setForm((p) => ({ ...p, [key]: value }))
@@ -469,7 +473,9 @@ export default function AdminPageConfig() {
         aboutHeroImage ||
         aboutJourneyPhoto ||
         aboutFormationsImage ||
-        aboutCtaBgImage
+        aboutCtaBgImage ||
+        hypnosisInfoImage ||
+        removeHypnosisInfoImage
 
       if (hasFiles) {
         const fd = new FormData()
@@ -484,12 +490,19 @@ export default function AdminPageConfig() {
         if (aboutJourneyPhoto) fd.append('about_journey_photo', aboutJourneyPhoto)
         if (aboutFormationsImage) fd.append('about_formations_image', aboutFormationsImage)
         if (aboutCtaBgImage) fd.append('about_cta_background_image', aboutCtaBgImage)
+        if (hypnosisInfoImage) {
+          fd.append('hypnosis_info_image', hypnosisInfoImage)
+        } else if (removeHypnosisInfoImage) {
+          fd.append('hypnosis_info_image', '')
+        }
         await updatePlatformSettings(recordId, fd)
       }
 
       toast.success('Configurações salvas com sucesso!')
-    } catch {
-      toast.error('Erro ao salvar')
+      setHypnosisInfoImage(null)
+      setRemoveHypnosisInfoImage(false)
+    } catch (err) {
+      toast.error(getErrorMessage(err))
     } finally {
       setSaving(false)
     }
@@ -688,6 +701,40 @@ export default function AdminPageConfig() {
                         que é Hipnose Clínica?".
                       </p>
                     </div>
+                    {settings && settings.hypnosis_info_image && !removeHypnosisInfoImage && (
+                      <div className="space-y-2">
+                        <FieldLabel
+                          label="Imagem atual — O que é Hipnose Clínica?"
+                          description="Imagem exibida ao lado do texto na seção 'O que é Hipnose Clínica?' da página inicial"
+                        />
+                        <div className="flex items-center gap-3">
+                          <img
+                            src={getHypnosisInfoImageUrl(settings)!}
+                            alt="Imagem atual — O que é Hipnose Clínica?"
+                            className="rounded-lg border border-border/50 max-h-32 object-cover"
+                          />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setRemoveHypnosisInfoImage(true)}
+                            className="text-red-500 hover:text-red-600"
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Remover
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                    <ImageUpload
+                      label="Imagem — O que é Hipnose Clínica?"
+                      description="Imagem exibida ao lado do texto na seção 'O que é Hipnose Clínica?' da página inicial"
+                      helperText="Recomendado: 600×500 px (formato paisagem, até 500KB)"
+                      onFile={(f) => {
+                        setHypnosisInfoImage(f)
+                        if (f) setRemoveHypnosisInfoImage(false)
+                      }}
+                    />
                     <LabeledInput
                       label="Título da Seção"
                       value={form.home_section_title}

@@ -8,6 +8,7 @@ import {
   getHomeHeroImageUrl,
   getParallaxBackgroundImageUrl,
   getFaqSectionImageUrl,
+  getHypnosisInfoImageUrl,
 } from '@/services/landing'
 import { getTreatmentCategories } from '@/services/treatment-categories'
 import { getBlogPosts } from '@/services/blog'
@@ -91,6 +92,9 @@ export default function Landing() {
   useRealtime('blog_posts', () => loadData())
 
   const heroImageUrl = settings?.home_hero_image ? getHomeHeroImageUrl(settings) : null
+  const hypnosisInfoImageUrl = settings?.hypnosis_info_image
+    ? getHypnosisInfoImageUrl(settings)
+    : null
   const agendarText = settings?.agendar_sessao_text || 'Agendar Sessão'
   if (loading) {
     return (
@@ -226,7 +230,10 @@ export default function Landing() {
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div>
                 <img
-                  src="https://img.usecurling.com/p/600/500?q=clinical%20hypnosis%20session&color=blue"
+                  src={
+                    hypnosisInfoImageUrl ||
+                    'https://img.usecurling.com/p/600/500?q=clinical%20hypnosis%20session&color=blue'
+                  }
                   alt="O que é Hipnose Clínica?"
                   className="rounded-2xl shadow-xl object-cover w-full h-[400px] md:h-[500px]"
                 />

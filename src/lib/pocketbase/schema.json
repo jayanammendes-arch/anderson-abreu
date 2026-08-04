@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-03T17:45:52.110Z",
+  "generatedAt": "2026-08-04T16:48:12.163Z",
   "collections": [
     {
       "name": "users",
@@ -1228,6 +1228,12 @@
         {
           "name": "show_logo",
           "type": "bool",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "hypnosis_info_image",
+          "type": "file",
           "required": false,
           "system": false
         }

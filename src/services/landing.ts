@@ -141,6 +141,16 @@ export function getFaqSectionImageUrl(settings: {
   return null
 }
 
+export function getHypnosisInfoImageUrl(settings: {
+  id: string
+  hypnosis_info_image?: string
+}): string | null {
+  if (settings.hypnosis_info_image) {
+    return `${import.meta.env.VITE_POCKETBASE_URL}/api/files/platform_settings/${settings.id}/${settings.hypnosis_info_image}`
+  }
+  return null
+}
+
 export function getAboutHeroImageUrl(settings: {
   id: string
   about_hero_image?: string

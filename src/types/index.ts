@@ -186,6 +186,7 @@ export interface PlatformSettings {
   home_credential_name?: string
   home_credential_subtitle?: string
   home_credential_image?: string
+  hypnosis_info_image?: string
   home_credential_list?: string | string[]
   home_credential_cta_text?: string
   home_credential_floating_badge_text?: string
