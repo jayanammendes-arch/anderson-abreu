@@ -122,7 +122,7 @@ export function RichTextEditor({ value, onChange, className }: RichTextEditorPro
   const btn = 'h-7 w-7'
 
   return (
-    <div className={cn('rounded-md border border-input overflow-hidden', className)}>
+    <div className={cn('rounded-md border border-input overflow-visible', className)}>
       <div className="flex items-center gap-1 border-b border-input bg-muted/50 p-1.5 flex-wrap">
         <Button
           type="button"
@@ -353,7 +353,7 @@ export function RichTextEditor({ value, onChange, className }: RichTextEditorPro
         onInput={handleInput}
         onBlur={handleBlur}
         suppressContentEditableWarning
-        className="min-h-[120px] max-h-[300px] overflow-y-auto p-3 text-sm outline-none prose prose-sm max-w-none"
+        className="min-h-[120px] max-h-[300px] overflow-y-auto p-3 pb-4 text-sm outline-none prose prose-sm max-w-none leading-relaxed"
       />
     </div>
   )

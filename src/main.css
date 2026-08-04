@@ -252,4 +252,13 @@
     -webkit-text-fill-color: transparent;
     color: transparent;
   }
+
+  [contenteditable].prose {
+    padding-bottom: 0.75rem;
+    line-height: 1.625;
+  }
+
+  [contenteditable].prose p:last-child {
+    margin-bottom: 0.25rem;
+  }
 }

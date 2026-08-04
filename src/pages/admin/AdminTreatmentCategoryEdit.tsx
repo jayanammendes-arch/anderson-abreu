@@ -62,7 +62,7 @@ function FormSection({
 }) {
   const [open, setOpen] = useState(defaultOpen)
   return (
-    <Card className="bg-card/50 border-border/50 overflow-hidden">
+    <Card className="bg-card/50 border-border/50 overflow-visible">
       <Collapsible open={open} onOpenChange={setOpen}>
         <CollapsibleTrigger asChild>
           <CardHeader className="cursor-pointer hover:bg-muted/30 transition-colors py-3">
@@ -73,7 +73,7 @@ function FormSection({
           </CardHeader>
         </CollapsibleTrigger>
         <CollapsibleContent>
-          <CardContent className="space-y-4 pt-0">{children}</CardContent>
+          <CardContent className="space-y-4 pt-0 pb-6">{children}</CardContent>
         </CollapsibleContent>
       </Collapsible>
     </Card>
