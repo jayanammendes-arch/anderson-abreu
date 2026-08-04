@@ -10,14 +10,19 @@ import {
   Heading3,
   Palette,
   Pilcrow,
+  Sparkles,
+  Eraser,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { cn } from '@/lib/utils'
+import { GRADIENT_OPTIONS, getActiveGradient } from '@/lib/rte-gradients'
 
 interface RichTextEditorProps {
   value: string
   onChange: (html: string) => void
   className?: string
+  editorLabel?: string
 }
 
 interface ActiveState {
@@ -26,6 +31,7 @@ interface ActiveState {
   underline: boolean
   block: string
   foreColor: string
+  gradient: string
 }
 
 const DEFAULT_ACTIVE: ActiveState = {
@@ -34,13 +40,15 @@ const DEFAULT_ACTIVE: ActiveState = {
   underline: false,
   block: 'p',
   foreColor: '',
+  gradient: '',
 }
 
-export function RichTextEditor({ value, onChange, className }: RichTextEditorProps) {
+export function RichTextEditor({ value, onChange, className, editorLabel }: RichTextEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null)
   const isInternal = useRef(false)
   const savedRange = useRef<Range | null>(null)
   const [active, setActive] = useState<ActiveState>(DEFAULT_ACTIVE)
+  const [gradientOpen, setGradientOpen] = useState(false)
 
   useEffect(() => {
     if (editorRef.current && !isInternal.current) {
@@ -61,6 +69,7 @@ export function RichTextEditor({ value, onChange, className }: RichTextEditorPro
         underline: document.queryCommandState('underline'),
         block: (document.queryCommandValue('formatBlock') || 'p').toLowerCase(),
         foreColor: document.queryCommandValue('foreColor') || '',
+        gradient: getActiveGradient(editor),
       })
     }
     document.addEventListener('selectionchange', updateActive)
@@ -95,6 +104,61 @@ export function RichTextEditor({ value, onChange, className }: RichTextEditorPro
     [onChange],
   )
 
+  const applyGradient = useCallback(
+    (gradientClass: string) => {
+      restoreSelection()
+      const sel = window.getSelection()
+      if (!sel || sel.rangeCount === 0) return
+      const range = sel.getRangeAt(0)
+      if (range.collapsed) return
+      const span = document.createElement('span')
+      span.className = gradientClass
+      try {
+        range.surroundContents(span)
+      } catch {
+        const contents = range.extractContents()
+        span.appendChild(contents)
+        range.insertNode(span)
+      }
+      if (editorRef.current) {
+        isInternal.current = true
+        onChange(editorRef.current.innerHTML)
+      }
+      setGradientOpen(false)
+      editorRef.current?.focus()
+    },
+    [onChange],
+  )
+
+  const removeGradient = useCallback(() => {
+    restoreSelection()
+    const sel = window.getSelection()
+    if (!sel || sel.rangeCount === 0) return
+    let node: Node | null = sel.anchorNode
+    const editor = editorRef.current
+    if (!editor) return
+    while (node && node !== editor) {
+      if (node.nodeType === Node.ELEMENT_NODE) {
+        const el = node as HTMLElement
+        if (GRADIENT_OPTIONS.some((g) => el.classList.contains(g.className))) {
+          const parent = el.parentNode
+          if (parent) {
+            while (el.firstChild) parent.insertBefore(el.firstChild, el)
+            parent.removeChild(el)
+          }
+          break
+        }
+      }
+      node = node.parentNode
+    }
+    if (editorRef.current) {
+      isInternal.current = true
+      onChange(editorRef.current.innerHTML)
+    }
+    setGradientOpen(false)
+    editorRef.current?.focus()
+  }, [onChange])
+
   const handleInput = () => {
     if (editorRef.current) {
       isInternal.current = true
@@ -111,10 +175,13 @@ export function RichTextEditor({ value, onChange, className }: RichTextEditorPro
 
   const btn = 'h-7 w-7'
   const activeCls = 'bg-accent text-accent-foreground'
+  const divider = <div className="w-px h-5 bg-border mx-1" />
+  const groupDivider = <div className="w-px h-6 bg-border/60 mx-1.5" />
 
   return (
     <div className={cn('rounded-md border border-input overflow-visible', className)}>
-      <div className="flex items-center gap-1 border-b border-input bg-muted/50 p-1.5 flex-wrap">
+      <div className="flex items-center gap-0.5 border-b border-input bg-muted/50 p-1.5 flex-wrap">
+        {/* Group 1: Basic formatting — headings, inline styles, lists */}
         <Button
           type="button"
           variant="ghost"
@@ -155,7 +222,7 @@ export function RichTextEditor({ value, onChange, className }: RichTextEditorPro
         >
           <Pilcrow className="h-3.5 w-3.5" />
         </Button>
-        <div className="w-px h-5 bg-border mx-1" />
+        {divider}
         <Button
           type="button"
           variant="ghost"
@@ -186,7 +253,7 @@ export function RichTextEditor({ value, onChange, className }: RichTextEditorPro
         >
           <Underline className="h-3.5 w-3.5" />
         </Button>
-        <div className="w-px h-5 bg-border mx-1" />
+        {divider}
         <Button
           type="button"
           variant="ghost"
@@ -207,7 +274,9 @@ export function RichTextEditor({ value, onChange, className }: RichTextEditorPro
         >
           <ListOrdered className="h-3.5 w-3.5" />
         </Button>
-        <div className="w-px h-5 bg-border mx-1" />
+
+        {/* Group 2: Colors and gradients */}
+        {groupDivider}
         <label
           className="h-7 w-7 flex items-center justify-center cursor-pointer rounded hover:bg-accent relative"
           title="Cor do texto"
@@ -222,7 +291,53 @@ export function RichTextEditor({ value, onChange, className }: RichTextEditorPro
             onChange={(e) => exec('foreColor', e.target.value)}
           />
         </label>
+        <Popover open={gradientOpen} onOpenChange={setGradientOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className={cn(btn, active.gradient && activeCls)}
+              title="Gradiente de texto"
+            >
+              <Sparkles className="h-3.5 w-3.5" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-56 p-2" align="start">
+            <div className="text-xs font-semibold text-muted-foreground mb-2 px-1">
+              Gradientes de texto
+            </div>
+            <div className="grid grid-cols-2 gap-1">
+              {GRADIENT_OPTIONS.map((g) => (
+                <button
+                  key={g.className}
+                  type="button"
+                  onClick={() => applyGradient(g.className)}
+                  className="flex items-center gap-2 rounded-md px-2 py-1.5 text-xs hover:bg-accent transition-colors"
+                >
+                  <span className="h-4 w-4 rounded shrink-0" style={{ background: g.preview }} />
+                  <span className="truncate">{g.label}</span>
+                </button>
+              ))}
+            </div>
+            <div className="mt-2 pt-2 border-t border-border">
+              <button
+                type="button"
+                onClick={removeGradient}
+                className="flex items-center gap-2 w-full rounded-md px-2 py-1.5 text-xs hover:bg-accent transition-colors text-muted-foreground"
+              >
+                <Eraser className="h-3.5 w-3.5" />
+                <span>Remover gradiente</span>
+              </button>
+            </div>
+          </PopoverContent>
+        </Popover>
       </div>
+      {editorLabel && (
+        <div className="px-3 py-1 text-xs font-medium text-muted-foreground border-b border-border/50 bg-muted/20">
+          {editorLabel}
+        </div>
+      )}
       <div
         ref={editorRef}
         contentEditable

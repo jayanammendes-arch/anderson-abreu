@@ -14,7 +14,10 @@ export function RichSection({ title, html, images, className }: RichSectionProps
   return (
     <section className={className}>
       <div className="max-w-4xl mx-auto px-6">
-        <h2 className="text-3xl font-bold text-slate-900 mb-6">{title}</h2>
+        <h2
+          className="text-3xl font-bold text-slate-900 mb-6 [&_span]:inline"
+          dangerouslySetInnerHTML={{ __html: title }}
+        />
         {hasText && (
           <div
             className="prose prose-lg max-w-none text-slate-600 [&_h2]:text-slate-900 [&_h2]:font-bold [&_ul]:list-disc [&_ul]:pl-6 [&_li]:mb-2"
