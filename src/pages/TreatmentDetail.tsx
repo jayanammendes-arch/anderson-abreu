@@ -120,6 +120,10 @@ export default function TreatmentDetail() {
   const hasComoFunciona = category.como_funciona_text?.trim()
   const hasResultados = category.resultados_text?.trim()
   const hasSintomas = category.sintomas_text?.trim()
+  const hasDetailedContent = category.detailed_content?.trim()
+  const hasCta = category.cta_text?.trim()
+  const hasPorQueTantas = category.por_que_tantas_content?.trim()
+  const hasComparacao = category.comparacao_content?.trim()
 
   return (
     <LandingLayout settings={settings}>
@@ -162,6 +166,19 @@ export default function TreatmentDetail() {
       <ScrollFadeIn>
         <GlobalBlueBand settings={settings} />
       </ScrollFadeIn>
+
+      {hasDetailedContent && (
+        <ScrollFadeIn>
+          <section className="py-24 bg-white overflow-visible">
+            <div className="max-w-4xl mx-auto px-6 overflow-visible">
+              <div
+                className={proseClass}
+                dangerouslySetInnerHTML={{ __html: category.detailed_content! }}
+              />
+            </div>
+          </section>
+        </ScrollFadeIn>
+      )}
 
       {hasComoFunciona && (
         <ScrollFadeIn>
@@ -234,6 +251,48 @@ export default function TreatmentDetail() {
                 />
               </div>
               {sintomasImg && <FramedImage src={sintomasImg} alt="Sintomas" position="right" />}
+            </div>
+          </section>
+        </ScrollFadeIn>
+      )}
+
+      {hasCta && (
+        <ScrollFadeIn>
+          <section className="py-24 bg-white overflow-visible">
+            <div className="max-w-4xl mx-auto px-6 text-center overflow-visible">
+              <SectionTitle title={category.cta_title} defaultTitle="" />
+              <div
+                className={proseClass}
+                dangerouslySetInnerHTML={{ __html: category.cta_text! }}
+              />
+            </div>
+          </section>
+        </ScrollFadeIn>
+      )}
+
+      {hasPorQueTantas && (
+        <ScrollFadeIn>
+          <section className="py-24 bg-slate-50 overflow-visible">
+            <div className="max-w-4xl mx-auto px-6 overflow-visible">
+              <SectionTitle title={category.por_que_tantas_title} defaultTitle="Por que tantas?" />
+              <div
+                className={proseClass}
+                dangerouslySetInnerHTML={{ __html: category.por_que_tantas_content! }}
+              />
+            </div>
+          </section>
+        </ScrollFadeIn>
+      )}
+
+      {hasComparacao && (
+        <ScrollFadeIn>
+          <section className="py-24 bg-white overflow-visible">
+            <div className="max-w-4xl mx-auto px-6 overflow-visible">
+              <SectionTitle title={category.comparacao_title} defaultTitle="Comparação" />
+              <div
+                className={proseClass}
+                dangerouslySetInnerHTML={{ __html: category.comparacao_content! }}
+              />
             </div>
           </section>
         </ScrollFadeIn>

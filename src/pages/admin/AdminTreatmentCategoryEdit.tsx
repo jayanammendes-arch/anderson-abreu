@@ -18,7 +18,7 @@ import { FileUploadField } from '@/components/admin/FileUploadField'
 import { CropImageUploader } from '@/components/admin/CropImageUploader'
 import { extractFieldErrors, type FieldErrors } from '@/lib/pocketbase/errors'
 import { toast } from 'sonner'
-import { ArrowLeft, Save, Loader2, ChevronDown } from 'lucide-react'
+import { ArrowLeft, Save, Loader2, ChevronDown, ExternalLink, Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const emptyForm: Partial<TreatmentCategory> = {
@@ -39,6 +39,13 @@ const emptyForm: Partial<TreatmentCategory> = {
   resultados_text: '',
   sintomas_title: '',
   sintomas_text: '',
+  cta_title: '',
+  cta_text: '',
+  por_que_tantas_title: '',
+  por_que_tantas_content: '',
+  comparacao_title: '',
+  comparacao_content: '',
+  symptoms_list: '',
 }
 
 function slugify(text: string): string {
@@ -86,6 +93,7 @@ export default function AdminTreatmentCategoryEdit() {
   const isEdit = !!id
   const [loading, setLoading] = useState(isEdit)
   const [saving, setSaving] = useState(false)
+  const [saveSuccess, setSaveSuccess] = useState(false)
   const [formData, setFormData] = useState<Partial<TreatmentCategory>>(emptyForm)
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null)
@@ -140,6 +148,7 @@ export default function AdminTreatmentCategoryEdit() {
     e.preventDefault()
     setSaving(true)
     setFieldErrors({})
+    setSaveSuccess(false)
     try {
       const slug = formData.slug || slugify(formData.name || '')
       const fd = new FormData()
@@ -159,6 +168,12 @@ export default function AdminTreatmentCategoryEdit() {
       fd.append('resultados_text', formData.resultados_text || '')
       fd.append('sintomas_title', formData.sintomas_title || '')
       fd.append('sintomas_text', formData.sintomas_text || '')
+      fd.append('cta_title', formData.cta_title || '')
+      fd.append('cta_text', formData.cta_text || '')
+      fd.append('por_que_tantas_title', formData.por_que_tantas_title || '')
+      fd.append('por_que_tantas_content', formData.por_que_tantas_content || '')
+      fd.append('comparacao_title', formData.comparacao_title || '')
+      fd.append('comparacao_content', formData.comparacao_content || '')
       fd.append('detailed_content', formData.detailed_content || '')
       fd.append('symptoms_list', formData.symptoms_list || '')
       if (imageFile) fd.append('image', imageFile)
@@ -167,13 +182,20 @@ export default function AdminTreatmentCategoryEdit() {
       if (sintomasImageFile) fd.append('sintomas_image', sintomasImageFile)
 
       if (id) {
-        await adminUpdateTreatmentCategory(id, fd)
-        toast.success('Categoria atualizada!')
+        const updated = await adminUpdateTreatmentCategory(id, fd)
+        setFormData({ ...updated })
+        setImageFile(null)
+        setComoFuncionaImageFile(null)
+        setResultadosImageFile(null)
+        setSintomasImageFile(null)
+        toast.success('✅ Salvo com sucesso')
+        setSaveSuccess(true)
+        setTimeout(() => setSaveSuccess(false), 5000)
       } else {
-        await adminCreateTreatmentCategory(fd)
-        toast.success('Categoria criada!')
+        const result = await adminCreateTreatmentCategory(fd)
+        toast.success('✅ Salvo com sucesso')
+        navigate(`/admin/categorias-tratamentos/${result.id}/editar`)
       }
-      navigate('/admin/categorias-tratamentos')
     } catch (err) {
       const errors = extractFieldErrors(err)
       setFieldErrors(errors)
@@ -190,16 +212,33 @@ export default function AdminTreatmentCategoryEdit() {
       </div>
     )
 
+  const publicSlug = formData.slug || slugify(formData.name || '')
+
   return (
     <div className="space-y-6 animate-fade-in max-w-3xl mx-auto">
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 flex-wrap">
         <Button variant="secondary" size="sm" asChild>
           <Link to="/admin/categorias-tratamentos">
             <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
           </Link>
         </Button>
         <h1 className="text-2xl font-bold">{isEdit ? 'Editar Categoria' : 'Nova Categoria'}</h1>
+        {isEdit && publicSlug && (
+          <Button variant="outline" size="sm" asChild>
+            <a href={`/tratamentos/${publicSlug}`} target="_blank" rel="noopener noreferrer">
+              <ExternalLink className="mr-2 h-4 w-4" /> Visualizar no site
+            </a>
+          </Button>
+        )}
       </div>
+
+      {saveSuccess && (
+        <div className="flex items-center gap-2 rounded-lg border border-green-500/30 bg-green-500/10 px-4 py-3 text-green-400 animate-fade-in">
+          <Check className="h-4 w-4" />
+          <span className="text-sm font-medium">✅ Salvo com sucesso</span>
+        </div>
+      )}
+
       <form onSubmit={handleSave} className="space-y-4">
         <FormSection title="Informações Gerais" defaultOpen>
           <div className="space-y-2">
@@ -227,19 +266,29 @@ export default function AdminTreatmentCategoryEdit() {
               onChange={(e) => setFormData({ ...formData, short_description: e.target.value })}
             />
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2"></div>
+          <div className="flex items-center gap-3">
+            <Switch
+              checked={formData.is_active ?? true}
+              onCheckedChange={(v) => setFormData({ ...formData, is_active: v })}
+            />
+            <Label>Categoria ativa</Label>
           </div>
-
+          <div className="flex items-center gap-3">
+            <Switch
+              checked={formData.hide_icon ?? false}
+              onCheckedChange={(v) => setFormData({ ...formData, hide_icon: v })}
+            />
+            <Label>Ocultar ícone</Label>
+          </div>
           <div className="space-y-2">
             <div className="flex items-center gap-3">
               <Switch checked={showIconPicker} onCheckedChange={setShowIconPicker} />
-              <Label className="cursor-pointer">Mostrar/Ocultar seletor de ícones</Label>
+              <Label className="cursor-pointer">Mostrar seletor de ícones</Label>
             </div>
             {showIconPicker && (
               <IconPicker
                 value={formData.icon || ''}
-                onChange={(icon) => setFormData({ ...formData, icon })}
+                onChange={(icon: string) => setFormData({ ...formData, icon })}
               />
             )}
           </div>
@@ -253,21 +302,28 @@ export default function AdminTreatmentCategoryEdit() {
             cropX={formData.crop_x ?? 0.5}
             cropY={formData.crop_y ?? 0.5}
             onFileChange={setImageFile}
-            onCropChange={(x, y) => setFormData({ ...formData, crop_x: x, crop_y: y })}
+            onCropChange={(x: number, y: number) =>
+              setFormData({ ...formData, crop_x: x, crop_y: y })
+            }
             accept="image/jpeg,image/png,image/webp,image/svg+xml"
             error={fieldErrors.image}
           />
-          <p className="text-xs text-muted-foreground">
-            O botão "Agendar Sessão" é exibido automaticamente no hero e direciona para /agendar.
-          </p>
+        </FormSection>
+
+        <FormSection title="Conteúdo Detalhado">
+          <RichTextEditor
+            value={formData.detailed_content || ''}
+            onChange={(html) => setFormData({ ...formData, detailed_content: html })}
+          />
         </FormSection>
 
         <FormSection title="1. Como Funciona" defaultOpen>
           <div className="space-y-2">
             <Label>Título</Label>
-            <RichTextEditor
+            <Input
               value={formData.como_funciona_title || ''}
-              onChange={(html) => setFormData({ ...formData, como_funciona_title: html })}
+              onChange={(e) => setFormData({ ...formData, como_funciona_title: e.target.value })}
+              placeholder="Como Funciona"
             />
           </div>
           <div className="space-y-2">
@@ -287,7 +343,7 @@ export default function AdminTreatmentCategoryEdit() {
           />
         </FormSection>
 
-        <FormSection title="2. Faixa Azul (Frase Configurável)" defaultOpen>
+        <FormSection title="2. Faixa Azul" defaultOpen>
           <div className="space-y-2">
             <Label>Frase da Faixa Azul</Label>
             <Input
@@ -298,12 +354,13 @@ export default function AdminTreatmentCategoryEdit() {
           </div>
         </FormSection>
 
-        <FormSection title="3. Resultados Respaldados Pela Ciência" defaultOpen>
+        <FormSection title="3. Resultados" defaultOpen>
           <div className="space-y-2">
             <Label>Título</Label>
-            <RichTextEditor
+            <Input
               value={formData.resultados_title || ''}
-              onChange={(html) => setFormData({ ...formData, resultados_title: html })}
+              onChange={(e) => setFormData({ ...formData, resultados_title: e.target.value })}
+              placeholder="Resultados Respaldados Pela Ciência"
             />
           </div>
           <div className="space-y-2">
@@ -323,12 +380,13 @@ export default function AdminTreatmentCategoryEdit() {
           />
         </FormSection>
 
-        <FormSection title="4. Sintomas" defaultOpen>
+        <FormSection title="4. Sintomas">
           <div className="space-y-2">
             <Label>Título</Label>
-            <RichTextEditor
+            <Input
               value={formData.sintomas_title || ''}
-              onChange={(html) => setFormData({ ...formData, sintomas_title: html })}
+              onChange={(e) => setFormData({ ...formData, sintomas_title: e.target.value })}
+              placeholder="Sintomas"
             />
           </div>
           <div className="space-y-2">
@@ -345,6 +403,67 @@ export default function AdminTreatmentCategoryEdit() {
             onChange={setSintomasImageFile}
             accept="image/jpeg,image/png,image/webp,image/svg+xml"
             error={fieldErrors.sintomas_image}
+          />
+        </FormSection>
+
+        <FormSection title="5. CTA">
+          <div className="space-y-2">
+            <Label>Título</Label>
+            <Input
+              value={formData.cta_title || ''}
+              onChange={(e) => setFormData({ ...formData, cta_title: e.target.value })}
+              placeholder="Título do CTA"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>Conteúdo</Label>
+            <RichTextEditor
+              value={formData.cta_text || ''}
+              onChange={(html) => setFormData({ ...formData, cta_text: html })}
+            />
+          </div>
+        </FormSection>
+
+        <FormSection title="6. Por que tantas...">
+          <div className="space-y-2">
+            <Label>Título</Label>
+            <Input
+              value={formData.por_que_tantas_title || ''}
+              onChange={(e) => setFormData({ ...formData, por_que_tantas_title: e.target.value })}
+              placeholder="Por que tantas..."
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>Conteúdo</Label>
+            <RichTextEditor
+              value={formData.por_que_tantas_content || ''}
+              onChange={(html) => setFormData({ ...formData, por_que_tantas_content: html })}
+            />
+          </div>
+        </FormSection>
+
+        <FormSection title="7. Comparação">
+          <div className="space-y-2">
+            <Label>Título</Label>
+            <Input
+              value={formData.comparacao_title || ''}
+              onChange={(e) => setFormData({ ...formData, comparacao_title: e.target.value })}
+              placeholder="Comparação"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>Conteúdo</Label>
+            <RichTextEditor
+              value={formData.comparacao_content || ''}
+              onChange={(html) => setFormData({ ...formData, comparacao_content: html })}
+            />
+          </div>
+        </FormSection>
+
+        <FormSection title="Lista de Sintomas (Legado)">
+          <RichTextEditor
+            value={formData.symptoms_list || ''}
+            onChange={(html) => setFormData({ ...formData, symptoms_list: html })}
           />
         </FormSection>
 

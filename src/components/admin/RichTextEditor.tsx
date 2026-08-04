@@ -10,12 +10,6 @@ import {
   Heading3,
   Palette,
   Pilcrow,
-  AlignLeft,
-  AlignCenter,
-  AlignRight,
-  AlignJustify,
-  Sparkles,
-  Type,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -26,30 +20,27 @@ interface RichTextEditorProps {
   className?: string
 }
 
-const FONT_FAMILIES = [
-  { value: 'Arial', label: 'Arial' },
-  { value: 'Georgia', label: 'Georgia' },
-  { value: 'Verdana', label: 'Verdana' },
-  { value: 'Times New Roman', label: 'Times New Roman' },
-  { value: 'Courier New', label: 'Courier New' },
-]
+interface ActiveState {
+  bold: boolean
+  italic: boolean
+  underline: boolean
+  block: string
+  foreColor: string
+}
 
-const FONT_SIZES = [
-  { value: '2', label: 'Pequeno' },
-  { value: '3', label: 'Normal' },
-  { value: '4', label: 'Médio' },
-  { value: '5', label: 'Grande' },
-  { value: '6', label: 'Maior' },
-  { value: '7', label: 'Enorme' },
-]
+const DEFAULT_ACTIVE: ActiveState = {
+  bold: false,
+  italic: false,
+  underline: false,
+  block: 'p',
+  foreColor: '',
+}
 
 export function RichTextEditor({ value, onChange, className }: RichTextEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null)
   const isInternal = useRef(false)
   const savedRange = useRef<Range | null>(null)
-  const [gradStart, setGradStart] = useState('#3b82f6')
-  const [gradEnd, setGradEnd] = useState('#22c55e')
-  const [showGradient, setShowGradient] = useState(false)
+  const [active, setActive] = useState<ActiveState>(DEFAULT_ACTIVE)
 
   useEffect(() => {
     if (editorRef.current && !isInternal.current) {
@@ -57,6 +48,24 @@ export function RichTextEditor({ value, onChange, className }: RichTextEditorPro
     }
     isInternal.current = false
   }, [value])
+
+  useEffect(() => {
+    const updateActive = () => {
+      const editor = editorRef.current
+      if (!editor) return
+      const sel = window.getSelection()
+      if (!sel || sel.rangeCount === 0 || !editor.contains(sel.anchorNode)) return
+      setActive({
+        bold: document.queryCommandState('bold'),
+        italic: document.queryCommandState('italic'),
+        underline: document.queryCommandState('underline'),
+        block: (document.queryCommandValue('formatBlock') || 'p').toLowerCase(),
+        foreColor: document.queryCommandValue('foreColor') || '',
+      })
+    }
+    document.addEventListener('selectionchange', updateActive)
+    return () => document.removeEventListener('selectionchange', updateActive)
+  }, [])
 
   const restoreSelection = () => {
     if (savedRange.current && editorRef.current) {
@@ -86,25 +95,6 @@ export function RichTextEditor({ value, onChange, className }: RichTextEditorPro
     [onChange],
   )
 
-  const applyGradient = () => {
-    restoreSelection()
-    const sel = window.getSelection()
-    if (!sel || sel.rangeCount === 0 || sel.isCollapsed || !editorRef.current) return
-    const range = sel.getRangeAt(0)
-    const span = document.createElement('span')
-    span.style.cssText = `background: linear-gradient(135deg, ${gradStart}, ${gradEnd}); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;`
-    try {
-      span.appendChild(range.extractContents())
-      range.insertNode(span)
-      isInternal.current = true
-      onChange(editorRef.current.innerHTML)
-    } catch {
-      /* selection spans incompatible nodes */
-    }
-    sel.removeAllRanges()
-    editorRef.current.focus()
-  }
-
   const handleInput = () => {
     if (editorRef.current) {
       isInternal.current = true
@@ -120,6 +110,7 @@ export function RichTextEditor({ value, onChange, className }: RichTextEditorPro
   }
 
   const btn = 'h-7 w-7'
+  const activeCls = 'bg-accent text-accent-foreground'
 
   return (
     <div className={cn('rounded-md border border-input overflow-visible', className)}>
@@ -128,7 +119,7 @@ export function RichTextEditor({ value, onChange, className }: RichTextEditorPro
           type="button"
           variant="ghost"
           size="icon"
-          className={btn}
+          className={cn(btn, active.block === 'h1' && activeCls)}
           onClick={() => exec('formatBlock', '<h1>')}
           title="Título 1"
         >
@@ -138,7 +129,7 @@ export function RichTextEditor({ value, onChange, className }: RichTextEditorPro
           type="button"
           variant="ghost"
           size="icon"
-          className={btn}
+          className={cn(btn, active.block === 'h2' && activeCls)}
           onClick={() => exec('formatBlock', '<h2>')}
           title="Título 2"
         >
@@ -148,7 +139,7 @@ export function RichTextEditor({ value, onChange, className }: RichTextEditorPro
           type="button"
           variant="ghost"
           size="icon"
-          className={btn}
+          className={cn(btn, active.block === 'h3' && activeCls)}
           onClick={() => exec('formatBlock', '<h3>')}
           title="Título 3"
         >
@@ -158,7 +149,7 @@ export function RichTextEditor({ value, onChange, className }: RichTextEditorPro
           type="button"
           variant="ghost"
           size="icon"
-          className={btn}
+          className={cn(btn, active.block === 'p' && activeCls)}
           onClick={() => exec('formatBlock', '<p>')}
           title="Parágrafo"
         >
@@ -169,7 +160,7 @@ export function RichTextEditor({ value, onChange, className }: RichTextEditorPro
           type="button"
           variant="ghost"
           size="icon"
-          className={btn}
+          className={cn(btn, active.bold && activeCls)}
           onClick={() => exec('bold')}
           title="Negrito"
         >
@@ -179,7 +170,7 @@ export function RichTextEditor({ value, onChange, className }: RichTextEditorPro
           type="button"
           variant="ghost"
           size="icon"
-          className={btn}
+          className={cn(btn, active.italic && activeCls)}
           onClick={() => exec('italic')}
           title="Itálico"
         >
@@ -189,142 +180,12 @@ export function RichTextEditor({ value, onChange, className }: RichTextEditorPro
           type="button"
           variant="ghost"
           size="icon"
-          className={btn}
+          className={cn(btn, active.underline && activeCls)}
           onClick={() => exec('underline')}
           title="Sublinhado"
         >
           <Underline className="h-3.5 w-3.5" />
         </Button>
-        <div className="w-px h-5 bg-border mx-1" />
-        <div className="flex items-center gap-1">
-          <Type className="h-3.5 w-3.5 text-muted-foreground" />
-          <select
-            className="h-7 rounded border border-input bg-background text-xs px-1 outline-none cursor-pointer"
-            defaultValue=""
-            onChange={(e) => {
-              if (e.target.value) {
-                exec('fontName', e.target.value)
-                e.target.value = ''
-              }
-            }}
-            title="Fonte"
-          >
-            <option value="">Fonte</option>
-            {FONT_FAMILIES.map((f) => (
-              <option key={f.value} value={f.value}>
-                {f.label}
-              </option>
-            ))}
-          </select>
-        </div>
-        <select
-          className="h-7 rounded border border-input bg-background text-xs px-1 outline-none cursor-pointer"
-          defaultValue=""
-          onChange={(e) => {
-            if (e.target.value) {
-              exec('fontSize', e.target.value)
-              e.target.value = ''
-            }
-          }}
-          title="Tamanho da fonte"
-        >
-          <option value="">Tamanho</option>
-          {FONT_SIZES.map((s) => (
-            <option key={s.value} value={s.value}>
-              {s.label}
-            </option>
-          ))}
-        </select>
-        <div className="w-px h-5 bg-border mx-1" />
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className={btn}
-          onClick={() => exec('justifyLeft')}
-          title="Alinhar à esquerda"
-        >
-          <AlignLeft className="h-3.5 w-3.5" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className={btn}
-          onClick={() => exec('justifyCenter')}
-          title="Centralizar"
-        >
-          <AlignCenter className="h-3.5 w-3.5" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className={btn}
-          onClick={() => exec('justifyRight')}
-          title="Alinhar à direita"
-        >
-          <AlignRight className="h-3.5 w-3.5" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className={btn}
-          onClick={() => exec('justifyFull')}
-          title="Justificar"
-        >
-          <AlignJustify className="h-3.5 w-3.5" />
-        </Button>
-        <div className="w-px h-5 bg-border mx-1" />
-        <label
-          className="h-7 w-7 flex items-center justify-center cursor-pointer rounded hover:bg-accent relative"
-          title="Cor do texto"
-        >
-          <Palette className="h-3.5 w-3.5" />
-          <input
-            type="color"
-            className="absolute opacity-0 inset-0 cursor-pointer"
-            onChange={(e) => exec('foreColor', e.target.value)}
-          />
-        </label>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className={cn(btn, showGradient && 'bg-accent')}
-          onClick={() => setShowGradient(!showGradient)}
-          title="Texto com gradiente"
-        >
-          <Sparkles className="h-3.5 w-3.5" />
-        </Button>
-        {showGradient && (
-          <div className="flex items-center gap-1 ml-1">
-            <input
-              type="color"
-              value={gradStart}
-              onChange={(e) => setGradStart(e.target.value)}
-              className="h-7 w-7 rounded border border-input cursor-pointer"
-              title="Cor inicial"
-            />
-            <input
-              type="color"
-              value={gradEnd}
-              onChange={(e) => setGradEnd(e.target.value)}
-              className="h-7 w-7 rounded border border-input cursor-pointer"
-              title="Cor final"
-            />
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="h-7 text-xs"
-              onClick={applyGradient}
-            >
-              Aplicar
-            </Button>
-          </div>
-        )}
         <div className="w-px h-5 bg-border mx-1" />
         <Button
           type="button"
@@ -346,6 +207,21 @@ export function RichTextEditor({ value, onChange, className }: RichTextEditorPro
         >
           <ListOrdered className="h-3.5 w-3.5" />
         </Button>
+        <div className="w-px h-5 bg-border mx-1" />
+        <label
+          className="h-7 w-7 flex items-center justify-center cursor-pointer rounded hover:bg-accent relative"
+          title="Cor do texto"
+        >
+          <Palette
+            className="h-3.5 w-3.5"
+            style={active.foreColor ? { color: active.foreColor } : undefined}
+          />
+          <input
+            type="color"
+            className="absolute opacity-0 inset-0 cursor-pointer"
+            onChange={(e) => exec('foreColor', e.target.value)}
+          />
+        </label>
       </div>
       <div
         ref={editorRef}
@@ -353,7 +229,7 @@ export function RichTextEditor({ value, onChange, className }: RichTextEditorPro
         onInput={handleInput}
         onBlur={handleBlur}
         suppressContentEditableWarning
-        className="min-h-[120px] max-h-[300px] overflow-y-auto p-3 pb-4 text-sm outline-none prose prose-sm max-w-none leading-relaxed"
+        className="rte-content-area min-h-[120px] max-h-[400px] overflow-y-auto p-3 pb-6 text-sm outline-none prose prose-sm max-w-none leading-relaxed"
       />
     </div>
   )

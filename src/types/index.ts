@@ -321,3 +321,57 @@ export interface BlogPost {
   created?: string
   updated?: string
 }
+
+export interface Treatment {
+  id: string
+  name: string
+  slug: string
+  short_description?: string
+  detailed_content?: string
+  image?: string
+  order?: number
+  created?: string
+  updated?: string
+  icon?: string
+  category?: 'Doenças Mentais' | 'Doenças Emocionais' | 'Doenças Corporais'
+}
+
+export interface TreatmentCategory {
+  id: string
+  name: string
+  slug: string
+  short_description: string
+  detailed_content?: string
+  image?: string
+  icon?: string
+  symptoms_list?: string
+  order?: number
+  created?: string
+  updated?: string
+  como_funciona_text?: string
+  como_funciona_images?: string[]
+  como_funciona_image?: string
+  como_funciona_title?: string
+  resultados_text?: string
+  resultados_images?: string[]
+  resultados_image?: string
+  resultados_title?: string
+  sintomas_text?: string
+  sintomas_image?: string
+  sintomas_title?: string
+  cta_text?: string
+  cta_images?: string[]
+  cta_title?: string
+  sections_config?: string | unknown[]
+  faixa_text?: string
+  faixa_azul_frase?: string
+  is_active?: boolean
+  hide_icon?: boolean
+  crop_x?: number
+  crop_y?: number
+  por_que_tantas_title?: string
+  por_que_tantas_content?: string
+  comparacao_title?: string
+  comparacao_content?: string
+  como_funciona_title?: string
+}
