@@ -119,6 +119,13 @@ const SECTIONS: SectionDef[] = [
       },
       { key: 'blue_band_whatsapp_enabled', label: 'Ativar Botão WhatsApp', type: 'boolean' },
     ],
+    fileFields: [
+      {
+        key: 'blue_band_image',
+        label:
+          'Imagem de Fundo — Recomendado: 1920×1080 px (paisagem), máx. 5 MB, formatos JPEG, PNG, WebP ou SVG.',
+      },
+    ],
   },
   {
     title: 'Comece sua Jornada',

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-06T17:46:34.349Z",
+  "generatedAt": "2026-08-06T18:07:34.165Z",
   "collections": [
     {
       "name": "users",
@@ -1233,6 +1233,12 @@
         },
         {
           "name": "hypnosis_info_image",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "blue_band_image",
           "type": "file",
           "required": false,
           "system": false

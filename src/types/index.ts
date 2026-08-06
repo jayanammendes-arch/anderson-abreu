@@ -225,6 +225,7 @@ export interface PlatformSettings {
   global_blue_band_title?: string
   global_blue_band_text?: string
   blue_band_phrase?: string
+  blue_band_image?: string
   blue_band_whatsapp_text?: string
   blue_band_whatsapp_enabled?: boolean
   journey_title?: string

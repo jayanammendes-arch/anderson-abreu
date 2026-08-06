@@ -8,7 +8,6 @@ import {
   getHomeHeroImageUrl,
   getParallaxBackgroundImageUrl,
   getFaqSectionImageUrl,
-  getHypnosisInfoImageUrl,
 } from '@/services/landing'
 import { getTreatmentCategories } from '@/services/treatment-categories'
 import { getBlogPosts } from '@/services/blog'
@@ -24,6 +23,7 @@ import { ArrowRight, Calendar, Loader2, ArrowUpRight } from 'lucide-react'
 import { CredentialsMarquee } from '@/components/CredentialsMarquee'
 import { HomeCredentialSection } from '@/components/HomeCredentialSection'
 import { ScrollFadeIn } from '@/components/ScrollFadeIn'
+import { GlobalBlueBand } from '@/components/GlobalBlueBand'
 import { cn } from '@/lib/utils'
 
 function ParallaxCTASection({ settings }: { settings: PlatformSettings }) {
@@ -91,9 +91,6 @@ export default function Landing() {
   useRealtime('blog_posts', () => loadData())
 
   const heroImageUrl = settings?.home_hero_image ? getHomeHeroImageUrl(settings) : null
-  const hypnosisInfoImageUrl = settings?.hypnosis_info_image
-    ? getHypnosisInfoImageUrl(settings)
-    : null
   const agendarText = settings?.agendar_sessao_text || 'Agendar Sessão'
   if (loading) {
     return (
@@ -222,45 +219,9 @@ export default function Landing() {
         </div>
       </ScrollFadeIn>
 
-      {/* O que é Hipnose Clínica? */}
+      {/* Blue Band (O que é Hipnose?) */}
       <ScrollFadeIn>
-        <section className="py-24 bg-slate-50">
-          <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12">
-            <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-center">
-              <div>
-                <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">
-                  O que é Hipnose Clínica?
-                </h2>
-                <p className="text-lg text-slate-600 leading-relaxed mb-4">
-                  A hipnose clínica é uma técnica terapêutica reconhecida cientificamente que
-                  utiliza um estado de relaxamento profundo e foco concentrado para acessar o
-                  subconsciente, permitindo transformações profundas e duradouras.
-                </p>
-                <p className="text-lg text-slate-600 leading-relaxed mb-4">
-                  Diferente do que se vê em shows de entretenimento, a hipnose clínica é uma
-                  ferramenta terapêutica séria e eficaz, utilizada para tratar ansiedade, depressão,
-                  fobias, traumas, compulsões e diversos outros quadros emocionais e
-                  comportamentais.
-                </p>
-                <p className="text-lg text-slate-600 leading-relaxed">
-                  Através de técnicas comprovadas, o terapeuta guia o paciente a um estado de
-                  relaxamento profundo onde a mente se torna mais receptiva a mudanças positivas,
-                  promovendo cura emocional e bem-estar duradouro.
-                </p>
-              </div>
-              <div>
-                <img
-                  src={
-                    hypnosisInfoImageUrl ||
-                    'https://img.usecurling.com/p/600/500?q=clinical%20hypnosis%20session&color=blue'
-                  }
-                  alt="O que é Hipnose Clínica?"
-                  className="rounded-2xl shadow-xl object-cover w-full h-[400px] md:h-[500px]"
-                />
-              </div>
-            </div>
-          </div>
-        </section>
+        <GlobalBlueBand settings={settings} />
       </ScrollFadeIn>
 
       {/* Parallax CTA Section */}

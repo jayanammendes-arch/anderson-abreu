@@ -128,6 +128,20 @@ export default function TreatmentDetail() {
   const hasPorQueTantas = category.por_que_tantas_content?.trim()
   const hasComparacao = category.comparacao_content?.trim()
 
+  let imgSectionIdx = 0
+  const comoFuncionaImgLeft = (() => {
+    if (!hasComoFunciona || !comoFuncionaImg) return false
+    return imgSectionIdx++ % 2 === 1
+  })()
+  const resultadosImgLeft = (() => {
+    if (!hasResultados || !resultadosImg) return false
+    return imgSectionIdx++ % 2 === 1
+  })()
+  const sintomasImgLeft = (() => {
+    if (!hasSintomas || !sintomasImg) return false
+    return imgSectionIdx++ % 2 === 1
+  })()
+
   return (
     <LandingLayout settings={settings}>
       <ScrollFadeIn>
@@ -187,7 +201,7 @@ export default function TreatmentDetail() {
         <ScrollFadeIn>
           <section className="py-24 bg-white overflow-visible">
             <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 grid md:grid-cols-2 gap-8 lg:gap-12 items-center overflow-visible">
-              <div>
+              <div className={cn(comoFuncionaImgLeft && 'md:order-2')}>
                 <SectionTitle title={category.como_funciona_title} defaultTitle="Como Funciona" />
                 <div
                   className={proseClass}
@@ -195,14 +209,22 @@ export default function TreatmentDetail() {
                 />
               </div>
               {comoFuncionaImg && (
-                <FramedImage src={comoFuncionaImg} alt="Como Funciona" position="right" />
+                <div className={cn(comoFuncionaImgLeft && 'md:order-1')}>
+                  <FramedImage
+                    src={comoFuncionaImg}
+                    alt="Como Funciona"
+                    position={comoFuncionaImgLeft ? 'left' : 'right'}
+                  />
+                </div>
               )}
             </div>
           </section>
         </ScrollFadeIn>
       )}
 
-      {category.faixa_azul_frase?.trim() && (
+      {(category.faixa_azul_frase?.trim() ||
+        faixaAzulImg ||
+        category.faixa_azul_whatsapp_enabled) && (
         <section
           className="relative w-full overflow-hidden"
           style={
@@ -221,9 +243,11 @@ export default function TreatmentDetail() {
           {!faixaAzulImg && <div className="absolute inset-0 bg-[#0B1D3A]" />}
           {faixaAzulImg && <div className="absolute inset-0 bg-[#0B1D3A]/70" />}
           <div className="relative z-10 w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 py-16 md:py-24 flex flex-col items-center gap-8">
-            <p className="text-white text-xl md:text-2xl lg:text-3xl font-semibold leading-relaxed text-center max-w-4xl">
-              {category.faixa_azul_frase}
-            </p>
+            {category.faixa_azul_frase?.trim() && (
+              <p className="text-white text-xl md:text-2xl lg:text-3xl font-semibold leading-relaxed text-center max-w-4xl">
+                {category.faixa_azul_frase}
+              </p>
+            )}
             {category.faixa_azul_whatsapp_enabled && whatsappNumber && (
               <Button
                 size="lg"
@@ -248,7 +272,12 @@ export default function TreatmentDetail() {
         <ScrollFadeIn>
           <section className="py-24 bg-slate-50 overflow-visible">
             <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 grid md:grid-cols-2 gap-8 lg:gap-12 items-center overflow-visible">
-              <div className={resultadosImg ? 'md:col-span-1' : 'md:col-span-2'}>
+              <div
+                className={cn(
+                  resultadosImg ? 'md:col-span-1' : 'md:col-span-2',
+                  resultadosImgLeft && 'md:order-2',
+                )}
+              >
                 <SectionTitle
                   title={category.resultados_title}
                   defaultTitle="Resultados Respaldados Pela Ciência"
@@ -259,7 +288,13 @@ export default function TreatmentDetail() {
                 />
               </div>
               {resultadosImg && (
-                <FramedImage src={resultadosImg} alt="Resultados" position="right" />
+                <div className={cn(resultadosImgLeft && 'md:order-1')}>
+                  <FramedImage
+                    src={resultadosImg}
+                    alt="Resultados"
+                    position={resultadosImgLeft ? 'left' : 'right'}
+                  />
+                </div>
               )}
             </div>
           </section>
@@ -270,14 +305,22 @@ export default function TreatmentDetail() {
         <ScrollFadeIn>
           <section className="py-24 bg-white overflow-visible">
             <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 grid md:grid-cols-2 gap-8 lg:gap-12 items-center overflow-visible">
-              <div>
+              <div className={cn(sintomasImgLeft && 'md:order-2')}>
                 <SectionTitle title={category.sintomas_title} defaultTitle="Sintomas" />
                 <div
                   className={proseClass}
                   dangerouslySetInnerHTML={{ __html: category.sintomas_text! }}
                 />
               </div>
-              {sintomasImg && <FramedImage src={sintomasImg} alt="Sintomas" position="right" />}
+              {sintomasImg && (
+                <div className={cn(sintomasImgLeft && 'md:order-1')}>
+                  <FramedImage
+                    src={sintomasImg}
+                    alt="Sintomas"
+                    position={sintomasImgLeft ? 'left' : 'right'}
+                  />
+                </div>
+              )}
             </div>
           </section>
         </ScrollFadeIn>

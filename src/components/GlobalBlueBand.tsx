@@ -1,6 +1,7 @@
 import type { PlatformSettings } from '@/types'
 import { Button } from '@/components/ui/button'
 import { MessageCircle } from 'lucide-react'
+import { getBlueBandImageUrl } from '@/services/landing'
 
 interface GlobalBlueBandProps {
   settings?: PlatformSettings | null
@@ -14,39 +15,36 @@ export function GlobalBlueBand({ settings, className = '' }: GlobalBlueBandProps
   const whatsappEnabled = settings?.blue_band_whatsapp_enabled
   const whatsappText = settings?.blue_band_whatsapp_text?.trim() || 'Fale Conosco'
   const whatsappNumber = (settings?.whatsapp_number || '').replace(/\D/g, '')
+  const bgImageUrl = settings ? getBlueBandImageUrl(settings) : null
 
   const proseClass =
     'prose prose-invert max-w-none text-slate-200 text-base md:text-lg leading-relaxed space-y-4 [&_p]:text-slate-200 [&_strong]:text-white [&_strong]:font-semibold'
 
+  const sectionStyle = bgImageUrl
+    ? {
+        backgroundImage: `url(${bgImageUrl})`,
+        backgroundAttachment: 'fixed' as const,
+        backgroundPosition: 'center' as const,
+        backgroundRepeat: 'no-repeat' as const,
+        backgroundSize: 'cover' as const,
+        minHeight: '320px',
+      }
+    : undefined
+
   return (
-    <section className={`w-full bg-[#0B1D3A] text-white py-8 md:py-10 ${className}`}>
-      <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12">
+    <section
+      className={`relative w-full overflow-hidden bg-[#0B1D3A] text-white py-8 md:py-10 ${className}`}
+      style={sectionStyle}
+    >
+      {bgImageUrl && <div className="absolute inset-0 bg-[#0B1D3A]/70" />}
+      <div className="relative z-10 w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12">
         <h2 className="text-3xl md:text-4xl font-bold text-white mb-6 tracking-tight">{title}</h2>
 
         {phrase ? (
           <div className={proseClass} dangerouslySetInnerHTML={{ __html: phrase }} />
         ) : customText ? (
           <div className={proseClass} dangerouslySetInnerHTML={{ __html: customText }} />
-        ) : (
-          <div className="text-slate-200 text-base md:text-lg leading-relaxed space-y-4 max-w-6xl">
-            <p>
-              A hipnose é uma técnica segura e natural que utiliza um estado de foco e relaxamento
-              profundo para acessar padrões emocionais, crenças e comportamentos que muitas vezes
-              atuam de forma <strong className="font-semibold text-white">inconsciente</strong>.
-              Durante todo o processo, você permanece{' '}
-              <strong className="font-semibold text-white">consciente e no controle</strong>.
-            </p>
-            <p>
-              Enquanto muitas abordagens trabalham apenas os sintomas, a hipnose busca identificar e
-              ressignificar as causas emocionais por trás deles, promovendo{' '}
-              <strong className="font-semibold text-white">
-                mudanças mais profundas e duradouras
-              </strong>
-              . É uma ferramenta poderosa para quem deseja superar bloqueios, tratar a ansiedade e
-              desenvolver uma relação mais saudável consigo mesmo.
-            </p>
-          </div>
-        )}
+        ) : null}
 
         {whatsappEnabled && whatsappNumber && (
           <div className="mt-8">
