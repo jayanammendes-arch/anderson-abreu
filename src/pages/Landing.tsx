@@ -121,7 +121,7 @@ export default function Landing() {
               <div className="absolute inset-0 bg-gradient-to-t from-white/95 via-white/40 to-transparent sm:hidden" />
             </>
           )}
-          <div className="relative z-10 w-full max-w-7xl mx-auto px-6 py-20">
+          <div className="relative z-10 w-full max-w-[1600px] mx-auto px-6 md:px-12 lg:px-16 py-20">
             <div className="max-w-2xl">
               <h1
                 className={cn(
@@ -174,7 +174,7 @@ export default function Landing() {
       {treatmentCategories.length > 0 && (
         <ScrollFadeIn>
           <section id="tratamentos" className="py-24 bg-white">
-            <div className="max-w-7xl mx-auto px-6">
+            <div className="max-w-[1600px] mx-auto px-6 md:px-12 lg:px-16">
               <div className="text-center mb-16">
                 <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
                   {settings?.treatments_section_title || 'O que podemos tratar com Hipnose'}
@@ -207,7 +207,7 @@ export default function Landing() {
       {/* Saiba mais button below specialist description */}
       <ScrollFadeIn>
         <div className="pb-16 bg-white">
-          <div className="max-w-7xl mx-auto px-6 flex justify-center">
+          <div className="max-w-[1600px] mx-auto px-6 md:px-12 lg:px-16 flex justify-center">
             <Button
               size="lg"
               className="royal-btn-gradient text-white rounded-full px-10 py-6 text-lg font-medium shadow-lg transition-all hover:scale-105"
@@ -225,8 +225,8 @@ export default function Landing() {
       {/* O que é Hipnose Clínica? */}
       <ScrollFadeIn>
         <section className="py-24 bg-slate-50">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div className="max-w-[1600px] mx-auto px-6 md:px-12 lg:px-16">
+            <div className="grid md:grid-cols-2 gap-12 lg:gap-16 items-center">
               <div>
                 <img
                   src={
@@ -287,7 +287,7 @@ export default function Landing() {
       {blogPosts.length > 0 && (
         <ScrollFadeIn>
           <section className="py-24 bg-white">
-            <div className="max-w-7xl mx-auto px-6">
+            <div className="max-w-[1600px] mx-auto px-6 md:px-12 lg:px-16">
               <div className="flex items-end justify-between mb-12">
                 <div>
                   <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-3">
