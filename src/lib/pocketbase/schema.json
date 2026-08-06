@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-06T16:21:22.573Z",
+  "generatedAt": "2026-08-06T16:33:18.196Z",
   "collections": [
     {
       "name": "users",
@@ -2336,6 +2336,24 @@
         {
           "name": "comparacao_content",
           "type": "editor",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "faixa_azul_image",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "faixa_azul_whatsapp_enabled",
+          "type": "bool",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "faixa_azul_whatsapp_text",
+          "type": "text",
           "required": false,
           "system": false
         }

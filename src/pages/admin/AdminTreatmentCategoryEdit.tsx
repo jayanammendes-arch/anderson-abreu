@@ -48,6 +48,8 @@ const emptyForm: Partial<TreatmentCategory> = {
   comparacao_title: '',
   comparacao_content: '',
   symptoms_list: '',
+  faixa_azul_whatsapp_enabled: false,
+  faixa_azul_whatsapp_text: 'Fale Conosco',
 }
 
 function slugify(text: string): string {
@@ -102,6 +104,7 @@ export default function AdminTreatmentCategoryEdit() {
   const [comoFuncionaImageFile, setComoFuncionaImageFile] = useState<File | null>(null)
   const [resultadosImageFile, setResultadosImageFile] = useState<File | null>(null)
   const [sintomasImageFile, setSintomasImageFile] = useState<File | null>(null)
+  const [faixaAzulImageFile, setFaixaAzulImageFile] = useState<File | null>(null)
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [showIconPicker, setShowIconPicker] = useState(false)
   const [snapshotOpen, setSnapshotOpen] = useState(false)
@@ -180,10 +183,17 @@ export default function AdminTreatmentCategoryEdit() {
       fd.append('comparacao_content', formData.comparacao_content || '')
       fd.append('detailed_content', formData.detailed_content || '')
       fd.append('symptoms_list', formData.symptoms_list || '')
+      fd.append('faixa_azul_frase', formData.faixa_azul_frase || '')
+      fd.append(
+        'faixa_azul_whatsapp_enabled',
+        String(formData.faixa_azul_whatsapp_enabled ?? false),
+      )
+      fd.append('faixa_azul_whatsapp_text', formData.faixa_azul_whatsapp_text || '')
       if (imageFile) fd.append('image', imageFile)
       if (comoFuncionaImageFile) fd.append('como_funciona_image', comoFuncionaImageFile)
       if (resultadosImageFile) fd.append('resultados_image', resultadosImageFile)
       if (sintomasImageFile) fd.append('sintomas_image', sintomasImageFile)
+      if (faixaAzulImageFile) fd.append('faixa_azul_image', faixaAzulImageFile)
 
       if (id) {
         const updated = await adminUpdateTreatmentCategory(id, fd)
@@ -191,6 +201,7 @@ export default function AdminTreatmentCategoryEdit() {
         setImageFile(null)
         setComoFuncionaImageFile(null)
         setResultadosImageFile(null)
+        setFaixaAzulImageFile(null)
         setSintomasImageFile(null)
         toast.success('✅ Salvo com sucesso')
         setSaveSuccess(true)
@@ -222,6 +233,7 @@ export default function AdminTreatmentCategoryEdit() {
     comoFunciona: getExistingImageSrc('como_funciona_image', comoFuncionaImageFile),
     resultados: getExistingImageSrc('resultados_image', resultadosImageFile),
     sintomas: getExistingImageSrc('sintomas_image', sintomasImageFile),
+    faixaAzul: getExistingImageSrc('faixa_azul_image', faixaAzulImageFile),
   }
 
   return (
@@ -364,6 +376,17 @@ export default function AdminTreatmentCategoryEdit() {
 
           <FormSection title="2. Faixa Azul" defaultOpen>
             <div className="space-y-2">
+              <Label>Imagem de Fundo (Parallax)</Label>
+              <FileUploadField
+                label="Imagem de fundo da faixa azul"
+                currentSrc={getExistingImageSrc('faixa_azul_image', faixaAzulImageFile)}
+                file={faixaAzulImageFile}
+                onChange={setFaixaAzulImageFile}
+                accept="image/jpeg,image/png,image/webp,image/svg+xml"
+                error={fieldErrors.faixa_azul_image}
+              />
+            </div>
+            <div className="space-y-2">
               <Label>Frase da Faixa Azul</Label>
               <Input
                 value={formData.faixa_azul_frase || ''}
@@ -371,6 +394,27 @@ export default function AdminTreatmentCategoryEdit() {
                 placeholder="Texto exibido na faixa azul full-width"
               />
             </div>
+            <div className="flex items-center gap-3">
+              <Switch
+                checked={formData.faixa_azul_whatsapp_enabled ?? false}
+                onCheckedChange={(v) =>
+                  setFormData({ ...formData, faixa_azul_whatsapp_enabled: v })
+                }
+              />
+              <Label>Exibir botão do WhatsApp</Label>
+            </div>
+            {formData.faixa_azul_whatsapp_enabled && (
+              <div className="space-y-2">
+                <Label>Texto do botão do WhatsApp</Label>
+                <Input
+                  value={formData.faixa_azul_whatsapp_text || ''}
+                  onChange={(e) =>
+                    setFormData({ ...formData, faixa_azul_whatsapp_text: e.target.value })
+                  }
+                  placeholder="Fale Conosco"
+                />
+              </div>
+            )}
           </FormSection>
 
           <FormSection title="3. Resultados" defaultOpen>
@@ -497,6 +541,7 @@ export default function AdminTreatmentCategoryEdit() {
                 setImageFile(null)
                 setComoFuncionaImageFile(null)
                 setResultadosImageFile(null)
+                setFaixaAzulImageFile(null)
                 setSintomasImageFile(null)
               })
             }

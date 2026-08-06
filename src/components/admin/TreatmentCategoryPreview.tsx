@@ -2,7 +2,7 @@ import { useState } from 'react'
 import type { TreatmentCategory } from '@/types'
 import { getTreatmentIcon } from '@/lib/treatment-icons'
 import { getCropPositionCss } from '@/lib/image-position'
-import { Monitor, Smartphone } from 'lucide-react'
+import { Monitor, Smartphone, MessageCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface PreviewProps {
@@ -12,6 +12,7 @@ interface PreviewProps {
     comoFunciona: string | null
     resultados: string | null
     sintomas: string | null
+    faixaAzul: string | null
   }
 }
 
@@ -109,8 +110,34 @@ export function TreatmentCategoryPreview({ data, imageUrls }: PreviewProps) {
         )}
 
         {data.faixa_azul_frase?.trim() && (
-          <div className="bg-[#0B1D3A] py-3 px-4 text-center">
-            <p className="text-white text-sm font-semibold">{data.faixa_azul_frase}</p>
+          <div
+            className={cn(
+              'relative overflow-hidden py-8 px-6 flex flex-col items-center gap-4',
+              imageUrls.faixaAzul ? 'bg-[#0B1D3A]' : 'bg-[#0B1D3A]',
+            )}
+          >
+            {imageUrls.faixaAzul && (
+              <div className="absolute inset-0 overflow-hidden">
+                <img
+                  src={imageUrls.faixaAzul}
+                  alt=""
+                  className="absolute inset-0 h-[140%] w-full object-cover opacity-40"
+                  style={{ top: '-20%' }}
+                />
+              </div>
+            )}
+            <p className="relative z-10 text-white text-sm font-semibold leading-relaxed text-center max-w-md">
+              {data.faixa_azul_frase}
+            </p>
+            {data.faixa_azul_whatsapp_enabled && (
+              <button
+                className="relative z-10 inline-flex items-center gap-2 rounded-full bg-[#25D366] px-5 py-2 text-xs font-medium text-white shadow-lg"
+                type="button"
+              >
+                <MessageCircle className="h-3.5 w-3.5" />
+                {data.faixa_azul_whatsapp_text || 'Fale Conosco'}
+              </button>
+            )}
           </div>
         )}
 

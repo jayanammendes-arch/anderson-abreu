@@ -14,7 +14,7 @@ import { LandingLayout } from '@/components/LandingLayout'
 import { Button } from '@/components/ui/button'
 import { TestimonialsSection } from '@/components/TestimonialsSection'
 import { getTreatmentIcon } from '@/lib/treatment-icons'
-import { Loader2, ArrowRight, Calendar } from 'lucide-react'
+import { Loader2, ArrowRight, Calendar, MessageCircle } from 'lucide-react'
 import { ScrollFadeIn } from '@/components/ScrollFadeIn'
 import { GlobalBlueBand } from '@/components/GlobalBlueBand'
 import { HypnotherapyComparisonSection } from '@/components/HypnotherapyComparisonSection'
@@ -116,6 +116,8 @@ export default function TreatmentDetail() {
   const comoFuncionaImg = getTreatmentCategoryComoFuncionaImageUrl(category)
   const resultadosImg = getTreatmentCategoryResultadosImageUrl(category)
   const sintomasImg = getTreatmentCategorySintomasImageUrl(category)
+  const faixaAzulImg = getTreatmentCategoryFaixaAzulImageUrl(category)
+  const whatsappNumber = (settings?.whatsapp_number || '').replace(/\D/g, '')
 
   const hasComoFunciona = category.como_funciona_text?.trim()
   const hasResultados = category.resultados_text?.trim()
@@ -200,19 +202,43 @@ export default function TreatmentDetail() {
       )}
 
       {category.faixa_azul_frase?.trim() && (
-        <section className="w-full royal-cta-gradient py-8 md:py-10">
-          <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 text-center flex flex-col items-center gap-6">
-            <p className="text-white text-base md:text-lg font-semibold leading-relaxed">
+        <section
+          className="relative w-full overflow-hidden"
+          style={
+            faixaAzulImg
+              ? {
+                  backgroundImage: `url(${faixaAzulImg})`,
+                  backgroundAttachment: 'fixed',
+                  backgroundPosition: 'center',
+                  backgroundRepeat: 'no-repeat',
+                  backgroundSize: 'cover',
+                  minHeight: '320px',
+                }
+              : undefined
+          }
+        >
+          {!faixaAzulImg && <div className="absolute inset-0 bg-[#0B1D3A]" />}
+          {faixaAzulImg && <div className="absolute inset-0 bg-[#0B1D3A]/70" />}
+          <div className="relative z-10 w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 py-16 md:py-24 flex flex-col items-center gap-8">
+            <p className="text-white text-xl md:text-2xl lg:text-3xl font-semibold leading-relaxed text-center max-w-4xl">
               {category.faixa_azul_frase}
             </p>
-            <Button
-              size="lg"
-              className="bg-[#22C55E] hover:bg-[#1ea34d] text-white rounded-full px-10 py-6 text-lg font-medium shadow-lg transition-all hover:scale-105 border-none"
-              onClick={() => navigate('/agendar')}
-            >
-              <Calendar className="mr-2 h-5 w-5" />
-              {agendarText}
-            </Button>
+            {category.faixa_azul_whatsapp_enabled && whatsappNumber && (
+              <Button
+                size="lg"
+                className="bg-[#25D366] hover:bg-[#1eb558] text-white rounded-full px-10 py-6 text-lg font-medium shadow-lg transition-all hover:scale-105 border-none"
+                asChild
+              >
+                <a
+                  href={`https://wa.me/${whatsappNumber}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <MessageCircle className="mr-2 h-5 w-5" />
+                  {category.faixa_azul_whatsapp_text || 'Fale Conosco'}
+                </a>
+              </Button>
+            )}
           </div>
         </section>
       )}

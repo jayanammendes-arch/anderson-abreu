@@ -365,6 +365,9 @@ export interface TreatmentCategory {
   sections_config?: string | unknown[]
   faixa_text?: string
   faixa_azul_frase?: string
+  faixa_azul_image?: string
+  faixa_azul_whatsapp_enabled?: boolean
+  faixa_azul_whatsapp_text?: string
   is_active?: boolean
   hide_icon?: boolean
   crop_x?: number

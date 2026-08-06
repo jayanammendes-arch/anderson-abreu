@@ -39,6 +39,11 @@ export function getTreatmentCategoryResultadosImageUrl(category: TreatmentCatego
   return `${import.meta.env.VITE_POCKETBASE_URL}/api/files/treatment_categories/${category.id}/${category.resultados_image}`
 }
 
+export function getTreatmentCategoryFaixaAzulImageUrl(category: TreatmentCategory): string | null {
+  if (!category.faixa_azul_image) return null
+  return `${import.meta.env.VITE_POCKETBASE_URL}/api/files/treatment_categories/${category.id}/${category.faixa_azul_image}`
+}
+
 export const adminGetTreatmentCategories = (): Promise<TreatmentCategory[]> =>
   pb.collection('treatment_categories').getFullList({ sort: 'order' })
 
