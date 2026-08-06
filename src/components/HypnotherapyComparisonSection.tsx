@@ -61,16 +61,9 @@ export function HypnotherapyComparisonSection({ settings }: { settings: Platform
       <div className="max-w-7xl mx-auto px-6 overflow-visible">
         <div className="text-center max-w-3xl mx-auto mb-12 md:mb-16 overflow-visible py-1">
           <div className="inline-block w-12 h-1 bg-gradient-to-r from-[#00A3C4] to-[#026aa2] rounded-full mb-6" />
-          {title.includes('<') ? (
-            <div
-              className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-normal mb-4 leading-snug py-1 [&_span]:!bg-transparent [&_p]:text-3xl [&_p]:md:text-4xl [&_p]:lg:text-5xl [&_p]:font-extrabold [&_p]:text-slate-900"
-              dangerouslySetInnerHTML={{ __html: title }}
-            />
-          ) : (
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-normal mb-4 leading-snug py-1">
-              {title}
-            </h2>
-          )}
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-normal mb-4 leading-snug py-1">
+            {title}
+          </h2>
           <p className="text-slate-500 text-base md:text-lg leading-relaxed">{subtitle}</p>
         </div>
 

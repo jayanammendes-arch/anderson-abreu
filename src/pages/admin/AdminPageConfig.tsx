@@ -498,7 +498,7 @@ export default function AdminPageConfig() {
         await updatePlatformSettings(recordId, fd)
       }
 
-      toast.success('Configurações salvas com sucesso!')
+      toast.success('✅ Salvo com sucesso', { duration: 3000 })
       setHypnosisInfoImage(null)
       setRemoveHypnosisInfoImage(false)
     } catch (err) {
