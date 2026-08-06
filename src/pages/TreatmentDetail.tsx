@@ -7,6 +7,7 @@ import {
   getTreatmentCategoryComoFuncionaImageUrl,
   getTreatmentCategoryResultadosImageUrl,
   getTreatmentCategorySintomasImageUrl,
+  getTreatmentCategoryFaixaAzulImageUrl,
 } from '@/services/treatment-categories'
 import { getPlatformSettingsPublic } from '@/services/landing'
 import type { TreatmentCategory, PlatformSettings } from '@/types'
