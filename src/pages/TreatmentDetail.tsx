@@ -274,6 +274,12 @@ export default function TreatmentDetail() {
 
       {hasComparacao && <ScrollFadeIn></ScrollFadeIn>}
 
+      {settings && (
+        <ScrollFadeIn>
+          <HypnotherapyComparisonSection settings={settings} />
+        </ScrollFadeIn>
+      )}
+
       {otherCategories.length > 0 && (
         <ScrollFadeIn>
           <section className="py-24 bg-slate-50 overflow-visible">
@@ -300,12 +306,6 @@ export default function TreatmentDetail() {
               </div>
             </div>
           </section>
-        </ScrollFadeIn>
-      )}
-
-      {settings && (
-        <ScrollFadeIn>
-          <HypnotherapyComparisonSection settings={settings} />
         </ScrollFadeIn>
       )}
 
