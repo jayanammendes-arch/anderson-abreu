@@ -19,8 +19,8 @@ export function GlobalBlueBand({ settings, className = '' }: GlobalBlueBandProps
     'prose prose-invert max-w-none text-slate-200 text-base md:text-lg leading-relaxed space-y-4 [&_p]:text-slate-200 [&_strong]:text-white [&_strong]:font-semibold'
 
   return (
-    <section className={`w-full bg-[#0B1D3A] text-white py-12 md:py-16 ${className}`}>
-      <div className="max-w-7xl mx-auto px-6">
+    <section className={`w-full bg-[#0B1D3A] text-white py-8 md:py-10 ${className}`}>
+      <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12">
         <h2 className="text-3xl md:text-4xl font-bold text-white mb-6 tracking-tight">{title}</h2>
 
         {phrase ? (
