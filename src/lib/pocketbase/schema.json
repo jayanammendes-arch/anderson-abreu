@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-06T15:16:28.584Z",
+  "generatedAt": "2026-08-06T15:53:10.951Z",
   "collections": [
     {
       "name": "users",
@@ -3396,6 +3396,57 @@
       "indexes": [
         "CREATE INDEX idx_form_submissions_user ON form_submissions (user)",
         "CREATE INDEX idx_form_submissions_form ON form_submissions (form)"
+      ]
+    },
+    {
+      "name": "content_snapshots",
+      "type": "base",
+      "apiRules": {
+        "list": "@request.auth.is_admin = true",
+        "view": "@request.auth.is_admin = true",
+        "create": "@request.auth.is_admin = true",
+        "update": "@request.auth.is_admin = true",
+        "delete": "@request.auth.is_admin = true"
+      },
+      "fields": [
+        {
+          "name": "record_id",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "treatment_categories"
+        },
+        {
+          "name": "snapshot",
+          "type": "json",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "user",
+          "type": "relation",
+          "required": false,
+          "system": false,
+          "collectionRef": "users"
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": [
+        "CREATE INDEX idx_content_snapshots_record ON content_snapshots (record_id)",
+        "CREATE INDEX idx_content_snapshots_created ON content_snapshots (created DESC)"
       ]
     }
   ]

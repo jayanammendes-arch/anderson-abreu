@@ -18,8 +18,10 @@ import { FileUploadField } from '@/components/admin/FileUploadField'
 import { CropImageUploader } from '@/components/admin/CropImageUploader'
 import { extractFieldErrors, type FieldErrors } from '@/lib/pocketbase/errors'
 import { toast } from 'sonner'
-import { ArrowLeft, Save, Loader2, ChevronDown, ExternalLink, Check } from 'lucide-react'
+import { ArrowLeft, Save, Loader2, ChevronDown, ExternalLink, Check, History } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { TreatmentCategoryPreview } from '@/components/admin/TreatmentCategoryPreview'
+import { SnapshotHistoryDialog } from '@/components/admin/SnapshotHistoryDialog'
 
 const emptyForm: Partial<TreatmentCategory> = {
   name: '',
@@ -102,6 +104,8 @@ export default function AdminTreatmentCategoryEdit() {
   const [sintomasImageFile, setSintomasImageFile] = useState<File | null>(null)
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [showIconPicker, setShowIconPicker] = useState(false)
+  const [snapshotOpen, setSnapshotOpen] = useState(false)
+  const [showMobilePreview, setShowMobilePreview] = useState(false)
 
   useEffect(() => {
     if (!id) {
@@ -213,9 +217,15 @@ export default function AdminTreatmentCategoryEdit() {
     )
 
   const publicSlug = formData.slug || slugify(formData.name || '')
+  const previewImageUrls = {
+    main: imagePreviewUrl,
+    comoFunciona: getExistingImageSrc('como_funciona_image', comoFuncionaImageFile),
+    resultados: getExistingImageSrc('resultados_image', resultadosImageFile),
+    sintomas: getExistingImageSrc('sintomas_image', sintomasImageFile),
+  }
 
   return (
-    <div className="space-y-6 animate-fade-in max-w-3xl mx-auto">
+    <div className="space-y-6 animate-fade-in">
       <div className="flex items-center gap-4 flex-wrap">
         <Button variant="secondary" size="sm" asChild>
           <Link to="/admin/categorias-tratamentos">
@@ -230,6 +240,11 @@ export default function AdminTreatmentCategoryEdit() {
             </a>
           </Button>
         )}
+        {isEdit && (
+          <Button variant="outline" size="sm" onClick={() => setSnapshotOpen(true)}>
+            <History className="mr-2 h-4 w-4" /> Histórico
+          </Button>
+        )}
       </div>
 
       {saveSuccess && (
@@ -239,218 +254,255 @@ export default function AdminTreatmentCategoryEdit() {
         </div>
       )}
 
-      <form onSubmit={handleSave} className="space-y-4">
-        <FormSection title="Informações Gerais" defaultOpen>
-          <div className="space-y-2">
-            <Label>Nome *</Label>
-            <Input
-              required
-              value={formData.name || ''}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            />
-            {fieldErrors.name && <p className="text-sm text-red-500">{fieldErrors.name}</p>}
-          </div>
-          <div className="space-y-2">
-            <Label>Slug</Label>
-            <Input
-              value={formData.slug || ''}
-              onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-              placeholder="auto-gerado a partir do nome"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>Descrição Curta *</Label>
-            <Input
-              required
-              value={formData.short_description || ''}
-              onChange={(e) => setFormData({ ...formData, short_description: e.target.value })}
-            />
-          </div>
-          <div className="flex items-center gap-3">
-            <Switch
-              checked={formData.is_active ?? true}
-              onCheckedChange={(v) => setFormData({ ...formData, is_active: v })}
-            />
-            <Label>Categoria ativa</Label>
-          </div>
-          <div className="flex items-center gap-3">
-            <Switch
-              checked={formData.hide_icon ?? false}
-              onCheckedChange={(v) => setFormData({ ...formData, hide_icon: v })}
-            />
-            <Label>Ocultar ícone</Label>
-          </div>
-          <div className="space-y-2">
-            <div className="flex items-center gap-3">
-              <Switch checked={showIconPicker} onCheckedChange={setShowIconPicker} />
-              <Label className="cursor-pointer">Mostrar seletor de ícones</Label>
-            </div>
-            {showIconPicker && (
-              <IconPicker
-                value={formData.icon || ''}
-                onChange={(icon: string) => setFormData({ ...formData, icon })}
+      <div className="grid lg:grid-cols-[1fr_400px] gap-6 items-start">
+        <form onSubmit={handleSave} className="space-y-4 max-w-3xl">
+          <FormSection title="Informações Gerais" defaultOpen>
+            <div className="space-y-2">
+              <Label>Nome *</Label>
+              <Input
+                required
+                value={formData.name || ''}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               />
-            )}
-          </div>
-        </FormSection>
+              {fieldErrors.name && <p className="text-sm text-red-500">{fieldErrors.name}</p>}
+            </div>
+            <div className="space-y-2">
+              <Label>Slug</Label>
+              <Input
+                value={formData.slug || ''}
+                onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                placeholder="auto-gerado a partir do nome"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Descrição Curta *</Label>
+              <Input
+                required
+                value={formData.short_description || ''}
+                onChange={(e) => setFormData({ ...formData, short_description: e.target.value })}
+              />
+            </div>
+            <div className="flex items-center gap-3">
+              <Switch
+                checked={formData.is_active ?? true}
+                onCheckedChange={(v) => setFormData({ ...formData, is_active: v })}
+              />
+              <Label>Categoria ativa</Label>
+            </div>
+            <div className="flex items-center gap-3">
+              <Switch
+                checked={formData.hide_icon ?? false}
+                onCheckedChange={(v) => setFormData({ ...formData, hide_icon: v })}
+              />
+              <Label>Ocultar ícone</Label>
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center gap-3">
+                <Switch checked={showIconPicker} onCheckedChange={setShowIconPicker} />
+                <Label className="cursor-pointer">Mostrar seletor de ícones</Label>
+              </div>
+              {showIconPicker && (
+                <IconPicker
+                  value={formData.icon || ''}
+                  onChange={(icon: string) => setFormData({ ...formData, icon })}
+                />
+              )}
+            </div>
+          </FormSection>
 
-        <FormSection title="Imagem Principal (Hero)" defaultOpen>
-          <CropImageUploader
-            label="Imagem Principal"
-            imageUrl={imagePreviewUrl}
-            file={imageFile}
-            cropX={formData.crop_x ?? 0.5}
-            cropY={formData.crop_y ?? 0.5}
-            onFileChange={setImageFile}
-            onCropChange={(x: number, y: number) =>
-              setFormData({ ...formData, crop_x: x, crop_y: y })
-            }
-            accept="image/jpeg,image/png,image/webp,image/svg+xml"
-            error={fieldErrors.image}
-          />
-        </FormSection>
-
-        <FormSection title="Conteúdo Detalhado">
-          <RichTextEditor
-            value={formData.detailed_content || ''}
-            onChange={(html) => setFormData({ ...formData, detailed_content: html })}
-            editorLabel="Conteúdo da seção"
-          />
-        </FormSection>
-
-        <FormSection title="1. Como Funciona" defaultOpen>
-          <div className="space-y-2">
-            <Label className="font-semibold text-primary">Título da seção</Label>
-            <RichTextEditor
-              value={formData.como_funciona_title || ''}
-              onChange={(html) => setFormData({ ...formData, como_funciona_title: html })}
-              editorLabel="Título da seção"
-              className="border-primary/20"
+          <FormSection title="Imagem Principal (Hero)" defaultOpen>
+            <CropImageUploader
+              label="Imagem Principal"
+              imageUrl={imagePreviewUrl}
+              file={imageFile}
+              cropX={formData.crop_x ?? 0.5}
+              cropY={formData.crop_y ?? 0.5}
+              onFileChange={setImageFile}
+              onCropChange={(x: number, y: number) =>
+                setFormData({ ...formData, crop_x: x, crop_y: y })
+              }
+              accept="image/jpeg,image/png,image/webp,image/svg+xml"
+              error={fieldErrors.image}
             />
-          </div>
-          <div className="space-y-2">
-            <Label className="text-muted-foreground">Conteúdo da seção</Label>
+          </FormSection>
+
+          <FormSection title="Conteúdo Detalhado">
             <RichTextEditor
-              value={formData.como_funciona_text || ''}
-              onChange={(html) => setFormData({ ...formData, como_funciona_text: html })}
+              value={formData.detailed_content || ''}
+              onChange={(html) => setFormData({ ...formData, detailed_content: html })}
               editorLabel="Conteúdo da seção"
             />
-          </div>
-          <FileUploadField
-            label="Imagem"
-            currentSrc={getExistingImageSrc('como_funciona_image', comoFuncionaImageFile)}
-            file={comoFuncionaImageFile}
-            onChange={setComoFuncionaImageFile}
-            accept="image/jpeg,image/png,image/webp,image/svg+xml"
-            error={fieldErrors.como_funciona_image}
-          />
-        </FormSection>
+          </FormSection>
 
-        <FormSection title="2. Faixa Azul" defaultOpen>
-          <div className="space-y-2">
-            <Label>Frase da Faixa Azul</Label>
-            <Input
-              value={formData.faixa_azul_frase || ''}
-              onChange={(e) => setFormData({ ...formData, faixa_azul_frase: e.target.value })}
-              placeholder="Texto exibido na faixa azul full-width"
+          <FormSection title="1. Como Funciona" defaultOpen>
+            <div className="space-y-2">
+              <Label className="font-semibold text-primary">Título da seção</Label>
+              <RichTextEditor
+                value={formData.como_funciona_title || ''}
+                onChange={(html) => setFormData({ ...formData, como_funciona_title: html })}
+                editorLabel="Título da seção"
+                className="border-primary/20"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-muted-foreground">Conteúdo da seção</Label>
+              <RichTextEditor
+                value={formData.como_funciona_text || ''}
+                onChange={(html) => setFormData({ ...formData, como_funciona_text: html })}
+                editorLabel="Conteúdo da seção"
+              />
+            </div>
+            <FileUploadField
+              label="Imagem"
+              currentSrc={getExistingImageSrc('como_funciona_image', comoFuncionaImageFile)}
+              file={comoFuncionaImageFile}
+              onChange={setComoFuncionaImageFile}
+              accept="image/jpeg,image/png,image/webp,image/svg+xml"
+              error={fieldErrors.como_funciona_image}
             />
-          </div>
-        </FormSection>
+          </FormSection>
 
-        <FormSection title="3. Resultados" defaultOpen>
-          <div className="space-y-2">
-            <Label className="font-semibold text-primary">Título da seção</Label>
-            <RichTextEditor
-              value={formData.resultados_title || ''}
-              onChange={(html) => setFormData({ ...formData, resultados_title: html })}
-              editorLabel="Título da seção"
-              className="border-primary/20"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label className="text-muted-foreground">Conteúdo da seção</Label>
-            <RichTextEditor
-              value={formData.resultados_text || ''}
-              onChange={(html) => setFormData({ ...formData, resultados_text: html })}
-              editorLabel="Conteúdo da seção"
-            />
-          </div>
-          <FileUploadField
-            label="Imagem"
-            currentSrc={getExistingImageSrc('resultados_image', resultadosImageFile)}
-            file={resultadosImageFile}
-            onChange={setResultadosImageFile}
-            accept="image/jpeg,image/png,image/webp,image/svg+xml"
-            error={fieldErrors.resultados_image}
-          />
-        </FormSection>
+          <FormSection title="2. Faixa Azul" defaultOpen>
+            <div className="space-y-2">
+              <Label>Frase da Faixa Azul</Label>
+              <Input
+                value={formData.faixa_azul_frase || ''}
+                onChange={(e) => setFormData({ ...formData, faixa_azul_frase: e.target.value })}
+                placeholder="Texto exibido na faixa azul full-width"
+              />
+            </div>
+          </FormSection>
 
-        <FormSection title="4. Sintomas">
-          <div className="space-y-2">
-            <Label className="font-semibold text-primary">Título da seção</Label>
-            <RichTextEditor
-              value={formData.sintomas_title || ''}
-              onChange={(html) => setFormData({ ...formData, sintomas_title: html })}
-              editorLabel="Título da seção"
-              className="border-primary/20"
+          <FormSection title="3. Resultados" defaultOpen>
+            <div className="space-y-2">
+              <Label className="font-semibold text-primary">Título da seção</Label>
+              <RichTextEditor
+                value={formData.resultados_title || ''}
+                onChange={(html) => setFormData({ ...formData, resultados_title: html })}
+                editorLabel="Título da seção"
+                className="border-primary/20"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-muted-foreground">Conteúdo da seção</Label>
+              <RichTextEditor
+                value={formData.resultados_text || ''}
+                onChange={(html) => setFormData({ ...formData, resultados_text: html })}
+                editorLabel="Conteúdo da seção"
+              />
+            </div>
+            <FileUploadField
+              label="Imagem"
+              currentSrc={getExistingImageSrc('resultados_image', resultadosImageFile)}
+              file={resultadosImageFile}
+              onChange={setResultadosImageFile}
+              accept="image/jpeg,image/png,image/webp,image/svg+xml"
+              error={fieldErrors.resultados_image}
             />
-          </div>
-          <div className="space-y-2">
-            <Label className="text-muted-foreground">Conteúdo da seção</Label>
-            <RichTextEditor
-              value={formData.sintomas_text || ''}
-              onChange={(html) => setFormData({ ...formData, sintomas_text: html })}
-              editorLabel="Conteúdo da seção"
-            />
-          </div>
-          <FileUploadField
-            label="Imagem"
-            currentSrc={getExistingImageSrc('sintomas_image', sintomasImageFile)}
-            file={sintomasImageFile}
-            onChange={setSintomasImageFile}
-            accept="image/jpeg,image/png,image/webp,image/svg+xml"
-            error={fieldErrors.sintomas_image}
-          />
-        </FormSection>
+          </FormSection>
 
-        <FormSection title="5. CTA">
-          <div className="space-y-2">
-            <Label className="font-semibold text-primary">Título da seção</Label>
-            <RichTextEditor
-              value={formData.cta_title || ''}
-              onChange={(html) => setFormData({ ...formData, cta_title: html })}
-              editorLabel="Título da seção"
-              className="border-primary/20"
+          <FormSection title="4. Sintomas">
+            <div className="space-y-2">
+              <Label className="font-semibold text-primary">Título da seção</Label>
+              <RichTextEditor
+                value={formData.sintomas_title || ''}
+                onChange={(html) => setFormData({ ...formData, sintomas_title: html })}
+                editorLabel="Título da seção"
+                className="border-primary/20"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-muted-foreground">Conteúdo da seção</Label>
+              <RichTextEditor
+                value={formData.sintomas_text || ''}
+                onChange={(html) => setFormData({ ...formData, sintomas_text: html })}
+                editorLabel="Conteúdo da seção"
+              />
+            </div>
+            <FileUploadField
+              label="Imagem"
+              currentSrc={getExistingImageSrc('sintomas_image', sintomasImageFile)}
+              file={sintomasImageFile}
+              onChange={setSintomasImageFile}
+              accept="image/jpeg,image/png,image/webp,image/svg+xml"
+              error={fieldErrors.sintomas_image}
             />
-          </div>
-          <div className="space-y-2">
-            <Label className="text-muted-foreground">Conteúdo da seção</Label>
-            <RichTextEditor
-              value={formData.cta_text || ''}
-              onChange={(html) => setFormData({ ...formData, cta_text: html })}
-              editorLabel="Conteúdo da seção"
-            />
-          </div>
-        </FormSection>
+          </FormSection>
 
-        <div className="flex justify-end gap-3">
-          <Button variant="secondary" asChild>
-            <Link to="/admin/categorias-tratamentos">Cancelar</Link>
-          </Button>
-          <Button
-            type="submit"
-            disabled={saving}
-            className="bg-green-600 hover:bg-green-700 text-white"
-          >
-            {saving ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <Save className="mr-2 h-4 w-4" />
-            )}
-            Salvar
-          </Button>
+          <FormSection title="5. CTA">
+            <div className="space-y-2">
+              <Label className="font-semibold text-primary">Título da seção</Label>
+              <RichTextEditor
+                value={formData.cta_title || ''}
+                onChange={(html) => setFormData({ ...formData, cta_title: html })}
+                editorLabel="Título da seção"
+                className="border-primary/20"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-muted-foreground">Conteúdo da seção</Label>
+              <RichTextEditor
+                value={formData.cta_text || ''}
+                onChange={(html) => setFormData({ ...formData, cta_text: html })}
+                editorLabel="Conteúdo da seção"
+              />
+            </div>
+          </FormSection>
+
+          <div className="flex justify-end gap-3">
+            <Button variant="secondary" asChild>
+              <Link to="/admin/categorias-tratamentos">Cancelar</Link>
+            </Button>
+            <Button
+              type="submit"
+              disabled={saving}
+              className="bg-green-600 hover:bg-green-700 text-white"
+            >
+              {saving ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Save className="mr-2 h-4 w-4" />
+              )}
+              Salvar
+            </Button>
+          </div>
+        </form>
+        <div className="hidden lg:block sticky top-4 h-[calc(100vh-2rem)]">
+          <TreatmentCategoryPreview data={formData} imageUrls={previewImageUrls} />
         </div>
-      </form>
+      </div>
+      <div className="lg:hidden">
+        <Button
+          variant="outline"
+          className="w-full"
+          onClick={() => setShowMobilePreview(!showMobilePreview)}
+        >
+          {showMobilePreview ? 'Ocultar Preview' : 'Ver Preview'}
+        </Button>
+        {showMobilePreview && (
+          <div className="mt-4 h-[600px]">
+            <TreatmentCategoryPreview data={formData} imageUrls={previewImageUrls} />
+          </div>
+        )}
+      </div>
+      {isEdit && (
+        <SnapshotHistoryDialog
+          recordId={id!}
+          open={snapshotOpen}
+          onOpenChange={setSnapshotOpen}
+          onRestored={() => {
+            if (id) {
+              adminGetTreatmentCategory(id).then((cat) => {
+                setFormData({ ...cat })
+                setImageFile(null)
+                setComoFuncionaImageFile(null)
+                setResultadosImageFile(null)
+                setSintomasImageFile(null)
+              })
+            }
+          }}
+        />
+      )}
     </div>
   )
 }

@@ -373,5 +373,14 @@ export interface TreatmentCategory {
   por_que_tantas_content?: string
   comparacao_title?: string
   comparacao_content?: string
-  como_funciona_title?: string
+}
+
+export interface ContentSnapshot {
+  id: string
+  record_id: string
+  snapshot: string
+  user: string
+  created: string
+  updated: string
+  expand?: { user?: { id: string; name: string } }
 }
