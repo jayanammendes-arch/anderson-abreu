@@ -433,14 +433,6 @@ export default function AdminTreatmentCategoryEdit() {
           </div>
         </FormSection>
 
-        <FormSection title="Lista de Sintomas (Legado)">
-          <RichTextEditor
-            value={formData.symptoms_list || ''}
-            onChange={(html) => setFormData({ ...formData, symptoms_list: html })}
-            editorLabel="Conteúdo da seção"
-          />
-        </FormSection>
-
         <div className="flex justify-end gap-3">
           <Button variant="secondary" asChild>
             <Link to="/admin/categorias-tratamentos">Cancelar</Link>

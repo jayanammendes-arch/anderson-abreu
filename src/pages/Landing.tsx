@@ -24,7 +24,6 @@ import { ArrowRight, Calendar, Loader2, ArrowUpRight } from 'lucide-react'
 import { CredentialsMarquee } from '@/components/CredentialsMarquee'
 import { HomeCredentialSection } from '@/components/HomeCredentialSection'
 import { ScrollFadeIn } from '@/components/ScrollFadeIn'
-import { HypnotherapyComparisonSection } from '@/components/HypnotherapyComparisonSection'
 import { cn } from '@/lib/utils'
 
 function ParallaxCTASection({ settings }: { settings: PlatformSettings }) {
@@ -262,11 +261,6 @@ export default function Landing() {
             </div>
           </div>
         </section>
-      </ScrollFadeIn>
-
-      {/* Por que tantas pessoas buscam a Hipnoterapia? (Comparison Section) */}
-      <ScrollFadeIn>
-        <HypnotherapyComparisonSection settings={settings} />
       </ScrollFadeIn>
 
       {/* Parallax CTA Section */}
