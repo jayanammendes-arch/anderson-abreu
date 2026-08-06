@@ -155,7 +155,7 @@ export function LandingLayout({
               : 'bg-white/80 backdrop-blur-sm py-5',
         )}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between">
+        <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
             {logoUrl && (
               <img src={logoUrl} alt="Logo" className="h-9 w-auto object-contain flex-shrink-0" />
@@ -319,7 +319,7 @@ export function LandingLayout({
           isDarkPage ? 'bg-transparent' : 'royal-footer-gradient',
         )}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12">
           <div className="flex flex-col md:flex-row justify-between items-start gap-8 mb-12">
             <div className="max-w-sm">
               <span className="text-2xl font-bold text-white">
