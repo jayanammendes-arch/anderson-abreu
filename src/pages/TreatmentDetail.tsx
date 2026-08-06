@@ -270,33 +270,9 @@ export default function TreatmentDetail() {
         </ScrollFadeIn>
       )}
 
-      {hasPorQueTantas && (
-        <ScrollFadeIn>
-          <section className="py-24 bg-slate-50 overflow-visible">
-            <div className="max-w-4xl mx-auto px-6 overflow-visible">
-              <SectionTitle title={category.por_que_tantas_title} defaultTitle="Por que tantas?" />
-              <div
-                className={proseClass}
-                dangerouslySetInnerHTML={{ __html: category.por_que_tantas_content! }}
-              />
-            </div>
-          </section>
-        </ScrollFadeIn>
-      )}
+      {hasPorQueTantas && <ScrollFadeIn></ScrollFadeIn>}
 
-      {hasComparacao && (
-        <ScrollFadeIn>
-          <section className="py-24 bg-white overflow-visible">
-            <div className="max-w-4xl mx-auto px-6 overflow-visible">
-              <SectionTitle title={category.comparacao_title} defaultTitle="Comparação" />
-              <div
-                className={proseClass}
-                dangerouslySetInnerHTML={{ __html: category.comparacao_content! }}
-              />
-            </div>
-          </section>
-        </ScrollFadeIn>
-      )}
+      {hasComparacao && <ScrollFadeIn></ScrollFadeIn>}
 
       {otherCategories.length > 0 && (
         <ScrollFadeIn>
