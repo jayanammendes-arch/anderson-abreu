@@ -433,46 +433,6 @@ export default function AdminTreatmentCategoryEdit() {
           </div>
         </FormSection>
 
-        <FormSection title="6. Por que tantas...">
-          <div className="space-y-2">
-            <Label className="font-semibold text-primary">Título da seção</Label>
-            <RichTextEditor
-              value={formData.por_que_tantas_title || ''}
-              onChange={(html) => setFormData({ ...formData, por_que_tantas_title: html })}
-              editorLabel="Título da seção"
-              className="border-primary/20"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label className="text-muted-foreground">Conteúdo da seção</Label>
-            <RichTextEditor
-              value={formData.por_que_tantas_content || ''}
-              onChange={(html) => setFormData({ ...formData, por_que_tantas_content: html })}
-              editorLabel="Conteúdo da seção"
-            />
-          </div>
-        </FormSection>
-
-        <FormSection title="7. Comparação">
-          <div className="space-y-2">
-            <Label className="font-semibold text-primary">Título da seção</Label>
-            <RichTextEditor
-              value={formData.comparacao_title || ''}
-              onChange={(html) => setFormData({ ...formData, comparacao_title: html })}
-              editorLabel="Título da seção"
-              className="border-primary/20"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label className="text-muted-foreground">Conteúdo da seção</Label>
-            <RichTextEditor
-              value={formData.comparacao_content || ''}
-              onChange={(html) => setFormData({ ...formData, comparacao_content: html })}
-              editorLabel="Conteúdo da seção"
-            />
-          </div>
-        </FormSection>
-
         <FormSection title="Lista de Sintomas (Legado)">
           <RichTextEditor
             value={formData.symptoms_list || ''}
