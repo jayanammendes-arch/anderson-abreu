@@ -37,6 +37,7 @@ const emptyForm: Partial<TreatmentCategory> = {
   como_funciona_title: '',
   como_funciona_text: '',
   faixa_azul_frase: '',
+  faixa_azul_subtitulo: '',
   resultados_title: '',
   resultados_text: '',
   sintomas_title: '',
@@ -170,7 +171,7 @@ export default function AdminTreatmentCategoryEdit() {
       fd.append('hide_icon', String(formData.hide_icon ?? false))
       fd.append('como_funciona_title', formData.como_funciona_title || '')
       fd.append('como_funciona_text', formData.como_funciona_text || '')
-      fd.append('faixa_azul_frase', formData.faixa_azul_frase || '')
+      fd.append('faixa_azul_subtitulo', formData.faixa_azul_subtitulo || '')
       fd.append('resultados_title', formData.resultados_title || '')
       fd.append('resultados_text', formData.resultados_text || '')
       fd.append('sintomas_title', formData.sintomas_title || '')
@@ -183,7 +184,6 @@ export default function AdminTreatmentCategoryEdit() {
       fd.append('comparacao_content', formData.comparacao_content || '')
       fd.append('detailed_content', formData.detailed_content || '')
       fd.append('symptoms_list', formData.symptoms_list || '')
-      fd.append('faixa_azul_frase', formData.faixa_azul_frase || '')
       fd.append(
         'faixa_azul_whatsapp_enabled',
         String(formData.faixa_azul_whatsapp_enabled ?? false),
@@ -393,6 +393,20 @@ export default function AdminTreatmentCategoryEdit() {
                 onChange={(e) => setFormData({ ...formData, faixa_azul_frase: e.target.value })}
                 placeholder="Texto exibido na faixa azul full-width"
               />
+              {fieldErrors.faixa_azul_frase && (
+                <p className="text-sm text-red-500">{fieldErrors.faixa_azul_frase}</p>
+              )}
+            </div>
+            <div className="space-y-2">
+              <Label>Subtítulo da Faixa Azul</Label>
+              <Input
+                value={formData.faixa_azul_subtitulo || ''}
+                onChange={(e) => setFormData({ ...formData, faixa_azul_subtitulo: e.target.value })}
+                placeholder="Texto explicativo exibido abaixo da frase"
+              />
+              {fieldErrors.faixa_azul_subtitulo && (
+                <p className="text-sm text-red-500">{fieldErrors.faixa_azul_subtitulo}</p>
+              )}
             </div>
             <div className="flex items-center gap-3">
               <Switch

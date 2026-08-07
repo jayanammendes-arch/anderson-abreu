@@ -20,6 +20,7 @@ export const SNAPSHOT_FIELDS: SnapshotFieldDef[] = [
   { key: 'como_funciona_text', label: 'Conteúdo: Como Funciona', type: 'richtext' },
   { key: 'como_funciona_image', label: 'Imagem: Como Funciona', type: 'image' },
   { key: 'faixa_azul_frase', label: 'Frase da Faixa Azul', type: 'text' },
+  { key: 'faixa_azul_subtitulo', label: 'Subtítulo da Faixa Azul', type: 'text' },
   { key: 'faixa_text', label: 'Texto da Faixa', type: 'text' },
   { key: 'resultados_title', label: 'Título: Resultados', type: 'text' },
   { key: 'resultados_text', label: 'Conteúdo: Resultados', type: 'richtext' },

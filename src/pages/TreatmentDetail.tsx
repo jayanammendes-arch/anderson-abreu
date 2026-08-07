@@ -244,8 +244,13 @@ export default function TreatmentDetail() {
           {faixaAzulImg && <div className="absolute inset-0 bg-[#0B1D3A]/70" />}
           <div className="relative z-10 w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 py-16 md:py-24 flex flex-col items-center gap-8">
             {category.faixa_azul_frase?.trim() && (
-              <p className="text-white text-xl md:text-2xl lg:text-3xl font-semibold leading-relaxed text-center max-w-4xl">
+              <p className="text-white text-2xl md:text-3xl lg:text-4xl font-bold leading-tight text-center max-w-4xl">
                 {category.faixa_azul_frase}
+              </p>
+            )}
+            {category.faixa_azul_subtitulo?.trim() && (
+              <p className="text-white/80 text-base md:text-lg lg:text-xl font-medium leading-relaxed text-center max-w-3xl">
+                {category.faixa_azul_subtitulo}
               </p>
             )}
             {category.faixa_azul_whatsapp_enabled && whatsappNumber && (
