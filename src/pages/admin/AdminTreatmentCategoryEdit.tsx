@@ -257,24 +257,26 @@ export default function AdminTreatmentCategoryEdit() {
       )}
 
       <div className="w-full">
-        <form onSubmit={handleSave} className="space-y-4 max-w-3xl">
+        <form onSubmit={handleSave} className="space-y-4">
           <FormSection title="Informações Gerais" defaultOpen>
-            <div className="space-y-2">
-              <Label>Nome *</Label>
-              <Input
-                required
-                value={formData.name || ''}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              />
-              {fieldErrors.name && <p className="text-sm text-red-500">{fieldErrors.name}</p>}
-            </div>
-            <div className="space-y-2">
-              <Label>Slug</Label>
-              <Input
-                value={formData.slug || ''}
-                onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                placeholder="auto-gerado a partir do nome"
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Nome *</Label>
+                <Input
+                  required
+                  value={formData.name || ''}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                />
+                {fieldErrors.name && <p className="text-sm text-red-500">{fieldErrors.name}</p>}
+              </div>
+              <div className="space-y-2">
+                <Label>Slug</Label>
+                <Input
+                  value={formData.slug || ''}
+                  onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                  placeholder="auto-gerado a partir do nome"
+                />
+              </div>
             </div>
             <div className="space-y-2">
               <Label>Descrição Curta *</Label>
@@ -284,32 +286,42 @@ export default function AdminTreatmentCategoryEdit() {
                 onChange={(e) => setFormData({ ...formData, short_description: e.target.value })}
               />
             </div>
-            <div className="flex items-center gap-3">
-              <Switch
-                checked={formData.is_active ?? true}
-                onCheckedChange={(v) => setFormData({ ...formData, is_active: v })}
-              />
-              <Label>Categoria ativa</Label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Ordem</Label>
+                <Input
+                  type="number"
+                  value={formData.order ?? 0}
+                  onChange={(e) => setFormData({ ...formData, order: Number(e.target.value) })}
+                />
+              </div>
+              <div className="flex items-center gap-3 pt-6">
+                <Switch
+                  checked={formData.is_active ?? true}
+                  onCheckedChange={(v) => setFormData({ ...formData, is_active: v })}
+                />
+                <Label>Categoria ativa</Label>
+              </div>
             </div>
-            <div className="flex items-center gap-3">
-              <Switch
-                checked={formData.hide_icon ?? false}
-                onCheckedChange={(v) => setFormData({ ...formData, hide_icon: v })}
-              />
-              <Label>Ocultar ícone</Label>
-            </div>
-            <div className="space-y-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex items-center gap-3">
+                <Switch
+                  checked={formData.hide_icon ?? false}
+                  onCheckedChange={(v) => setFormData({ ...formData, hide_icon: v })}
+                />
+                <Label>Ocultar ícone</Label>
+              </div>
               <div className="flex items-center gap-3">
                 <Switch checked={showIconPicker} onCheckedChange={setShowIconPicker} />
                 <Label className="cursor-pointer">Mostrar seletor de ícones</Label>
               </div>
-              {showIconPicker && (
-                <IconPicker
-                  value={formData.icon || ''}
-                  onChange={(icon: string) => setFormData({ ...formData, icon })}
-                />
-              )}
             </div>
+            {showIconPicker && (
+              <IconPicker
+                value={formData.icon || ''}
+                onChange={(icon: string) => setFormData({ ...formData, icon })}
+              />
+            )}
           </FormSection>
 
           <FormSection title="Imagem Principal (Hero)" defaultOpen>
@@ -354,71 +366,76 @@ export default function AdminTreatmentCategoryEdit() {
                 editorLabel="Conteúdo da seção"
               />
             </div>
-            <FileUploadField
-              label="Imagem"
-              currentSrc={getExistingImageSrc('como_funciona_image', comoFuncionaImageFile)}
-              file={comoFuncionaImageFile}
-              onChange={setComoFuncionaImageFile}
-              accept="image/jpeg,image/png,image/webp,image/svg+xml"
-              error={fieldErrors.como_funciona_image}
-            />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FileUploadField
+                label="Imagem"
+                currentSrc={getExistingImageSrc('como_funciona_image', comoFuncionaImageFile)}
+                file={comoFuncionaImageFile}
+                onChange={setComoFuncionaImageFile}
+                accept="image/jpeg,image/png,image/webp,image/svg+xml"
+                error={fieldErrors.como_funciona_image}
+              />
+            </div>
           </FormSection>
 
           <FormSection title="2. Faixa Azul" defaultOpen>
-            <div className="space-y-2">
-              <Label>Imagem de Fundo (Parallax)</Label>
-              <FileUploadField
-                label="Imagem de fundo da faixa azul"
-                currentSrc={getExistingImageSrc('faixa_azul_image', faixaAzulImageFile)}
-                file={faixaAzulImageFile}
-                onChange={setFaixaAzulImageFile}
-                accept="image/jpeg,image/png,image/webp,image/svg+xml"
-                error={fieldErrors.faixa_azul_image}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Frase da Faixa Azul</Label>
-              <Input
-                value={formData.faixa_azul_frase || ''}
-                onChange={(e) => setFormData({ ...formData, faixa_azul_frase: e.target.value })}
-                placeholder="Texto exibido na faixa azul full-width"
-              />
-              {fieldErrors.faixa_azul_frase && (
-                <p className="text-sm text-red-500">{fieldErrors.faixa_azul_frase}</p>
-              )}
-            </div>
-            <div className="space-y-2">
-              <Label>Subtítulo da Faixa Azul</Label>
-              <Input
-                value={formData.faixa_azul_subtitulo || ''}
-                onChange={(e) => setFormData({ ...formData, faixa_azul_subtitulo: e.target.value })}
-                placeholder="Texto explicativo exibido abaixo da frase"
-              />
-              {fieldErrors.faixa_azul_subtitulo && (
-                <p className="text-sm text-red-500">{fieldErrors.faixa_azul_subtitulo}</p>
-              )}
-            </div>
-            <div className="flex items-center gap-3">
-              <Switch
-                checked={formData.faixa_azul_whatsapp_enabled ?? false}
-                onCheckedChange={(v) =>
-                  setFormData({ ...formData, faixa_azul_whatsapp_enabled: v })
-                }
-              />
-              <Label>Exibir botão do WhatsApp</Label>
-            </div>
-            {formData.faixa_azul_whatsapp_enabled && (
+            <FileUploadField
+              label="Imagem de fundo da faixa azul"
+              currentSrc={getExistingImageSrc('faixa_azul_image', faixaAzulImageFile)}
+              file={faixaAzulImageFile}
+              onChange={setFaixaAzulImageFile}
+              accept="image/jpeg,image/png,image/webp,image/svg+xml"
+              error={fieldErrors.faixa_azul_image}
+            />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Texto do botão do WhatsApp</Label>
+                <Label>Frase da Faixa Azul</Label>
                 <Input
-                  value={formData.faixa_azul_whatsapp_text || ''}
-                  onChange={(e) =>
-                    setFormData({ ...formData, faixa_azul_whatsapp_text: e.target.value })
-                  }
-                  placeholder="Fale Conosco"
+                  value={formData.faixa_azul_frase || ''}
+                  onChange={(e) => setFormData({ ...formData, faixa_azul_frase: e.target.value })}
+                  placeholder="Texto exibido na faixa azul full-width"
                 />
+                {fieldErrors.faixa_azul_frase && (
+                  <p className="text-sm text-red-500">{fieldErrors.faixa_azul_frase}</p>
+                )}
               </div>
-            )}
+              <div className="space-y-2">
+                <Label>Subtítulo da Faixa Azul</Label>
+                <Input
+                  value={formData.faixa_azul_subtitulo || ''}
+                  onChange={(e) =>
+                    setFormData({ ...formData, faixa_azul_subtitulo: e.target.value })
+                  }
+                  placeholder="Texto explicativo exibido abaixo da frase"
+                />
+                {fieldErrors.faixa_azul_subtitulo && (
+                  <p className="text-sm text-red-500">{fieldErrors.faixa_azul_subtitulo}</p>
+                )}
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex items-center gap-3">
+                <Switch
+                  checked={formData.faixa_azul_whatsapp_enabled ?? false}
+                  onCheckedChange={(v) =>
+                    setFormData({ ...formData, faixa_azul_whatsapp_enabled: v })
+                  }
+                />
+                <Label>Exibir botão do WhatsApp</Label>
+              </div>
+              {formData.faixa_azul_whatsapp_enabled && (
+                <div className="space-y-2">
+                  <Label>Texto do botão do WhatsApp</Label>
+                  <Input
+                    value={formData.faixa_azul_whatsapp_text || ''}
+                    onChange={(e) =>
+                      setFormData({ ...formData, faixa_azul_whatsapp_text: e.target.value })
+                    }
+                    placeholder="Fale Conosco"
+                  />
+                </div>
+              )}
+            </div>
           </FormSection>
 
           <FormSection title="3. Resultados" defaultOpen>
@@ -439,14 +456,16 @@ export default function AdminTreatmentCategoryEdit() {
                 editorLabel="Conteúdo da seção"
               />
             </div>
-            <FileUploadField
-              label="Imagem"
-              currentSrc={getExistingImageSrc('resultados_image', resultadosImageFile)}
-              file={resultadosImageFile}
-              onChange={setResultadosImageFile}
-              accept="image/jpeg,image/png,image/webp,image/svg+xml"
-              error={fieldErrors.resultados_image}
-            />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FileUploadField
+                label="Imagem"
+                currentSrc={getExistingImageSrc('resultados_image', resultadosImageFile)}
+                file={resultadosImageFile}
+                onChange={setResultadosImageFile}
+                accept="image/jpeg,image/png,image/webp,image/svg+xml"
+                error={fieldErrors.resultados_image}
+              />
+            </div>
           </FormSection>
 
           <FormSection title="4. Sintomas">
@@ -467,33 +486,37 @@ export default function AdminTreatmentCategoryEdit() {
                 editorLabel="Conteúdo da seção"
               />
             </div>
-            <FileUploadField
-              label="Imagem"
-              currentSrc={getExistingImageSrc('sintomas_image', sintomasImageFile)}
-              file={sintomasImageFile}
-              onChange={setSintomasImageFile}
-              accept="image/jpeg,image/png,image/webp,image/svg+xml"
-              error={fieldErrors.sintomas_image}
-            />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FileUploadField
+                label="Imagem"
+                currentSrc={getExistingImageSrc('sintomas_image', sintomasImageFile)}
+                file={sintomasImageFile}
+                onChange={setSintomasImageFile}
+                accept="image/jpeg,image/png,image/webp,image/svg+xml"
+                error={fieldErrors.sintomas_image}
+              />
+            </div>
           </FormSection>
 
           <FormSection title="5. CTA">
-            <div className="space-y-2">
-              <Label className="font-semibold text-primary">Título da seção</Label>
-              <RichTextEditor
-                value={formData.cta_title || ''}
-                onChange={(html) => setFormData({ ...formData, cta_title: html })}
-                editorLabel="Título da seção"
-                className="border-primary/20"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label className="text-muted-foreground">Conteúdo da seção</Label>
-              <RichTextEditor
-                value={formData.cta_text || ''}
-                onChange={(html) => setFormData({ ...formData, cta_text: html })}
-                editorLabel="Conteúdo da seção"
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label className="font-semibold text-primary">Título da seção</Label>
+                <RichTextEditor
+                  value={formData.cta_title || ''}
+                  onChange={(html) => setFormData({ ...formData, cta_title: html })}
+                  editorLabel="Título da seção"
+                  className="border-primary/20"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-muted-foreground">Conteúdo da seção</Label>
+                <RichTextEditor
+                  value={formData.cta_text || ''}
+                  onChange={(html) => setFormData({ ...formData, cta_text: html })}
+                  editorLabel="Conteúdo da seção"
+                />
+              </div>
             </div>
           </FormSection>
 
