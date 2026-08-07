@@ -235,9 +235,9 @@ export default function AdminTreatmentCategoryEdit() {
           </Link>
         </Button>
         <h1 className="text-2xl font-bold">{isEdit ? 'Editar Categoria' : 'Nova Categoria'}</h1>
-        {isEdit && publicSlug && (
+        {isEdit && formData.slug && (
           <Button variant="outline" size="sm" asChild>
-            <a href={`/tratamentos/${publicSlug}`} target="_blank" rel="noopener noreferrer">
+            <a href={`/tratamentos/${formData.slug}`} target="_blank" rel="noopener noreferrer">
               <ExternalLink className="mr-2 h-4 w-4" /> Visualizar no site
             </a>
           </Button>
