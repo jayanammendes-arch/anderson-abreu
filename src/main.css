@@ -89,10 +89,66 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 1.6;
     font-feature-settings:
       'rlig' 1,
       'calt' 1;
     -webkit-font-smoothing: antialiased;
+  }
+
+  @media (min-width: 768px) {
+    body {
+      font-size: 16px;
+    }
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 28px;
+    line-height: 1.2;
+  }
+
+  @media (min-width: 768px) {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-size: 36px;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-size: 38px;
+    }
+  }
+
+  p {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+  }
+
+  strong,
+  b {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 700;
   }
   ::selection {
     background-color: hsl(142 71% 45% / 0.3);
