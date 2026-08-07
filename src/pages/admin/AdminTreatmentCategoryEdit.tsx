@@ -20,7 +20,6 @@ import { extractFieldErrors, type FieldErrors } from '@/lib/pocketbase/errors'
 import { toast } from 'sonner'
 import { ArrowLeft, Save, Loader2, ChevronDown, ExternalLink, Check, History } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { TreatmentCategoryPreview } from '@/components/admin/TreatmentCategoryPreview'
 import { SnapshotHistoryDialog } from '@/components/admin/SnapshotHistoryDialog'
 
 const emptyForm: Partial<TreatmentCategory> = {
@@ -109,7 +108,6 @@ export default function AdminTreatmentCategoryEdit() {
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [showIconPicker, setShowIconPicker] = useState(false)
   const [snapshotOpen, setSnapshotOpen] = useState(false)
-  const [showMobilePreview, setShowMobilePreview] = useState(false)
 
   useEffect(() => {
     if (!id) {
@@ -171,6 +169,7 @@ export default function AdminTreatmentCategoryEdit() {
       fd.append('hide_icon', String(formData.hide_icon ?? false))
       fd.append('como_funciona_title', formData.como_funciona_title || '')
       fd.append('como_funciona_text', formData.como_funciona_text || '')
+      fd.append('faixa_azul_frase', formData.faixa_azul_frase || '')
       fd.append('faixa_azul_subtitulo', formData.faixa_azul_subtitulo || '')
       fd.append('resultados_title', formData.resultados_title || '')
       fd.append('resultados_text', formData.resultados_text || '')
@@ -227,15 +226,6 @@ export default function AdminTreatmentCategoryEdit() {
       </div>
     )
 
-  const publicSlug = formData.slug || slugify(formData.name || '')
-  const previewImageUrls = {
-    main: imagePreviewUrl,
-    comoFunciona: getExistingImageSrc('como_funciona_image', comoFuncionaImageFile),
-    resultados: getExistingImageSrc('resultados_image', resultadosImageFile),
-    sintomas: getExistingImageSrc('sintomas_image', sintomasImageFile),
-    faixaAzul: getExistingImageSrc('faixa_azul_image', faixaAzulImageFile),
-  }
-
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="flex items-center gap-4 flex-wrap">
@@ -266,7 +256,7 @@ export default function AdminTreatmentCategoryEdit() {
         </div>
       )}
 
-      <div className="grid lg:grid-cols-[1fr_400px] gap-6 items-start">
+      <div className="w-full">
         <form onSubmit={handleSave} className="space-y-4 max-w-3xl">
           <FormSection title="Informações Gerais" defaultOpen>
             <div className="space-y-2">
@@ -525,23 +515,6 @@ export default function AdminTreatmentCategoryEdit() {
             </Button>
           </div>
         </form>
-        <div className="hidden lg:block sticky top-4 h-[calc(100vh-2rem)]">
-          <TreatmentCategoryPreview data={formData} imageUrls={previewImageUrls} />
-        </div>
-      </div>
-      <div className="lg:hidden">
-        <Button
-          variant="outline"
-          className="w-full"
-          onClick={() => setShowMobilePreview(!showMobilePreview)}
-        >
-          {showMobilePreview ? 'Ocultar Preview' : 'Ver Preview'}
-        </Button>
-        {showMobilePreview && (
-          <div className="mt-4 h-[600px]">
-            <TreatmentCategoryPreview data={formData} imageUrls={previewImageUrls} />
-          </div>
-        )}
       </div>
       {isEdit && (
         <SnapshotHistoryDialog
