@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
+import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from 'react'
 import pb from '@/lib/pocketbase/client'
 
 interface AuthContextType {
@@ -27,6 +27,7 @@ interface AuthContextType {
   }) => Promise<{ error: any }>
   updatePassword: (currentPassword: string, newPassword: string) => Promise<{ error: any }>
   loading: boolean
+  refreshUser: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -51,6 +52,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (pb.authStore.isValid) {
       pb.collection('users')
         .authRefresh()
+        .then(async () => {
+          const userId = pb.authStore.record?.id
+          if (userId) {
+            try {
+              const freshRecord = await pb.collection('users').getOne(userId)
+              pb.authStore.save(pb.authStore.token, freshRecord)
+            } catch {
+              // fall back to the refreshed record from authRefresh
+            }
+          }
+        })
         .catch(() => pb.authStore.clear())
         .finally(() => setLoading(false))
     } else {
@@ -81,7 +93,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         birth_date,
         instagram_handle: instagram_handle || undefined,
       })
-      await pb.collection('users').authWithPassword(email, password)
+      const result = await pb.collection('users').authWithPassword(email, password)
+      try {
+        const freshRecord = await pb.collection('users').getOne(result.record.id)
+        pb.authStore.save(pb.authStore.token, freshRecord)
+      } catch {
+        // fall back to the record from authWithPassword
+      }
       return { error: null }
     } catch (error) {
       return { error }
@@ -90,7 +108,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signIn = async (email: string, password: string) => {
     try {
-      await pb.collection('users').authWithPassword(email, password)
+      const result = await pb.collection('users').authWithPassword(email, password)
+      try {
+        const freshRecord = await pb.collection('users').getOne(result.record.id)
+        pb.authStore.save(pb.authStore.token, freshRecord)
+      } catch {
+        // fall back to the record from authWithPassword
+      }
       return { error: null }
     } catch (error) {
       return { error }
@@ -201,6 +225,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }
 
+  const refreshUser = useCallback(async () => {
+    const userId = pb.authStore.record?.id
+    if (!userId) return
+    try {
+      const freshRecord = await pb.collection('users').getOne(userId)
+      pb.authStore.save(pb.authStore.token, freshRecord)
+    } catch {
+      // ignore refresh errors
+    }
+  }, [])
+
   const isAdmin = !!user?.is_admin
   const userLevel = user?.level || 'Prata'
   const canAccessCommunity = userLevel === 'Ouro' || userLevel === 'Diamante'
@@ -221,6 +256,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         updateProfile,
         updatePassword,
         loading,
+        refreshUser,
       }}
     >
       {children}

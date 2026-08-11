@@ -29,7 +29,7 @@ export const adminGetUsersByLevel = (level: string) =>
 export const adminGetHypnosisUsers = () =>
   pb.collection('users').getFullList({ filter: `is_patient = true`, sort: '-created' })
 
-export const adminUpdateStudent = (
+export const adminUpdateStudent = async (
   userId: string,
   data: {
     name?: string
@@ -39,9 +39,24 @@ export const adminUpdateStudent = (
     birth_date?: string
   },
 ) => {
-  const payload: Record<string, unknown> = { ...data }
+  const payload: Record<string, unknown> = {}
+  if (data.name !== undefined) payload.name = data.name
+  if (data.phone !== undefined) payload.phone = data.phone
+  if (data.instagram_handle !== undefined) payload.instagram_handle = data.instagram_handle
+  if (data.birth_date !== undefined) payload.birth_date = data.birth_date
+
   if (data.email !== undefined) {
-    payload.emailConfirm = data.email
+    try {
+      const current = await pb.collection('users').getOne(userId)
+      if (current.email !== data.email) {
+        payload.email = data.email
+        payload.emailConfirm = data.email
+      }
+    } catch {
+      payload.email = data.email
+      payload.emailConfirm = data.email
+    }
   }
+
   return pb.collection('users').update(userId, payload)
 }

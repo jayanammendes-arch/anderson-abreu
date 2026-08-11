@@ -1,4 +1,4 @@
-import { useState, type FormEvent, type ChangeEvent } from 'react'
+import { useState, useEffect, type FormEvent, type ChangeEvent } from 'react'
 import { useAuth } from '@/hooks/use-auth'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -11,7 +11,7 @@ import { User, Camera, Lock, Loader2, Save } from 'lucide-react'
 import { extractFieldErrors, getErrorMessage, type FieldErrors } from '@/lib/pocketbase/errors'
 
 export default function Profile() {
-  const { user, updateProfile, updatePassword } = useAuth()
+  const { user, updateProfile, updatePassword, refreshUser } = useAuth()
 
   const [name, setName] = useState(user?.name || '')
   const [phone, setPhone] = useState(user?.phone || '')
@@ -27,6 +27,10 @@ export default function Profile() {
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [savingProfile, setSavingProfile] = useState(false)
   const [savingPassword, setSavingPassword] = useState(false)
+
+  useEffect(() => {
+    refreshUser()
+  }, [refreshUser])
 
   const avatarUrl = user?.avatar
     ? `${import.meta.env.VITE_POCKETBASE_URL}/api/files/users/${user.id}/${user.avatar}`
