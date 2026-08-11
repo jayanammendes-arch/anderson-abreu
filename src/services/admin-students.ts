@@ -38,4 +38,10 @@ export const adminUpdateStudent = (
     instagram_handle?: string
     birth_date?: string
   },
-) => pb.collection('users').update(userId, data)
+) => {
+  const payload: Record<string, unknown> = { ...data }
+  if (data.email !== undefined) {
+    payload.emailConfirm = data.email
+  }
+  return pb.collection('users').update(userId, payload)
+}
