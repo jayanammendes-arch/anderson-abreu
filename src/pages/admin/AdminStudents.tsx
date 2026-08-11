@@ -6,6 +6,7 @@ import {
   adminRevokeAccess,
   adminUpdateLevel,
   adminUpdateStudent,
+  adminUpdateAdminStatus,
 } from '@/services/admin-students'
 import { getCourses } from '@/services/courses'
 import { Button } from '@/components/ui/button'
@@ -33,6 +34,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Switch } from '@/components/ui/switch'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -103,6 +105,23 @@ export default function AdminStudents() {
       toast.error('Erro ao alterar nível')
     } finally {
       setPendingLevel(null)
+    }
+  }
+
+  const handleAdminToggle = async (checked: boolean) => {
+    if (!selected) return
+    const previousValue = selected.is_admin
+    setSelected({ ...selected, is_admin: checked })
+    try {
+      await adminUpdateAdminStatus(selected.id, checked)
+      toast.success(
+        checked
+          ? 'Privilégios de administrador concedidos'
+          : 'Privilégios de administrador revogados',
+      )
+    } catch {
+      setSelected({ ...selected, is_admin: previousValue })
+      toast.error('Erro ao alterar status de administrador')
     }
   }
   useEffect(() => {
@@ -315,6 +334,17 @@ export default function AdminStudents() {
               </Select>
             )}
           </div>
+          {isAdmin && (
+            <div className="mt-4 pt-4 border-t border-border/50 flex items-center justify-between">
+              <div>
+                <h3 className="font-semibold text-foreground">Administrador</h3>
+                <p className="text-sm text-muted-foreground">
+                  Concede privilégios de administrador na plataforma
+                </p>
+              </div>
+              <Switch checked={!!selected.is_admin} onCheckedChange={handleAdminToggle} />
+            </div>
+          )}
         </Card>
 
         <AlertDialog open={!!pendingLevel} onOpenChange={(open) => !open && setPendingLevel(null)}>

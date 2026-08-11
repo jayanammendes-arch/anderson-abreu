@@ -20,6 +20,9 @@ export const adminRevokeAccess = (accessId: string) => pb.collection('user_acces
 export const adminUpdateLevel = (userId: string, level: string) =>
   pb.collection('users').update(userId, { level })
 
+export const adminUpdateAdminStatus = (userId: string, isAdmin: boolean) =>
+  pb.collection('users').update(userId, { is_admin: isAdmin })
+
 export const adminGetUsersByLevel = (level: string) =>
   pb.collection('users').getFullList({ filter: `level = "${level}"`, sort: '-created' })
 
