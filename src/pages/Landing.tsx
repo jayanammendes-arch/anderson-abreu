@@ -197,32 +197,38 @@ export default function Landing() {
       </ScrollFadeIn>
 
       {/* Home Credential Section (replaces old About Intro) */}
-      <ScrollFadeIn>
-        <HomeCredentialSection settings={settings} />
-      </ScrollFadeIn>
+      {settings && (
+        <ScrollFadeIn>
+          <HomeCredentialSection settings={settings} />
+        </ScrollFadeIn>
+      )}
 
       {/* Saiba mais button below specialist description */}
-      <ScrollFadeIn>
-        <div className="pb-16 bg-card">
-          <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 flex justify-center">
-            <Button
-              size="lg"
-              className="royal-btn-gradient text-white rounded-full px-10 py-6 text-lg font-medium shadow-lg transition-all hover:scale-105"
-              asChild
-            >
-              <Link to="/sobre">
-                {settings?.saiba_mais_text || 'Saiba mais'}
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-            </Button>
+      {settings && (
+        <ScrollFadeIn>
+          <div className="pb-16 bg-card">
+            <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 flex justify-center">
+              <Button
+                size="lg"
+                className="royal-btn-gradient text-white rounded-full px-10 py-6 text-lg font-medium shadow-lg transition-all hover:scale-105"
+                asChild
+              >
+                <Link to="/sobre">
+                  {settings?.saiba_mais_text || 'Saiba mais'}
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
+              </Button>
+            </div>
           </div>
-        </div>
-      </ScrollFadeIn>
+        </ScrollFadeIn>
+      )}
 
       {/* Blue Band (O que é Hipnose?) */}
-      <ScrollFadeIn>
-        <GlobalBlueBand settings={settings} />
-      </ScrollFadeIn>
+      {settings && (
+        <ScrollFadeIn>
+          <GlobalBlueBand settings={settings} />
+        </ScrollFadeIn>
+      )}
 
       {/* Parallax CTA Section */}
       {settings?.parallax_background_image && settings?.parallax_headline && (

@@ -106,7 +106,8 @@ export function getCredentialsImageUrl(settings: {
   credentials_image?: string
 }): string | null {
   if (settings.credentials_image) {
-    return pb.files.getUrl(settings, settings.credentials_image)
+    const url = pb.files.getUrl(settings, settings.credentials_image)
+    return url || null
   }
   return null
 }
@@ -136,7 +137,8 @@ export function getFaqSectionImageUrl(settings: {
   faq_section_image?: string
 }): string | null {
   if (settings.faq_section_image) {
-    return pb.files.getUrl(settings, settings.faq_section_image)
+    const url = pb.files.getUrl(settings, settings.faq_section_image)
+    return url || null
   }
   return null
 }
