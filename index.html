@@ -28,6 +28,33 @@
       document.documentElement.classList.remove('light');
       document.documentElement.classList.add('dark');
     </script>
+    <script>
+      // Guard cross-origin stylesheet access to prevent SecurityError
+      // when html-to-image (loaded by skip.js Bug Scanner) iterates
+      // document.styleSheets and calls cssRules on external CDNs
+      // (Google Fonts, jsdelivr, etc.). Browsers block reading rules
+      // from cross-origin sheets; returning [] lets capture continue.
+      (function () {
+        var proto = CSSStyleSheet.prototype;
+        var props = ['cssRules', 'rules'];
+        props.forEach(function (prop) {
+          var desc = Object.getOwnPropertyDescriptor(proto, prop);
+          if (desc && desc.get) {
+            var origGet = desc.get;
+            Object.defineProperty(proto, prop, {
+              get: function () {
+                try {
+                  return origGet.call(this);
+                } catch (e) {
+                  return [];
+                }
+              },
+              configurable: true,
+            });
+          }
+        });
+      })();
+    </script>
     <div id="root"></div>
     <!-- @skip-protected: Do not remove. Required for app features. -->
     <script src="https://goskip.dev/skip.js"></script>
