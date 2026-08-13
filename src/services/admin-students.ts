@@ -48,16 +48,17 @@ export const adminUpdateStudent = async (
   if (data.instagram_handle !== undefined) payload.instagram_handle = data.instagram_handle
   if (data.birth_date !== undefined) payload.birth_date = data.birth_date
 
-  if (data.email !== undefined) {
+  if (data.email !== undefined && data.email.trim() !== '') {
+    const trimmedEmail = data.email.trim()
     try {
       const current = await pb.collection('users').getOne(userId)
-      if (current.email !== data.email) {
-        payload.email = data.email
-        payload.emailConfirm = data.email
+      if (current.email !== trimmedEmail) {
+        payload.email = trimmedEmail
+        payload.emailConfirm = trimmedEmail
       }
     } catch {
-      payload.email = data.email
-      payload.emailConfirm = data.email
+      payload.email = trimmedEmail
+      payload.emailConfirm = trimmedEmail
     }
   }
 

@@ -188,6 +188,17 @@ export default function AdminStudents() {
     }
   }
 
+  // Sincroniza os estados de edição sempre que `selected` mudar (por exemplo, após atualizar no banco)
+  useEffect(() => {
+    if (selected) {
+      setEditName(selected.name || '')
+      setEditEmail(selected.email || '')
+      setEditPhone(selected.phone || '')
+      setEditInstagram(selected.instagram_handle || '')
+      setEditBirthDate(selected.birth_date ? selected.birth_date.split(' ')[0] : '')
+    }
+  }, [selected?.id])
+
   const handleSaveProfile = async () => {
     if (!selected) return
     setSavingProfile(true)
