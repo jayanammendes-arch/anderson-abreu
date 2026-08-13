@@ -8,11 +8,11 @@ import { getUserAccess } from '@/services/user-access'
 import { getOnboardingConfig, getCoverImageUrl } from '@/services/onboarding'
 import { CourseCard } from '@/components/CourseCard'
 import { Button } from '@/components/ui/button'
-import { PlayCircle, Star, Loader2, Sparkles, Radar } from 'lucide-react'
+import { PlayCircle, Star, Loader2, Sparkles, Radar, Lock, HelpCircle } from 'lucide-react'
 import type { CourseWithProgress, OnboardingConfig } from '@/types'
 
 export default function Index() {
-  const { user } = useAuth()
+  const { user, hasLevel, canAccessComecePorAqui } = useAuth()
   const [courses, setCourses] = useState<CourseWithProgress[]>([])
   const [loading, setLoading] = useState(true)
   const [resumeUrl, setResumeUrl] = useState<string | null>(null)
@@ -108,7 +108,7 @@ export default function Index() {
   )
   return (
     <div className="space-y-10 animate-fade-in pb-10">
-      {onboardingConfig?.is_active && (
+      {hasLevel && onboardingConfig?.is_active && canAccessComecePorAqui && (
         <section className="relative overflow-hidden rounded-3xl border border-primary/20 shadow-elevation min-h-[280px]">
           {getCoverImageUrl(onboardingConfig) ? (
             <>
@@ -138,75 +138,128 @@ export default function Index() {
         </section>
       )}
 
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-brand p-8 sm:p-12 border border-white/5 shadow-elevation">
-        <div className="absolute top-0 right-0 -mt-16 -mr-16 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
-        <div className="absolute bottom-0 left-0 -mb-16 -ml-16 h-48 w-48 rounded-full bg-blue-500/10 blur-3xl" />
-        <div className="relative z-10 max-w-2xl">
-          <h1 className="mb-4 text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
-            Olá, {userName}! <br className="hidden sm:block" />
-            <span className="text-gradient-gold">Vamos continuar sua jornada?</span>
-          </h1>
-          <p className="mb-8 text-lg text-muted-foreground">
-            {pendingLessons > 0
-              ? `Você tem ${pendingLessons} aula${pendingLessons > 1 ? 's' : ''} pendente${pendingLessons > 1 ? 's' : ''}. Aproveite o momento para evoluir.`
-              : 'Parabéns! Você concluiu todas as aulas disponíveis. Confira novos cursos abaixo.'}
-          </p>
-          <div className="flex flex-wrap gap-4">
-            {resumeUrl && (
-              <Button size="lg" className="shadow-glow group" asChild>
-                <Link to={resumeUrl}>
-                  <PlayCircle className="mr-2 h-5 w-5 transition-transform group-hover:scale-110" />
-                  {hasProgress ? 'Retomar Aula Atual' : 'Começar Agora'}
+      {/* Usuário sem nível: mostra um banner explicativo em vez da jornada/curso */}
+      {!hasLevel && (
+        <section className="relative overflow-hidden rounded-3xl bg-gradient-brand p-8 sm:p-12 border border-white/5 shadow-elevation">
+          <div className="relative z-10 max-w-2xl">
+            <h1 className="mb-4 text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
+              Olá, {userName}! <br className="hidden sm:block" />
+              <span className="text-gradient-gold">Bem-vindo à plataforma</span>
+            </h1>
+            <p className="mb-8 text-lg text-muted-foreground">
+              Você ainda não possui um nível atribuído. Ao comprar seu primeiro curso, você será
+              promovido automaticamente ao nível Ouro e ganhará acesso aos conteúdos da plataforma.
+            </p>
+            <div className="flex flex-wrap gap-4">
+              <Button size="lg" className="shadow-glow" asChild>
+                <Link to="/cursos">Ver cursos disponíveis</Link>
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="bg-white/5 border-white/10 hover:bg-white/10"
+                asChild
+              >
+                <Link to="/dashboard/faq">
+                  <HelpCircle className="mr-2 h-5 w-5" />
+                  Central de Ajuda
                 </Link>
               </Button>
-            )}
-            <Button
-              size="lg"
-              variant="outline"
-              className="bg-white/5 border-white/10 hover:bg-white/10"
-              asChild
-            >
-              <Link to="/dashboard/produtos">Ver Produtos</Link>
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      <section className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-semibold tracking-tight">Meus Cursos</h2>
-            <p className="text-sm text-muted-foreground">Continue de onde parou.</p>
-          </div>
-        </div>
-        {availableCourses.length > 0 ? (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {availableCourses.map((course) => (
-              <CourseCard key={course.id} course={course} />
-            ))}
-          </div>
-        ) : (
-          <p className="text-muted-foreground text-center py-12">
-            Nenhum curso disponível no momento.
-          </p>
-        )}
-      </section>
-
-      {lockedCourses.length > 0 && (
-        <section className="space-y-6 pt-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-semibold tracking-tight flex items-center gap-2">
-                <Star className="h-6 w-6 text-primary fill-primary" />
-                Em Breve
-              </h2>
-              <p className="text-sm text-muted-foreground">Novos cursos chegando para você.</p>
             </div>
           </div>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {lockedCourses.map((course) => (
-              <CourseCard key={course.id} course={course} locked />
-            ))}
+        </section>
+      )}
+
+      {hasLevel && (
+        <>
+          <section className="relative overflow-hidden rounded-3xl bg-gradient-brand p-8 sm:p-12 border border-white/5 shadow-elevation">
+            <div className="absolute top-0 right-0 -mt-16 -mr-16 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
+            <div className="absolute bottom-0 left-0 -mb-16 -ml-16 h-48 w-48 rounded-full bg-blue-500/10 blur-3xl" />
+            <div className="relative z-10 max-w-2xl">
+              <h1 className="mb-4 text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
+                Olá, {userName}! <br className="hidden sm:block" />
+                <span className="text-gradient-gold">Vamos continuar sua jornada?</span>
+              </h1>
+              <p className="mb-8 text-lg text-muted-foreground">
+                {pendingLessons > 0
+                  ? `Você tem ${pendingLessons} aula${pendingLessons > 1 ? 's' : ''} pendente${pendingLessons > 1 ? 's' : ''}. Aproveite o momento para evoluir.`
+                  : 'Parabéns! Você concluiu todas as aulas disponíveis. Confira novos cursos abaixo.'}
+              </p>
+              <div className="flex flex-wrap gap-4">
+                {resumeUrl && (
+                  <Button size="lg" className="shadow-glow group" asChild>
+                    <Link to={resumeUrl}>
+                      <PlayCircle className="mr-2 h-5 w-5 transition-transform group-hover:scale-110" />
+                      {hasProgress ? 'Retomar Aula Atual' : 'Começar Agora'}
+                    </Link>
+                  </Button>
+                )}
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="bg-white/5 border-white/10 hover:bg-white/10"
+                  asChild
+                >
+                  <Link to="/dashboard/produtos">Ver Produtos</Link>
+                </Button>
+              </div>
+            </div>
+          </section>
+
+          <section className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-semibold tracking-tight">Meus Cursos</h2>
+                <p className="text-sm text-muted-foreground">Continue de onde parou.</p>
+              </div>
+            </div>
+            {availableCourses.length > 0 ? (
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {availableCourses.map((course) => (
+                  <CourseCard key={course.id} course={course} />
+                ))}
+              </div>
+            ) : (
+              <p className="text-muted-foreground text-center py-12">
+                Nenhum curso disponível no momento.
+              </p>
+            )}
+          </section>
+
+          {lockedCourses.length > 0 && (
+            <section className="space-y-6 pt-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-semibold tracking-tight flex items-center gap-2">
+                    <Star className="h-6 w-6 text-primary fill-primary" />
+                    Em Breve
+                  </h2>
+                  <p className="text-sm text-muted-foreground">Novos cursos chegando para você.</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {lockedCourses.map((course) => (
+                  <CourseCard key={course.id} course={course} locked />
+                ))}
+              </div>
+            </section>
+          )}
+        </>
+      )}
+
+      {!hasLevel && (
+        <section className="space-y-6">
+          <div className="rounded-2xl border border-primary/20 bg-primary/5 p-6 space-y-2">
+            <h2 className="text-2xl font-semibold tracking-tight">Central de Ajuda</h2>
+            <p className="text-sm text-muted-foreground">
+              Tire suas dúvidas sobre compras e produtos.
+            </p>
+            <Button asChild>
+              <Link to="/dashboard/faq">
+                <HelpCircle className="mr-2 h-4 w-4" />
+                Acessar a FAQ
+              </Link>
+            </Button>
           </div>
         </section>
       )}

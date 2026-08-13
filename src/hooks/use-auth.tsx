@@ -6,7 +6,9 @@ interface AuthContextType {
   isAuthenticated: boolean
   isAdmin: boolean
   userLevel: string
+  hasLevel: boolean
   canAccessCommunity: boolean
+  canAccessComecePorAqui: boolean
   signUp: (
     name: string,
     email: string,
@@ -237,8 +239,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [])
 
   const isAdmin = !!user?.is_admin
-  const userLevel = user?.level || 'Prata'
+  const userLevel = user?.level || ''
+  const hasLevel = userLevel === 'Prata' || userLevel === 'Ouro' || userLevel === 'Diamante'
   const canAccessCommunity = userLevel === 'Ouro' || userLevel === 'Diamante'
+  const canAccessComecePorAqui =
+    userLevel === 'Prata' ||
+    ((userLevel === 'Ouro' || userLevel === 'Diamante') && !!user?.comece_por_aqui_access)
 
   return (
     <AuthContext.Provider
@@ -247,7 +253,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         isAuthenticated,
         isAdmin,
         userLevel,
+        hasLevel,
         canAccessCommunity,
+        canAccessComecePorAqui,
         signUp,
         signIn,
         signInWithOAuth,

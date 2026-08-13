@@ -25,7 +25,8 @@ export default function CursosPage() {
         getPlatformSettingsPublic().catch(() => null),
       ])
       const filteredCourses = coursesData.filter((c) =>
-        canAccessCourse(c.level, user?.level || 'Prata'),
+        // Usuário sem nível não vê cursos de nível; Prata/Ouro/Diamante vê conforme seu nível.
+        canAccessCourse(c.level, user?.level || ''),
       )
       setCourses(filteredCourses)
       setSettings(settingsData as PlatformSettings | null)

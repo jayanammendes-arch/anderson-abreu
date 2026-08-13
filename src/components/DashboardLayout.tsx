@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { LogOut, Loader2, User, Award, ShoppingBag, LifeBuoy } from 'lucide-react'
+import { LogOut, Loader2, User, Award, ShoppingBag, LifeBuoy, Sparkles } from 'lucide-react'
 import { NotificationBell } from '@/components/community/NotificationBell'
 import { LevelBadge } from '@/components/LevelBadge'
 import { useState, useEffect } from 'react'
@@ -34,7 +34,7 @@ const pageTitles: Record<string, string> = {
 }
 
 export function DashboardLayout() {
-  const { isAuthenticated, loading, user, signOut } = useAuth()
+  const { isAuthenticated, loading, user, signOut, canAccessComecePorAqui } = useAuth()
   const location = useLocation()
   const navigate = useNavigate()
   const [platformSettings, setPlatformSettings] = useState<PlatformSettings | null>(null)
@@ -78,6 +78,9 @@ export function DashboardLayout() {
     : undefined
   const pageTitle = pageTitles[location.pathname] || 'Dashboard'
 
+  const userLevel = user?.level || ''
+  const hasLevel = userLevel === 'Prata' || userLevel === 'Ouro' || userLevel === 'Diamante'
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -105,7 +108,7 @@ export function DashboardLayout() {
                 </Avatar>
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium text-foreground">{userName}</span>
-                  {user?.level && <LevelBadge level={user.level} size="sm" />}
+                  <LevelBadge level={user?.level} size="sm" showNoLevel />
                 </div>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56 border-border bg-popover">
@@ -113,7 +116,7 @@ export function DashboardLayout() {
                   <div className="flex flex-col space-y-1">
                     <div className="flex items-center gap-2">
                       <p className="text-sm font-medium leading-none">{userName}</p>
-                      {user?.level && <LevelBadge level={user.level} size="sm" />}
+                      <LevelBadge level={user?.level} size="sm" showNoLevel />
                     </div>
                     <p className="text-xs leading-none text-muted-foreground">{user?.email}</p>
                   </div>
@@ -126,20 +129,33 @@ export function DashboardLayout() {
                   <User className="mr-2 h-4 w-4" />
                   Acessar perfil
                 </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="cursor-pointer"
-                  onClick={() => navigate('/dashboard/certificates')}
-                >
-                  <Award className="mr-2 h-4 w-4" />
-                  Certificados
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="cursor-pointer"
-                  onClick={() => navigate('/dashboard/compras')}
-                >
-                  <ShoppingBag className="mr-2 h-4 w-4" />
-                  Minhas compras
-                </DropdownMenuItem>
+                {hasLevel && (
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() => navigate('/dashboard/certificates')}
+                  >
+                    <Award className="mr-2 h-4 w-4" />
+                    Certificados
+                  </DropdownMenuItem>
+                )}
+                {hasLevel && (
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() => navigate('/dashboard/compras')}
+                  >
+                    <ShoppingBag className="mr-2 h-4 w-4" />
+                    Minhas compras
+                  </DropdownMenuItem>
+                )}
+                {hasLevel && canAccessComecePorAqui && (
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() => navigate('/dashboard/comece-por-aqui')}
+                  >
+                    <Sparkles className="mr-2 h-4 w-4" />
+                    Comece por Aqui
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem
                   className="cursor-pointer"
                   onClick={() => navigate('/dashboard/faq')}

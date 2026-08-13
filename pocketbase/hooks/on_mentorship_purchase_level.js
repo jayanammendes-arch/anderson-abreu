@@ -17,8 +17,10 @@ onRecordAfterCreateSuccess((e) => {
 
   try {
     var user = $app.findRecordById('users', userId)
-    var currentLevel = user.getString('level') || 'Prata'
+    var currentLevel = user.getString('level')
 
+    // Mentoring purchase upgrades a Gold ("Ouro") student to "Diamante".
+    // It never touches "Prata" (admin-assigned) or "Diamante" (already top).
     if (currentLevel === 'Ouro') {
       user.set('level', 'Diamante')
       $app.saveNoValidate(user)

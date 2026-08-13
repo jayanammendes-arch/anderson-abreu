@@ -23,6 +23,7 @@ import {
   Headphones,
   ChevronRight,
 } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import type {
   CourseWithProgress,
@@ -67,7 +68,7 @@ interface LessonRef {
 }
 
 export default function ComecePorAqui() {
-  const { user } = useAuth()
+  const { user, canAccessComecePorAqui } = useAuth()
   const navigate = useNavigate()
   const [loading, setLoading] = useState(true)
   const [config, setConfig] = useState<OnboardingConfig | null>(null)
@@ -128,6 +129,32 @@ export default function ComecePorAqui() {
     return (
       <div className="flex h-96 items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
+  }
+
+  // Restrição de nível: "Comece por Aqui" é exclusivo do nível Prata, ou
+  // liberado manualmente pelo admin para alunos Ouro/Diamante.
+  if (!canAccessComecePorAqui) {
+    return (
+      <div className="space-y-6 animate-fade-in pb-10">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Comece por Aqui</h1>
+          <p className="text-muted-foreground mt-2">
+            Sua jornada passo a passo. Complete cada etapa para desbloquear a próxima.
+          </p>
+        </div>
+        <div className="mx-auto max-w-md text-center py-16 space-y-4">
+          <Lock className="h-12 w-12 mx-auto text-muted-foreground" />
+          <p className="text-lg font-semibold">Acesso Restrito</p>
+          <p className="text-muted-foreground">
+            O módulo "Comece por Aqui" está disponível para alunos nível Prata, ou para alunos
+            Ouro/Diamante com liberação manual do administrador.
+          </p>
+          <Button asChild>
+            <Link to="/dashboard">Voltar ao início</Link>
+          </Button>
+        </div>
       </div>
     )
   }

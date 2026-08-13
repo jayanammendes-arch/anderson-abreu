@@ -5,9 +5,11 @@ import {
   adminGrantAccess,
   adminRevokeAccess,
   adminUpdateLevel,
+  adminUpdateComecePorAquiAccess,
   adminUpdateStudent,
   adminUpdateAdminStatus,
 } from '@/services/admin-students'
+import { canManuallyReleaseComecePorAqui, NO_LEVEL } from '@/lib/level-access'
 import { getCourses } from '@/services/courses'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -77,6 +79,7 @@ export default function AdminStudents() {
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [savingProfile, setSavingProfile] = useState(false)
   const [pendingLevel, setPendingLevel] = useState<string | null>(null)
+  const [comeceLoading, setComeceLoading] = useState(false)
 
   const loadStudents = useCallback(async () => {
     setLoading(true)
@@ -97,14 +100,51 @@ export default function AdminStudents() {
 
   const handleLevelChange = async () => {
     if (!selected || !pendingLevel) return
+    // "Sem nivel" é representado por uma string vazia no banco.
+    const newLevel = pendingLevel === NO_LEVEL ? '' : pendingLevel
     try {
-      await adminUpdateLevel(selected.id, pendingLevel)
-      setSelected({ ...selected, level: pendingLevel })
-      toast.success(`Nível alterado para ${pendingLevel}`)
+      await adminUpdateLevel(selected.id, newLevel)
+      // Ao rebaixar para "Sem nivel", o acesso ao "Comece por Aqui" não faz
+      // sentido; removemos a flag para manter o estado consistente.
+      if (pendingLevel === NO_LEVEL && selected.comece_por_aqui_access) {
+        try {
+          await adminUpdateComecePorAquiAccess(selected.id, false)
+        } catch {
+          /* não bloqueia o fluxo principal */
+        }
+        setSelected({ ...selected, level: '', comece_por_aqui_access: false })
+      } else {
+        setSelected({ ...selected, level: newLevel })
+      }
+      toast.success(
+        pendingLevel === NO_LEVEL
+          ? 'Nível removido (aluno sem nível)'
+          : `Nível alterado para ${pendingLevel}`,
+      )
     } catch {
       toast.error('Erro ao alterar nível')
     } finally {
       setPendingLevel(null)
+    }
+  }
+
+  const handleComecePorAquiToggle = async (checked: boolean) => {
+    if (!selected) return
+    const previousValue = !!selected.comece_por_aqui_access
+    setSelected({ ...selected, comece_por_aqui_access: checked })
+    setComeceLoading(true)
+    try {
+      await adminUpdateComecePorAquiAccess(selected.id, checked)
+      toast.success(
+        checked
+          ? 'Acesso ao "Comece por Aqui" liberado para o aluno'
+          : 'Acesso ao "Comece por Aqui" revogado',
+      )
+    } catch {
+      setSelected({ ...selected, comece_por_aqui_access: previousValue })
+      toast.error('Erro ao alterar liberação do "Comece por Aqui"')
+    } finally {
+      setComeceLoading(false)
     }
   }
 
@@ -207,7 +247,7 @@ export default function AdminStudents() {
           <div>
             <h1 className="text-2xl font-bold flex items-center gap-2 text-foreground">
               {selected.name || 'Aluno'}
-              {selected.level && <LevelBadge level={selected.level} size="md" />}
+              <LevelBadge level={selected.level} size="md" showNoLevel />
             </h1>
             <p className="text-sm text-muted-foreground">{selected.email}</p>
           </div>
@@ -313,20 +353,21 @@ export default function AdminStudents() {
           </CardContent>
         </Card>
 
-        <Card className="bg-card/50 border-border/50 p-4">
+        <Card className="bg-card/50 border-border/50 p-4 space-y-4">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="font-semibold text-foreground">Nível do Aluno</h3>
               <p className="text-sm text-muted-foreground">
-                Define o acesso do aluno na plataforma
+                Prata e Diamante são atribuídos manualmente. Ouro é automático ao comprar um curso.
               </p>
             </div>
             {isAdmin && (
-              <Select value={selected.level || 'Prata'} onValueChange={(v) => setPendingLevel(v)}>
-                <SelectTrigger className="w-36">
+              <Select value={selected.level || NO_LEVEL} onValueChange={(v) => setPendingLevel(v)}>
+                <SelectTrigger className="w-40">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value={NO_LEVEL}>Sem nível</SelectItem>
                   <SelectItem value="Prata">Prata</SelectItem>
                   <SelectItem value="Ouro">Ouro</SelectItem>
                   <SelectItem value="Diamante">Diamante</SelectItem>
@@ -334,8 +375,34 @@ export default function AdminStudents() {
               </Select>
             )}
           </div>
+
+          {/* Liberação manual do "Comece por Aqui" — disponível apenas para Ouro/Diamante.
+              Prata já possui acesso por padrão ao módulo. */}
+          {isAdmin && canManuallyReleaseComecePorAqui(selected.level) && (
+            <div className="pt-4 border-t border-border/50 flex items-center justify-between">
+              <div>
+                <h3 className="font-semibold text-foreground">Acesso ao “Comece por Aqui”</h3>
+                <p className="text-sm text-muted-foreground">
+                  Libera manualmente o módulo de onboarding para este aluno.
+                </p>
+              </div>
+              <Switch
+                checked={!!selected.comece_por_aqui_access}
+                onCheckedChange={handleComecePorAquiToggle}
+                disabled={comeceLoading}
+              />
+            </div>
+          )}
+          {isAdmin && selected.level === 'Prata' && (
+            <div className="pt-4 border-t border-border/50">
+              <p className="text-sm text-muted-foreground">
+                ℹ️ Alunos Prata já possuem acesso automático ao “Comece por Aqui”.
+              </p>
+            </div>
+          )}
+
           {isAdmin && (
-            <div className="mt-4 pt-4 border-t border-border/50 flex items-center justify-between">
+            <div className="pt-4 border-t border-border/50 flex items-center justify-between">
               <div>
                 <h3 className="font-semibold text-foreground">Administrador</h3>
                 <p className="text-sm text-muted-foreground">
@@ -457,7 +524,7 @@ export default function AdminStudents() {
                     {s.name || 'Sem nome'}
                   </h3>
                   <div className="mt-0.5">
-                    <LevelBadge level={s.level || 'Prata'} size="sm" />
+                    <LevelBadge level={s.level} size="sm" showNoLevel />
                   </div>
                   <p className="text-sm text-muted-foreground mt-0.5">{s.email}</p>
                 </div>
