@@ -128,9 +128,13 @@ export default function CourseDetailsPage() {
     const ctaText = course.buy_button_text || 'Comprar Agora'
     if (course.external_buy_url) {
       return (
-        <Button size="lg" className="px-10 py-6 text-lg" asChild>
+        <Button
+          size="lg"
+          className="px-10 py-6 text-lg bg-[#D4AF37] hover:bg-[#C5A030] text-black font-semibold shadow-[0_0_15px_rgba(212,175,55,0.4)] border border-[#D4AF37]/30 transition-all duration-200 active:scale-[0.99]"
+          asChild
+        >
           <a href={course.external_buy_url} target="_blank" rel="noopener noreferrer">
-            {ctaText} <ExternalLink className="ml-2 h-5 w-5" />
+            {ctaText} <ExternalLink className="ml-2 h-5 w-5 shrink-0" />
           </a>
         </Button>
       )

@@ -104,23 +104,23 @@ export default function CursosPage() {
                       )}
                     </div>
                     <div className="p-6 flex-1 flex flex-col">
-                      <h3 className="text-xl font-bold text-slate-900 mb-2 line-clamp-2">
+                      <h3 className="text-xl font-bold text-foreground mb-2 line-clamp-2">
                         {course.title}
                       </h3>
-                      <p className="text-slate-500 text-sm mb-6 flex-1">
+                      <p className="text-muted-foreground text-sm mb-6 flex-1">
                         {course.short_description || course.description}
                       </p>
                       <div className="mb-6">
                         {isFree ? (
                           <span className="text-2xl font-bold text-primary">Gratuito</span>
                         ) : isHypnosis ? (
-                          <div className="flex items-center gap-2 text-slate-500">
+                          <div className="flex items-center gap-2 text-muted-foreground">
                             <Lock className="h-5 w-5" />
                             <span className="text-sm">Acesso exclusivo</span>
                           </div>
                         ) : hasDiscount ? (
                           <div>
-                            <span className="text-sm text-slate-400 line-through">
+                            <span className="text-sm text-muted-foreground line-through">
                               R$ {course.price?.toFixed(2)}
                             </span>
                             <span className="text-2xl font-bold text-primary ml-2">
@@ -135,7 +135,7 @@ export default function CursosPage() {
                       </div>
                       {hasAccess ? (
                         <Button
-                          className="w-full bg-slate-900 text-white hover:bg-slate-800"
+                          className="w-full bg-slate-900 text-white hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700"
                           asChild
                         >
                           <Link to={`/dashboard/curso/${course.id}`}>
@@ -144,7 +144,7 @@ export default function CursosPage() {
                         </Button>
                       ) : !isFree && course.external_buy_url ? (
                         <Button
-                          className="w-full bg-slate-900 text-white hover:bg-slate-800"
+                          className="w-full bg-[#D4AF37] hover:bg-[#C5A030] text-black font-semibold shadow-[0_0_15px_rgba(212,175,55,0.3)] border border-[#D4AF37]/30 transition-all duration-200 active:scale-[0.99]"
                           asChild
                         >
                           <a
@@ -152,12 +152,12 @@ export default function CursosPage() {
                             target="_blank"
                             rel="noopener noreferrer"
                           >
-                            {ctaText} <ExternalLink className="ml-2 h-4 w-4" />
+                            {ctaText} <ExternalLink className="ml-2 h-4 w-4 shrink-0" />
                           </a>
                         </Button>
                       ) : (
                         <Button
-                          className="w-full bg-slate-900 text-white hover:bg-slate-800"
+                          className="w-full bg-slate-900 text-white hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700"
                           asChild
                         >
                           <Link to={`/cursos/${course.id}`}>Ver Detalhes</Link>

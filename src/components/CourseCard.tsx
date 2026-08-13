@@ -1,109 +1,97 @@
 import { Link } from 'react-router-dom'
-import { Card, CardContent, CardFooter, CardTitle } from '@/components/ui/card'
-import { Progress } from '@/components/ui/progress'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Lock, Clock, PlayCircle, CheckCircle2 } from 'lucide-react'
-import type { CourseWithProgress } from '@/types'
+import { Badge } from '@/components/ui/badge'
+import { ExternalLink, PlayCircle, Lock } from 'lucide-react'
 import { getThumbnailUrl } from '@/services/courses'
+import type { Course } from '@/types'
 
 interface CourseCardProps {
-  course: CourseWithProgress
-  locked?: boolean
+  course: Course
+  hasAccess?: boolean
 }
 
-export function CourseCard({ course, locked = false }: CourseCardProps) {
-  const thumb = getThumbnailUrl(course)
-
-  if (locked) {
-    return (
-      <Card className="group relative overflow-hidden border-border/30 bg-card/50 transition-all duration-300 hover:border-primary/30">
-        <div className="aspect-video overflow-hidden relative">
-          <img
-            src={thumb}
-            alt={course.title}
-            className="h-full w-full object-cover grayscale opacity-40"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="h-14 w-14 rounded-full bg-background/80 backdrop-blur-md flex items-center justify-center border border-white/10">
-              <Lock className="h-6 w-6 text-muted-foreground" />
-            </div>
-          </div>
-          <Badge className="absolute top-3 right-3 bg-purple-500/90 backdrop-blur-md">
-            Exclusivo
-          </Badge>
-        </div>
-        <CardContent className="p-5">
-          <CardTitle className="line-clamp-2 text-lg mb-2 flex items-center gap-2">
-            <Lock className="h-4 w-4 text-muted-foreground shrink-0" />
-            {course.title}
-          </CardTitle>
-          <p className="text-sm text-muted-foreground line-clamp-2">{course.description}</p>
-          <p className="text-xs text-purple-400 mt-3">
-            Acesso exclusivo — liberação mediante análise
-          </p>
-        </CardContent>
-      </Card>
-    )
-  }
+export function CourseCard({ course, hasAccess }: CourseCardProps) {
+  const isFree = course.access_type === 'free'
+  const isHypnosis = course.access_type === 'hypnosis'
+  const hasDiscount =
+    course.discount_price != null && course.price != null && course.discount_price < course.price
+  const ctaText = course.buy_button_text || 'Comprar'
 
   return (
-    <Card className="group overflow-hidden border-border/50 bg-card hover:border-primary/50 transition-all duration-300 hover:shadow-glow">
-      <Link to={`/dashboard/curso/${course.id}`}>
-        <div className="aspect-video overflow-hidden relative">
-          <img
-            src={thumb}
-            alt={course.title}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-background/90 to-transparent" />
-          {course.totalLessons > 0 && (
-            <Badge className="absolute bottom-3 left-3 bg-black/50 backdrop-blur-md text-white hover:bg-black/50">
-              <Clock className="mr-1 h-3 w-3" /> {course.totalLessons} aulas
-            </Badge>
-          )}
-          {course.progress === 100 && (
-            <Badge className="absolute top-3 right-3 bg-green-500/90 backdrop-blur-md">
-              <CheckCircle2 className="mr-1 h-3 w-3" /> Concluído
-            </Badge>
+    <div className="group bg-card border border-border rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 flex flex-col">
+      <div className="aspect-video relative overflow-hidden bg-muted">
+        <img
+          src={getThumbnailUrl(course)}
+          alt={course.title}
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+        />
+        {hasDiscount && !hasAccess && (
+          <Badge className="absolute top-4 right-4 bg-primary text-white">
+            -
+            {course.discount_percentage ||
+              Math.round((1 - course.discount_price! / course.price!) * 100)}
+            %
+          </Badge>
+        )}
+        {hasAccess && (
+          <Badge className="absolute top-4 right-4 bg-green-500 text-white">Adquirido</Badge>
+        )}
+      </div>
+      <div className="p-6 flex-1 flex flex-col">
+        <h3 className="text-xl font-bold text-foreground mb-2 line-clamp-2">{course.title}</h3>
+        <p className="text-muted-foreground text-sm mb-6 flex-1 line-clamp-3">
+          {course.short_description || course.description}
+        </p>
+        <div className="mb-6">
+          {isFree ? (
+            <span className="text-2xl font-bold text-primary">Gratuito</span>
+          ) : isHypnosis ? (
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <Lock className="h-5 w-5" />
+              <span className="text-sm">Acesso exclusivo</span>
+            </div>
+          ) : hasDiscount ? (
+            <div>
+              <span className="text-sm text-muted-foreground line-through">
+                R$ {course.price?.toFixed(2)}
+              </span>
+              <span className="text-2xl font-bold text-primary ml-2">
+                R$ {course.discount_price?.toFixed(2)}
+              </span>
+            </div>
+          ) : (
+            <span className="text-2xl font-bold text-primary">
+              {course.price ? `R$ ${course.price.toFixed(2)}` : 'Consulte'}
+            </span>
           )}
         </div>
-      </Link>
-      <CardContent className="p-5">
-        <CardTitle className="line-clamp-2 text-lg mb-4 h-14 leading-tight">
-          {course.title}
-        </CardTitle>
-        {course.totalLessons > 0 && (
-          <div className="space-y-2">
-            <div className="flex justify-between text-sm font-medium">
-              <span className="text-muted-foreground">Progresso</span>
-              <span className="text-primary">{course.progress}%</span>
-            </div>
-            <Progress
-              value={course.progress}
-              className="h-2 bg-secondary"
-              indicatorClassName={course.progress === 100 ? 'bg-green-500' : 'bg-primary'}
-            />
-          </div>
+        {hasAccess ? (
+          <Button
+            className="w-full bg-slate-900 text-white hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700"
+            asChild
+          >
+            <Link to={`/dashboard/curso/${course.id}`}>
+              <PlayCircle className="mr-2 h-4 w-4" /> Acessar Curso
+            </Link>
+          </Button>
+        ) : !isFree && course.external_buy_url ? (
+          <Button
+            className="w-full bg-[#D4AF37] hover:bg-[#C5A030] text-black font-semibold shadow-[0_0_15px_rgba(212,175,55,0.3)] border border-[#D4AF37]/30 transition-all duration-200 active:scale-[0.99]"
+            asChild
+          >
+            <a href={course.external_buy_url} target="_blank" rel="noopener noreferrer">
+              {ctaText} <ExternalLink className="ml-2 h-4 w-4 shrink-0" />
+            </a>
+          </Button>
+        ) : (
+          <Button
+            className="w-full bg-slate-900 text-white hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700"
+            asChild
+          >
+            <Link to={`/cursos/${course.id}`}>Ver Detalhes</Link>
+          </Button>
         )}
-      </CardContent>
-      <CardFooter className="p-5 pt-0">
-        <Button
-          className="w-full"
-          variant={course.progress === 100 ? 'secondary' : 'default'}
-          asChild
-        >
-          <Link to={`/dashboard/curso/${course.id}`}>
-            <PlayCircle className="mr-2 h-4 w-4" />
-            {course.progress === 100
-              ? 'Revisar Conteúdo'
-              : course.progress > 0
-                ? 'Continuar'
-                : 'Começar'}
-          </Link>
-        </Button>
-      </CardFooter>
-    </Card>
+      </div>
+    </div>
   )
 }
