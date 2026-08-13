@@ -4,82 +4,82 @@
 
 @layer base {
   :root {
-    --background: 222 33% 6%;
+    --background: 222 33% 4%;
     --foreground: 0 0% 100%;
-    --card: 215 22% 11%;
+    --card: 222 20% 9%;
     --card-foreground: 0 0% 100%;
-    --popover: 215 22% 11%;
+    --popover: 222 20% 9%;
     --popover-foreground: 0 0% 100%;
-    --primary: 191 100% 50%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 215 22% 11%;
+    --primary: 46 65% 52%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 222 20% 11%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 215 22% 11%;
-    --muted-foreground: 212 9% 58%;
-    --accent: 216 100% 50%;
-    --accent-foreground: 0 0% 100%;
+    --muted: 222 20% 11%;
+    --muted-foreground: 220 9% 65%;
+    --accent: 44 64% 47%;
+    --accent-foreground: 0 0% 0%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
-    --border: 216 18% 13%;
-    --input: 216 18% 13%;
-    --ring: 191 100% 50%;
-    --gold: 46 64% 52%;
+    --border: 222 18% 16%;
+    --input: 222 18% 16%;
+    --ring: 46 65% 52%;
+    --gold: 46 65% 52%;
     --gold-foreground: 0 0% 0%;
-    --chart-1: 191 100% 50%;
-    --chart-2: 216 100% 50%;
-    --chart-3: 46 64% 52%;
+    --chart-1: 46 65% 52%;
+    --chart-2: 44 64% 47%;
+    --chart-3: 38 70% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 0 72% 51%;
     --radius: 0.75rem;
-    --sidebar-background: 215 22% 11%;
+    --sidebar-background: 222 20% 9%;
     --sidebar-foreground: 0 0% 100%;
-    --sidebar-primary: 191 100% 50%;
+    --sidebar-primary: 46 65% 52%;
     --sidebar-primary-foreground: 0 0% 0%;
-    --sidebar-accent: 216 18% 13%;
+    --sidebar-accent: 222 18% 13%;
     --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 216 18% 13%;
-    --sidebar-ring: 191 100% 50%;
-    --royal-blue: 216 100% 50%;
-    --royal-blue-hover: 216 100% 40%;
+    --sidebar-border: 222 18% 16%;
+    --sidebar-ring: 46 65% 52%;
+    --royal-blue: 46 65% 52%;
+    --royal-blue-hover: 44 64% 42%;
   }
   .light {
-    --background: 0 0% 98%;
-    --foreground: 222 33% 6%;
-    --card: 0 0% 100%;
-    --card-foreground: 222 33% 6%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 33% 6%;
-    --primary: 191 100% 50%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 220 14% 96%;
-    --secondary-foreground: 222 33% 6%;
-    --muted: 220 14% 96%;
-    --muted-foreground: 212 9% 58%;
-    --accent: 216 100% 50%;
-    --accent-foreground: 0 0% 100%;
+    --background: 222 33% 4%;
+    --foreground: 0 0% 100%;
+    --card: 222 20% 9%;
+    --card-foreground: 0 0% 100%;
+    --popover: 222 20% 9%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 46 65% 52%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 222 20% 11%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 222 20% 11%;
+    --muted-foreground: 220 9% 65%;
+    --accent: 44 64% 47%;
+    --accent-foreground: 0 0% 0%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 191 100% 50%;
-    --gold: 46 64% 52%;
+    --border: 222 18% 16%;
+    --input: 222 18% 16%;
+    --ring: 46 65% 52%;
+    --gold: 46 65% 52%;
     --gold-foreground: 0 0% 0%;
-    --chart-1: 191 100% 50%;
-    --chart-2: 216 100% 50%;
-    --chart-3: 46 64% 52%;
+    --chart-1: 46 65% 52%;
+    --chart-2: 44 64% 47%;
+    --chart-3: 38 70% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 0 72% 51%;
     --radius: 0.75rem;
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 222 33% 6%;
-    --sidebar-primary: 191 100% 50%;
+    --sidebar-background: 222 20% 9%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 46 65% 52%;
     --sidebar-primary-foreground: 0 0% 0%;
-    --sidebar-accent: 220 14% 96%;
-    --sidebar-accent-foreground: 222 33% 6%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 191 100% 50%;
-    --royal-blue: 216 100% 50%;
-    --royal-blue-hover: 216 100% 40%;
+    --sidebar-accent: 222 18% 13%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 222 18% 16%;
+    --sidebar-ring: 46 65% 52%;
+    --royal-blue: 46 65% 52%;
+    --royal-blue-hover: 44 64% 42%;
   }
 }
 
@@ -151,11 +151,11 @@
     font-weight: 700;
   }
   ::selection {
-    background-color: hsl(191 100% 50% / 0.3);
+    background-color: hsl(46 65% 52% / 0.3);
     color: inherit;
   }
   ::-moz-selection {
-    background-color: hsl(191 100% 50% / 0.3);
+    background-color: hsl(46 65% 52% / 0.3);
     color: inherit;
   }
   ::-webkit-scrollbar {
@@ -166,11 +166,11 @@
     background: hsl(var(--background));
   }
   ::-webkit-scrollbar-thumb {
-    background: hsl(216 18% 20%);
+    background: hsl(222 18% 20%);
     border-radius: 3px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: hsl(216 100% 40%);
+    background: hsl(46 65% 42%);
   }
 }
 
@@ -247,7 +247,7 @@
     inset: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(5, 5, 5, 0.5);
     z-index: 1;
   }
 
@@ -274,32 +274,32 @@
   .royal-gradient-bg {
     background: linear-gradient(
       180deg,
-      #0a0d14 0%,
-      #0d1117 20%,
-      #003d99 50%,
-      #0066ff 80%,
-      #00d2ff 100%
+      #050505 0%,
+      #0a0d14 30%,
+      #0d0f14 60%,
+      #12161f 80%,
+      #1a1505 100%
     );
   }
 
   .royal-cta-gradient {
-    background: linear-gradient(180deg, #0a0d14 0%, #0d1117 30%, #0052cc 65%, #0066ff 100%);
+    background: linear-gradient(180deg, #050505 0%, #0a0d14 30%, #1a1505 65%, #2a2010 100%);
   }
 
   .royal-gradient-footer,
   .royal-footer-gradient {
-    background: linear-gradient(180deg, #0066ff 0%, #0052cc 35%, #0d1117 70%, #0a0d14 100%);
+    background: linear-gradient(180deg, #1a1505 0%, #12100a 35%, #0a0d14 70%, #050505 100%);
   }
 
   .royal-btn-gradient {
-    background: linear-gradient(135deg, #0a0d14 0%, #0052cc 45%, #00d2ff 100%);
+    background: linear-gradient(135deg, #0a0d14 0%, #8b7420 45%, #d4af37 100%);
     transition:
       background 0.3s ease,
       transform 0.2s ease;
   }
 
   .royal-btn-gradient:hover {
-    background: linear-gradient(135deg, #0d1117 0%, #0066ff 45%, #00a3ff 100%);
+    background: linear-gradient(135deg, #0d1117 0%, #a88c2e 45%, #e6c547 100%);
   }
 
   .brand-gradient-text {

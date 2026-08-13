@@ -129,9 +129,9 @@ export function LandingLayout({
   const brandGradientImage =
     settings?.login_gradient ||
     (settings?.primary_color
-      ? `linear-gradient(135deg, ${settings.primary_color}, ${isDarkPage ? '#6b8cce' : '#1a3fa8'})`
+      ? `linear-gradient(135deg, ${settings.primary_color}, ${isDarkPage ? '#C59A2A' : '#8B7420'})`
       : isDarkPage
-        ? 'linear-gradient(135deg, #ffffff, #8ba5d9)'
+        ? 'linear-gradient(135deg, #D4AF37, #C59A2A)'
         : 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--royal-blue-hover)))')
   const agendarText = settings?.agendar_sessao_text || 'Agendar Sessão'
   const handleAreaAlunoClick = () => navigate(areaAlunoHref)
@@ -139,8 +139,8 @@ export function LandingLayout({
   return (
     <div
       className={cn(
-        'min-h-screen flex flex-col justify-between font-sans selection:bg-primary selection:text-white transition-colors duration-300',
-        isDarkPage ? 'royal-gradient-bg text-white' : 'bg-white text-slate-900',
+        'min-h-screen flex flex-col justify-between font-sans selection:bg-primary selection:text-primary-foreground transition-colors duration-300',
+        isDarkPage ? 'royal-gradient-bg text-white' : 'bg-background text-foreground',
       )}
     >
       <header
@@ -149,10 +149,10 @@ export function LandingLayout({
           isScrolled
             ? isDarkPage
               ? 'bg-[#020412]/90 backdrop-blur-md shadow-sm border-b border-white/10 py-3'
-              : 'bg-white/95 backdrop-blur-md shadow-sm border-b border-slate-100 py-3'
+              : 'bg-background/95 backdrop-blur-md shadow-sm border-b border-border py-3'
             : isDarkPage
               ? 'bg-transparent py-5'
-              : 'bg-white/80 backdrop-blur-sm py-5',
+              : 'bg-background/80 backdrop-blur-sm py-5',
         )}
       >
         <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 flex items-center justify-between">
@@ -181,7 +181,7 @@ export function LandingLayout({
                     'text-sm font-medium px-3 py-2 rounded-md transition-colors',
                     isDarkPage
                       ? 'text-white/80 hover:text-white hover:bg-white/10'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100',
+                      : 'text-muted-foreground hover:text-foreground hover:bg-white/5',
                   )}
                 >
                   {link.name}
@@ -211,7 +211,7 @@ export function LandingLayout({
             )}
           </div>
           <button
-            className={cn('lg:hidden p-2', isDarkPage ? 'text-white' : 'text-slate-900')}
+            className={cn('lg:hidden p-2', isDarkPage ? 'text-white' : 'text-foreground')}
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             {isMenuOpen ? <X /> : <Menu />}
@@ -222,7 +222,7 @@ export function LandingLayout({
       <div
         className={cn(
           'fixed inset-0 z-40 transition-transform duration-300 lg:hidden flex flex-col pt-24 px-6',
-          isDarkPage ? 'bg-[#020412] text-white' : 'bg-white text-slate-900',
+          isDarkPage ? 'bg-[#020412] text-white' : 'bg-background text-foreground',
           isMenuOpen ? 'translate-x-0' : 'translate-x-full',
         )}
       >
@@ -237,7 +237,7 @@ export function LandingLayout({
                       'flex items-center justify-between w-full text-left py-3 border-b transition-colors',
                       isDarkPage
                         ? 'text-white/90 border-white/10 hover:text-white'
-                        : 'text-slate-700 border-slate-100 hover:text-primary',
+                        : 'text-muted-foreground border-border hover:text-foreground',
                     )}
                   >
                     Tratamentos
@@ -259,7 +259,7 @@ export function LandingLayout({
                             'text-base text-left py-2.5 border-b transition-colors',
                             isDarkPage
                               ? 'text-white/70 border-white/5 hover:text-white'
-                              : 'text-slate-600 border-slate-50 hover:text-primary',
+                              : 'text-muted-foreground border-border hover:text-foreground',
                           )}
                         >
                           {treatment.name}
@@ -278,7 +278,7 @@ export function LandingLayout({
                   'text-left py-3 border-b transition-colors',
                   isDarkPage
                     ? 'text-white/90 border-white/10 hover:text-white'
-                    : 'text-slate-700 border-slate-100 hover:text-primary',
+                    : 'text-muted-foreground border-border hover:text-foreground',
                 )}
               >
                 {link.name}
