@@ -49,6 +49,7 @@ function FramedImage({
   alt: string
   position: 'left' | 'right'
 }) {
+  if (!src) return null
   return (
     <div
       className={cn(

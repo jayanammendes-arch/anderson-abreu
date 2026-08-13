@@ -68,12 +68,12 @@ export function HypnotherapyComparisonSection({ settings }: { settings: Platform
         </div>
 
         <div className="grid md:grid-cols-2 gap-6 lg:gap-8 items-stretch overflow-visible">
-          <div className="relative bg-gradient-to-br from-[#026aa2] to-[#014a75] text-white rounded-3xl p-6 sm:p-8 lg:p-10 shadow-2xl overflow-hidden">
-            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#38bdf8] via-[#00A3C4] to-[#38bdf8]" />
-            <div className="absolute -top-20 -right-20 w-40 h-40 bg-white/5 rounded-full blur-2xl" />
+          <div className="relative bg-gradient-to-br from-[#0a1a3a] to-[#06122a] text-white rounded-3xl p-6 sm:p-8 lg:p-10 shadow-2xl overflow-hidden border border-[#d4af37]/20">
+            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#d4af37] via-[#c9a227] to-[#d4af37]" />
+            <div className="absolute -top-20 -right-20 w-40 h-40 bg-[#d4af37]/5 rounded-full blur-2xl" />
             <div className="relative">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/15 text-white text-sm font-semibold mb-8 backdrop-blur-sm">
-                <span className="text-[#38bdf8]">✦</span>
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#d4af37]/15 text-[#d4af37] text-sm font-semibold mb-8 backdrop-blur-sm border border-[#d4af37]/20">
+                <span className="text-[#d4af37]">✦</span>
                 <span>Hipnoterapia Clínica Avançada</span>
               </div>
               <ul className="space-y-5">
@@ -81,8 +81,8 @@ export function HypnotherapyComparisonSection({ settings }: { settings: Platform
                   const Icon = getTreatmentIcon(item.icon)
                   return (
                     <li key={idx} className="flex items-start gap-4">
-                      <div className="flex-shrink-0 w-9 h-9 rounded-xl bg-white/15 border border-white/20 flex items-center justify-center mt-0.5">
-                        <Icon className="w-4 h-4 text-[#7dd3fc]" strokeWidth={2.5} />
+                      <div className="flex-shrink-0 w-9 h-9 rounded-xl bg-[#d4af37]/10 border border-[#d4af37]/30 flex items-center justify-center mt-0.5">
+                        <Icon className="w-4 h-4 text-[#d4af37]" strokeWidth={2.5} />
                       </div>
                       <span className="text-white/95 text-base md:text-[17px] font-medium leading-snug pt-1.5">
                         {item.text}
@@ -94,10 +94,10 @@ export function HypnotherapyComparisonSection({ settings }: { settings: Platform
             </div>
           </div>
 
-          <div className="relative bg-card border border-border/50 rounded-3xl p-6 sm:p-8 lg:p-10 shadow-lg overflow-hidden">
-            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-muted-foreground/30 via-muted-foreground/50 to-muted-foreground/30" />
+          <div className="relative bg-[#1a1a1e] border border-[#2a2a30] rounded-3xl p-6 sm:p-8 lg:p-10 shadow-lg overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#3a3a40] via-[#4a4a50] to-[#3a3a40]" />
             <div className="relative">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-muted/50 text-muted-foreground text-sm font-semibold mb-8">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#2a2a30] text-[#9a9aa0] text-sm font-semibold mb-8">
                 Abordagens Tradicionais
               </div>
               <ul className="space-y-5">
@@ -105,10 +105,10 @@ export function HypnotherapyComparisonSection({ settings }: { settings: Platform
                   const Icon = getTreatmentIcon(item.icon)
                   return (
                     <li key={idx} className="flex items-start gap-4">
-                      <div className="flex-shrink-0 w-9 h-9 rounded-xl bg-muted/50 border border-border flex items-center justify-center mt-0.5">
-                        <Icon className="w-4 h-4 text-muted-foreground" strokeWidth={2.5} />
+                      <div className="flex-shrink-0 w-9 h-9 rounded-xl bg-[#2a2a30] border border-[#3a3a40] flex items-center justify-center mt-0.5">
+                        <Icon className="w-4 h-4 text-[#8a8a90]" strokeWidth={2.5} />
                       </div>
-                      <span className="text-muted-foreground text-base md:text-[17px] font-normal leading-snug pt-1.5">
+                      <span className="text-[#9a9aa0] text-base md:text-[17px] font-normal leading-snug pt-1.5">
                         {item.text}
                       </span>
                     </li>
