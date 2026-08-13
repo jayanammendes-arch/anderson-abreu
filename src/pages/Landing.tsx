@@ -311,7 +311,7 @@ export default function Landing() {
                 return (
                   <Button
                     size="lg"
-                    className="bg-[#22C55E] hover:bg-[#1ea34d] text-white rounded-full px-10 py-6 text-lg font-medium shadow-lg transition-all hover:scale-105 border-none"
+                    className="bg-[#D4AF37] hover:bg-[#c49f28] text-black font-semibold rounded-full px-10 py-6 text-lg shadow-lg transition-all hover:scale-105 border-none"
                     asChild
                   >
                     <a href={`https://wa.me/${waNum}`} target="_blank" rel="noopener noreferrer">
@@ -324,7 +324,7 @@ export default function Landing() {
               return (
                 <Button
                   size="lg"
-                  className="bg-[#22C55E] hover:bg-[#1ea34d] text-white rounded-full px-10 py-6 text-lg font-medium shadow-lg transition-all hover:scale-105 border-none"
+                  className="bg-[#D4AF37] hover:bg-[#c49f28] text-black font-semibold rounded-full px-10 py-6 text-lg shadow-lg transition-all hover:scale-105 border-none"
                   onClick={() => navigate(btnLink)}
                 >
                   <Calendar className="mr-2 h-5 w-5" />

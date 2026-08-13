@@ -275,10 +275,10 @@
     background: linear-gradient(
       180deg,
       #050505 0%,
-      #0a0d14 30%,
-      #0d0f14 60%,
-      #12161f 80%,
-      #1a1505 100%
+      #080c14 25%,
+      #0a1428 50%,
+      #080c14 75%,
+      #050505 100%
     );
   }
 
@@ -296,12 +296,30 @@
   }
 
   .royal-cta-gradient {
-    background: linear-gradient(180deg, #050505 0%, #0a0d14 30%, #1a1505 65%, #2a2010 100%);
+    background: linear-gradient(
+      to right,
+      #050505 0%,
+      #080c14 20%,
+      #0a1428 45%,
+      #0d1a35 50%,
+      #0a1428 55%,
+      #080c14 80%,
+      #050505 100%
+    );
   }
 
   .royal-gradient-footer,
   .royal-footer-gradient {
-    background: linear-gradient(180deg, #1a1505 0%, #12100a 35%, #0a0d14 70%, #050505 100%);
+    background: linear-gradient(
+      to right,
+      #050505 0%,
+      #080c14 20%,
+      #0a1428 45%,
+      #0d1a35 50%,
+      #0a1428 55%,
+      #080c14 80%,
+      #050505 100%
+    );
   }
 
   .royal-btn-gradient {

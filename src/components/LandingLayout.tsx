@@ -315,7 +315,7 @@ export function LandingLayout({
 
       <footer
         className={cn(
-          'text-white pt-16 pb-8 transition-colors duration-300 border-none',
+          'text-white pt-16 pb-8 transition-colors duration-300 border-none border-t-0',
           isDarkPage ? 'bg-transparent' : 'royal-footer-gradient',
         )}
       >
