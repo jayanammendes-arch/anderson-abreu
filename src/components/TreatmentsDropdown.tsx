@@ -34,7 +34,7 @@ export function TreatmentsDropdown({
           'flex items-center gap-1 text-sm font-medium px-3 py-2 rounded-md transition-colors outline-none focus:outline-none',
           isDark
             ? 'text-white/80 hover:text-white hover:bg-white/10 data-[state=open]:bg-white/10 data-[state=open]:text-white'
-            : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 data-[state=open]:bg-slate-100 data-[state=open]:text-slate-900',
+            : 'text-slate-200 hover:text-white hover:bg-white/10 data-[state=open]:bg-white/10 data-[state=open]:text-white',
         )}
       >
         {children}
@@ -42,21 +42,27 @@ export function TreatmentsDropdown({
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="start"
-        className="w-[480px] p-4 rounded-xl shadow-lg border-slate-100 bg-white"
+        className="w-[480px] p-4 rounded-xl shadow-2xl border border-white/10 bg-[#0b101d] text-white backdrop-blur-xl z-50"
       >
         <div className="grid grid-cols-2 gap-1">
           {categories.slice(0, 12).map((category) => {
             const Icon = getTreatmentIcon(category.icon)
             return (
-              <DropdownMenuItem key={category.id} asChild className="p-0">
+              <DropdownMenuItem
+                key={category.id}
+                asChild
+                className="p-0 focus:bg-transparent focus:text-white"
+              >
                 <Link
                   to={`/tratamentos/${category.slug}`}
-                  className="group flex items-center gap-3 w-full cursor-pointer rounded-lg px-3 py-2.5 text-sm text-slate-700 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                  className="group flex items-center gap-3 w-full cursor-pointer rounded-lg px-3 py-2.5 text-sm text-slate-200 hover:text-white hover:bg-white/10 transition-colors"
                 >
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-50 group-hover:bg-blue-100 transition-colors">
-                    <Icon className="h-[18px] w-[18px] text-blue-500" strokeWidth={2} />
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 border border-primary/20 group-hover:bg-primary/20 group-hover:border-primary/40 transition-colors">
+                    <Icon className="h-[18px] w-[18px] text-primary" strokeWidth={2} />
                   </span>
-                  <span className="font-medium leading-snug line-clamp-2">{category.name}</span>
+                  <span className="font-medium leading-snug line-clamp-2 text-slate-200 group-hover:text-white">
+                    {category.name}
+                  </span>
                 </Link>
               </DropdownMenuItem>
             )

@@ -133,7 +133,7 @@ export default function Agendar() {
             <ScrollFadeIn>
               <div className="text-white">
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-6">
-                  <Calendar className="h-4 w-4 text-white" />
+                  <Calendar className="h-4 w-4 text-primary" />
                   <span className="text-sm font-medium text-white/90">
                     Hipnose Clínica & Desenvolvimento Humano
                   </span>
@@ -153,8 +153,8 @@ export default function Agendar() {
                       key={i}
                       className="flex items-center gap-3 text-white/90 text-base sm:text-lg"
                     >
-                      <span className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-white/15 border border-white/25">
-                        <CheckCircle2 className="h-4 w-4 text-white" />
+                      <span className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-primary/20 border border-primary/40">
+                        <CheckCircle2 className="h-4 w-4 text-primary" />
                       </span>
                       {benefit}
                     </li>
@@ -175,7 +175,7 @@ export default function Agendar() {
                   )}
                   <button
                     onClick={scrollToForm}
-                    className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-[#22C55E] hover:bg-[#1ea34d] text-white font-semibold text-base shadow-lg transition-all duration-200 hover:scale-105"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full royal-btn-gradient text-white font-semibold text-base shadow-lg transition-all duration-200 hover:scale-105"
                   >
                     {settings?.agendar_sessao_text || 'Agendar Sessão'}
                     <ArrowRight className="h-5 w-5" />
@@ -287,7 +287,7 @@ export default function Agendar() {
                       <Button
                         type="submit"
                         disabled={submitting}
-                        className="w-full h-12 text-base font-semibold rounded-xl bg-white text-slate-900 hover:bg-white/90 transition-colors duration-200 shadow-md"
+                        className="w-full h-12 text-base font-semibold rounded-xl royal-btn-gradient text-white hover:opacity-90 transition-all duration-200 shadow-lg"
                       >
                         {submitting ? (
                           <>

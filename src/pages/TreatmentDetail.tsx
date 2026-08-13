@@ -15,7 +15,7 @@ import { LandingLayout } from '@/components/LandingLayout'
 import { Button } from '@/components/ui/button'
 import { TestimonialsSection } from '@/components/TestimonialsSection'
 import { getTreatmentIcon } from '@/lib/treatment-icons'
-import { Loader2, ArrowRight, Calendar, MessageCircle } from 'lucide-react'
+import { Loader2, ArrowRight, MessageCircle } from 'lucide-react'
 import { ScrollFadeIn } from '@/components/ScrollFadeIn'
 import { GlobalBlueBand } from '@/components/GlobalBlueBand'
 import { HypnotherapyComparisonSection } from '@/components/HypnotherapyComparisonSection'
@@ -23,21 +23,20 @@ import { getCropPositionCss } from '@/lib/image-position'
 import { cn } from '@/lib/utils'
 
 const proseClass =
-  'prose prose-lg prose-invert max-w-none text-muted-foreground [&_h1]:text-foreground [&_h1]:font-bold [&_h1]:text-3xl [&_h1]:mb-4 [&_h2]:text-foreground [&_h2]:font-bold [&_h3]:text-foreground [&_h3]:font-semibold [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mb-2 [&_a]:text-primary [&_span]:!bg-transparent'
+  'prose prose-lg prose-invert max-w-none text-muted-foreground [&_h1]:text-white [&_h1]:font-bold [&_h1]:text-3xl [&_h1]:mb-4 [&_h2]:text-white [&_h2]:font-bold [&_h3]:text-white [&_h3]:font-semibold [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mb-2 [&_a]:text-primary [&_span]:!bg-transparent'
+
 function SectionTitle({ title, defaultTitle }: { title?: string; defaultTitle: string }) {
   const content = title?.trim() || defaultTitle
   if (content.includes('<')) {
     return (
       <div
-        className="text-3xl md:text-4xl font-bold text-slate-900 mb-6 leading-snug py-1 [&_span]:!bg-transparent [&_p]:text-3xl [&_p]:md:text-4xl [&_p]:font-bold [&_p]:text-slate-900 [&_p]:mb-0"
+        className="text-3xl md:text-4xl font-bold text-white mb-6 leading-snug py-1 [&_span]:!bg-transparent [&_p]:text-3xl [&_p]:md:text-4xl [&_p]:font-bold [&_p]:text-white [&_p]:mb-0"
         dangerouslySetInnerHTML={{ __html: content }}
       />
     )
   }
   return (
-    <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6 leading-snug py-1">
-      {content}
-    </h2>
+    <h2 className="text-3xl md:text-4xl font-bold text-white mb-6 leading-snug py-1">{content}</h2>
   )
 }
 
@@ -98,8 +97,8 @@ export default function TreatmentDetail() {
     return (
       <LandingLayout settings={settings}>
         <div className="flex flex-col items-center justify-center min-h-screen pt-20 px-6">
-          <h1 className="text-3xl font-bold text-slate-900 mb-4">Tratamento não encontrado</h1>
-          <Button asChild>
+          <h1 className="text-3xl font-bold text-white mb-4">Tratamento não encontrado</h1>
+          <Button asChild className="royal-btn-gradient text-white">
             <Link to="/#tratamentos">
               <ArrowRight className="mr-2 h-4 w-4" /> Voltar para tratamentos
             </Link>
@@ -163,7 +162,7 @@ export default function TreatmentDetail() {
           <div className="relative z-10 w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 py-20">
             <div className="max-w-2xl">
               {!category.hide_icon && (
-                <Icon className="h-12 w-12 text-white/80 mb-6" strokeWidth={1.5} />
+                <Icon className="h-12 w-12 text-primary mb-6" strokeWidth={1.5} />
               )}
               <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">{category.name}</h1>
               <p className="text-lg md:text-xl text-white/80 mb-8">{category.short_description}</p>
@@ -358,9 +357,7 @@ export default function TreatmentDetail() {
         <ScrollFadeIn>
           <section className="py-24 bg-card/50 overflow-visible">
             <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 overflow-visible">
-              <h2 className="text-3xl font-bold text-foreground mb-8 text-center">
-                Outros Tratamentos
-              </h2>
+              <h2 className="text-3xl font-bold text-white mb-8 text-center">Outros Tratamentos</h2>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {otherCategories.map((cat) => {
                   const CatIcon = getTreatmentIcon(cat.icon)
@@ -368,10 +365,10 @@ export default function TreatmentDetail() {
                     <Link
                       key={cat.id}
                       to={`/tratamentos/${cat.slug}`}
-                      className="group flex flex-col items-center gap-2 p-4 bg-white rounded-xl border border-slate-100 hover:border-blue-200 hover:shadow-md transition-all"
+                      className="group flex flex-col items-center gap-2 p-4 bg-white/5 rounded-xl border border-white/10 hover:border-primary/50 hover:bg-white/10 transition-all shadow-md"
                     >
                       <CatIcon className="h-8 w-8 text-primary" strokeWidth={1.5} />
-                      <span className="text-sm font-medium text-muted-foreground group-hover:text-primary text-center">
+                      <span className="text-sm font-medium text-white/80 group-hover:text-primary text-center">
                         {cat.name}
                       </span>
                     </Link>

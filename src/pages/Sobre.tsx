@@ -11,7 +11,6 @@ import {
 import {
   getAboutGrandNames,
   getAboutMediaMentions,
-  getAboutMediaMentionImageUrl,
   getAboutRecommendations,
   getAboutEnvironmentImages,
   getAboutEnvironmentImageUrl,
@@ -149,7 +148,7 @@ export default function Sobre() {
                       'https://img.usecurling.com/p/600/800?q=hypnotherapist%20portrait&color=gray'
                     }
                     alt="Anderson Abreu"
-                    className="rounded-2xl shadow-xl w-full h-[400px] md:h-[500px] object-cover"
+                    className="rounded-2xl shadow-xl w-full h-[400px] md:h-[500px] object-cover border border-white/10"
                   />
                 </div>
                 <div>
@@ -183,7 +182,7 @@ export default function Sobre() {
                   <ul className="space-y-4">
                     {formations.map((f, i) => (
                       <li key={i} className="flex items-start gap-3">
-                        <span className="mt-0.5 flex-shrink-0 flex h-6 w-6 items-center justify-center rounded-full bg-primary/10">
+                        <span className="mt-0.5 flex-shrink-0 flex h-6 w-6 items-center justify-center rounded-full bg-primary/20 border border-primary/30">
                           <Check className="h-4 w-4 text-primary" strokeWidth={3} />
                         </span>
                         <span className="text-lg text-muted-foreground">{f}</span>
@@ -196,7 +195,7 @@ export default function Sobre() {
                     <img
                       src={formationsImage}
                       alt=""
-                      className="rounded-2xl shadow-xl w-full h-[400px] object-cover"
+                      className="rounded-2xl shadow-xl w-full h-[400px] object-cover border border-white/10"
                     />
                   </div>
                 )}
@@ -234,12 +233,15 @@ export default function Sobre() {
               </h2>
               <div className="grid md:grid-cols-3 gap-6">
                 {mediaMentions.map((item) => (
-                  <div key={item.id} className="bg-white rounded-xl shadow-md overflow-hidden">
+                  <div
+                    key={item.id}
+                    className="bg-white/5 border border-white/10 rounded-xl shadow-lg overflow-hidden backdrop-blur-sm"
+                  >
                     {item.video_url && <VideoEmbed url={item.video_url} />}
                     <div className="p-6">
-                      <h3 className="font-bold text-slate-900 mb-2">{item.title}</h3>
+                      <h3 className="font-bold text-white mb-2">{item.title}</h3>
                       {item.description && (
-                        <p className="text-sm text-slate-600">{item.description}</p>
+                        <p className="text-sm text-white/70">{item.description}</p>
                       )}
                     </div>
                   </div>
@@ -282,10 +284,7 @@ export default function Sobre() {
                   const parts = title.split(/(Ambiente)/i)
                   return parts.map((part, i) =>
                     part.toLowerCase() === 'ambiente' ? (
-                      <span
-                        key={i}
-                        style={{ color: settings?.primary_color || 'hsl(var(--primary))' }}
-                      >
+                      <span key={i} className="text-primary">
                         {part}
                       </span>
                     ) : (
@@ -303,7 +302,10 @@ export default function Sobre() {
                     'https://img.usecurling.com/p/600/800?q=therapy%20armchair',
                   ]
                   return (
-                    <div key={item.id} className="rounded-2xl overflow-hidden shadow-md">
+                    <div
+                      key={item.id}
+                      className="rounded-2xl overflow-hidden shadow-md border border-white/10 bg-white/5"
+                    >
                       <img
                         src={
                           getAboutEnvironmentImageUrl(item) ||
@@ -347,7 +349,7 @@ export default function Sobre() {
               </p>
               <Button
                 size="lg"
-                className="bg-[#22C55E] hover:bg-[#1ea34d] text-white rounded-full px-10 py-6 text-lg font-medium shadow-lg transition-all hover:scale-105 border-none"
+                className="royal-btn-gradient text-white rounded-full px-10 py-6 text-lg font-medium shadow-lg transition-all hover:scale-105 border-none"
                 asChild
               >
                 {ctaLink.startsWith('/') ? (
