@@ -50,13 +50,19 @@ export const adminUpdateStudent = async (
 
   if (data.email !== undefined && data.email.trim() !== '') {
     const trimmedEmail = data.email.trim()
+    // Only send `email` + `emailConfirm` to the backend when the value actually
+    // changed. PocketBase requires `emailConfirm` to match `email` whenever the
+    // email field is present in an auth-record update, and sending an unchanged
+    // email can trigger unnecessary validation. Compare against the current
+    // stored value (now reliably returned thanks to emailVisibility=true).
+    let currentEmail = ''
     try {
       const current = await pb.collection('users').getOne(userId)
-      if (current.email !== trimmedEmail) {
-        payload.email = trimmedEmail
-        payload.emailConfirm = trimmedEmail
-      }
+      currentEmail = current.email || ''
     } catch {
+      /* ignore — fall through to send the email */
+    }
+    if (currentEmail !== trimmedEmail) {
       payload.email = trimmedEmail
       payload.emailConfirm = trimmedEmail
     }
