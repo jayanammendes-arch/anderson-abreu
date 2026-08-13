@@ -241,6 +241,12 @@ export interface PlatformSettings {
   show_logo?: boolean
   created?: string
   updated?: string
+  mentorship_title?: string
+  mentorship_subtitle?: string
+  mentorship_description?: string
+  mentorship_benefits?: string | string[]
+  mentorship_button_text?: string
+  mentorship_whatsapp_number?: string
 }
 
 export interface AboutGrandName {

@@ -106,6 +106,12 @@ interface FormState {
   home_column2_items: string
   home_section_footer: string
   show_logo: boolean
+  mentorship_title: string
+  mentorship_subtitle: string
+  mentorship_description: string
+  mentorship_benefits: string
+  mentorship_button_text: string
+  mentorship_whatsapp_number: string
 }
 
 const emptyForm: FormState = {
@@ -194,6 +200,12 @@ const emptyForm: FormState = {
   home_column2_items: '[]',
   home_section_footer: '',
   show_logo: true,
+  mentorship_title: '',
+  mentorship_subtitle: '',
+  mentorship_description: '',
+  mentorship_benefits: '[]',
+  mentorship_button_text: '',
+  mentorship_whatsapp_number: '',
 }
 
 function FieldLabel({ label, description }: { label: string; description?: string }) {
@@ -432,6 +444,15 @@ export default function AdminPageConfig() {
                 : JSON.stringify(data.home_column2_items || []),
             home_section_footer: data.home_section_footer || '',
             show_logo: data.show_logo !== false,
+            mentorship_title: data.mentorship_title || '',
+            mentorship_subtitle: data.mentorship_subtitle || '',
+            mentorship_description: data.mentorship_description || '',
+            mentorship_benefits:
+              typeof data.mentorship_benefits === 'string'
+                ? data.mentorship_benefits
+                : JSON.stringify(data.mentorship_benefits || []),
+            mentorship_button_text: data.mentorship_button_text || '',
+            mentorship_whatsapp_number: data.mentorship_whatsapp_number || '',
           })
         }
       } catch {
@@ -519,11 +540,11 @@ export default function AdminPageConfig() {
     <form onSubmit={handleSave} className="space-y-6 animate-fade-in max-w-4xl">
       <h1 className="text-2xl font-bold">Configuração de Páginas Principais</h1>
       <Tabs defaultValue="geral">
-        <TabsList className="grid w-full grid-cols-2 max-w-md">
+        <TabsList className="grid w-full grid-cols-3 max-w-md">
           <TabsTrigger value="geral">Geral</TabsTrigger>
+          <TabsTrigger value="mentoria">Mentoria</TabsTrigger>
           <TabsTrigger value="aluno">Aluno</TabsTrigger>
         </TabsList>
-
         <TabsContent value="geral">
           <Tabs defaultValue="plataforma">
             <TabsList className="grid w-full grid-cols-2 md:grid-cols-9">
@@ -1073,6 +1094,78 @@ export default function AdminPageConfig() {
               </Card>
             </TabsContent>
           </Tabs>
+        </TabsContent>
+
+        <TabsContent value="mentoria">
+          <Card className="bg-card/50 border-border/50">
+            <CardContent className="space-y-4 pt-6">
+              <div className="space-y-2">
+                <h3 className="text-lg font-semibold">Página de Mentoria</h3>
+                <p className="text-sm text-muted-foreground">
+                  Configure o conteúdo da página pública de mentoria e o número de WhatsApp dedicado
+                  para contato sobre o programa de mentoria.
+                </p>
+              </div>
+              <LabeledInput
+                label="Título da Página"
+                description="Título principal exibido no topo da página de mentoria"
+                value={form.mentorship_title}
+                onChange={(v) => set('mentorship_title', v)}
+                placeholder="Ex: Mentoria de Alta Performance"
+              />
+              <LabeledInput
+                label="Subtítulo"
+                description="Texto de destaque exibido abaixo do título"
+                value={form.mentorship_subtitle}
+                onChange={(v) => set('mentorship_subtitle', v)}
+                placeholder="Ex: Transforme sua vida e alcance resultados extraordinários"
+              />
+              <div className="space-y-2">
+                <FieldLabel
+                  label="Descrição da Mentoria"
+                  description="Texto descritivo sobre o programa de mentoria (formato rich text)"
+                />
+                <RichTextEditor
+                  value={form.mentorship_description}
+                  onChange={(html) => set('mentorship_description', html)}
+                />
+              </div>
+              <LabeledTextarea
+                label="Benefícios / Diferenciais"
+                description='Um item por linha. Cada linha será exibida com um checkmark. Formato JSON também aceito: ["Item 1", "Item 2"]'
+                value={
+                  form.mentorship_benefits.startsWith('[')
+                    ? (() => {
+                        try {
+                          const arr = JSON.parse(form.mentorship_benefits)
+                          return Array.isArray(arr) ? arr.join('\n') : ''
+                        } catch {
+                          return ''
+                        }
+                      })()
+                    : form.mentorship_benefits
+                }
+                onChange={(v) => {
+                  const arr = v.split('\n').filter((line) => line.trim())
+                  set('mentorship_benefits', JSON.stringify(arr))
+                }}
+              />
+              <LabeledInput
+                label="Texto do Botão de WhatsApp"
+                description="Texto exibido no botão de call-to-action para WhatsApp"
+                value={form.mentorship_button_text}
+                onChange={(v) => set('mentorship_button_text', v)}
+                placeholder="Ex: Falar sobre a Mentoria"
+              />
+              <LabeledInput
+                label="WhatsApp da Mentoria"
+                description="Número de WhatsApp dedicado para contato sobre mentoria (independente do WhatsApp geral). Formato: 5511999999999"
+                value={form.mentorship_whatsapp_number}
+                onChange={(v) => set('mentorship_whatsapp_number', v)}
+                placeholder="Ex: 5511999999999"
+              />
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="aluno">

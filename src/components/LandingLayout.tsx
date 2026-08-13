@@ -22,6 +22,7 @@ const navLinks = [
   { name: 'Hipnoterapia', href: '/agendar', type: 'route' as const },
   { name: 'Depoimentos', href: '/#depoimentos', type: 'scroll' as const },
   { name: 'Blog', href: '/blog', type: 'route' as const },
+  { name: 'Mentoria', href: '/mentoria', type: 'route' as const },
   { name: 'Cursos', href: '/cursos', type: 'route' as const },
 ]
 

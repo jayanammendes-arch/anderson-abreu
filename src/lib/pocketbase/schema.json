@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-13T14:59:57.656Z",
+  "generatedAt": "2026-08-13T15:11:12.856Z",
   "collections": [
     {
       "name": "users",
@@ -1240,6 +1240,42 @@
         {
           "name": "blue_band_image",
           "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "mentorship_title",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "mentorship_subtitle",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "mentorship_description",
+          "type": "editor",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "mentorship_benefits",
+          "type": "json",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "mentorship_button_text",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "mentorship_whatsapp_number",
+          "type": "text",
           "required": false,
           "system": false
         }

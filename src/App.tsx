@@ -15,6 +15,7 @@ import TreatmentDetail from '@/pages/TreatmentDetail'
 import Blog from '@/pages/Blog'
 import BlogDetail from '@/pages/BlogDetail'
 import Agendar from '@/pages/Agendar'
+import Mentoria from '@/pages/Mentoria'
 import { AdminLayout } from '@/components/AdminLayout'
 import AdminCourses from '@/pages/admin/AdminCourses'
 import AdminCourseForm from '@/pages/admin/AdminCourseForm'
@@ -76,6 +77,7 @@ const App = () => (
             <Route path="/blog/:slug" element={<BlogDetail />} />
             <Route path="/agendar" element={<Agendar />} />
             <Route path="/hipnoterapia" element={<Agendar />} />
+            <Route path="/mentoria" element={<Mentoria />} />
             <Route path="/cursos" element={<CursosPage />} />
             <Route path="/cursos/:courseId" element={<CourseDetailsPage />} />
             <Route path="/courses/:courseId" element={<CourseDetailsPage />} />
