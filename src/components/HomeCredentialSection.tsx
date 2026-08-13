@@ -59,7 +59,9 @@ export function HomeCredentialSection({ settings }: HomeCredentialSectionProps) 
               asChild
               size="lg"
               className="rounded-full px-8 bg-[#22C55E] hover:bg-[#20a854] text-white border-none"
-            ></Button>
+            >
+              <Link to="/sobre">{ctaText}</Link>
+            </Button>
           </div>
 
           <div className="order-1 md:order-2 relative">

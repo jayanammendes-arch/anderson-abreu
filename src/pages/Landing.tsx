@@ -44,7 +44,6 @@ function ParallaxCTASection({ settings }: { settings: PlatformSettings }) {
             className="mt-8 bg-[#D4AF37] hover:bg-[#C5A030] text-black rounded-full px-10 py-6 text-lg font-medium shadow-lg transition-all hover:scale-105"
             asChild
           >
-            {' '}
             {settings.parallax_button_link && settings.parallax_button_link.startsWith('/') ? (
               <Link to={settings.parallax_button_link}>{settings.parallax_button_text}</Link>
             ) : settings.parallax_button_link ? (
