@@ -131,19 +131,39 @@ export default function Login() {
   }
 
   const inputClass =
-    'border-foreground/15 bg-foreground/5 text-foreground placeholder:text-muted-foreground/40 h-11 rounded-xl focus:border-blue-400 focus:ring-1 focus:ring-blue-400'
+    'border-foreground/15 bg-foreground/5 text-foreground placeholder:text-muted-foreground/40 h-11 rounded-xl focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37]'
   const goldButtonClass =
     'w-full bg-[#D4AF37] hover:bg-[#C5A030] text-black shadow-[0_0_15px_rgba(212,175,55,0.4)] border border-[#D4AF37]/30 font-semibold h-11 rounded-xl transition-all duration-200 active:scale-[0.99]'
 
   return (
-    <div className="relative min-h-screen w-full flex items-center justify-center p-4 sm:p-6 lg:p-12 overflow-x-hidden text-foreground login-gradient-bg">
+    <div
+      className="relative min-h-screen w-full flex items-center justify-center p-4 sm:p-6 lg:p-12 overflow-x-hidden text-foreground login-gradient-bg"
+      style={
+        loginSettings?.login_gradient && loginSettings.login_gradient.trim() !== ''
+          ? { background: loginSettings.login_gradient }
+          : undefined
+      }
+    >
       <div className="relative z-10 w-full max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-        <div className="w-full max-w-md mx-auto lg:max-w-none lg:col-span-6 bg-black/40 backdrop-blur-xl border border-foreground/10 rounded-2xl p-6 sm:p-8 lg:p-10 shadow-2xl">
+        <div className="w-full max-w-md mx-auto lg:max-w-none lg:col-span-6 bg-black/50 backdrop-blur-xl border border-white/10 rounded-2xl p-6 sm:p-8 lg:p-10 shadow-2xl">
           <Link
             to="/"
             className="mb-8 flex items-center gap-3 transition-opacity hover:opacity-80 group"
           >
-            <div></div>
+            {loginSettings && shouldShowLogo(loginSettings) && getLogoUrl(loginSettings) ? (
+              <img
+                src={getLogoUrl(loginSettings)!}
+                alt={loginSettings.company_name || 'Anderson Abreu'}
+                className="h-10 w-auto object-contain"
+              />
+            ) : (
+              <div className="flex items-center gap-2.5">
+                <Brain className="h-7 w-7 text-[#D4AF37]" />
+                <span className="font-bold text-lg text-foreground tracking-tight">
+                  {loginSettings?.company_name || 'Anderson Abreu'}
+                </span>
+              </div>
+            )}
           </Link>
 
           {mode === 'recovery' && recoverySent ? (
@@ -382,7 +402,7 @@ export default function Login() {
                     <button
                       type="button"
                       onClick={() => switchMode('recovery')}
-                      className="text-sm text-blue-300 hover:text-foreground transition-colors"
+                      className="text-sm text-[#D4AF37]/90 hover:text-[#D4AF37] transition-colors font-medium"
                     >
                       Esqueci minha senha
                     </button>
@@ -422,7 +442,7 @@ export default function Login() {
                 {mode === 'login' ? 'Não tem conta? ' : 'Já tem conta? '}
                 <button
                   onClick={() => switchMode(mode === 'login' ? 'signup' : 'login')}
-                  className="font-medium text-blue-300 hover:text-foreground transition-colors underline-offset-4 hover:underline"
+                  className="font-medium text-[#D4AF37] hover:text-[#C5A030] transition-colors underline-offset-4 hover:underline"
                 >
                   {mode === 'login' ? 'Criar conta' : 'Entrar'}
                 </button>
@@ -443,7 +463,7 @@ export default function Login() {
                 className="h-16 w-16 object-contain"
               />
             ) : (
-              <Brain className="h-12 w-12 text-blue-300" />
+              <Brain className="h-12 w-12 text-[#D4AF37]" />
             )}
           </Link>
 
@@ -451,7 +471,7 @@ export default function Login() {
             <h2 className="text-3xl font-extrabold text-foreground tracking-tight">
               {loginSettings?.company_name || 'Anderson Abreu'}
             </h2>
-            <p className="text-base text-blue-100/70 leading-relaxed">
+            <p className="text-base text-muted-foreground leading-relaxed">
               {loginSettings?.login_text ||
                 'Hipnose, inteligência emocional e mentoria de alta performance'}
             </p>

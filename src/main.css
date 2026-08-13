@@ -283,16 +283,8 @@
   }
 
   .login-gradient-bg {
-    background: linear-gradient(
-      to right,
-      #050505 0%,
-      #080c14 20%,
-      #0a1428 45%,
-      #0d1a35 50%,
-      #0a1428 55%,
-      #080c14 80%,
-      #050505 100%
-    );
+    background: linear-gradient(180deg, #050505 0%, #080c14 30%, #0a1428 70%, #0f2a5e 100%);
+    background-attachment: fixed;
   }
 
   .royal-cta-gradient {
