@@ -203,8 +203,70 @@ export function getAboutCtaBackgroundImageUrl(settings: {
   return null
 }
 
+/**
+ * Normalizes a color into the bare HSL component format Tailwind expects
+ * for `--primary` (e.g. "46 65% 52%"), which is consumed as `hsl(var(--primary))`.
+ * Writing a raw hex like "#D4AF37" directly into `--primary` produces an invalid
+ * `hsl(#D4AF37)` and silently breaks every `bg-primary`/`text-primary` utility.
+ */
+function normalizeColorToHsl(color: string): string {
+  if (!color) return color
+  const trimmed = color.trim()
+
+  // Already in Tailwind HSL component format (e.g. "46 65% 52%")
+  if (/^\d+\s+\d+%\s+\d+%$/.test(trimmed)) return trimmed
+
+  // hex (#RGB or #RRGGBB)
+  const hexMatch = trimmed.match(/^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/)
+  if (hexMatch) {
+    let hex = hexMatch[1]
+    if (hex.length === 3) {
+      hex = hex
+        .split('')
+        .map((c) => c + c)
+        .join('')
+    }
+    const r = parseInt(hex.slice(0, 2), 16) / 255
+    const g = parseInt(hex.slice(2, 4), 16) / 255
+    const b = parseInt(hex.slice(4, 6), 16) / 255
+    const max = Math.max(r, g, b)
+    const min = Math.min(r, g, b)
+    const l = (max + min) / 2
+    const d = max - min
+    let h = 0
+    let s = 0
+    if (d !== 0) {
+      s = d / (1 - Math.abs(2 * l - 1))
+      switch (max) {
+        case r:
+          h = ((g - b) / d) % 6
+          break
+        case g:
+          h = (b - r) / d + 2
+          break
+        default:
+          h = (r - g) / d + 4
+          break
+      }
+      h *= 60
+      if (h < 0) h += 360
+    }
+    return `${Math.round(h)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`
+  }
+
+  // hsl(h, s%, l%) or hsl(h s% l%) -> bare components
+  const hslMatch = trimmed.match(/^hsla?\(\s*([\d.]+)\s*[,\s]\s*([\d.]+)%\s*[,\s]\s*([\d.]+)%/)
+  if (hslMatch) {
+    return `${Math.round(parseFloat(hslMatch[1]))} ${Math.round(parseFloat(hslMatch[2]))}% ${Math.round(
+      parseFloat(hslMatch[3]),
+    )}%`
+  }
+
+  return trimmed
+}
+
 export function applyBrandColor(color: string): void {
-  document.documentElement.style.setProperty('--primary', color)
+  document.documentElement.style.setProperty('--primary', normalizeColorToHsl(color))
 }
 
 export function shouldShowLogo(

@@ -297,14 +297,14 @@
   }
 
   .royal-btn-gradient {
-    background: linear-gradient(135deg, #0a0d14 0%, #8b7420 45%, #d4af37 100%);
+    background: linear-gradient(135deg, #d4af37 0%, #d4af37 100%);
     transition:
       background 0.3s ease,
       transform 0.2s ease;
   }
 
   .royal-btn-gradient:hover {
-    background: linear-gradient(135deg, #0d1117 0%, #a88c2e 45%, #e6c547 100%);
+    background: linear-gradient(135deg, #c5a030 0%, #c5a030 100%);
   }
 
   .brand-gradient-text {
