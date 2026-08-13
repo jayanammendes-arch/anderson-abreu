@@ -487,7 +487,10 @@ export default function AdminAboutContent() {
               </Button>
               <div className="grid md:grid-cols-3 gap-4">
                 {media.map((item) => (
-                  <div key={item.id} className="relative group bg-white rounded-lg border p-4">
+                  <div
+                    key={item.id}
+                    className="relative group bg-card rounded-lg border border-border/50 p-4"
+                  >
                     <p className="font-medium">{item.title}</p>
                     {item.video_url && (
                       <p className="text-xs text-primary mt-1 truncate">{item.video_url}</p>
@@ -530,8 +533,9 @@ export default function AdminAboutContent() {
                 {recs.map((item) => (
                   <div
                     key={item.id}
-                    className="relative group flex items-center gap-4 bg-white rounded-lg border p-3"
+                    className="relative group flex items-center gap-4 bg-card rounded-lg border border-border/50 p-3"
                   >
+                    {' '}
                     <p className="text-sm flex-1 truncate">{item.video_url}</p>
                     {item.description && (
                       <p className="text-sm text-muted-foreground">{item.description}</p>
@@ -572,7 +576,7 @@ export default function AdminAboutContent() {
                   return (
                     <div
                       key={item.id}
-                      className="relative group flex items-center gap-3 bg-white rounded-lg border p-3"
+                      className="relative group flex items-center gap-3 bg-card rounded-lg border border-border/50 p-3"
                     >
                       <span className="text-xs font-mono w-6 text-center text-muted-foreground">
                         {index + 1}

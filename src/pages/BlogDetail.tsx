@@ -68,31 +68,31 @@ export default function BlogDetail() {
 
   return (
     <LandingLayout settings={settings}>
-      <article className="pt-32 pb-20 bg-white min-h-screen">
+      <article className="pt-32 pb-20 bg-card min-h-screen">
         <div className="max-w-3xl mx-auto px-6">
           <Button
             variant="ghost"
             size="sm"
-            className="mb-8 text-slate-500 hover:text-slate-900"
+            className="mb-8 text-muted-foreground hover:text-foreground"
             onClick={() => navigate('/blog')}
           >
             <ArrowLeft className="mr-2 h-4 w-4" /> Voltar para o blog
           </Button>
 
           {dateStr && (
-            <div className="flex items-center gap-2 text-sm text-slate-400 mb-4">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
               <Calendar className="h-4 w-4" />
               {dateStr}
               {post.author && <span>• {post.author}</span>}
             </div>
           )}
 
-          <h1 className="text-3xl md:text-5xl font-bold text-slate-900 leading-tight mb-6">
+          <h1 className="text-3xl md:text-5xl font-bold text-foreground leading-tight mb-6">
             {post.title}
           </h1>
 
           {post.excerpt && (
-            <p className="text-xl text-slate-500 leading-relaxed mb-8">{post.excerpt}</p>
+            <p className="text-xl text-muted-foreground leading-relaxed mb-8">{post.excerpt}</p>
           )}
 
           {imageUrl && (
@@ -102,9 +102,9 @@ export default function BlogDetail() {
           )}
 
           <div
-            className="prose prose-lg max-w-none text-slate-700
-              [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-slate-900 [&_h2]:mt-8 [&_h2]:mb-4
-              [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:text-slate-800 [&_h3]:mt-6 [&_h3]:mb-3
+            className="prose prose-lg prose-invert max-w-none text-muted-foreground
+              [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-foreground [&_h2]:mt-8 [&_h2]:mb-4
+              [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:text-foreground [&_h3]:mt-6 [&_h3]:mb-3
               [&_p]:mb-4 [&_p]:leading-relaxed
               [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:mb-4
               [&_li]:mb-2"

@@ -53,7 +53,7 @@ export function GrandNamesCarousel({ items }: { items: AboutGrandName[] }) {
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                     </div>
-                    <p className="font-semibold text-lg md:text-xl text-slate-900">{item.name}</p>
+                    <p className="font-semibold text-lg md:text-xl text-foreground">{item.name}</p>
                   </div>
                 ))}
               </div>
@@ -71,8 +71,8 @@ export function GrandNamesCarousel({ items }: { items: AboutGrandName[] }) {
               className={cn(
                 'rounded-full transition-all duration-300',
                 index === selectedIndex
-                  ? 'w-8 h-2.5 bg-slate-900'
-                  : 'w-2.5 h-2.5 bg-slate-300 hover:bg-slate-400',
+                  ? 'w-8 h-2.5 bg-primary'
+                  : 'w-2.5 h-2.5 bg-muted hover:bg-muted-foreground/50',
               )}
               aria-label={`Ir para slide ${index + 1}`}
             />

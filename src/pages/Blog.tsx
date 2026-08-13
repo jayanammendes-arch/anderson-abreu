@@ -34,13 +34,13 @@ export default function Blog() {
 
   return (
     <LandingLayout settings={settings}>
-      <section className="pt-32 pb-20 bg-white min-h-screen">
+      <section className="pt-32 pb-20 bg-card min-h-screen">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
-            <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
+            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
               {settings?.blog_section_title || 'Blog'}
             </h1>
-            <p className="text-lg text-slate-500 max-w-2xl mx-auto">
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               {settings?.blog_section_intro ||
                 'Reflexões, técnicas e histórias sobre hipnose, inteligência emocional e desenvolvimento humano.'}
             </p>
@@ -52,7 +52,7 @@ export default function Blog() {
               ))}
             </div>
           ) : (
-            <p className="text-center text-slate-400 py-20">Nenhum post publicado ainda.</p>
+            <p className="text-center text-muted-foreground py-20">Nenhum post publicado ainda.</p>
           )}
         </div>
       </section>

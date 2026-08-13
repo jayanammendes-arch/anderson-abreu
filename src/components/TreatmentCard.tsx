@@ -8,15 +8,15 @@ export function TreatmentCard({ category }: { category: TreatmentCategory }) {
   return (
     <Link
       to={`/tratamentos/${category.slug}`}
-      className="group flex flex-col items-center text-center p-6 bg-white rounded-2xl border border-slate-100 hover:border-blue-200 hover:shadow-lg transition-all duration-300"
+      className="group flex flex-col items-center text-center p-6 bg-card rounded-2xl border border-border/50 hover:border-primary/30 hover:shadow-lg transition-all duration-300"
     >
-      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-50 group-hover:bg-blue-100 transition-colors duration-300 mb-4">
-        <Icon className="h-7 w-7 text-blue-500" strokeWidth={2} />
+      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors duration-300 mb-4">
+        <Icon className="h-7 w-7 text-primary" strokeWidth={2} />
       </div>
-      <h3 className="text-base font-semibold text-slate-900 group-hover:text-blue-600 transition-colors mb-2 leading-snug">
+      <h3 className="text-base font-semibold text-foreground group-hover:text-primary transition-colors mb-2 leading-snug">
         {category.name}
       </h3>
-      <p className="text-sm text-slate-500 line-clamp-3 leading-relaxed">
+      <p className="text-sm text-muted-foreground line-clamp-3 leading-relaxed">
         {category.short_description}
       </p>
     </Link>

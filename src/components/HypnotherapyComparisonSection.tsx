@@ -57,14 +57,14 @@ export function HypnotherapyComparisonSection({ settings }: { settings: Platform
     '* As abordagens convencionais são igualmente importantes e complementares. O objetivo não é substituir, mas apresentar uma alternativa natural eficaz.'
 
   return (
-    <section className="py-20 md:py-28 bg-gradient-to-b from-white to-slate-50 overflow-visible">
+    <section className="py-20 md:py-28 bg-gradient-to-b from-background to-card overflow-visible">
       <div className="max-w-7xl mx-auto px-6 overflow-visible">
         <div className="text-center max-w-3xl mx-auto mb-12 md:mb-16 overflow-visible py-1">
-          <div className="inline-block w-12 h-1 bg-gradient-to-r from-[#00A3C4] to-[#026aa2] rounded-full mb-6" />
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-normal mb-4 leading-snug py-1">
+          <div className="inline-block w-12 h-1 bg-gradient-to-r from-primary to-primary/60 rounded-full mb-6" />
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-foreground tracking-normal mb-4 leading-snug py-1">
             {title}
           </h2>
-          <p className="text-slate-500 text-base md:text-lg leading-relaxed">{subtitle}</p>
+          <p className="text-muted-foreground text-base md:text-lg leading-relaxed">{subtitle}</p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6 lg:gap-8 items-stretch overflow-visible">
@@ -94,10 +94,10 @@ export function HypnotherapyComparisonSection({ settings }: { settings: Platform
             </div>
           </div>
 
-          <div className="relative bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 lg:p-10 shadow-lg overflow-hidden">
-            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-slate-300 via-slate-400 to-slate-300" />
+          <div className="relative bg-card border border-border/50 rounded-3xl p-6 sm:p-8 lg:p-10 shadow-lg overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-muted-foreground/30 via-muted-foreground/50 to-muted-foreground/30" />
             <div className="relative">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 text-slate-700 text-sm font-semibold mb-8">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-muted/50 text-muted-foreground text-sm font-semibold mb-8">
                 Abordagens Tradicionais
               </div>
               <ul className="space-y-5">
@@ -105,10 +105,10 @@ export function HypnotherapyComparisonSection({ settings }: { settings: Platform
                   const Icon = getTreatmentIcon(item.icon)
                   return (
                     <li key={idx} className="flex items-start gap-4">
-                      <div className="flex-shrink-0 w-9 h-9 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center mt-0.5">
-                        <Icon className="w-4 h-4 text-slate-400" strokeWidth={2.5} />
+                      <div className="flex-shrink-0 w-9 h-9 rounded-xl bg-muted/50 border border-border flex items-center justify-center mt-0.5">
+                        <Icon className="w-4 h-4 text-muted-foreground" strokeWidth={2.5} />
                       </div>
-                      <span className="text-slate-600 text-base md:text-[17px] font-normal leading-snug pt-1.5">
+                      <span className="text-muted-foreground text-base md:text-[17px] font-normal leading-snug pt-1.5">
                         {item.text}
                       </span>
                     </li>
@@ -120,8 +120,8 @@ export function HypnotherapyComparisonSection({ settings }: { settings: Platform
         </div>
 
         <div className="mt-10 flex justify-center">
-          <div className="max-w-3xl bg-[#00A3C4]/5 border-l-4 border-[#00A3C4] rounded-r-xl px-6 py-4">
-            <p className="text-xs md:text-sm text-slate-500 italic leading-relaxed text-center">
+          <div className="max-w-3xl bg-primary/5 border-l-4 border-primary rounded-r-xl px-6 py-4">
+            <p className="text-xs md:text-sm text-muted-foreground italic leading-relaxed text-center">
               {footer}
             </p>
           </div>

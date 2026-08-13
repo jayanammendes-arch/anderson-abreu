@@ -136,9 +136,9 @@ export default function Sobre() {
 
       {settings?.about_journey_visible !== false && (
         <ScrollFadeIn>
-          <section className="py-20 bg-white">
+          <section className="py-20 bg-card">
             <div className="max-w-7xl mx-auto px-6">
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-12 text-center">
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-12 text-center">
                 {settings?.about_journey_title || 'Jornada de Sucesso'}
               </h2>
               <div className="grid md:grid-cols-2 gap-12 items-start">
@@ -155,11 +155,11 @@ export default function Sobre() {
                 <div>
                   {settings?.about_full_bio ? (
                     <div
-                      className="prose prose-lg max-w-none text-slate-600"
+                      className="prose prose-lg prose-invert max-w-none text-muted-foreground"
                       dangerouslySetInnerHTML={{ __html: settings.about_full_bio }}
                     />
                   ) : (
-                    <p className="text-lg text-slate-600 leading-relaxed">
+                    <p className="text-lg text-muted-foreground leading-relaxed">
                       Especialista em hipnose clínica e desenvolvimento humano, com mais de uma
                       década transformando vidas.
                     </p>
@@ -173,9 +173,9 @@ export default function Sobre() {
 
       {settings?.about_formations_visible !== false && (
         <ScrollFadeIn>
-          <section className="py-20 bg-slate-50">
+          <section className="py-20 bg-card/50">
             <div className="max-w-7xl mx-auto px-6">
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-12 text-center">
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-12 text-center">
                 {settings?.about_formations_title || 'Formações'}
               </h2>
               <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -183,10 +183,10 @@ export default function Sobre() {
                   <ul className="space-y-4">
                     {formations.map((f, i) => (
                       <li key={i} className="flex items-start gap-3">
-                        <span className="mt-0.5 flex-shrink-0 flex h-6 w-6 items-center justify-center rounded-full bg-green-50">
-                          <Check className="h-4 w-4 text-green-600" strokeWidth={3} />
+                        <span className="mt-0.5 flex-shrink-0 flex h-6 w-6 items-center justify-center rounded-full bg-primary/10">
+                          <Check className="h-4 w-4 text-primary" strokeWidth={3} />
                         </span>
-                        <span className="text-lg text-slate-700">{f}</span>
+                        <span className="text-lg text-muted-foreground">{f}</span>
                       </li>
                     ))}
                   </ul>
@@ -214,9 +214,9 @@ export default function Sobre() {
 
       {settings?.about_grand_names_visible !== false && grandNames.length > 0 && (
         <ScrollFadeIn>
-          <section className="py-20 bg-white">
+          <section className="py-20 bg-card">
             <div className="max-w-7xl mx-auto px-6">
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-12 text-center">
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-12 text-center">
                 {settings?.about_grand_names_title?.trim() || 'Com Grandes Nomes da Hipnoterapia'}
               </h2>
               <GrandNamesCarousel items={grandNames} />
@@ -227,9 +227,9 @@ export default function Sobre() {
 
       {settings?.about_media_visible !== false && mediaMentions.length > 0 && (
         <ScrollFadeIn>
-          <section className="py-20 bg-slate-50">
+          <section className="py-20 bg-card/50">
             <div className="max-w-7xl mx-auto px-6">
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-12 text-center">
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-12 text-center">
                 {settings?.about_media_title || 'Na Mídia'}
               </h2>
               <div className="grid md:grid-cols-3 gap-6">
@@ -252,9 +252,9 @@ export default function Sobre() {
 
       {settings?.about_recommendations_visible !== false && recommendations.length > 0 && (
         <ScrollFadeIn>
-          <section className="py-20 bg-white">
+          <section className="py-20 bg-card">
             <div className="max-w-7xl mx-auto px-6">
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-12 text-center">
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-12 text-center">
                 {settings?.about_recommendations_title || 'Quem Recomenda'}
               </h2>
               <div className="grid md:grid-cols-2 gap-8">
@@ -262,7 +262,7 @@ export default function Sobre() {
                   <div key={item.id} className="space-y-3">
                     <VideoEmbed url={item.video_url} />
                     {item.description && (
-                      <p className="text-sm text-slate-600">{item.description}</p>
+                      <p className="text-sm text-muted-foreground">{item.description}</p>
                     )}
                   </div>
                 ))}
@@ -274,9 +274,9 @@ export default function Sobre() {
 
       {settings?.about_environment_visible !== false && envImages.length > 0 && (
         <ScrollFadeIn>
-          <section className="py-20 bg-slate-50">
+          <section className="py-20 bg-card/50">
             <div className="max-w-7xl mx-auto px-6">
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-12 text-center">
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-12 text-center">
                 {(() => {
                   const title = settings?.about_environment_title || 'Nosso Ambiente'
                   const parts = title.split(/(Ambiente)/i)
@@ -313,7 +313,7 @@ export default function Sobre() {
                         className="w-full h-72 object-cover rounded-2xl"
                       />
                       {item.caption && (
-                        <p className="text-sm text-center text-slate-500 mt-2 px-2 pb-1">
+                        <p className="text-sm text-center text-muted-foreground mt-2 px-2 pb-1">
                           {item.caption}
                         </p>
                       )}

@@ -194,8 +194,8 @@ export default function AdminTreatments() {
             return (
               <Card className="flex items-center gap-2 p-4 bg-card/50 border-border/50">
                 {dragHandle}
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-sky-100">
-                  <Icon className="h-5 w-5 text-sky-600" strokeWidth={1.75} />
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
+                  <Icon className="h-5 w-5 text-primary" strokeWidth={1.75} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-semibold truncate">{treatment.name}</h3>

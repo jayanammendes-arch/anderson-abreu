@@ -23,8 +23,7 @@ import { getCropPositionCss } from '@/lib/image-position'
 import { cn } from '@/lib/utils'
 
 const proseClass =
-  'prose prose-lg max-w-none text-slate-600 [&_h1]:text-slate-900 [&_h1]:font-bold [&_h1]:text-3xl [&_h1]:mb-4 [&_h2]:text-slate-900 [&_h2]:font-bold [&_h3]:text-slate-800 [&_h3]:font-semibold [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mb-2 [&_a]:text-blue-600 [&_span]:!bg-transparent'
-
+  'prose prose-lg prose-invert max-w-none text-muted-foreground [&_h1]:text-foreground [&_h1]:font-bold [&_h1]:text-3xl [&_h1]:mb-4 [&_h2]:text-foreground [&_h2]:font-bold [&_h3]:text-foreground [&_h3]:font-semibold [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mb-2 [&_a]:text-primary [&_span]:!bg-transparent'
 function SectionTitle({ title, defaultTitle }: { title?: string; defaultTitle: string }) {
   const content = title?.trim() || defaultTitle
   if (content.includes('<')) {
@@ -54,7 +53,7 @@ function FramedImage({
   return (
     <div
       className={cn(
-        'overflow-hidden rounded-2xl shadow-xl border-blue-600 max-w-full',
+        'overflow-hidden rounded-2xl shadow-xl border-primary max-w-full',
         position === 'right' ? 'border-l-4' : 'border-r-4',
       )}
     >
@@ -159,7 +158,7 @@ export default function TreatmentDetail() {
               <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-black/40" />
             </>
           ) : (
-            <div className="absolute inset-0 bg-gradient-to-br from-slate-900 to-slate-700" />
+            <div className="absolute inset-0 bg-gradient-to-br from-background to-card" />
           )}
           <div className="relative z-10 w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 py-20">
             <div className="max-w-2xl">
@@ -186,7 +185,7 @@ export default function TreatmentDetail() {
 
       {hasDetailedContent && (
         <ScrollFadeIn>
-          <section className="py-24 bg-white overflow-visible">
+          <section className="py-24 bg-card overflow-visible">
             <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 overflow-visible">
               <div
                 className={proseClass}
@@ -199,7 +198,7 @@ export default function TreatmentDetail() {
 
       {hasComoFunciona && (
         <ScrollFadeIn>
-          <section className="py-24 bg-white overflow-visible">
+          <section className="py-24 bg-card overflow-visible">
             <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 grid md:grid-cols-2 gap-8 lg:gap-12 items-center overflow-visible">
               <div className={cn(comoFuncionaImgLeft && 'md:order-2')}>
                 <SectionTitle title={category.como_funciona_title} defaultTitle="Como Funciona" />
@@ -275,7 +274,7 @@ export default function TreatmentDetail() {
 
       {hasResultados && (
         <ScrollFadeIn>
-          <section className="py-24 bg-slate-50 overflow-visible">
+          <section className="py-24 bg-card/50 overflow-visible">
             <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 grid md:grid-cols-2 gap-8 lg:gap-12 items-center overflow-visible">
               <div
                 className={cn(
@@ -308,7 +307,7 @@ export default function TreatmentDetail() {
 
       {hasSintomas && (
         <ScrollFadeIn>
-          <section className="py-24 bg-white overflow-visible">
+          <section className="py-24 bg-card overflow-visible">
             <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 grid md:grid-cols-2 gap-8 lg:gap-12 items-center overflow-visible">
               <div className={cn(sintomasImgLeft && 'md:order-2')}>
                 <SectionTitle title={category.sintomas_title} defaultTitle="Sintomas" />
@@ -333,7 +332,7 @@ export default function TreatmentDetail() {
 
       {hasCta && (
         <ScrollFadeIn>
-          <section className="py-24 bg-white overflow-visible">
+          <section className="py-24 bg-card overflow-visible">
             <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 text-center overflow-visible">
               <SectionTitle title={category.cta_title} defaultTitle="" />
               <div
@@ -357,9 +356,9 @@ export default function TreatmentDetail() {
 
       {otherCategories.length > 0 && (
         <ScrollFadeIn>
-          <section className="py-24 bg-slate-50 overflow-visible">
+          <section className="py-24 bg-card/50 overflow-visible">
             <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 overflow-visible">
-              <h2 className="text-3xl font-bold text-slate-900 mb-8 text-center">
+              <h2 className="text-3xl font-bold text-foreground mb-8 text-center">
                 Outros Tratamentos
               </h2>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -371,8 +370,8 @@ export default function TreatmentDetail() {
                       to={`/tratamentos/${cat.slug}`}
                       className="group flex flex-col items-center gap-2 p-4 bg-white rounded-xl border border-slate-100 hover:border-blue-200 hover:shadow-md transition-all"
                     >
-                      <CatIcon className="h-8 w-8 text-blue-500" strokeWidth={1.5} />
-                      <span className="text-sm font-medium text-slate-700 group-hover:text-blue-600 text-center">
+                      <CatIcon className="h-8 w-8 text-primary" strokeWidth={1.5} />
+                      <span className="text-sm font-medium text-muted-foreground group-hover:text-primary text-center">
                         {cat.name}
                       </span>
                     </Link>

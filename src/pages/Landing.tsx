@@ -106,7 +106,7 @@ export default function Landing() {
     <LandingLayout settings={settings}>
       {/* Hero */}
       <ScrollFadeIn>
-        <section className="relative min-h-screen flex items-center overflow-hidden pt-20 bg-slate-50">
+        <section className="relative min-h-screen flex items-center overflow-hidden pt-20 bg-background">
           {heroImageUrl && (
             <>
               <img
@@ -114,15 +114,15 @@ export default function Landing() {
                 alt=""
                 className="absolute inset-0 h-full w-full object-cover object-right md:object-center"
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-transparent md:w-3/4" />
-              <div className="absolute inset-0 bg-gradient-to-t from-white/95 via-white/40 to-transparent sm:hidden" />
+              <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/80 to-transparent md:w-3/4" />
+              <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/40 to-transparent sm:hidden" />
             </>
           )}
           <div className="relative z-10 w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 py-20">
             <div className="max-w-2xl">
               <h1
                 className={cn(
-                  'text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-4 leading-[1.1] text-slate-900 uppercase',
+                  'text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-4 leading-[1.1] text-foreground uppercase',
                 )}
               >
                 {settings?.hero_title || 'HIPNOSE CLÍNICA AVANÇADA'}
@@ -134,8 +134,8 @@ export default function Landing() {
                     key={i}
                     className={cn(
                       arr.length > 1 && i === 0
-                        ? 'text-xl md:text-3xl text-slate-800 mb-6 font-medium'
-                        : 'text-lg md:text-xl text-slate-600 mb-6 leading-relaxed',
+                        ? 'text-xl md:text-3xl text-foreground mb-6 font-medium'
+                        : 'text-lg md:text-xl text-muted-foreground mb-6 leading-relaxed',
                     )}
                   >
                     {line}
@@ -143,10 +143,10 @@ export default function Landing() {
                 ))
               ) : (
                 <>
-                  <p className="text-xl md:text-3xl text-slate-800 mb-6 font-medium">
+                  <p className="text-xl md:text-3xl text-foreground mb-6 font-medium">
                     Resultados em 2 Sessões*
                   </p>
-                  <p className="text-lg md:text-xl text-slate-600 mb-10 leading-relaxed">
+                  <p className="text-lg md:text-xl text-muted-foreground mb-10 leading-relaxed">
                     Ansiedade, depressão, traumas, fobias, compulsões e bloqueios tratados com
                     hipnose clínica focada na causa.
                   </p>
@@ -170,13 +170,13 @@ export default function Landing() {
       {/* Treatments */}
       {treatmentCategories.length > 0 && (
         <ScrollFadeIn>
-          <section id="tratamentos" className="py-24 bg-white">
+          <section id="tratamentos" className="py-24 bg-card">
             <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12">
               <div className="text-center mb-16">
-                <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
                   {settings?.treatments_section_title || 'O que podemos tratar com Hipnose'}
                 </h2>
-                <p className="text-slate-500 text-lg max-w-2xl mx-auto">
+                <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
                   {settings?.treatments_section_intro ||
                     'Tratamentos especializados para diversos quadros emocionais e comportamentais.'}
                 </p>
@@ -203,7 +203,7 @@ export default function Landing() {
 
       {/* Saiba mais button below specialist description */}
       <ScrollFadeIn>
-        <div className="pb-16 bg-white">
+        <div className="pb-16 bg-card">
           <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 flex justify-center">
             <Button
               size="lg"
@@ -247,14 +247,14 @@ export default function Landing() {
       {/* Blog */}
       {blogPosts.length > 0 && (
         <ScrollFadeIn>
-          <section className="py-24 bg-white">
+          <section className="py-24 bg-card">
             <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12">
               <div className="flex items-end justify-between mb-12">
                 <div>
-                  <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-3">
+                  <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
                     {settings?.blog_section_title || 'Blog'}
                   </h2>
-                  <p className="text-slate-500 text-lg max-w-xl">
+                  <p className="text-muted-foreground text-lg max-w-xl">
                     {settings?.blog_section_intro ||
                       'Reflexões e técnicas sobre hipnose e desenvolvimento humano.'}
                   </p>

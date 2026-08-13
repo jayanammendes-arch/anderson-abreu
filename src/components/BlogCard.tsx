@@ -16,9 +16,9 @@ export function BlogCard({ post }: { post: BlogPost }) {
   return (
     <Link
       to={`/blog/${post.slug}`}
-      className="group flex flex-col bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-lg hover:border-slate-300 transition-all duration-300"
+      className="group flex flex-col bg-card border border-border rounded-xl overflow-hidden hover:shadow-lg hover:border-primary/30 transition-all duration-300"
     >
-      <div className="aspect-[16/10] overflow-hidden bg-slate-100">
+      <div className="aspect-[16/10] overflow-hidden bg-muted">
         {imageUrl ? (
           <img
             src={imageUrl}
@@ -26,21 +26,21 @@ export function BlogCard({ post }: { post: BlogPost }) {
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
-          <div className="h-full w-full bg-gradient-to-br from-slate-100 to-slate-200" />
+          <div className="h-full w-full bg-gradient-to-br from-muted/50 to-muted" />
         )}
       </div>
       <div className="flex flex-col flex-1 p-5">
         {dateStr && (
-          <div className="flex items-center gap-1.5 text-xs text-slate-400 mb-2">
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-2">
             <Calendar className="h-3 w-3" />
             {dateStr}
           </div>
         )}
-        <h3 className="text-lg font-semibold text-slate-900 mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+        <h3 className="text-lg font-semibold text-foreground mb-2 line-clamp-2 group-hover:text-primary transition-colors">
           {post.title}
         </h3>
         {post.excerpt && (
-          <p className="text-sm text-slate-500 line-clamp-3 flex-1">{post.excerpt}</p>
+          <p className="text-sm text-muted-foreground line-clamp-3 flex-1">{post.excerpt}</p>
         )}
         <div className="flex items-center gap-1 text-sm font-medium text-primary mt-4">
           Ler mais

@@ -35,7 +35,7 @@ function VideoTestimonial({ testimonial }: { testimonial: Testimonial }) {
       <DialogTrigger asChild>
         <button
           onClick={() => embedUrl && setIsPlaying(true)}
-          className="relative aspect-video w-full overflow-hidden rounded-lg bg-slate-100 group"
+          className="relative aspect-video w-full overflow-hidden rounded-lg bg-muted group"
         >
           {thumbnailSrc ? (
             <img
@@ -44,8 +44,8 @@ function VideoTestimonial({ testimonial }: { testimonial: Testimonial }) {
               className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center bg-slate-200">
-              <Play className="h-10 w-10 text-slate-400" />
+            <div className="flex h-full w-full items-center justify-center bg-muted">
+              <Play className="h-10 w-10 text-muted-foreground" />
             </div>
           )}
           <div className="absolute inset-0 flex items-center justify-center bg-black/20 transition-colors group-hover:bg-black/40">
@@ -77,7 +77,7 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
   const courseName = testimonial.expand?.course?.title
 
   return (
-    <div className="flex flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:shadow-lg hover:border-slate-300">
+    <div className="flex flex-col rounded-2xl border border-border bg-card p-6 shadow-sm transition-all duration-300 hover:shadow-lg hover:border-primary/30">
       {testimonial.type === 'video' ? (
         <div className="mb-4">
           <VideoTestimonial testimonial={testimonial} />
@@ -87,12 +87,12 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
       )}
 
       {testimonial.type === 'text' && testimonial.content && (
-        <p className="text-slate-600 text-sm leading-relaxed mb-4 flex-1">
+        <p className="text-muted-foreground text-sm leading-relaxed mb-4 flex-1">
           "{testimonial.content}"
         </p>
       )}
 
-      <div className="flex items-center gap-3 mt-auto pt-4 border-t border-slate-100">
+      <div className="flex items-center gap-3 mt-auto pt-4 border-t border-border/50">
         {imageUrl ? (
           <img
             src={imageUrl}
@@ -105,10 +105,10 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
           </div>
         )}
         <div className="min-w-0">
-          <div className="font-semibold text-slate-900 text-sm truncate">
+          <div className="font-semibold text-foreground text-sm truncate">
             {testimonial.student_name}
           </div>
-          {courseName && <div className="text-xs text-slate-400 truncate">{courseName}</div>}
+          {courseName && <div className="text-xs text-muted-foreground truncate">{courseName}</div>}
         </div>
       </div>
     </div>
@@ -131,9 +131,9 @@ export function TestimonialsSection({ customTitle }: { customTitle?: string }) {
   const title = customTitle || 'Depoimentos'
 
   return (
-    <section className="py-16 px-4 sm:px-6 lg:px-8 bg-slate-50">
+    <section className="py-16 px-4 sm:px-6 lg:px-8 bg-card/50">
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-3xl font-bold text-center text-slate-900 mb-2">{title}</h2>
+        <h2 className="text-3xl font-bold text-center text-foreground mb-2">{title}</h2>
         <div className="w-20 h-1 bg-primary mx-auto mb-10 rounded-full" />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {testimonials.map((testimonial) => (

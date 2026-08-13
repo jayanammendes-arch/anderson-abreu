@@ -53,15 +53,15 @@ export default function CourseDetailsPage() {
 
   if (loading) {
     return (
-      <div className="flex h-96 items-center justify-center bg-white">
+      <div className="flex h-96 items-center justify-center bg-background">
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
       </div>
     )
   }
   if (!course) {
     return (
-      <div className="text-center py-20 bg-white min-h-screen">
-        <p className="text-gray-600 mb-4">Curso não encontrado.</p>
+      <div className="text-center py-20 bg-background min-h-screen">
+        <p className="text-muted-foreground mb-4">Curso não encontrado.</p>
         <Button asChild>
           <Link to="/">
             <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
@@ -101,8 +101,8 @@ export default function CourseDetailsPage() {
     }
     if (isHypnosis) {
       return (
-        <div className="flex items-center gap-3 text-gray-700 bg-gray-100 rounded-lg px-6 py-4">
-          <Lock className="h-6 w-6 shrink-0 text-purple-600" />
+        <div className="flex items-center gap-3 text-muted-foreground bg-muted/30 rounded-lg px-6 py-4">
+          <Lock className="h-6 w-6 shrink-0 text-primary" />
           <span className="font-medium">Acesso Exclusivo — Liberação mediante análise</span>
         </div>
       )
@@ -143,17 +143,17 @@ export default function CourseDetailsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <header className="bg-gradient-to-r from-primary to-black">
+    <div className="min-h-screen bg-background">
+      <header className="bg-gradient-to-r from-primary to-background">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/" className="text-white font-bold text-lg">
+          <Link to="/" className="text-foreground font-bold text-lg">
             Anderson Abreu
           </Link>
           <Button
             variant="ghost"
             size="sm"
             asChild
-            className="text-white hover:text-white hover:bg-white/10"
+            className="text-foreground hover:text-foreground hover:bg-white/10"
           >
             <Link to="/">
               <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
@@ -168,37 +168,39 @@ export default function CourseDetailsPage() {
           alt={course.title}
           className="absolute inset-0 h-full w-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-background/30" />
         <div className="relative h-full flex items-end pb-12 md:pb-16">
           <div className="container mx-auto px-4">
             <div className="flex items-center gap-2 mb-4 flex-wrap">
               {course.category && <Badge className="bg-accent text-white">{course.category}</Badge>}
               {isFree && <Badge className="bg-green-600 text-white">Gratuito</Badge>}
               {totalLessons > 0 && (
-                <Badge variant="outline" className="text-white border-white/40">
+                <Badge variant="outline" className="text-foreground border-border">
                   <BookOpen className="mr-1 h-3 w-3" /> {totalLessons} aulas
                 </Badge>
               )}
             </div>
-            <h1 className="text-3xl md:text-5xl font-bold text-white max-w-3xl leading-tight">
+            <h1 className="text-3xl md:text-5xl font-bold text-foreground max-w-3xl leading-tight">
               {catchyTitle}
             </h1>
           </div>
         </div>
       </section>
 
-      <section className="py-12 md:py-16 bg-white">
+      <section className="py-12 md:py-16 bg-background">
         <div className="container mx-auto px-4 max-w-4xl">
           {publicDescription ? (
             <div
-              className="prose prose-lg max-w-none text-gray-700
-                [&_h1]:text-black [&_h2]:text-black [&_h3]:text-black [&_h3]:font-bold
-                [&_strong]:text-accent [&_a]:text-accent"
+              className="prose prose-lg prose-invert max-w-none text-muted-foreground
+                [&_h2]:text-foreground [&_h2]:font-bold [&_h3]:text-foreground [&_h3]:font-bold
+                [&_strong]:text-primary [&_a]:text-primary"
               dangerouslySetInnerHTML={{ __html: publicDescription }}
             />
           ) : (
             course.short_description && (
-              <p className="text-lg text-gray-600 leading-relaxed">{course.short_description}</p>
+              <p className="text-lg text-muted-foreground leading-relaxed">
+                {course.short_description}
+              </p>
             )
           )}
           <div className="mt-8">{renderCTA()}</div>
@@ -206,9 +208,11 @@ export default function CourseDetailsPage() {
       </section>
 
       {modules.length > 0 && (
-        <section className="py-12 md:py-16 bg-gray-50">
+        <section className="py-12 md:py-16 bg-card">
           <div className="container mx-auto px-4 max-w-4xl">
-            <h2 className="text-2xl md:text-3xl font-bold text-black mb-8">Conteúdo do Curso</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-8">
+              Conteúdo do Curso
+            </h2>
             <div className="space-y-3">
               {modules.map((m) => {
                 const moduleLessons = lessons.filter((l) => l.module === m.id)
@@ -216,19 +220,21 @@ export default function CourseDetailsPage() {
                 return (
                   <div
                     key={m.id}
-                    className="bg-white rounded-xl border border-gray-200 overflow-hidden"
+                    className="bg-card rounded-xl border border-border overflow-hidden"
                   >
                     <button
-                      className="w-full flex items-center justify-between p-5 hover:bg-gray-50 transition-colors"
+                      className="w-full flex items-center justify-between p-5 hover:bg-muted/30 transition-colors"
                       onClick={() => toggleModule(m.id)}
                     >
                       <div className="text-left">
-                        <span className="font-bold text-black text-lg block">{m.title}</span>
+                        <span className="font-bold text-foreground text-lg block">{m.title}</span>
                         {m.description && (
-                          <span className="text-sm text-gray-500 mt-1 block">{m.description}</span>
+                          <span className="text-sm text-muted-foreground mt-1 block">
+                            {m.description}
+                          </span>
                         )}
                       </div>
-                      <div className="flex items-center gap-2 text-sm text-gray-400">
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <span>{moduleLessons.length} aulas</span>
                         <ChevronRight
                           className={`h-5 w-5 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
@@ -236,23 +242,23 @@ export default function CourseDetailsPage() {
                       </div>
                     </button>
                     {isExpanded && moduleLessons.length > 0 && (
-                      <div className="border-t border-gray-100">
+                      <div className="border-t border-border/50">
                         {moduleLessons.map((l) => (
                           <div
                             key={l.id}
-                            className="flex items-center gap-3 px-5 py-3 text-sm border-b border-gray-50 last:border-0"
+                            className="flex items-center gap-3 px-5 py-3 text-sm border-b border-border/30 last:border-0"
                           >
-                            <PlayCircle className="h-4 w-4 text-gray-300 shrink-0" />
+                            <PlayCircle className="h-4 w-4 text-muted-foreground shrink-0" />
                             <div className="flex-1">
-                              <span className="text-gray-700 font-medium">{l.title}</span>
+                              <span className="text-foreground font-medium">{l.title}</span>
                               {l.description && (
-                                <span className="text-xs text-gray-400 block mt-0.5">
+                                <span className="text-xs text-muted-foreground block mt-0.5">
                                   {l.description}
                                 </span>
                               )}
                             </div>
                             {l.duration && (
-                              <span className="text-gray-400 text-xs flex items-center gap-1">
+                              <span className="text-muted-foreground text-xs flex items-center gap-1">
                                 <Clock className="h-3 w-3" /> {l.duration}
                               </span>
                             )}
@@ -269,17 +275,17 @@ export default function CourseDetailsPage() {
       )}
 
       {footerBanner && (
-        <section className="bg-white">
+        <section className="bg-background">
           <img src={footerBanner} alt="" className="w-full max-h-72 object-cover" />
         </section>
       )}
 
-      <section className="py-12 bg-white">
+      <section className="py-12 bg-background">
         <div className="container mx-auto px-4 max-w-4xl text-center">{renderCTA()}</div>
       </section>
 
-      <footer className="bg-gradient-to-r from-primary to-black py-8">
-        <div className="container mx-auto px-4 text-center text-white/70 text-sm">
+      <footer className="bg-gradient-to-r from-primary to-background py-8">
+        <div className="container mx-auto px-4 text-center text-muted-foreground text-sm">
           © {new Date().getFullYear()} Anderson Abreu. Todos os direitos reservados.
         </div>
       </footer>

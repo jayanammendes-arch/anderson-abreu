@@ -56,13 +56,13 @@ export default function CursosPage() {
 
   return (
     <LandingLayout settings={settings}>
-      <div className="pt-32 pb-24 bg-white min-h-screen">
+      <div className="pt-32 pb-24 bg-card min-h-screen">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
+            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
               {settings?.courses_section_title || 'Cursos Disponíveis'}
             </h1>
-            <p className="text-slate-500 text-lg">
+            <p className="text-muted-foreground text-lg">
               {settings?.courses_section_text ||
                 'Conheça nossos cursos e formações em hipnoterapia e desenvolvimento humano.'}
             </p>
@@ -81,9 +81,9 @@ export default function CursosPage() {
                 return (
                   <div
                     key={course.id}
-                    className="group bg-white border border-slate-200 rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 hover:border-slate-300 flex flex-col"
+                    className="group bg-card border border-border rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 flex flex-col"
                   >
-                    <div className="aspect-video relative overflow-hidden bg-slate-200">
+                    <div className="aspect-video relative overflow-hidden bg-muted">
                       <img
                         src={getThumbnailUrl(course)}
                         alt={course.title}
@@ -168,14 +168,14 @@ export default function CursosPage() {
                 )
               })
             ) : (
-              <div className="col-span-full text-center py-20 text-slate-400">
+              <div className="col-span-full text-center py-20 text-muted-foreground">
                 Nenhum curso disponível no momento.
               </div>
             )}
           </div>
           {isAuthenticated && (
             <div className="text-center mt-16">
-              <Button variant="outline" className="rounded-full border-slate-300" asChild>
+              <Button variant="outline" className="rounded-full border-border" asChild>
                 <Link to="/dashboard">Ir para Área do Aluno</Link>
               </Button>
             </div>

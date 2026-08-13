@@ -31,11 +31,11 @@ export function HomeCredentialSection({ settings }: HomeCredentialSectionProps) 
   const imageUrl = settings ? getHomeCredentialImageUrl(settings) : null
 
   return (
-    <section className="py-24 bg-white">
+    <section className="py-24 bg-card">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid md:grid-cols-2 gap-16 items-center">
           <div className="order-2 md:order-1">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 mb-3">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-foreground mb-3">
               {name}
             </h2>
             {subtitle && (
@@ -45,10 +45,10 @@ export function HomeCredentialSection({ settings }: HomeCredentialSectionProps) 
               <ul className="space-y-3 mb-8">
                 {credentials.map((cred, idx) => (
                   <li key={idx} className="flex items-start gap-3">
-                    <span className="mt-0.5 flex-shrink-0 flex h-6 w-6 items-center justify-center rounded-full bg-blue-50">
-                      <Check className="h-4 w-4 text-blue-600" strokeWidth={3} />
+                    <span className="mt-0.5 flex-shrink-0 flex h-6 w-6 items-center justify-center rounded-full bg-primary/10">
+                      <Check className="h-4 w-4 text-primary" strokeWidth={3} />
                     </span>
-                    <span className="text-base md:text-lg text-slate-700 leading-relaxed">
+                    <span className="text-base md:text-lg text-muted-foreground leading-relaxed">
                       {cred}
                     </span>
                   </li>
@@ -63,7 +63,7 @@ export function HomeCredentialSection({ settings }: HomeCredentialSectionProps) 
           </div>
 
           <div className="order-1 md:order-2 relative">
-            <div className="relative h-[400px] md:h-[680px] w-full rounded-2xl overflow-hidden shadow-xl bg-slate-100">
+            <div className="relative h-[400px] md:h-[680px] w-full rounded-2xl overflow-hidden shadow-xl bg-muted/30">
               {imageUrl ? (
                 <img src={imageUrl} alt={name} className="w-full h-full object-cover object-top" />
               ) : (
