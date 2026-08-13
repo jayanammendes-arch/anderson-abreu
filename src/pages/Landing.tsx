@@ -41,9 +41,10 @@ function ParallaxCTASection({ settings }: { settings: PlatformSettings }) {
         {settings.parallax_button_text && (
           <Button
             size="lg"
-            className="mt-8 bg-[#00A3C4] hover:bg-[#008ca8] text-white rounded-full px-10 py-6 text-lg font-medium shadow-lg transition-all hover:scale-105"
+            className="mt-8 bg-[#D4AF37] hover:bg-[#C5A030] text-black rounded-full px-10 py-6 text-lg font-medium shadow-lg transition-all hover:scale-105"
             asChild
           >
+            {' '}
             {settings.parallax_button_link && settings.parallax_button_link.startsWith('/') ? (
               <Link to={settings.parallax_button_link}>{settings.parallax_button_text}</Link>
             ) : settings.parallax_button_link ? (
@@ -156,7 +157,7 @@ export default function Landing() {
               <div className="pt-4">
                 <Button
                   size="lg"
-                  className="bg-[#00A3C4] hover:bg-[#008ca8] text-white rounded-full px-10 py-6 text-lg font-medium shadow-lg transition-all hover:scale-105"
+                  className="bg-[#D4AF37] hover:bg-[#C5A030] text-black rounded-full px-10 py-6 text-lg font-medium shadow-lg transition-all hover:scale-105"
                   onClick={() => navigate('/agendar')}
                 >
                   {settings?.hero_cta_text || 'Falar com especialista'}
@@ -260,7 +261,7 @@ export default function Landing() {
                   </p>
                 </div>
                 <Button
-                  className="rounded-full hidden md:flex bg-[#22C55E] hover:bg-[#20a854] text-white border-none"
+                  className="rounded-full hidden md:flex bg-[#D4AF37] hover:bg-[#C5A030] text-black border-none"
                   asChild
                 >
                   <Link to="/blog">
