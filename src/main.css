@@ -157,13 +157,41 @@
   .prose span,
   .prose li,
   .prose div,
+  .prose font,
+  .prose b,
+  .prose strong,
   .rte-content-area,
   .rte-content-area p,
   .rte-content-area span,
+  .rte-content-area li,
+  .rte-content-area font,
+  .rte-content-area b,
+  .rte-content-area strong,
   .section-content,
   .section-description {
     font-family: 'Open Sans', sans-serif !important;
     line-height: 1.6 !important;
+  }
+
+  .prose font,
+  .rte-content-area font {
+    font-family: 'Open Sans', sans-serif !important;
+  }
+
+  .prose b,
+  .prose strong,
+  .rte-content-area b,
+  .rte-content-area strong {
+    font-family: 'Open Sans', sans-serif !important;
+    font-weight: 700 !important;
+  }
+
+  .prose p,
+  .prose li,
+  .prose span:not([class*='rte-gradient']),
+  .prose font,
+  .prose div:not([class*='title']) {
+    color: #ffffff !important;
   }
   ::selection {
     background-color: hsl(46 65% 52% / 0.3);

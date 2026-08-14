@@ -18,7 +18,7 @@ export function GlobalBlueBand({ settings, className = '' }: GlobalBlueBandProps
   const bgImageUrl = settings ? getBlueBandImageUrl(settings) : null
 
   const proseClass =
-    'prose prose-invert max-w-none text-slate-200 text-base md:text-lg leading-relaxed space-y-4 [&_p]:text-slate-200 [&_strong]:text-white [&_strong]:font-semibold'
+    'prose prose-invert max-w-none text-white text-base md:text-lg leading-[1.6] space-y-4 [&_*]:!font-["Open_Sans",sans-serif] [&_p]:!text-white [&_p]:!leading-[1.6] [&_li]:!text-white [&_li]:!leading-[1.6] [&_strong]:!text-white [&_strong]:!font-bold [&_b]:!text-white [&_b]:!font-bold [&_font]:!text-white'
 
   const sectionStyle = bgImageUrl
     ? {
