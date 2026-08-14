@@ -23,7 +23,7 @@ import { getCropPositionCss } from '@/lib/image-position'
 import { cn } from '@/lib/utils'
 
 const proseClass =
-  'prose prose-lg prose-invert max-w-none text-white [&_p]:!text-white [&_p_*]:!text-white [&_h1]:!text-white [&_h1]:font-bold [&_h1]:text-3xl [&_h1]:mb-4 [&_h2]:!text-white [&_h2]:font-bold [&_h3]:!text-white [&_h3]:font-semibold [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:!text-white [&_li_*]:!text-white [&_li]:mb-2 [&_a]:text-primary [&_span:not([class*="rte-gradient"])]:!text-white [&_font]:!text-white [&_span]:!bg-transparent [&_font]:!bg-transparent'
+  'prose prose-lg prose-invert max-w-none text-white [&_p]:!font-["Open_Sans",sans-serif] [&_p]:!leading-[1.6] [&_p]:!text-white [&_p_*]:!font-["Open_Sans",sans-serif] [&_p_*]:!text-white [&_h1]:!text-white [&_h1]:font-bold [&_h1]:text-3xl [&_h1]:mb-4 [&_h2]:!text-white [&_h2]:font-bold [&_h3]:!text-white [&_h3]:font-semibold [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:!font-["Open_Sans",sans-serif] [&_li]:!leading-[1.6] [&_li]:!text-white [&_li_*]:!font-["Open_Sans",sans-serif] [&_li_*]:!text-white [&_li]:mb-2 [&_a]:text-primary [&_span:not([class*="rte-gradient"])]:!text-white [&_font]:!text-white [&_span]:!bg-transparent [&_font]:!bg-transparent'
 
 function SectionTitle({ title, defaultTitle }: { title?: string; defaultTitle: string }) {
   const content = title?.trim() || defaultTitle
