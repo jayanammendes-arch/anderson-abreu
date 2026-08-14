@@ -176,10 +176,10 @@
 
 @layer components {
   .section-title-serif {
-    font-family: 'Playfair Display', serif;
-    font-size: 40px;
-    font-weight: 700;
-    line-height: 1.2;
+    font-family: 'Playfair Display', serif !important;
+    font-size: 40px !important;
+    font-weight: 700 !important;
+    line-height: 1.2 !important;
   }
 
   .credentials-marquee-section {

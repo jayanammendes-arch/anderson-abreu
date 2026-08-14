@@ -1,18 +1,9 @@
-onRecordCreateRequest((e) => {
-  e.next()
-
+onRecordAfterCreateSuccess((e) => {
   try {
     var recordId = e.record.id
     if (!recordId) return
 
-    var record
-    try {
-      record = $app.findRecordById('treatment_categories', recordId)
-    } catch (_) {
-      return
-    }
-
-    var snapshotJson = JSON.stringify(record)
+    var snapshotJson = JSON.stringify(e.record)
 
     var snapCol = $app.findCollectionByNameOrId('content_snapshots')
     var snap = new Record(snapCol)

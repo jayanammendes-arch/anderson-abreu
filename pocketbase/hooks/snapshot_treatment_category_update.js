@@ -1,12 +1,9 @@
-onRecordUpdateRequest((e) => {
-  e.next()
-
+onRecordAfterUpdateSuccess((e) => {
   try {
     var recordId = e.record.id
     if (!recordId) return
 
-    var record = $app.findRecordById('treatment_categories', recordId)
-    var snapshotJson = JSON.stringify(record)
+    var snapshotJson = JSON.stringify(e.record)
 
     var existing = $app.findRecordsByFilter(
       'content_snapshots',
