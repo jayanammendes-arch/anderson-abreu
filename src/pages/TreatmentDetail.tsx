@@ -30,14 +30,12 @@ function SectionTitle({ title, defaultTitle }: { title?: string; defaultTitle: s
   if (content.includes('<')) {
     return (
       <div
-        className="text-3xl md:text-4xl font-bold text-white mb-6 leading-snug py-1 [&_span]:!bg-transparent [&_p]:text-3xl [&_p]:md:text-4xl [&_p]:font-bold [&_p]:text-white [&_p]:mb-0"
+        className="section-title-serif text-white mb-6 leading-snug py-1 [&_span]:!bg-transparent [&_p]:text-[40px] [&_p]:font-bold [&_p]:text-white [&_p]:mb-0"
         dangerouslySetInnerHTML={{ __html: content }}
       />
     )
   }
-  return (
-    <h2 className="text-3xl md:text-4xl font-bold text-white mb-6 leading-snug py-1">{content}</h2>
-  )
+  return <h2 className="section-title-serif text-white mb-6 leading-snug py-1">{content}</h2>
 }
 
 function FramedImage({
