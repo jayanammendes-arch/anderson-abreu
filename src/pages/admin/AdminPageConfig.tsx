@@ -19,6 +19,7 @@ import { toast } from 'sonner'
 import type { PlatformSettings } from '@/types'
 import { getHypnosisInfoImageUrl } from '@/services/landing'
 import { getErrorMessage } from '@/lib/pocketbase/errors'
+import { cn } from '@/lib/utils'
 
 interface FormState {
   hero_title: string
@@ -288,6 +289,23 @@ function ImageUpload({
   )
 }
 
+const PRIMARY_COLOR_PRESETS = [
+  { name: 'Azul Royal', value: '#0047AB' },
+  { name: 'Azul Escuro', value: '#0B1D3A' },
+  { name: 'Azul Céu', value: '#0EA5E9' },
+  { name: 'Dourado', value: '#C59A2A' },
+  { name: 'Verde Esmeralda', value: '#10B981' },
+  { name: 'Verde Escuro', value: '#065F46' },
+  { name: 'Vermelho', value: '#DC2626' },
+  { name: 'Roxo', value: '#7C3AED' },
+  { name: 'Rosa', value: '#EC4899' },
+  { name: 'Laranja', value: '#EA580C' },
+  { name: 'Marrom', value: '#78350F' },
+  { name: 'Cinza', value: '#4B5563' },
+  { name: 'Preto', value: '#111827' },
+  { name: 'Branco', value: '#FFFFFF' },
+] as const
+
 function ColorInput({
   label,
   description,
@@ -299,18 +317,48 @@ function ColorInput({
   value: string
   onChange: (v: string) => void
 }) {
+  const isPreset = (PRIMARY_COLOR_PRESETS as readonly { value: string }[]).some(
+    (p) => p.value.toUpperCase() === (value || '').toUpperCase(),
+  )
   return (
     <div className="space-y-2">
       <FieldLabel label={label} description={description} />
-      <div className="flex gap-2 items-center">
+      <div className="flex flex-wrap items-center gap-2">
+        {PRIMARY_COLOR_PRESETS.map((preset) => {
+          const selected = (value || '').toUpperCase() === preset.value.toUpperCase()
+          return (
+            <button
+              key={preset.value}
+              type="button"
+              title={preset.name}
+              aria-label={preset.name}
+              onClick={() => onChange(preset.value)}
+              className={cn(
+                'h-9 w-9 rounded-full border-2 transition-transform hover:scale-110',
+                selected
+                  ? 'border-white ring-2 ring-primary ring-offset-2 ring-offset-background'
+                  : 'border-white/20',
+              )}
+              style={{ backgroundColor: preset.value }}
+            />
+          )
+        })}
+      </div>
+      <div className="flex gap-2 items-center pt-1">
         <input
           type="color"
           value={value || '#0047AB'}
           onChange={(e) => onChange(e.target.value)}
-          className="h-10 w-12 rounded border border-border cursor-pointer bg-transparent"
+          className="h-9 w-12 rounded border border-border cursor-pointer bg-transparent"
         />
         <Input value={value} onChange={(e) => onChange(e.target.value)} placeholder="#0047AB" />
+        {!isPreset && value && (
+          <span className="text-xs text-muted-foreground whitespace-nowrap">Cor personalizada</span>
+        )}
       </div>
+      <p className="text-xs text-muted-foreground">
+        Escolha uma cor padrão acima ou use o seletor para uma cor personalizada.
+      </p>
     </div>
   )
 }
