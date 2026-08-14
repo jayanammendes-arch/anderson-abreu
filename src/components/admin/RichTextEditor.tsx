@@ -277,20 +277,65 @@ export function RichTextEditor({ value, onChange, className, editorLabel }: Rich
 
         {/* Group 2: Colors and gradients */}
         {groupDivider}
-        <label
-          className="h-7 w-7 flex items-center justify-center cursor-pointer rounded hover:bg-accent relative"
-          title="Cor do texto"
-        >
-          <Palette
-            className="h-3.5 w-3.5"
-            style={active.foreColor ? { color: active.foreColor } : undefined}
-          />
-          <input
-            type="color"
-            className="absolute opacity-0 inset-0 cursor-pointer"
-            onChange={(e) => exec('foreColor', e.target.value)}
-          />
-        </label>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className={cn(btn, active.foreColor && activeCls)}
+              title="Cor do texto"
+            >
+              <Palette
+                className="h-3.5 w-3.5"
+                style={active.foreColor ? { color: active.foreColor } : undefined}
+              />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-56 p-2" align="start">
+            <div className="text-xs font-semibold text-muted-foreground mb-2 px-1">
+              Cores do texto
+            </div>
+            <div className="grid grid-cols-7 gap-1.5">
+              {[
+                { name: 'Azul Royal', value: '#0047AB' },
+                { name: 'Azul Escuro', value: '#0B1D3A' },
+                { name: 'Azul Céu', value: '#0EA5E9' },
+                { name: 'Dourado', value: '#C59A2A' },
+                { name: 'Verde Esmeralda', value: '#10B981' },
+                { name: 'Verde Escuro', value: '#065F46' },
+                { name: 'Vermelho', value: '#DC2626' },
+                { name: 'Roxo', value: '#7C3AED' },
+                { name: 'Rosa', value: '#EC4899' },
+                { name: 'Laranja', value: '#EA580C' },
+                { name: 'Marrom', value: '#78350F' },
+                { name: 'Cinza', value: '#4B5563' },
+                { name: 'Preto', value: '#111827' },
+                { name: 'Branco', value: '#FFFFFF' },
+              ].map((c) => (
+                <button
+                  key={c.value}
+                  type="button"
+                  title={c.name}
+                  aria-label={c.name}
+                  onClick={() => exec('foreColor', c.value)}
+                  className="h-6 w-6 rounded-full border border-white/20 transition-transform hover:scale-110 focus:outline-none focus:ring-1 focus:ring-primary"
+                  style={{ backgroundColor: c.value }}
+                />
+              ))}
+            </div>
+            <div className="mt-2 pt-2 border-t border-border flex items-center justify-between">
+              <button
+                type="button"
+                onClick={() => exec('foreColor', '#FFFFFF')}
+                className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <Eraser className="h-3.5 w-3.5" />
+                <span>Restaurar padrão (Branco)</span>
+              </button>
+            </div>
+          </PopoverContent>
+        </Popover>
         <Popover open={gradientOpen} onOpenChange={setGradientOpen}>
           <PopoverTrigger asChild>
             <Button

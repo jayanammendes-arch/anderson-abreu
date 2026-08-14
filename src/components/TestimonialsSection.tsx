@@ -133,7 +133,7 @@ export function TestimonialsSection({ customTitle }: { customTitle?: string }) {
   return (
     <section className="py-16 px-4 sm:px-6 lg:px-8 bg-card/50">
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-3xl font-bold text-center text-foreground mb-2">{title}</h2>
+        <h2 className="section-title-serif text-center text-foreground mb-2">{title}</h2>
         <div className="w-20 h-1 bg-primary mx-auto mb-10 rounded-full" />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {testimonials.map((testimonial) => (

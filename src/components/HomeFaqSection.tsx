@@ -56,9 +56,7 @@ export function HomeFaqSection() {
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
                 <HelpCircle className="h-5 w-5 text-primary" />
               </div>
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground">
-                Perguntas Frequentes
-              </h2>
+              <h2 className="section-title-serif text-foreground">Perguntas Frequentes</h2>
             </div>
             <div className="w-20 h-1 bg-primary mb-8 rounded-full" />
 

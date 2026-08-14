@@ -173,7 +173,7 @@ export default function Landing() {
           <section id="tratamentos" className="py-24 bg-card">
             <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12">
               <div className="text-center mb-16">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                <h2 className="section-title-serif text-foreground mb-4">
                   {settings?.treatments_section_title || 'O que podemos tratar com Hipnose'}
                 </h2>
                 <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
@@ -257,7 +257,7 @@ export default function Landing() {
             <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12">
               <div className="flex items-end justify-between mb-12">
                 <div>
-                  <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
+                  <h2 className="section-title-serif text-foreground mb-3">
                     {settings?.blog_section_title || 'Blog'}
                   </h2>
                   <p className="text-muted-foreground text-lg max-w-xl">
