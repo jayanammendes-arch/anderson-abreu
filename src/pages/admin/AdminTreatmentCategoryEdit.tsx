@@ -367,6 +367,7 @@ export default function AdminTreatmentCategoryEdit() {
               value={formData.detailed_content || ''}
               onChange={(html) => setFormData({ ...formData, detailed_content: html })}
               editorLabel="Conteúdo da seção"
+              variant="content"
             />
           </FormSection>
 
@@ -378,6 +379,7 @@ export default function AdminTreatmentCategoryEdit() {
                 onChange={(html) => setFormData({ ...formData, como_funciona_title: html })}
                 editorLabel="Título da seção"
                 className="border-primary/20"
+                variant="title"
               />
             </div>
             <div className="space-y-2">
@@ -386,6 +388,7 @@ export default function AdminTreatmentCategoryEdit() {
                 value={formData.como_funciona_text || ''}
                 onChange={(html) => setFormData({ ...formData, como_funciona_text: html })}
                 editorLabel="Conteúdo da seção"
+                variant="content"
               />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -468,6 +471,7 @@ export default function AdminTreatmentCategoryEdit() {
                 onChange={(html) => setFormData({ ...formData, resultados_title: html })}
                 editorLabel="Título da seção"
                 className="border-primary/20"
+                variant="title"
               />
             </div>
             <div className="space-y-2">
@@ -476,6 +480,7 @@ export default function AdminTreatmentCategoryEdit() {
                 value={formData.resultados_text || ''}
                 onChange={(html) => setFormData({ ...formData, resultados_text: html })}
                 editorLabel="Conteúdo da seção"
+                variant="content"
               />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -498,6 +503,7 @@ export default function AdminTreatmentCategoryEdit() {
                 onChange={(html) => setFormData({ ...formData, sintomas_title: html })}
                 editorLabel="Título da seção (Ex: Sintomas da Ansiedade?)"
                 className="border-primary/20"
+                variant="title"
               />
             </div>
 
@@ -508,6 +514,7 @@ export default function AdminTreatmentCategoryEdit() {
                   value={formData.sintomas_corpo_text || ''}
                   onChange={(html) => setFormData({ ...formData, sintomas_corpo_text: html })}
                   editorLabel="Conteúdo: No Corpo (Sinais Físicos)"
+                  variant="content"
                 />
               </div>
 
@@ -519,6 +526,7 @@ export default function AdminTreatmentCategoryEdit() {
                   value={formData.sintomas_mente_text || ''}
                   onChange={(html) => setFormData({ ...formData, sintomas_mente_text: html })}
                   editorLabel="Conteúdo: Na Mente e no Comportamento (Sinais Emocionais)"
+                  variant="content"
                 />
               </div>
             </div>
@@ -531,6 +539,7 @@ export default function AdminTreatmentCategoryEdit() {
                 value={formData.sintomas_text || ''}
                 onChange={(html) => setFormData({ ...formData, sintomas_text: html })}
                 editorLabel="Notas Adicionais"
+                variant="content"
               />
             </div>
 
@@ -555,6 +564,7 @@ export default function AdminTreatmentCategoryEdit() {
                   onChange={(html) => setFormData({ ...formData, cta_title: html })}
                   editorLabel="Título da seção"
                   className="border-primary/20"
+                  variant="title"
                 />
               </div>
               <div className="space-y-2">
@@ -563,6 +573,7 @@ export default function AdminTreatmentCategoryEdit() {
                   value={formData.cta_text || ''}
                   onChange={(html) => setFormData({ ...formData, cta_text: html })}
                   editorLabel="Conteúdo da seção"
+                  variant="content"
                 />
               </div>
             </div>

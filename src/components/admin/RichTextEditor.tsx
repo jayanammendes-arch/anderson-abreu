@@ -23,6 +23,11 @@ interface RichTextEditorProps {
   onChange: (html: string) => void
   className?: string
   editorLabel?: string
+  /**
+   * "content" — Open Sans, branco, line-height 1.6 (preview de conteúdo)
+   * "title"   — Playfair Display, 40px, bold, dourado (preview de título de seção)
+   */
+  variant?: 'content' | 'title'
 }
 
 interface ActiveState {
@@ -43,7 +48,13 @@ const DEFAULT_ACTIVE: ActiveState = {
   gradient: '',
 }
 
-export function RichTextEditor({ value, onChange, className, editorLabel }: RichTextEditorProps) {
+export function RichTextEditor({
+  value,
+  onChange,
+  className,
+  editorLabel,
+  variant,
+}: RichTextEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null)
   const lastSetValue = useRef<string>('')
   const savedRange = useRef<Range | null>(null)
@@ -395,7 +406,31 @@ export function RichTextEditor({ value, onChange, className, editorLabel }: Rich
         onInput={handleInput}
         onBlur={handleBlur}
         suppressContentEditableWarning
-        className="rte-content-area min-h-[120px] max-h-[400px] overflow-y-auto p-3 pb-6 text-sm outline-none prose prose-sm max-w-none leading-relaxed"
+        className={cn(
+          'rte-content-area min-h-[120px] max-h-[400px] overflow-y-auto p-3 pb-6 outline-none prose prose-sm max-w-none',
+          variant === 'title'
+            ? 'rte-title-preview min-h-[80px]'
+            : variant === 'content'
+              ? 'rte-content-preview'
+              : 'text-sm leading-relaxed',
+        )}
+        style={
+          variant === 'title'
+            ? {
+                fontFamily: "'Playfair Display', serif",
+                fontSize: '40px',
+                fontWeight: 700,
+                color: '#D4AF37',
+                lineHeight: 1.2,
+              }
+            : variant === 'content'
+              ? {
+                  fontFamily: "'Open Sans', sans-serif",
+                  color: '#ffffff',
+                  lineHeight: 1.6,
+                }
+              : undefined
+        }
       />
     </div>
   )
