@@ -1,17 +1,24 @@
-import { useRef, useEffect, useCallback, useState } from 'react'
+import React, { useRef, useEffect, useCallback, useState } from 'react'
 import {
-  Bold,
-  Italic,
-  Underline,
-  List,
-  ListOrdered,
-  Palette,
-  Pilcrow,
+  Strikethrough,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  AlignJustify,
+  Minus,
+  Plus,
   Sparkles,
   Eraser,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { cn } from '@/lib/utils'
 import { GRADIENT_OPTIONS, getActiveGradient } from '@/lib/rte-gradients'
 
@@ -21,8 +28,8 @@ interface RichTextEditorProps {
   className?: string
   editorLabel?: string
   /**
-   * "content" — Open Sans, branco, line-height 1.6 (preview de conteúdo)
-   * "title"   — Playfair Display, 40px, bold, dourado (preview de título de seção)
+   * "content" — Open Sans, 18px starting point
+   * "title"   — Playfair Display, 40px, bold, starting point
    */
   variant?: 'content' | 'title'
 }
@@ -31,19 +38,19 @@ interface ActiveState {
   bold: boolean
   italic: boolean
   underline: boolean
-  block: string
+  strikethrough: boolean
+  align: 'left' | 'center' | 'right' | 'justify'
   foreColor: string
   gradient: string
+  fontFamily: string
+  fontSize: number
 }
 
-const DEFAULT_ACTIVE: ActiveState = {
-  bold: false,
-  italic: false,
-  underline: false,
-  block: 'p',
-  foreColor: '',
-  gradient: '',
-}
+const FONT_FAMILIES = [
+  { label: 'Open Sans', value: "'Open Sans', sans-serif" },
+  { label: 'Montserrat', value: "'Montserrat', sans-serif" },
+  { label: 'Playfair Display', value: "'Playfair Display', serif" },
+]
 
 export function RichTextEditor({
   value,
@@ -55,10 +62,26 @@ export function RichTextEditor({
   const editorRef = useRef<HTMLDivElement>(null)
   const lastSetValue = useRef<string>('')
   const savedRange = useRef<Range | null>(null)
-  const [active, setActive] = useState<ActiveState>(DEFAULT_ACTIVE)
-  const [gradientOpen, setGradientOpen] = useState(false)
 
-  const currentBlock = active.block || 'p'
+  // Default font size depending on variant
+  const defaultFontSize = variant === 'title' ? 40 : 18
+  const defaultFontFamily =
+    variant === 'title' ? "'Playfair Display', serif" : "'Open Sans', sans-serif"
+
+  const [active, setActive] = useState<ActiveState>({
+    bold: false,
+    italic: false,
+    underline: false,
+    strikethrough: false,
+    align: 'left',
+    foreColor: '',
+    gradient: '',
+    fontFamily: defaultFontFamily,
+    fontSize: defaultFontSize,
+  })
+
+  const [gradientOpen, setGradientOpen] = useState(false)
+  const [fontSizeInput, setFontSizeInput] = useState<string>(defaultFontSize.toString())
 
   useEffect(() => {
     const editor = editorRef.current
@@ -68,24 +91,69 @@ export function RichTextEditor({
     }
   }, [value])
 
-  useEffect(() => {
-    const updateActive = () => {
-      const editor = editorRef.current
-      if (!editor) return
-      const sel = window.getSelection()
-      if (!sel || sel.rangeCount === 0 || !editor.contains(sel.anchorNode)) return
-      setActive({
-        bold: document.queryCommandState('bold'),
-        italic: document.queryCommandState('italic'),
-        underline: document.queryCommandState('underline'),
-        block: (document.queryCommandValue('formatBlock') || 'p').toLowerCase(),
-        foreColor: document.queryCommandValue('foreColor') || '',
-        gradient: getActiveGradient(editor),
-      })
+  // Helper to extract styled font size or family from selection anchor
+  const updateActiveState = useCallback(() => {
+    const editor = editorRef.current
+    if (!editor) return
+    const sel = window.getSelection()
+    if (!sel || sel.rangeCount === 0 || !editor.contains(sel.anchorNode)) return
+
+    let currentFontSize = defaultFontSize
+    let currentFontFamily = defaultFontFamily
+    let currentAlign: 'left' | 'center' | 'right' | 'justify' = 'left'
+
+    let node: Node | null = sel.anchorNode
+    while (node && node !== editor) {
+      if (node.nodeType === Node.ELEMENT_NODE) {
+        const el = node as HTMLElement
+        if (el.style.fontSize) {
+          const parsed = parseInt(el.style.fontSize, 10)
+          if (!isNaN(parsed)) currentFontSize = parsed
+        }
+        if (el.style.fontFamily) {
+          currentFontFamily = el.style.fontFamily
+        }
+        if (el.style.textAlign) {
+          const alignVal = el.style.textAlign.toLowerCase()
+          if (['left', 'center', 'right', 'justify'].includes(alignVal)) {
+            currentAlign = alignVal as any
+          }
+        }
+      }
+      node = node.parentNode
     }
-    document.addEventListener('selectionchange', updateActive)
-    return () => document.removeEventListener('selectionchange', updateActive)
-  }, [])
+
+    // Also check queryCommandState/Value for align
+    if (document.queryCommandState('justifyCenter')) currentAlign = 'center'
+    else if (document.queryCommandState('justifyRight')) currentAlign = 'right'
+    else if (document.queryCommandState('justifyFull')) currentAlign = 'justify'
+    else if (document.queryCommandState('justifyLeft')) currentAlign = 'left'
+
+    setActive({
+      bold: document.queryCommandState('bold'),
+      italic: document.queryCommandState('italic'),
+      underline: document.queryCommandState('underline'),
+      strikethrough: document.queryCommandState('strikethrough'),
+      align: currentAlign,
+      foreColor: document.queryCommandValue('foreColor') || '',
+      gradient: getActiveGradient(editor),
+      fontFamily: currentFontFamily,
+      fontSize: currentFontSize,
+    })
+    setFontSizeInput(currentFontSize.toString())
+  }, [defaultFontSize, defaultFontFamily])
+
+  useEffect(() => {
+    document.addEventListener('selectionchange', updateActiveState)
+    return () => document.removeEventListener('selectionchange', updateActiveState)
+  }, [updateActiveState])
+
+  const saveCurrentSelection = () => {
+    const sel = window.getSelection()
+    if (sel && sel.rangeCount > 0 && editorRef.current?.contains(sel.anchorNode)) {
+      savedRange.current = sel.getRangeAt(0).cloneRange()
+    }
+  }
 
   const restoreSelection = () => {
     if (savedRange.current && editorRef.current) {
@@ -102,18 +170,98 @@ export function RichTextEditor({
     }
   }
 
+  const notifyChange = () => {
+    if (editorRef.current) {
+      lastSetValue.current = editorRef.current.innerHTML
+      onChange(editorRef.current.innerHTML)
+    }
+  }
+
   const exec = useCallback(
     (command: string, val?: string) => {
       restoreSelection()
       document.execCommand(command, false, val)
-      if (editorRef.current) {
-        lastSetValue.current = editorRef.current.innerHTML
-        onChange(editorRef.current.innerHTML)
-      }
+      notifyChange()
       editorRef.current?.focus()
     },
     [onChange],
   )
+
+  // Custom inline style wrapper for Font Size and Font Family
+  const applyCustomSpanStyle = useCallback(
+    (styleProp: 'fontSize' | 'fontFamily', styleValue: string) => {
+      restoreSelection()
+      const sel = window.getSelection()
+      if (!sel || sel.rangeCount === 0) return
+
+      const range = sel.getRangeAt(0)
+      if (range.collapsed) {
+        // If no text selected, focus back
+        editorRef.current?.focus()
+        return
+      }
+
+      const span = document.createElement('span')
+      span.style[styleProp] = styleValue
+
+      try {
+        range.surroundContents(span)
+      } catch {
+        const contents = range.extractContents()
+        span.appendChild(contents)
+        range.insertNode(span)
+      }
+
+      notifyChange()
+      editorRef.current?.focus()
+    },
+    [onChange],
+  )
+
+  const handleFontSizeChange = (newSize: number) => {
+    const clamped = Math.max(8, Math.min(200, newSize))
+    setFontSizeInput(clamped.toString())
+    setActive((prev) => ({ ...prev, fontSize: clamped }))
+    applyCustomSpanStyle('fontSize', `${clamped}px`)
+  }
+
+  const handleFontFamilyChange = (val: string) => {
+    setActive((prev) => ({ ...prev, fontFamily: val }))
+    applyCustomSpanStyle('fontFamily', val)
+  }
+
+  const handleCaseToggle = () => {
+    restoreSelection()
+    const sel = window.getSelection()
+    if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return
+
+    const range = sel.getRangeAt(0)
+    const container = document.createElement('div')
+    container.appendChild(range.cloneContents())
+    const currentText = container.textContent || ''
+
+    if (!currentText) return
+
+    // Check if fully uppercase -> convert to lowercase, else uppercase
+    const isUpper =
+      currentText === currentText.toUpperCase() && currentText !== currentText.toLowerCase()
+    const transformedText = isUpper ? currentText.toLowerCase() : currentText.toUpperCase()
+
+    // Replace selection contents with transformed text
+    range.deleteContents()
+    const textNode = document.createTextNode(transformedText)
+    range.insertNode(textNode)
+
+    // Select the newly inserted text
+    const newRange = document.createRange()
+    newRange.selectNode(textNode)
+    sel.removeAllRanges()
+    sel.addRange(newRange)
+    savedRange.current = newRange.cloneRange()
+
+    notifyChange()
+    editorRef.current?.focus()
+  }
 
   const applyGradient = useCallback(
     (gradientClass: string) => {
@@ -131,10 +279,7 @@ export function RichTextEditor({
         span.appendChild(contents)
         range.insertNode(span)
       }
-      if (editorRef.current) {
-        lastSetValue.current = editorRef.current.innerHTML
-        onChange(editorRef.current.innerHTML)
-      }
+      notifyChange()
       setGradientOpen(false)
       editorRef.current?.focus()
     },
@@ -162,162 +307,138 @@ export function RichTextEditor({
       }
       node = node.parentNode
     }
-    if (editorRef.current) {
-      lastSetValue.current = editorRef.current.innerHTML
-      onChange(editorRef.current.innerHTML)
-    }
+    notifyChange()
     setGradientOpen(false)
     editorRef.current?.focus()
   }, [onChange])
 
   const handleInput = () => {
-    if (editorRef.current) {
-      lastSetValue.current = editorRef.current.innerHTML
-      onChange(editorRef.current.innerHTML)
-    }
+    notifyChange()
   }
 
   const handleBlur = () => {
-    const sel = window.getSelection()
-    if (sel && sel.rangeCount > 0 && editorRef.current?.contains(sel.anchorNode)) {
-      savedRange.current = sel.getRangeAt(0).cloneRange()
-    }
-    // Safety net: ensure formData reflects current editor content on blur
-    if (editorRef.current) {
-      lastSetValue.current = editorRef.current.innerHTML
-      onChange(editorRef.current.innerHTML)
+    saveCurrentSelection()
+    notifyChange()
+  }
+
+  const handleMouseDownToolbar = (e: React.MouseEvent) => {
+    // Keep selection alive when clicking buttons in toolbar
+    const target = e.target as HTMLElement
+    if (target.tagName !== 'INPUT') {
+      saveCurrentSelection()
     }
   }
 
-  const btn = 'h-7 w-7'
-  const activeCls = 'bg-accent text-accent-foreground'
-  const divider = <div className="w-px h-5 bg-border mx-1" />
-  const groupDivider = <div className="w-px h-6 bg-border/60 mx-1.5" />
-
-  // Aplica um nível de heading (h1..h3) ou parágrafo no bloco atual.
-  const applyBlock = (tag: 'p' | 'h1' | 'h2' | 'h3') => {
-    exec('formatBlock', `<${tag}>`)
-  }
-
-  const blockBtn =
-    'h-7 min-w-7 px-1.5 text-[11px] font-semibold rounded-md hover:bg-accent transition-colors'
+  // Get font family standard label for select trigger
+  const selectedFontObj =
+    FONT_FAMILIES.find(
+      (f) =>
+        f.value === active.fontFamily || f.value.includes(active.fontFamily.replace(/['"]/g, '')),
+    ) || FONT_FAMILIES[0]
 
   return (
-    <div className={cn('rounded-md border border-input overflow-visible', className)}>
-      <div className="flex items-center gap-0.5 border-b border-input bg-muted/50 p-1.5 flex-wrap">
-        {/* Group 1: Basic formatting — headings, inline styles, lists */}
-        {/* Atalhos rápidos para h1/h2/h3 e parágrafo. */}
-        <Button
-          type="button"
-          variant="ghost"
-          className={cn(blockBtn, active.block === 'h1' && activeCls)}
-          onClick={() => applyBlock('h1')}
-          title="Título 1"
-        >
-          H1
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          className={cn(blockBtn, active.block === 'h2' && activeCls)}
-          onClick={() => applyBlock('h2')}
-          title="Título 2"
-        >
-          H2
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          className={cn(blockBtn, active.block === 'h3' && activeCls)}
-          onClick={() => applyBlock('h3')}
-          title="Título 3"
-        >
-          H3
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className={cn(btn, active.block === 'p' && activeCls)}
-          onClick={() => applyBlock('p')}
-          title="Parágrafo"
-        >
-          <Pilcrow className="h-3.5 w-3.5" />
-        </Button>
-        {divider}
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className={cn(btn, active.bold && activeCls)}
-          onClick={() => exec('bold')}
-          title="Negrito"
-        >
-          <Bold className="h-3.5 w-3.5" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className={cn(btn, active.italic && activeCls)}
-          onClick={() => exec('italic')}
-          title="Itálico"
-        >
-          <Italic className="h-3.5 w-3.5" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className={cn(btn, active.underline && activeCls)}
-          onClick={() => exec('underline')}
-          title="Sublinhado"
-        >
-          <Underline className="h-3.5 w-3.5" />
-        </Button>
-        {divider}
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className={btn}
-          onClick={() => exec('insertUnorderedList')}
-          title="Lista com marcadores"
-        >
-          <List className="h-3.5 w-3.5" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className={btn}
-          onClick={() => exec('insertOrderedList')}
-          title="Lista numerada"
-        >
-          <ListOrdered className="h-3.5 w-3.5" />
-        </Button>
+    <div
+      className={cn('rounded-xl border border-[#27272a] bg-[#121214] overflow-visible', className)}
+    >
+      {/* CANVA STYLE TOOLBAR */}
+      <div
+        className="flex items-center gap-1.5 p-1.5 bg-[#18181b] border-b border-[#27272a] rounded-t-xl overflow-x-auto select-none no-scrollbar"
+        onMouseDown={handleMouseDownToolbar}
+      >
+        {/* 1. FONT FAMILY DROPDOWN */}
+        <Select value={selectedFontObj.value} onValueChange={(val) => handleFontFamilyChange(val)}>
+          <SelectTrigger
+            className="h-8 w-[130px] sm:w-[145px] bg-[#27272a]/60 border-[#3f3f46] text-white text-xs font-medium rounded-lg px-2.5 focus:ring-1 focus:ring-purple-500 hover:bg-[#27272a] transition-colors shrink-0"
+            onFocus={saveCurrentSelection}
+          >
+            <SelectValue>{selectedFontObj.label}</SelectValue>
+          </SelectTrigger>
+          <SelectContent className="bg-[#18181b] border-[#27272a] text-white">
+            {FONT_FAMILIES.map((font) => (
+              <SelectItem
+                key={font.value}
+                value={font.value}
+                className="text-xs hover:bg-[#27272a] focus:bg-[#27272a] cursor-pointer"
+                style={{ fontFamily: font.value }}
+              >
+                {font.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
-        {/* Group 2: Colors and gradients */}
-        {groupDivider}
+        {/* 2. FONT SIZE CONTROLLER (- NUM +) */}
+        <div className="flex items-center bg-[#27272a]/60 border border-[#3f3f46] rounded-lg h-8 px-1 shrink-0">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6 text-zinc-300 hover:text-white hover:bg-[#3f3f46]/60 rounded-md p-0"
+            onClick={() => handleFontSizeChange(active.fontSize - 1)}
+            title="Diminuir tamanho da fonte"
+          >
+            <Minus className="h-3.5 w-3.5" />
+          </Button>
+          <input
+            type="number"
+            value={fontSizeInput}
+            onFocus={saveCurrentSelection}
+            onChange={(e) => setFontSizeInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault()
+                const val = parseInt(fontSizeInput, 10)
+                if (!isNaN(val)) handleFontSizeChange(val)
+              }
+            }}
+            onBlur={() => {
+              const val = parseInt(fontSizeInput, 10)
+              if (!isNaN(val)) handleFontSizeChange(val)
+              else setFontSizeInput(active.fontSize.toString())
+            }}
+            className="w-9 h-6 bg-transparent text-center text-xs font-semibold text-white focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          />
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6 text-zinc-300 hover:text-white hover:bg-[#3f3f46]/60 rounded-md p-0"
+            onClick={() => handleFontSizeChange(active.fontSize + 1)}
+            title="Aumentar tamanho da fonte"
+          >
+            <Plus className="h-3.5 w-3.5" />
+          </Button>
+        </div>
+
+        {/* 3. COLOR PICKER (A with rainbow underline) */}
         <Popover>
           <PopoverTrigger asChild>
             <Button
               type="button"
               variant="ghost"
               size="icon"
-              className={cn(btn, active.foreColor && activeCls)}
+              className={cn(
+                'h-8 w-8 rounded-lg relative hover:bg-[#27272a] text-white shrink-0',
+                active.foreColor && 'bg-[#27272a]',
+              )}
               title="Cor do texto"
+              onMouseDown={saveCurrentSelection}
             >
-              <Palette
-                className="h-3.5 w-3.5"
-                style={active.foreColor ? { color: active.foreColor } : undefined}
-              />
+              <div className="flex flex-col items-center justify-center">
+                <span className="font-serif font-bold text-sm leading-none">A</span>
+                <div
+                  className="w-3.5 h-[3px] rounded-full mt-0.5"
+                  style={{
+                    background:
+                      active.foreColor ||
+                      'linear-gradient(to right, #ef4444, #eab308, #3b82f6, #a855f7)',
+                  }}
+                />
+              </div>
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-56 p-2" align="start">
-            <div className="text-xs font-semibold text-muted-foreground mb-2 px-1">
-              Cores do texto
-            </div>
+          <PopoverContent className="w-56 p-2 bg-[#18181b] border-[#27272a]" align="start">
+            <div className="text-xs font-semibold text-zinc-400 mb-2 px-1">Cores do texto</div>
             <div className="grid grid-cols-7 gap-1.5">
               {[
                 { name: 'Azul Royal', value: '#0047AB' },
@@ -341,16 +462,16 @@ export function RichTextEditor({
                   title={c.name}
                   aria-label={c.name}
                   onClick={() => exec('foreColor', c.value)}
-                  className="h-6 w-6 rounded-full border border-white/20 transition-transform hover:scale-110 focus:outline-none focus:ring-1 focus:ring-primary"
+                  className="h-6 w-6 rounded-full border border-white/20 transition-transform hover:scale-110 focus:outline-none focus:ring-1 focus:ring-purple-500"
                   style={{ backgroundColor: c.value }}
                 />
               ))}
             </div>
-            <div className="mt-2 pt-2 border-t border-border flex items-center justify-between">
+            <div className="mt-2 pt-2 border-t border-[#27272a] flex items-center justify-between">
               <button
                 type="button"
                 onClick={() => exec('foreColor', '#FFFFFF')}
-                className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white transition-colors"
               >
                 <Eraser className="h-3.5 w-3.5" />
                 <span>Restaurar padrão (Branco)</span>
@@ -358,40 +479,44 @@ export function RichTextEditor({
             </div>
           </PopoverContent>
         </Popover>
+
+        {/* 4. GRADIENT PICKER (Sparkles) */}
         <Popover open={gradientOpen} onOpenChange={setGradientOpen}>
           <PopoverTrigger asChild>
             <Button
               type="button"
               variant="ghost"
               size="icon"
-              className={cn(btn, active.gradient && activeCls)}
+              className={cn(
+                'h-8 w-8 rounded-lg hover:bg-[#27272a] text-white shrink-0',
+                active.gradient && 'bg-[#6366f1]/30 text-purple-300',
+              )}
               title="Gradiente de texto"
+              onMouseDown={saveCurrentSelection}
             >
-              <Sparkles className="h-3.5 w-3.5" />
+              <Sparkles className="h-4 w-4" />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-56 p-2" align="start">
-            <div className="text-xs font-semibold text-muted-foreground mb-2 px-1">
-              Gradientes de texto
-            </div>
+          <PopoverContent className="w-56 p-2 bg-[#18181b] border-[#27272a]" align="start">
+            <div className="text-xs font-semibold text-zinc-400 mb-2 px-1">Gradientes de texto</div>
             <div className="grid grid-cols-2 gap-1">
               {GRADIENT_OPTIONS.map((g) => (
                 <button
                   key={g.className}
                   type="button"
                   onClick={() => applyGradient(g.className)}
-                  className="flex items-center gap-2 rounded-md px-2 py-1.5 text-xs hover:bg-accent transition-colors"
+                  className="flex items-center gap-2 rounded-md px-2 py-1.5 text-xs hover:bg-[#27272a] text-white transition-colors"
                 >
                   <span className="h-4 w-4 rounded shrink-0" style={{ background: g.preview }} />
                   <span className="truncate">{g.label}</span>
                 </button>
               ))}
             </div>
-            <div className="mt-2 pt-2 border-t border-border">
+            <div className="mt-2 pt-2 border-t border-[#27272a]">
               <button
                 type="button"
                 onClick={removeGradient}
-                className="flex items-center gap-2 w-full rounded-md px-2 py-1.5 text-xs hover:bg-accent transition-colors text-muted-foreground"
+                className="flex items-center gap-2 w-full rounded-md px-2 py-1.5 text-xs hover:bg-[#27272a] transition-colors text-zinc-400 hover:text-white"
               >
                 <Eraser className="h-3.5 w-3.5" />
                 <span>Remover gradiente</span>
@@ -399,12 +524,141 @@ export function RichTextEditor({
             </div>
           </PopoverContent>
         </Popover>
+
+        {/* 5. INLINE FORMATTING BUTTONS (B, I, U, S, aA) */}
+        <div className="flex items-center gap-0.5 shrink-0">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className={cn(
+              'h-8 w-8 rounded-lg font-bold text-sm text-zinc-300 hover:text-white hover:bg-[#27272a]',
+              active.bold &&
+                'bg-[#6366f1]/30 text-purple-300 hover:bg-[#6366f1]/40 hover:text-purple-200',
+            )}
+            onClick={() => exec('bold')}
+            title="Negrito"
+          >
+            B
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className={cn(
+              'h-8 w-8 rounded-lg italic text-sm text-zinc-300 hover:text-white hover:bg-[#27272a]',
+              active.italic &&
+                'bg-[#6366f1]/30 text-purple-300 hover:bg-[#6366f1]/40 hover:text-purple-200',
+            )}
+            onClick={() => exec('italic')}
+            title="Itálico"
+          >
+            I
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className={cn(
+              'h-8 w-8 rounded-lg underline text-sm text-zinc-300 hover:text-white hover:bg-[#27272a]',
+              active.underline &&
+                'bg-[#6366f1]/30 text-purple-300 hover:bg-[#6366f1]/40 hover:text-purple-200',
+            )}
+            onClick={() => exec('underline')}
+            title="Sublinhado"
+          >
+            U
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className={cn(
+              'h-8 w-8 rounded-lg text-zinc-300 hover:text-white hover:bg-[#27272a]',
+              active.strikethrough &&
+                'bg-[#6366f1]/30 text-purple-300 hover:bg-[#6366f1]/40 hover:text-purple-200',
+            )}
+            onClick={() => exec('strikethrough')}
+            title="Tachado"
+          >
+            <Strikethrough className="h-4 w-4" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 rounded-lg text-xs font-medium text-zinc-300 hover:text-white hover:bg-[#27272a]"
+            onClick={handleCaseToggle}
+            title="Alternar maiúsculas/minúsculas (aA)"
+          >
+            <span className="font-sans">aA</span>
+          </Button>
+        </div>
+
+        {/* 6. TEXT ALIGNMENT POPPER OR BUTTONS */}
+        <div className="flex items-center gap-0.5 shrink-0 border-l border-[#27272a] pl-1.5 ml-0.5">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className={cn(
+              'h-8 w-8 rounded-lg text-zinc-300 hover:text-white hover:bg-[#27272a]',
+              active.align === 'left' && 'bg-[#27272a] text-white',
+            )}
+            onClick={() => exec('justifyLeft')}
+            title="Alinhar à esquerda"
+          >
+            <AlignLeft className="h-4 w-4" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className={cn(
+              'h-8 w-8 rounded-lg text-zinc-300 hover:text-white hover:bg-[#27272a]',
+              active.align === 'center' && 'bg-[#27272a] text-white',
+            )}
+            onClick={() => exec('justifyCenter')}
+            title="Centralizar"
+          >
+            <AlignCenter className="h-4 w-4" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className={cn(
+              'h-8 w-8 rounded-lg text-zinc-300 hover:text-white hover:bg-[#27272a]',
+              active.align === 'right' && 'bg-[#27272a] text-white',
+            )}
+            onClick={() => exec('justifyRight')}
+            title="Alinhar à direita"
+          >
+            <AlignRight className="h-4 w-4" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className={cn(
+              'h-8 w-8 rounded-lg text-zinc-300 hover:text-white hover:bg-[#27272a]',
+              active.align === 'justify' && 'bg-[#27272a] text-white',
+            )}
+            onClick={() => exec('justifyFull')}
+            title="Justificar"
+          >
+            <AlignJustify className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
+
       {editorLabel && (
-        <div className="px-3 py-1 text-xs font-medium text-muted-foreground border-b border-border/50 bg-muted/20">
+        <div className="px-3 py-1 text-xs font-medium text-zinc-400 border-b border-[#27272a] bg-[#18181b]/50">
           {editorLabel}
         </div>
       )}
+
+      {/* CONTENT EDITABLE AREA */}
       <div
         ref={editorRef}
         contentEditable
@@ -412,30 +666,17 @@ export function RichTextEditor({
         onBlur={handleBlur}
         suppressContentEditableWarning
         className={cn(
-          'rte-content-area min-h-[120px] max-h-[400px] overflow-y-auto p-3 pb-6 outline-none prose prose-sm max-w-none',
+          'rte-content-area min-h-[120px] max-h-[400px] overflow-y-auto p-4 outline-none text-white leading-relaxed',
           variant === 'title'
             ? 'rte-title-preview min-h-[80px]'
             : variant === 'content'
               ? 'rte-content-preview'
-              : 'text-sm leading-relaxed',
+              : 'text-sm',
         )}
-        style={
-          variant === 'title'
-            ? {
-                fontFamily: "'Playfair Display', serif",
-                fontSize: '40px',
-                fontWeight: 700,
-                color: '#ffffff',
-                lineHeight: 1.2,
-              }
-            : variant === 'content'
-              ? {
-                  fontFamily: "'Open Sans', sans-serif",
-                  color: '#ffffff',
-                  lineHeight: 1.6,
-                }
-              : undefined
-        }
+        style={{
+          fontFamily: defaultFontFamily,
+          fontSize: `${defaultFontSize}px`,
+        }}
       />
     </div>
   )
