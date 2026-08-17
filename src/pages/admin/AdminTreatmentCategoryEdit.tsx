@@ -41,6 +41,8 @@ const emptyForm: Partial<TreatmentCategory> = {
   resultados_text: '',
   sintomas_title: '',
   sintomas_text: '',
+  sintomas_corpo_text: '',
+  sintomas_mente_text: '',
   cta_title: '',
   cta_text: '',
   por_que_tantas_title: '',
@@ -193,6 +195,8 @@ export default function AdminTreatmentCategoryEdit() {
       fd.append('resultados_text', safeRichText('resultados_text'))
       fd.append('sintomas_title', safeRichText('sintomas_title'))
       fd.append('sintomas_text', safeRichText('sintomas_text'))
+      fd.append('sintomas_corpo_text', safeRichText('sintomas_corpo_text'))
+      fd.append('sintomas_mente_text', safeRichText('sintomas_mente_text'))
       fd.append('cta_title', safeRichText('cta_title'))
       fd.append('cta_text', safeRichText('cta_text'))
       fd.append('por_que_tantas_title', safeRichText('por_que_tantas_title'))
@@ -492,21 +496,47 @@ export default function AdminTreatmentCategoryEdit() {
               <RichTextEditor
                 value={formData.sintomas_title || ''}
                 onChange={(html) => setFormData({ ...formData, sintomas_title: html })}
-                editorLabel="Título da seção"
+                editorLabel="Título da seção (Ex: Sintomas da Ansiedade?)"
                 className="border-primary/20"
               />
             </div>
-            <div className="space-y-2">
-              <Label className="text-muted-foreground">Conteúdo da seção</Label>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+              <div className="space-y-2 rounded-lg border border-border/60 bg-background/50 p-4">
+                <Label className="font-semibold text-[#D4AF37]">No Corpo (Sinais Físicos)</Label>
+                <RichTextEditor
+                  value={formData.sintomas_corpo_text || ''}
+                  onChange={(html) => setFormData({ ...formData, sintomas_corpo_text: html })}
+                  editorLabel="Conteúdo: No Corpo (Sinais Físicos)"
+                />
+              </div>
+
+              <div className="space-y-2 rounded-lg border border-border/60 bg-background/50 p-4">
+                <Label className="font-semibold text-[#D4AF37]">
+                  Na Mente e no Comportamento (Sinais Emocionais)
+                </Label>
+                <RichTextEditor
+                  value={formData.sintomas_mente_text || ''}
+                  onChange={(html) => setFormData({ ...formData, sintomas_mente_text: html })}
+                  editorLabel="Conteúdo: Na Mente e no Comportamento (Sinais Emocionais)"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2 pt-2">
+              <Label className="text-xs text-muted-foreground">
+                Notas Adicionais / Sintomas Gerais (Conteúdo legado para referência)
+              </Label>
               <RichTextEditor
                 value={formData.sintomas_text || ''}
                 onChange={(html) => setFormData({ ...formData, sintomas_text: html })}
-                editorLabel="Conteúdo da seção"
+                editorLabel="Notas Adicionais"
               />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
               <FileUploadField
-                label="Imagem"
+                label="Imagem da seção"
                 currentSrc={getExistingImageSrc('sintomas_image', sintomasImageFile)}
                 file={sintomasImageFile}
                 onChange={setSintomasImageFile}

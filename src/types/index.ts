@@ -364,6 +364,8 @@ export interface TreatmentCategory {
   resultados_image?: string
   resultados_title?: string
   sintomas_text?: string
+  sintomas_corpo_text?: string
+  sintomas_mente_text?: string
   sintomas_image?: string
   sintomas_title?: string
   cta_text?: string

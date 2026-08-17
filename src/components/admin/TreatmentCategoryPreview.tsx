@@ -157,7 +157,41 @@ export function TreatmentCategoryPreview({ data, imageUrls }: PreviewProps) {
             />
           )}
 
-          {renderSection(data.sintomas_title, data.sintomas_text, imageUrls.sintomas, 'Sintomas')}
+          {(data.sintomas_corpo_text || data.sintomas_mente_text || data.sintomas_text) && (
+            <div className="space-y-3">
+              <h2 className="text-lg font-bold text-slate-900">
+                {data.sintomas_title || 'Sintomas'}
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {data.sintomas_corpo_text && (
+                  <div className="p-3 bg-slate-900 text-white rounded-lg space-y-1">
+                    <h3 className="text-sm font-bold text-[#D4AF37]">No Corpo (Sinais Físicos)</h3>
+                    <div
+                      className={cn(proseClass, 'text-white [&_*]:!text-white')}
+                      dangerouslySetInnerHTML={{ __html: data.sintomas_corpo_text }}
+                    />
+                  </div>
+                )}
+                {data.sintomas_mente_text && (
+                  <div className="p-3 bg-slate-900 text-white rounded-lg space-y-1">
+                    <h3 className="text-sm font-bold text-[#D4AF37]">
+                      Na Mente e no Comportamento
+                    </h3>
+                    <div
+                      className={cn(proseClass, 'text-white [&_*]:!text-white')}
+                      dangerouslySetInnerHTML={{ __html: data.sintomas_mente_text }}
+                    />
+                  </div>
+                )}
+              </div>
+              {data.sintomas_text && !data.sintomas_corpo_text && !data.sintomas_mente_text && (
+                <div
+                  className={proseClass}
+                  dangerouslySetInnerHTML={{ __html: data.sintomas_text }}
+                />
+              )}
+            </div>
+          )}
           {renderSection(
             data.como_funciona_title,
             data.como_funciona_text,

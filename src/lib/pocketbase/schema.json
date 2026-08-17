@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-17T15:10:30.085Z",
+  "generatedAt": "2026-08-17T15:50:03.000Z",
   "collections": [
     {
       "name": "users",
@@ -2408,6 +2408,18 @@
         {
           "name": "faixa_azul_subtitulo",
           "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "sintomas_corpo_text",
+          "type": "editor",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "sintomas_mente_text",
+          "type": "editor",
           "required": false,
           "system": false
         }
