@@ -343,54 +343,63 @@ export default function TreatmentDetail() {
       {hasSintomas && (
         <ScrollFadeIn>
           <section className="py-24 bg-card overflow-visible">
-            <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 grid md:grid-cols-2 gap-8 lg:gap-12 items-center overflow-visible">
-              <div className={cn('w-full', sintomasImgLeft && 'md:order-2')}>
+            <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 overflow-visible">
+              <div className="text-center mb-8">
                 <SectionTitle
                   title={category.sintomas_title}
                   defaultTitle="Sintomas"
                   fontSizePx={sintomasCorpoStyles.title}
                 />
-
-                {hasSintomasCorpo || hasSintomasMente ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                    {hasSintomasCorpo && (
-                      <div className="bg-[#111622] border border-white/10 rounded-2xl p-6 shadow-xl flex flex-col space-y-4">
-                        <h3 className="font-['Playfair_Display',serif] text-xl md:text-2xl font-bold text-[#D4AF37] leading-snug">
-                          No Corpo (Sinais Físicos)
-                        </h3>
-                        <div
-                          className={proseClass}
-                          style={{ fontSize: `${sintomasCorpoStyles.content}px` }}
-                          dangerouslySetInnerHTML={{ __html: category.sintomas_corpo_text! }}
-                        />
-                      </div>
-                    )}
-
-                    {hasSintomasMente && (
-                      <div className="bg-[#111622] border border-white/10 rounded-2xl p-6 shadow-xl flex flex-col space-y-4">
-                        <h3 className="font-['Playfair_Display',serif] text-xl md:text-2xl font-bold text-[#D4AF37] leading-snug">
-                          Na Mente e no Comportamento (Sinais Emocionais)
-                        </h3>
-                        <div
-                          className={proseClass}
-                          style={{ fontSize: `${sintomasMenteStyles.content}px` }}
-                          dangerouslySetInnerHTML={{ __html: category.sintomas_mente_text! }}
-                        />
-                      </div>
-                    )}
-                  </div>
-                ) : null}
               </div>
 
-              {sintomasImg && (
-                <div className={cn('w-full', sintomasImgLeft && 'md:order-1')}>
-                  <FramedImage
-                    src={sintomasImg}
-                    alt="Sintomas"
-                    position={sintomasImgLeft ? 'left' : 'right'}
-                  />
+              <div
+                className={cn(
+                  'grid gap-8 lg:gap-12 items-center overflow-visible',
+                  sintomasImg ? 'md:grid-cols-2' : 'grid-cols-1',
+                )}
+              >
+                <div className={cn('w-full', sintomasImgLeft && 'md:order-2')}>
+                  {hasSintomasCorpo || hasSintomasMente ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {hasSintomasCorpo && (
+                        <div className="bg-[#111622] border border-white/10 rounded-2xl p-6 shadow-xl flex flex-col space-y-4">
+                          <h3 className="font-['Playfair_Display',serif] text-xl md:text-2xl font-bold text-[#D4AF37] leading-snug">
+                            Sinais Físicos
+                          </h3>
+                          <div
+                            className={proseClass}
+                            style={{ fontSize: `${sintomasCorpoStyles.content}px` }}
+                            dangerouslySetInnerHTML={{ __html: category.sintomas_corpo_text! }}
+                          />
+                        </div>
+                      )}
+
+                      {hasSintomasMente && (
+                        <div className="bg-[#111622] border border-white/10 rounded-2xl p-6 shadow-xl flex flex-col space-y-4">
+                          <h3 className="font-['Playfair_Display',serif] text-xl md:text-2xl font-bold text-[#D4AF37] leading-snug">
+                            Sinais Emocionais
+                          </h3>
+                          <div
+                            className={proseClass}
+                            style={{ fontSize: `${sintomasMenteStyles.content}px` }}
+                            dangerouslySetInnerHTML={{ __html: category.sintomas_mente_text! }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  ) : null}
                 </div>
-              )}
+
+                {sintomasImg && (
+                  <div className={cn('w-full', sintomasImgLeft && 'md:order-1')}>
+                    <FramedImage
+                      src={sintomasImg}
+                      alt="Sintomas"
+                      position={sintomasImgLeft ? 'left' : 'right'}
+                    />
+                  </div>
+                )}
+              </div>
             </div>
           </section>
         </ScrollFadeIn>

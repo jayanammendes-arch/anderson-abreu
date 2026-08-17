@@ -616,7 +616,7 @@ export default function AdminTreatmentCategoryEdit() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
               <div className="space-y-2 rounded-lg border border-border/60 bg-background/50 p-4">
                 <div className="flex items-center justify-between gap-2">
-                  <Label className="font-semibold text-[#D4AF37]">No Corpo (Sinais Físicos)</Label>
+                  <Label className="font-semibold text-[#D4AF37]">Sinais Físicos</Label>
                   <div className="flex items-center gap-2">
                     <FontSizeInput
                       compact
@@ -630,16 +630,14 @@ export default function AdminTreatmentCategoryEdit() {
                 <RichTextEditor
                   value={formData.sintomas_corpo_text || ''}
                   onChange={(html) => setFormData({ ...formData, sintomas_corpo_text: html })}
-                  editorLabel="Conteúdo: No Corpo (Sinais Físicos)"
+                  editorLabel="Conteúdo: Sinais Físicos"
                   variant="content"
                 />
               </div>
 
               <div className="space-y-2 rounded-lg border border-border/60 bg-background/50 p-4">
                 <div className="flex items-center justify-between gap-2">
-                  <Label className="font-semibold text-[#D4AF37]">
-                    Na Mente e no Comportamento (Sinais Emocionais)
-                  </Label>
+                  <Label className="font-semibold text-[#D4AF37]">Sinais Emocionais</Label>
                   <div className="flex items-center gap-2">
                     <FontSizeInput
                       compact
@@ -653,12 +651,11 @@ export default function AdminTreatmentCategoryEdit() {
                 <RichTextEditor
                   value={formData.sintomas_mente_text || ''}
                   onChange={(html) => setFormData({ ...formData, sintomas_mente_text: html })}
-                  editorLabel="Conteúdo: Na Mente e no Comportamento (Sinais Emocionais)"
+                  editorLabel="Conteúdo: Sinais Emocionais"
                   variant="content"
                 />
               </div>
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
               <div className="max-w-[300px]">
                 <FileUploadField
