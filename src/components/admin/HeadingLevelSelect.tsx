@@ -1,14 +1,5 @@
 import { useState } from 'react'
-import {
-  Heading1,
-  Heading2,
-  Heading3,
-  Heading4,
-  Heading5,
-  Heading6,
-  Pilcrow,
-  ChevronDown,
-} from 'lucide-react'
+import { Heading, Heading1, Heading2, Heading3, Pilcrow, ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { cn } from '@/lib/utils'
@@ -31,9 +22,9 @@ const ICONS: Record<HeadingLevel, typeof Heading1> = {
   h1: Heading1,
   h2: Heading2,
   h3: Heading3,
-  h4: Heading4,
-  h5: Heading5,
-  h6: Heading6,
+  h4: Heading,
+  h5: Heading,
+  h6: Heading,
 }
 
 function sizeLabel(level: HeadingLevel, sizes: HeadingSizes, desktop: boolean): string {
