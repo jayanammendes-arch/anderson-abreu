@@ -60,6 +60,7 @@ routerAdd(
       'comparacao_title',
       'comparacao_content',
       'heading_sizes',
+      'font_sizes',
     ]
 
     for (var i = 0; i < fieldNames.length; i++) {

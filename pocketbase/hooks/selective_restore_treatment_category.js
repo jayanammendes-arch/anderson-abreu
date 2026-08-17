@@ -50,6 +50,7 @@ routerAdd(
       'comparacao_title',
       'comparacao_content',
       'heading_sizes',
+      'font_sizes',
     ]
 
     var validFields = []

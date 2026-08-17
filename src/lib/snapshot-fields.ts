@@ -38,7 +38,7 @@ export const SNAPSHOT_FIELDS: SnapshotFieldDef[] = [
   { key: 'comparacao_content', label: 'Conteúdo: Comparação', type: 'richtext' },
   { key: 'symptoms_list', label: 'Lista de Sintomas', type: 'richtext' },
   { key: 'sections_config', label: 'Configuração de Seções', type: 'json' },
-  { key: 'heading_sizes', label: 'Tamanhos de Heading (h1-h6)', type: 'json' },
+  { key: 'font_sizes', label: 'Tamanhos de Fonte (px)', type: 'json' },
 ]
 
 export const RESTOREABLE_FIELD_NAMES = SNAPSHOT_FIELDS.map((f) => f.key)

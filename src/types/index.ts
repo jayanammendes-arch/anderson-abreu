@@ -386,17 +386,15 @@ export interface TreatmentCategory {
   por_que_tantas_content?: string
   comparacao_title?: string
   comparacao_content?: string
-  heading_sizes?: HeadingSizes
+  font_sizes?: FontSizes | string
 }
 
-export type HeadingLevel = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
-
-export interface HeadingSizeEntry {
-  mobile: number
-  desktop: number
+export interface FontSizeEntry {
+  title: number
+  content: number
 }
 
-export type HeadingSizes = Record<HeadingLevel, HeadingSizeEntry>
+export type FontSizes = Partial<Record<string, Partial<FontSizeEntry>>>
 
 export interface ContentSnapshot {
   id: string

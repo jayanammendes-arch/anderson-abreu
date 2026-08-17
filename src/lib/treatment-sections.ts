@@ -32,7 +32,19 @@ export function getSectionsConfig(config?: SectionConfigItem[] | null): SectionC
   return [...config, ...missing]
 }
 
-export const TREATMENT_DETAIL_SECTIONS = [
+export type TreatmentDetailSectionId =
+  | 'detailed_content'
+  | 'como_funciona'
+  | 'sintomas'
+  | 'sintomas_imagem'
+  | 'resultados'
+  | 'faixa_destaque'
+  | 'cta'
+
+export const TREATMENT_DETAIL_SECTIONS: ReadonlyArray<{
+  id: TreatmentDetailSectionId
+  label: string
+}> = [
   { id: 'detailed_content', label: 'Conteúdo Detalhado' },
   { id: 'como_funciona', label: 'Como Funciona' },
   { id: 'sintomas', label: 'Sintomas' },
@@ -40,9 +52,9 @@ export const TREATMENT_DETAIL_SECTIONS = [
   { id: 'resultados', label: 'Resultados' },
   { id: 'faixa_destaque', label: 'Faixa de Destaque' },
   { id: 'cta', label: 'CTA Final' },
-] as const
+]
 
-export const TREATMENT_DETAIL_SECTION_LABELS: Record<string, string> = {
+export const TREATMENT_DETAIL_SECTION_LABELS: Record<TreatmentDetailSectionId, string> = {
   detailed_content: 'Conteúdo Detalhado',
   como_funciona: 'Como Funciona',
   sintomas: 'Sintomas',
@@ -66,7 +78,7 @@ export function getTreatmentDetailConfig(config?: SectionConfigItem[] | null): S
   if (!config || !Array.isArray(config) || config.length === 0) {
     return DEFAULT_TREATMENT_DETAIL_CONFIG.map((s) => ({ ...s }))
   }
-  const knownIds = new Set(TREATMENT_DETAIL_SECTIONS.map((s) => s.id))
+  const knownIds = new Set<string>(TREATMENT_DETAIL_SECTIONS.map((s) => s.id))
   const filtered = config.filter((s) => knownIds.has(s.id))
   const existingIds = new Set(filtered.map((s) => s.id))
   const missing = DEFAULT_TREATMENT_DETAIL_CONFIG.filter((s) => !existingIds.has(s.id))
