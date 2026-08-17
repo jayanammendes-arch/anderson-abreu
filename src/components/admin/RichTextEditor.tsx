@@ -62,6 +62,15 @@ export function RichTextEditor({
   const editorRef = useRef<HTMLDivElement>(null)
   const lastSetValue = useRef<string>('')
   const savedRange = useRef<Range | null>(null)
+  // True while the font size input is focused (user is typing a value in it).
+  // While focused, selectionchange must NOT overwrite fontSizeInput from the DOM,
+  // otherwise the value the user just typed is replaced by the cursor's font size.
+  const fontSizeInputFocused = useRef<boolean>(false)
+  // One-shot guard set right after a font size is applied via the toolbar. The
+  // apply moves focus to the editor (blurring the input) and then a selectionchange
+  // fires whose anchor often lands just outside the freshly-created span, reading
+  // the default size. That next sync must be skipped so the typed value survives.
+  const skipNextFontSizeSync = useRef<boolean>(false)
 
   // Default font size depending on variant
   const defaultFontSize = variant === 'title' ? 40 : 18
@@ -140,7 +149,13 @@ export function RichTextEditor({
       fontFamily: currentFontFamily,
       fontSize: currentFontSize,
     })
-    setFontSizeInput(currentFontSize.toString())
+    // Only sync the input from the DOM when the user is NOT actively typing in it
+    // and we are not in the suppression window right after a toolbar apply.
+    if (!fontSizeInputFocused.current && !skipNextFontSizeSync.current) {
+      setFontSizeInput(currentFontSize.toString())
+    } else if (skipNextFontSizeSync.current) {
+      skipNextFontSizeSync.current = false
+    }
   }, [defaultFontSize, defaultFontFamily])
 
   useEffect(() => {
@@ -222,6 +237,10 @@ export function RichTextEditor({
     const clamped = Math.max(8, Math.min(200, newSize))
     setFontSizeInput(clamped.toString())
     setActive((prev) => ({ ...prev, fontSize: clamped }))
+    // After applying, focus moves to the editor and a selectionchange fires that
+    // may read a stale/adjacent size; suppress the next DOM-driven input sync so
+    // the value we just set survives.
+    skipNextFontSizeSync.current = true
     applyCustomSpanStyle('fontSize', `${clamped}px`)
   }
 
@@ -382,7 +401,10 @@ export function RichTextEditor({
           <input
             type="number"
             value={fontSizeInput}
-            onFocus={saveCurrentSelection}
+            onFocus={() => {
+              fontSizeInputFocused.current = true
+              saveCurrentSelection()
+            }}
             onChange={(e) => setFontSizeInput(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
@@ -392,6 +414,7 @@ export function RichTextEditor({
               }
             }}
             onBlur={() => {
+              fontSizeInputFocused.current = false
               const val = parseInt(fontSizeInput, 10)
               if (!isNaN(val)) handleFontSizeChange(val)
               else setFontSizeInput(active.fontSize.toString())
