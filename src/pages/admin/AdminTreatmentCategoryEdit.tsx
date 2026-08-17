@@ -127,13 +127,16 @@ export default function AdminTreatmentCategoryEdit() {
   const fontSizes = normalizeFontSizes(formData.font_sizes)
 
   const setFontSize = (section: FontSizeSection, key: 'title' | 'content', value: number) => {
-    const current = fontSizes[section] || DEFAULT_FONT_SIZES[section]
-    setFormData({
-      ...formData,
-      font_sizes: {
-        ...fontSizes,
-        [section]: { title: current.title, content: current.content, [key]: value },
-      },
+    setFormData((prev) => {
+      const prevSizes = normalizeFontSizes(prev.font_sizes)
+      const current = prevSizes[section] || DEFAULT_FONT_SIZES[section]
+      return {
+        ...prev,
+        font_sizes: {
+          ...prevSizes,
+          [section]: { title: current.title, content: current.content, [key]: value },
+        },
+      }
     })
   }
 

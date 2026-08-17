@@ -1,5 +1,7 @@
-import { Input } from '@/components/ui/input'
+import { useState, useEffect } from 'react'
+import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
+import { Minus, Plus } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface Props {
@@ -23,12 +25,12 @@ interface Props {
 
 /**
  * Campo numérico simples para escolher o tamanho da fonte em pixels (px).
- * Sem dropdown, sem níveis predefinidos — apenas um input type="number".
+ * Sem dropdown, sem níveis predefinidos — apenas um input type="number.
+ *
+ * O onChange é disparado a CADA tecla digitada (não só no Enter/blur), de modo
+ * que o tamanho da fonte reage imediatamente enquanto o usuário digita. O valor
+ * exibido no campo é sempre o valor real aplicado.
  */
-import { useState, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
-import { Minus, Plus } from 'lucide-react'
-
 export function FontSizeInput({
   label,
   value,
@@ -41,17 +43,38 @@ export function FontSizeInput({
 }: Props) {
   const [inputValue, setInputValue] = useState<string>(value != null ? String(value) : '')
 
+  // Sincroniza o campo quando o valor mudar externamente (ex.: botões + / -,
+  // carregamento inicial, restore de snapshot). Enquanto o usuário digita, o
+  // estado local já é mantido em paralelo pelo handleInputChange, então esta
+  // sincronização não entra em conflito.
   useEffect(() => {
     setInputValue(value != null ? String(value) : '')
   }, [value])
 
-  const commitValue = (valStr: string) => {
-    const parsed = parseInt(valStr, 10)
-    if (!isNaN(parsed)) {
-      const clamped = Math.min(max, Math.max(min, parsed))
-      onChange(clamped)
-      setInputValue(String(clamped))
-    } else {
+  /**
+   * Disparado a cada tecla. Atualiza o estado local E chama onChange com o
+   * número já clampado, para que o editor reaja imediatamente e o valor
+   * exibido corresponda ao valor aplicado.
+   */
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value
+    // Permite campo vazio enquanto o usuário apaga para digitar um novo valor.
+    if (raw === '') {
+      setInputValue('')
+      return
+    }
+    const parsed = parseInt(raw, 10)
+    if (isNaN(parsed)) return
+    const clamped = Math.min(max, Math.max(min, parsed))
+    setInputValue(String(clamped))
+    onChange(clamped)
+  }
+
+  // Ao perder o foco, se o campo estiver vazio ou inválido, restaura para o
+  // último valor aplicado (não dispara onChange de novo — já foi disparado).
+  const handleBlur = () => {
+    const parsed = parseInt(inputValue, 10)
+    if (isNaN(parsed)) {
       setInputValue(value != null ? String(value) : '')
     }
   }
@@ -68,6 +91,14 @@ export function FontSizeInput({
     const nextVal = Math.min(max, current + 1)
     onChange(nextVal)
     setInputValue(String(nextVal))
+  }
+
+  const inputProps = {
+    type: 'number' as const,
+    value: inputValue,
+    placeholder: placeholder != null ? String(placeholder) : '',
+    onChange: handleInputChange,
+    onBlur: handleBlur,
   }
 
   if (compact) {
@@ -90,17 +121,7 @@ export function FontSizeInput({
             <Minus className="h-3 w-3" />
           </Button>
           <input
-            type="number"
-            value={inputValue}
-            placeholder={placeholder != null ? String(placeholder) : ''}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                e.preventDefault()
-                commitValue(inputValue)
-              }
-            }}
-            onBlur={() => commitValue(inputValue)}
+            {...inputProps}
             className="w-9 h-5 bg-transparent text-center text-xs font-semibold text-white focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           />
           <Button
@@ -133,17 +154,7 @@ export function FontSizeInput({
           <Minus className="h-3.5 w-3.5" />
         </Button>
         <input
-          type="number"
-          value={inputValue}
-          placeholder={placeholder != null ? String(placeholder) : ''}
-          onChange={(e) => setInputValue(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              e.preventDefault()
-              commitValue(inputValue)
-            }
-          }}
-          onBlur={() => commitValue(inputValue)}
+          {...inputProps}
           className="w-10 h-6 bg-transparent text-center text-xs font-semibold text-white focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
         <Button
