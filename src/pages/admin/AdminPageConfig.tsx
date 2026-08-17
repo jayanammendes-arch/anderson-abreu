@@ -293,7 +293,7 @@ const PRIMARY_COLOR_PRESETS = [
   { name: 'Azul Royal', value: '#0047AB' },
   { name: 'Azul Escuro', value: '#0B1D3A' },
   { name: 'Azul Céu', value: '#0EA5E9' },
-  { name: 'Dourado', value: '#C59A2A' },
+  { name: 'Dourado', value: '#D4AF37' },
   { name: 'Verde Esmeralda', value: '#10B981' },
   { name: 'Verde Escuro', value: '#065F46' },
   { name: 'Vermelho', value: '#DC2626' },

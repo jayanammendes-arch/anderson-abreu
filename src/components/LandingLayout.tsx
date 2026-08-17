@@ -130,9 +130,9 @@ export function LandingLayout({
   const brandGradientImage =
     settings?.login_gradient ||
     (settings?.primary_color
-      ? `linear-gradient(135deg, ${settings.primary_color}, ${isDarkPage ? '#C59A2A' : '#8B7420'})`
+      ? `linear-gradient(135deg, ${settings.primary_color}, ${isDarkPage ? '#D4AF37' : '#8B7420'})`
       : isDarkPage
-        ? 'linear-gradient(135deg, #D4AF37, #C59A2A)'
+        ? 'linear-gradient(135deg, #D4AF37, #D4AF37)'
         : 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--royal-blue-hover)))')
   const agendarText = settings?.agendar_sessao_text || 'Agendar Sessão'
   const handleAreaAlunoClick = () => navigate(areaAlunoHref)

@@ -438,7 +438,7 @@
   }
 
   .rte-gradient-gold {
-    background: linear-gradient(135deg, #f59e0b, #fbbf24);
+    background: linear-gradient(135deg, #d4af37, #d4af37);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -497,7 +497,7 @@
   /* Gradiente dourado aplicado automaticamente aos títulos de seção
      (última palavra, ou todo o título quando for "APROVADO PELA CIÊNCIA"). */
   .section-title-gold {
-    background: linear-gradient(to right, #d4af37 0%, #f5e6a3 50%, #d4af37 100%);
+    background: linear-gradient(to right, #d4af37 0%, #d4af37 50%, #d4af37 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
