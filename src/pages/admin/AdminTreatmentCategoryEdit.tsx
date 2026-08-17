@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import {
   adminGetTreatmentCategory,
@@ -50,6 +50,13 @@ const emptyForm: Partial<TreatmentCategory> = {
   symptoms_list: '',
   faixa_azul_whatsapp_enabled: false,
   faixa_azul_whatsapp_text: 'Fale Conosco',
+}
+
+function isEmptyHtml(html: string | undefined | null): boolean {
+  if (!html || !html.trim()) return true
+  const tmp = document.createElement('div')
+  tmp.innerHTML = html
+  return !tmp.textContent?.trim()
 }
 
 function slugify(text: string): string {
@@ -108,6 +115,7 @@ export default function AdminTreatmentCategoryEdit() {
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [showIconPicker, setShowIconPicker] = useState(false)
   const [snapshotOpen, setSnapshotOpen] = useState(false)
+  const initialDataRef = useRef<Partial<TreatmentCategory>>({})
 
   useEffect(() => {
     if (!id) {
@@ -117,6 +125,7 @@ export default function AdminTreatmentCategoryEdit() {
     adminGetTreatmentCategory(id)
       .then((cat) => {
         setFormData({ ...cat })
+        initialDataRef.current = { ...cat }
         setLoading(false)
       })
       .catch(() => {
@@ -150,6 +159,15 @@ export default function AdminTreatmentCategoryEdit() {
     return `${import.meta.env.VITE_POCKETBASE_URL}/api/files/treatment_categories/${formData.id}/${filename}`
   }
 
+  const safeRichText = (field: keyof TreatmentCategory): string => {
+    const current = (formData[field] as string) || ''
+    const initial = (initialDataRef.current[field] as string) || ''
+    if (isEmptyHtml(current) && !isEmptyHtml(initial)) {
+      return initial
+    }
+    return current
+  }
+
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
     setSaving(true)
@@ -167,21 +185,21 @@ export default function AdminTreatmentCategoryEdit() {
       fd.append('crop_x', String(formData.crop_x ?? 0.5))
       fd.append('crop_y', String(formData.crop_y ?? 0.5))
       fd.append('hide_icon', String(formData.hide_icon ?? false))
-      fd.append('como_funciona_title', formData.como_funciona_title || '')
-      fd.append('como_funciona_text', formData.como_funciona_text || '')
+      fd.append('como_funciona_title', safeRichText('como_funciona_title'))
+      fd.append('como_funciona_text', safeRichText('como_funciona_text'))
       fd.append('faixa_azul_frase', formData.faixa_azul_frase || '')
       fd.append('faixa_azul_subtitulo', formData.faixa_azul_subtitulo || '')
-      fd.append('resultados_title', formData.resultados_title || '')
-      fd.append('resultados_text', formData.resultados_text || '')
-      fd.append('sintomas_title', formData.sintomas_title || '')
-      fd.append('sintomas_text', formData.sintomas_text || '')
-      fd.append('cta_title', formData.cta_title || '')
-      fd.append('cta_text', formData.cta_text || '')
-      fd.append('por_que_tantas_title', formData.por_que_tantas_title || '')
-      fd.append('por_que_tantas_content', formData.por_que_tantas_content || '')
-      fd.append('comparacao_title', formData.comparacao_title || '')
-      fd.append('comparacao_content', formData.comparacao_content || '')
-      fd.append('detailed_content', formData.detailed_content || '')
+      fd.append('resultados_title', safeRichText('resultados_title'))
+      fd.append('resultados_text', safeRichText('resultados_text'))
+      fd.append('sintomas_title', safeRichText('sintomas_title'))
+      fd.append('sintomas_text', safeRichText('sintomas_text'))
+      fd.append('cta_title', safeRichText('cta_title'))
+      fd.append('cta_text', safeRichText('cta_text'))
+      fd.append('por_que_tantas_title', safeRichText('por_que_tantas_title'))
+      fd.append('por_que_tantas_content', safeRichText('por_que_tantas_content'))
+      fd.append('comparacao_title', safeRichText('comparacao_title'))
+      fd.append('comparacao_content', safeRichText('comparacao_content'))
+      fd.append('detailed_content', safeRichText('detailed_content'))
       fd.append('symptoms_list', formData.symptoms_list || '')
       fd.append(
         'faixa_azul_whatsapp_enabled',
@@ -548,6 +566,7 @@ export default function AdminTreatmentCategoryEdit() {
             if (id) {
               adminGetTreatmentCategory(id).then((cat) => {
                 setFormData({ ...cat })
+                initialDataRef.current = { ...cat }
                 setImageFile(null)
                 setComoFuncionaImageFile(null)
                 setResultadosImageFile(null)

@@ -45,16 +45,17 @@ const DEFAULT_ACTIVE: ActiveState = {
 
 export function RichTextEditor({ value, onChange, className, editorLabel }: RichTextEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null)
-  const isInternal = useRef(false)
+  const lastSetValue = useRef<string>('')
   const savedRange = useRef<Range | null>(null)
   const [active, setActive] = useState<ActiveState>(DEFAULT_ACTIVE)
   const [gradientOpen, setGradientOpen] = useState(false)
 
   useEffect(() => {
-    if (editorRef.current && !isInternal.current) {
-      editorRef.current.innerHTML = value || ''
+    const editor = editorRef.current
+    if (editor && value !== lastSetValue.current) {
+      editor.innerHTML = value || ''
+      lastSetValue.current = value || ''
     }
-    isInternal.current = false
   }, [value])
 
   useEffect(() => {
@@ -96,7 +97,7 @@ export function RichTextEditor({ value, onChange, className, editorLabel }: Rich
       restoreSelection()
       document.execCommand(command, false, val)
       if (editorRef.current) {
-        isInternal.current = true
+        lastSetValue.current = editorRef.current.innerHTML
         onChange(editorRef.current.innerHTML)
       }
       editorRef.current?.focus()
@@ -121,7 +122,7 @@ export function RichTextEditor({ value, onChange, className, editorLabel }: Rich
         range.insertNode(span)
       }
       if (editorRef.current) {
-        isInternal.current = true
+        lastSetValue.current = editorRef.current.innerHTML
         onChange(editorRef.current.innerHTML)
       }
       setGradientOpen(false)
@@ -152,7 +153,7 @@ export function RichTextEditor({ value, onChange, className, editorLabel }: Rich
       node = node.parentNode
     }
     if (editorRef.current) {
-      isInternal.current = true
+      lastSetValue.current = editorRef.current.innerHTML
       onChange(editorRef.current.innerHTML)
     }
     setGradientOpen(false)
@@ -161,7 +162,7 @@ export function RichTextEditor({ value, onChange, className, editorLabel }: Rich
 
   const handleInput = () => {
     if (editorRef.current) {
-      isInternal.current = true
+      lastSetValue.current = editorRef.current.innerHTML
       onChange(editorRef.current.innerHTML)
     }
   }
@@ -170,6 +171,11 @@ export function RichTextEditor({ value, onChange, className, editorLabel }: Rich
     const sel = window.getSelection()
     if (sel && sel.rangeCount > 0 && editorRef.current?.contains(sel.anchorNode)) {
       savedRange.current = sel.getRangeAt(0).cloneRange()
+    }
+    // Safety net: ensure formData reflects current editor content on blur
+    if (editorRef.current) {
+      lastSetValue.current = editorRef.current.innerHTML
+      onChange(editorRef.current.innerHTML)
     }
   }
 
