@@ -409,11 +409,12 @@
   }
 
   /* Preview real: editor de título (Playfair Display, 40px, bold).
-     Palavras em branco; a última palavra (ou todo o título, quando for
-     "APROVADO PELA CIÊNCIA") recebe gradiente dourado via .section-title-gold. */
+     Nenhuma cor é forçada aqui — o título aparece exatamente como o usuário
+     formatou no editor. A cor padrão (branco) vem do style inline do editor;
+     cores/gradientes aplicados manualmente são respeitados. */
   .rte-title-preview,
   .rte-title-preview p,
-  .rte-title-preview span:not([class*='rte-gradient']):not(.section-title-gold),
+  .rte-title-preview span,
   .rte-title-preview div,
   .rte-title-preview font,
   .rte-title-preview b,
@@ -421,16 +422,6 @@
   .rte-title-preview h1,
   .rte-title-preview h2,
   .rte-title-preview h3 {
-    font-family: 'Playfair Display', serif !important;
-    font-size: 40px !important;
-    font-weight: 700 !important;
-    color: #ffffff !important;
-    line-height: 1.2 !important;
-    background: transparent !important;
-    -webkit-text-fill-color: currentColor !important;
-  }
-  .rte-title-preview span[class*='rte-gradient'],
-  .rte-title-preview span.section-title-gold {
     font-family: 'Playfair Display', serif !important;
     font-size: 40px !important;
     font-weight: 700 !important;
@@ -488,16 +479,6 @@
   }
   .rte-gradient-royal {
     background: linear-gradient(135deg, #1e3a8a, #6366f1);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
-  }
-
-  /* Gradiente dourado aplicado automaticamente aos títulos de seção
-     (última palavra, ou todo o título quando for "APROVADO PELA CIÊNCIA"). */
-  .section-title-gold {
-    background: linear-gradient(to right, #d4af37 0%, #d4af37 50%, #d4af37 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;

@@ -20,7 +20,6 @@ import { ScrollFadeIn } from '@/components/ScrollFadeIn'
 import { GlobalBlueBand } from '@/components/GlobalBlueBand'
 import { HypnotherapyComparisonSection } from '@/components/HypnotherapyComparisonSection'
 import { getCropPositionCss } from '@/lib/image-position'
-import { renderSectionTitleHtml } from '@/lib/section-title-gradient'
 import { normalizeFontSizes, type FontSizeSection } from '@/lib/font-sizes'
 import { cn } from '@/lib/utils'
 
@@ -40,14 +39,14 @@ function SectionTitle({
   fontSizePx?: number
 }) {
   const content = title?.trim() || defaultTitle
-  // Aplica o padrão automático: todas as palavras em branco, exceto a última
-  // com gradiente dourado. Exceção: "APROVADO PELA CIÊNCIA" fica inteiro dourado.
-  const html = renderSectionTitleHtml(content)
+  // Renderiza EXATAMENTE o HTML do título salvo no banco, sem nenhum
+  // pós-processamento de cores. Cores/gradientes aplicados manualmente no
+  // editor (RichTextEditor) são respeitados; ausência de cor => branco (padrão).
   return (
     <div
       className="section-title-serif text-white mb-6 py-1 leading-[1.2]"
       style={{ fontSize: `${fontSizePx}px` }}
-      dangerouslySetInnerHTML={{ __html: html }}
+      dangerouslySetInnerHTML={{ __html: content }}
     />
   )
 }
