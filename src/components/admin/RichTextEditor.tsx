@@ -17,6 +17,7 @@ import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { cn } from '@/lib/utils'
 import { GRADIENT_OPTIONS, getActiveGradient } from '@/lib/rte-gradients'
+import { renderSectionTitleHtml } from '@/lib/section-title-gradient'
 
 interface RichTextEditorProps {
   value: string
@@ -60,6 +61,12 @@ export function RichTextEditor({
   const savedRange = useRef<Range | null>(null)
   const [active, setActive] = useState<ActiveState>(DEFAULT_ACTIVE)
   const [gradientOpen, setGradientOpen] = useState(false)
+
+  // Para a variante "title", aplicamos o padrão automático de títulos de seção
+  // (palavras em branco + última palavra com gradiente dourado, ou todo o título
+  // dourado quando for "APROVADO PELA CIÊNCIA") apenas na renderização visual,
+  // mantendo o valor original editável em `value`/`onChange`.
+  const titlePreviewHtml = variant === 'title' && value ? renderSectionTitleHtml(value) : ''
 
   useEffect(() => {
     const editor = editorRef.current
@@ -400,6 +407,13 @@ export function RichTextEditor({
           {editorLabel}
         </div>
       )}
+      {variant === 'title' && (
+        <div
+          aria-hidden
+          className="rte-title-preview min-h-[80px] px-3 py-3 border-b border-input/60 bg-muted/20 overflow-visible [&_span.section-title-gold]:!bg-clip-text"
+          dangerouslySetInnerHTML={{ __html: titlePreviewHtml }}
+        />
+      )}
       <div
         ref={editorRef}
         contentEditable
@@ -420,7 +434,7 @@ export function RichTextEditor({
                 fontFamily: "'Playfair Display', serif",
                 fontSize: '40px',
                 fontWeight: 700,
-                color: '#D4AF37',
+                color: '#ffffff',
                 lineHeight: 1.2,
               }
             : variant === 'content'

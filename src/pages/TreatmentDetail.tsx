@@ -20,6 +20,7 @@ import { ScrollFadeIn } from '@/components/ScrollFadeIn'
 import { GlobalBlueBand } from '@/components/GlobalBlueBand'
 import { HypnotherapyComparisonSection } from '@/components/HypnotherapyComparisonSection'
 import { getCropPositionCss } from '@/lib/image-position'
+import { renderSectionTitleHtml } from '@/lib/section-title-gradient'
 import { cn } from '@/lib/utils'
 
 const proseClass =
@@ -27,15 +28,15 @@ const proseClass =
 
 function SectionTitle({ title, defaultTitle }: { title?: string; defaultTitle: string }) {
   const content = title?.trim() || defaultTitle
-  if (content.includes('<')) {
-    return (
-      <div
-        className="section-title-serif text-[#D4AF37] mb-6 py-1 [&_span]:!bg-transparent [&_*]:!font-['Playfair_Display',serif] [&_*]:!text-[40px] [&_*]:!font-bold [&_*]:!text-[#D4AF37] [&_*]:!mb-0 [&_*]:!leading-[1.2]"
-        dangerouslySetInnerHTML={{ __html: content }}
-      />
-    )
-  }
-  return <h2 className="section-title-serif text-[#D4AF37] mb-6 py-1">{content}</h2>
+  // Aplica o padrão automático: todas as palavras em branco, exceto a última
+  // com gradiente dourado. Exceção: "APROVADO PELA CIÊNCIA" fica inteiro dourado.
+  const html = renderSectionTitleHtml(content)
+  return (
+    <div
+      className="section-title-serif text-white mb-6 py-1"
+      dangerouslySetInnerHTML={{ __html: html }}
+    />
+  )
 }
 
 function FramedImage({
