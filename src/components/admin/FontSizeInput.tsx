@@ -25,21 +25,49 @@ interface Props {
  * Campo numérico simples para escolher o tamanho da fonte em pixels (px).
  * Sem dropdown, sem níveis predefinidos — apenas um input type="number".
  */
+import { useState, useEffect } from 'react'
+import { Button } from '@/components/ui/button'
+import { Minus, Plus } from 'lucide-react'
+
 export function FontSizeInput({
   label,
   value,
   onChange,
-  min = 8,
-  max = 200,
+  min = 1,
+  max = 999,
   placeholder,
   className,
   compact = false,
 }: Props) {
-  const handle = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const n = Number(e.target.value)
-    if (!Number.isFinite(n)) return
-    const clamped = Math.min(max, Math.max(min, Math.round(n)))
-    onChange(clamped)
+  const [inputValue, setInputValue] = useState<string>(value != null ? String(value) : '')
+
+  useEffect(() => {
+    setInputValue(value != null ? String(value) : '')
+  }, [value])
+
+  const commitValue = (valStr: string) => {
+    const parsed = parseInt(valStr, 10)
+    if (!isNaN(parsed)) {
+      const clamped = Math.min(max, Math.max(min, parsed))
+      onChange(clamped)
+      setInputValue(String(clamped))
+    } else {
+      setInputValue(value != null ? String(value) : '')
+    }
+  }
+
+  const handleDecrement = () => {
+    const current = value != null ? value : (placeholder ?? 16)
+    const nextVal = Math.max(min, current - 1)
+    onChange(nextVal)
+    setInputValue(String(nextVal))
+  }
+
+  const handleIncrement = () => {
+    const current = value != null ? value : (placeholder ?? 16)
+    const nextVal = Math.min(max, current + 1)
+    onChange(nextVal)
+    setInputValue(String(nextVal))
   }
 
   if (compact) {
@@ -50,19 +78,41 @@ export function FontSizeInput({
             {label}
           </span>
         )}
-        <div className="relative w-20">
-          <Input
+        <div className="flex items-center bg-[#27272a]/60 border border-[#3f3f46] rounded-lg h-7 px-1 shrink-0">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="h-5 w-5 text-zinc-300 hover:text-white hover:bg-[#3f3f46]/60 rounded-md p-0"
+            onClick={handleDecrement}
+            title="Diminuir tamanho"
+          >
+            <Minus className="h-3 w-3" />
+          </Button>
+          <input
             type="number"
-            min={min}
-            max={max}
-            value={value ?? ''}
+            value={inputValue}
             placeholder={placeholder != null ? String(placeholder) : ''}
-            onChange={handle}
-            className="h-7 pr-7 text-xs tabular-nums"
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault()
+                commitValue(inputValue)
+              }
+            }}
+            onBlur={() => commitValue(inputValue)}
+            className="w-9 h-5 bg-transparent text-center text-xs font-semibold text-white focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           />
-          <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-muted-foreground">
-            px
-          </span>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="h-5 w-5 text-zinc-300 hover:text-white hover:bg-[#3f3f46]/60 rounded-md p-0"
+            onClick={handleIncrement}
+            title="Aumentar tamanho"
+          >
+            <Plus className="h-3 w-3" />
+          </Button>
         </div>
       </div>
     )
@@ -71,19 +121,41 @@ export function FontSizeInput({
   return (
     <div className={cn('flex flex-col gap-1.5', className)}>
       {label && <Label className="text-xs font-medium text-muted-foreground">{label}</Label>}
-      <div className="relative w-28">
-        <Input
+      <div className="flex items-center bg-[#27272a]/60 border border-[#3f3f46] rounded-lg h-8 px-1 shrink-0 w-fit">
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="h-6 w-6 text-zinc-300 hover:text-white hover:bg-[#3f3f46]/60 rounded-md p-0"
+          onClick={handleDecrement}
+          title="Diminuir tamanho"
+        >
+          <Minus className="h-3.5 w-3.5" />
+        </Button>
+        <input
           type="number"
-          min={min}
-          max={max}
-          value={value ?? ''}
+          value={inputValue}
           placeholder={placeholder != null ? String(placeholder) : ''}
-          onChange={handle}
-          className="pr-8 tabular-nums"
+          onChange={(e) => setInputValue(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault()
+              commitValue(inputValue)
+            }
+          }}
+          onBlur={() => commitValue(inputValue)}
+          className="w-10 h-6 bg-transparent text-center text-xs font-semibold text-white focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
-        <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
-          px
-        </span>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="h-6 w-6 text-zinc-300 hover:text-white hover:bg-[#3f3f46]/60 rounded-md p-0"
+          onClick={handleIncrement}
+          title="Aumentar tamanho"
+        >
+          <Plus className="h-3.5 w-3.5" />
+        </Button>
       </div>
     </div>
   )

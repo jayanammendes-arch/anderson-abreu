@@ -390,14 +390,14 @@ export default function AdminTreatmentCategoryEdit() {
             <div className="flex flex-wrap items-center justify-end gap-3">
               <FontSizeInput
                 compact
-                label="Título (px)"
+                label="Título"
                 value={fontSizes.detailed_content.title}
                 placeholder={DEFAULT_FONT_SIZES.detailed_content.title}
                 onChange={(v) => setFontSize('detailed_content', 'title', v)}
               />
               <FontSizeInput
                 compact
-                label="Conteúdo (px)"
+                label="Conteúdo"
                 value={fontSizes.detailed_content.content}
                 placeholder={DEFAULT_FONT_SIZES.detailed_content.content}
                 onChange={(v) => setFontSize('detailed_content', 'content', v)}
@@ -418,14 +418,14 @@ export default function AdminTreatmentCategoryEdit() {
                 <div className="flex items-center gap-3">
                   <FontSizeInput
                     compact
-                    label="Título (px)"
+                    label="Título"
                     value={fontSizes.como_funciona.title}
                     placeholder={DEFAULT_FONT_SIZES.como_funciona.title}
                     onChange={(v) => setFontSize('como_funciona', 'title', v)}
                   />
                   <FontSizeInput
                     compact
-                    label="Conteúdo (px)"
+                    label="Conteúdo"
                     value={fontSizes.como_funciona.content}
                     placeholder={DEFAULT_FONT_SIZES.como_funciona.content}
                     onChange={(v) => setFontSize('como_funciona', 'content', v)}
@@ -535,14 +535,14 @@ export default function AdminTreatmentCategoryEdit() {
                 <div className="flex items-center gap-3">
                   <FontSizeInput
                     compact
-                    label="Título (px)"
+                    label="Título"
                     value={fontSizes.resultados.title}
                     placeholder={DEFAULT_FONT_SIZES.resultados.title}
                     onChange={(v) => setFontSize('resultados', 'title', v)}
                   />
                   <FontSizeInput
                     compact
-                    label="Conteúdo (px)"
+                    label="Conteúdo"
                     value={fontSizes.resultados.content}
                     placeholder={DEFAULT_FONT_SIZES.resultados.content}
                     onChange={(v) => setFontSize('resultados', 'content', v)}
@@ -590,14 +590,14 @@ export default function AdminTreatmentCategoryEdit() {
                 <div className="flex items-center gap-3">
                   <FontSizeInput
                     compact
-                    label="Título (px)"
+                    label="Título"
                     value={fontSizes.sintomas_corpo.title}
                     placeholder={DEFAULT_FONT_SIZES.sintomas_corpo.title}
                     onChange={(v) => setFontSize('sintomas_corpo', 'title', v)}
                   />
                   <FontSizeInput
                     compact
-                    label="Conteúdo (px)"
+                    label="Conteúdo"
                     value={fontSizes.sintomas_corpo.content}
                     placeholder={DEFAULT_FONT_SIZES.sintomas_corpo.content}
                     onChange={(v) => setFontSize('sintomas_corpo', 'content', v)}
@@ -620,7 +620,7 @@ export default function AdminTreatmentCategoryEdit() {
                   <div className="flex items-center gap-2">
                     <FontSizeInput
                       compact
-                      label="Cont. (px)"
+                      label="Conteúdo"
                       value={fontSizes.sintomas_corpo.content}
                       placeholder={DEFAULT_FONT_SIZES.sintomas_corpo.content}
                       onChange={(v) => setFontSize('sintomas_corpo', 'content', v)}
@@ -641,7 +641,7 @@ export default function AdminTreatmentCategoryEdit() {
                   <div className="flex items-center gap-2">
                     <FontSizeInput
                       compact
-                      label="Cont. (px)"
+                      label="Conteúdo"
                       value={fontSizes.sintomas_mente.content}
                       placeholder={DEFAULT_FONT_SIZES.sintomas_mente.content}
                       onChange={(v) => setFontSize('sintomas_mente', 'content', v)}
@@ -677,14 +677,14 @@ export default function AdminTreatmentCategoryEdit() {
             <div className="flex flex-wrap items-center justify-end gap-3 mb-2">
               <FontSizeInput
                 compact
-                label="Título (px)"
+                label="Título"
                 value={fontSizes.cta.title}
                 placeholder={DEFAULT_FONT_SIZES.cta.title}
                 onChange={(v) => setFontSize('cta', 'title', v)}
               />
               <FontSizeInput
                 compact
-                label="Conteúdo (px)"
+                label="Conteúdo"
                 value={fontSizes.cta.content}
                 placeholder={DEFAULT_FONT_SIZES.cta.content}
                 onChange={(v) => setFontSize('cta', 'content', v)}
