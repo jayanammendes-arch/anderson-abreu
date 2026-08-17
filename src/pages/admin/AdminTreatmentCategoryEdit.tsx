@@ -347,19 +347,24 @@ export default function AdminTreatmentCategoryEdit() {
           </FormSection>
 
           <FormSection title="Imagem Principal (Hero)" defaultOpen>
-            <CropImageUploader
-              label="Imagem Principal"
-              imageUrl={imagePreviewUrl}
-              file={imageFile}
-              cropX={formData.crop_x ?? 0.5}
-              cropY={formData.crop_y ?? 0.5}
-              onFileChange={setImageFile}
-              onCropChange={(x: number, y: number) =>
-                setFormData({ ...formData, crop_x: x, crop_y: y })
-              }
-              accept="image/jpeg,image/png,image/webp,image/svg+xml"
-              error={fieldErrors.image}
-            />
+            <div className="max-w-[300px]">
+              <CropImageUploader
+                label="Imagem Principal"
+                imageUrl={imagePreviewUrl}
+                file={imageFile}
+                cropX={formData.crop_x ?? 0.5}
+                cropY={formData.crop_y ?? 0.5}
+                onFileChange={setImageFile}
+                onCropChange={(x: number, y: number) =>
+                  setFormData({ ...formData, crop_x: x, crop_y: y })
+                }
+                accept="image/jpeg,image/png,image/webp,image/svg+xml"
+                error={fieldErrors.image}
+              />
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Tamanho ideal de upload recomendado: 800×400 px (proporção 2:1).
+            </p>
           </FormSection>
 
           <FormSection title="Conteúdo Detalhado">
@@ -392,26 +397,33 @@ export default function AdminTreatmentCategoryEdit() {
               />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FileUploadField
-                label="Imagem"
-                currentSrc={getExistingImageSrc('como_funciona_image', comoFuncionaImageFile)}
-                file={comoFuncionaImageFile}
-                onChange={setComoFuncionaImageFile}
-                accept="image/jpeg,image/png,image/webp,image/svg+xml"
-                error={fieldErrors.como_funciona_image}
-              />
+              <div className="max-w-[300px]">
+                <FileUploadField
+                  label="Imagem"
+                  currentSrc={getExistingImageSrc('como_funciona_image', comoFuncionaImageFile)}
+                  file={comoFuncionaImageFile}
+                  onChange={setComoFuncionaImageFile}
+                  accept="image/jpeg,image/png,image/webp,image/svg+xml"
+                  error={fieldErrors.como_funciona_image}
+                />
+              </div>
+              <p className="self-end text-xs text-muted-foreground">
+                Tamanho ideal de upload recomendado: 800×400 px (proporção 2:1).
+              </p>
             </div>
           </FormSection>
 
           <FormSection title="2. Faixa Azul" defaultOpen>
-            <FileUploadField
-              label="Imagem de fundo da faixa azul"
-              currentSrc={getExistingImageSrc('faixa_azul_image', faixaAzulImageFile)}
-              file={faixaAzulImageFile}
-              onChange={setFaixaAzulImageFile}
-              accept="image/jpeg,image/png,image/webp,image/svg+xml"
-              error={fieldErrors.faixa_azul_image}
-            />
+            <div className="max-w-[300px]">
+              <FileUploadField
+                label="Imagem de fundo da faixa azul"
+                currentSrc={getExistingImageSrc('faixa_azul_image', faixaAzulImageFile)}
+                file={faixaAzulImageFile}
+                onChange={setFaixaAzulImageFile}
+                accept="image/jpeg,image/png,image/webp,image/svg+xml"
+                error={fieldErrors.faixa_azul_image}
+              />
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Frase da Faixa Azul</Label>
@@ -484,14 +496,19 @@ export default function AdminTreatmentCategoryEdit() {
               />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FileUploadField
-                label="Imagem"
-                currentSrc={getExistingImageSrc('resultados_image', resultadosImageFile)}
-                file={resultadosImageFile}
-                onChange={setResultadosImageFile}
-                accept="image/jpeg,image/png,image/webp,image/svg+xml"
-                error={fieldErrors.resultados_image}
-              />
+              <div className="max-w-[300px]">
+                <FileUploadField
+                  label="Imagem"
+                  currentSrc={getExistingImageSrc('resultados_image', resultadosImageFile)}
+                  file={resultadosImageFile}
+                  onChange={setResultadosImageFile}
+                  accept="image/jpeg,image/png,image/webp,image/svg+xml"
+                  error={fieldErrors.resultados_image}
+                />
+              </div>
+              <p className="self-end text-xs text-muted-foreground">
+                Tamanho ideal de upload recomendado: 800×400 px (proporção 2:1).
+              </p>
             </div>
           </FormSection>
 
@@ -531,27 +548,20 @@ export default function AdminTreatmentCategoryEdit() {
               </div>
             </div>
 
-            <div className="space-y-2 pt-2">
-              <Label className="text-xs text-muted-foreground">
-                Notas Adicionais / Sintomas Gerais (Conteúdo legado para referência)
-              </Label>
-              <RichTextEditor
-                value={formData.sintomas_text || ''}
-                onChange={(html) => setFormData({ ...formData, sintomas_text: html })}
-                editorLabel="Notas Adicionais"
-                variant="content"
-              />
-            </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-              <FileUploadField
-                label="Imagem da seção"
-                currentSrc={getExistingImageSrc('sintomas_image', sintomasImageFile)}
-                file={sintomasImageFile}
-                onChange={setSintomasImageFile}
-                accept="image/jpeg,image/png,image/webp,image/svg+xml"
-                error={fieldErrors.sintomas_image}
-              />
+              <div className="max-w-[300px]">
+                <FileUploadField
+                  label="Imagem da seção"
+                  currentSrc={getExistingImageSrc('sintomas_image', sintomasImageFile)}
+                  file={sintomasImageFile}
+                  onChange={setSintomasImageFile}
+                  accept="image/jpeg,image/png,image/webp,image/svg+xml"
+                  error={fieldErrors.sintomas_image}
+                />
+              </div>
+              <p className="self-end text-xs text-muted-foreground">
+                Tamanho ideal de upload recomendado: 800×400 px (proporção 2:1).
+              </p>
             </div>
           </FormSection>
 

@@ -33,7 +33,7 @@ function SectionTitle({ title, defaultTitle }: { title?: string; defaultTitle: s
   const html = renderSectionTitleHtml(content)
   return (
     <div
-      className="section-title-serif text-white mb-6 py-1"
+      className="section-title-serif text-white mb-6 py-1 text-[40px] leading-[1.2]"
       dangerouslySetInnerHTML={{ __html: html }}
     />
   )
@@ -122,8 +122,7 @@ export default function TreatmentDetail() {
   const hasResultados = category.resultados_text?.trim()
   const hasSintomasCorpo = category.sintomas_corpo_text?.trim()
   const hasSintomasMente = category.sintomas_mente_text?.trim()
-  const hasSintomasText = category.sintomas_text?.trim()
-  const hasSintomas = hasSintomasCorpo || hasSintomasMente || hasSintomasText
+  const hasSintomas = hasSintomasCorpo || hasSintomasMente
   const hasDetailedContent = category.detailed_content?.trim()
   const hasCta = category.cta_text?.trim()
   const hasPorQueTantas = category.por_que_tantas_content?.trim()
@@ -341,25 +340,6 @@ export default function TreatmentDetail() {
                     )}
                   </div>
                 ) : null}
-
-                {hasSintomasText && (
-                  <div
-                    className={cn(
-                      'mt-6',
-                      (hasSintomasCorpo || hasSintomasMente) && 'pt-6 border-t border-white/10',
-                    )}
-                  >
-                    {(hasSintomasCorpo || hasSintomasMente) && (
-                      <h4 className="font-['Playfair_Display',serif] text-lg font-semibold text-[#D4AF37] mb-3">
-                        Notas Adicionais
-                      </h4>
-                    )}
-                    <div
-                      className={proseClass}
-                      dangerouslySetInnerHTML={{ __html: category.sintomas_text! }}
-                    />
-                  </div>
-                )}
               </div>
 
               {sintomasImg && (
