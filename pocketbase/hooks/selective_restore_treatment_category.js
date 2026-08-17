@@ -49,6 +49,7 @@ routerAdd(
       'por_que_tantas_content',
       'comparacao_title',
       'comparacao_content',
+      'heading_sizes',
     ]
 
     var validFields = []

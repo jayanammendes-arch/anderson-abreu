@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-17T17:25:01.986Z",
+  "generatedAt": "2026-08-17T17:53:17.677Z",
   "collections": [
     {
       "name": "users",
@@ -2420,6 +2420,12 @@
         {
           "name": "sintomas_mente_text",
           "type": "editor",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "heading_sizes",
+          "type": "json",
           "required": false,
           "system": false
         }

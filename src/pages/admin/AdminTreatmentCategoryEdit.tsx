@@ -16,7 +16,10 @@ import { RichTextEditor } from '@/components/admin/RichTextEditor'
 import { IconPicker } from '@/components/admin/IconPicker'
 import { FileUploadField } from '@/components/admin/FileUploadField'
 import { CropImageUploader } from '@/components/admin/CropImageUploader'
+import { HeadingSizesEditor } from '@/components/admin/HeadingSizesEditor'
 import { extractFieldErrors, type FieldErrors } from '@/lib/pocketbase/errors'
+import { DEFAULT_HEADING_SIZES, normalizeHeadingSizes } from '@/lib/heading-sizes'
+import type { HeadingSizes } from '@/types'
 import { toast } from 'sonner'
 import { ArrowLeft, Save, Loader2, ChevronDown, ExternalLink, Check, History } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -52,6 +55,7 @@ const emptyForm: Partial<TreatmentCategory> = {
   symptoms_list: '',
   faixa_azul_whatsapp_enabled: false,
   faixa_azul_whatsapp_text: 'Fale Conosco',
+  heading_sizes: { ...DEFAULT_HEADING_SIZES },
 }
 
 function isEmptyHtml(html: string | undefined | null): boolean {
@@ -118,6 +122,11 @@ export default function AdminTreatmentCategoryEdit() {
   const [showIconPicker, setShowIconPicker] = useState(false)
   const [snapshotOpen, setSnapshotOpen] = useState(false)
   const initialDataRef = useRef<Partial<TreatmentCategory>>({})
+
+  // Tamanhos de heading (h1..h6) configurados manualmente no admin. O editor
+  // RichTextEditor usa isso para o seletor de heading inline (px mobile/desktop)
+  // e para o preview do bloco atual.
+  const headingSizes: HeadingSizes = normalizeHeadingSizes(formData.heading_sizes)
 
   useEffect(() => {
     if (!id) {
@@ -210,6 +219,7 @@ export default function AdminTreatmentCategoryEdit() {
         String(formData.faixa_azul_whatsapp_enabled ?? false),
       )
       fd.append('faixa_azul_whatsapp_text', formData.faixa_azul_whatsapp_text || '')
+      fd.append('heading_sizes', JSON.stringify(headingSizes))
       if (imageFile) fd.append('image', imageFile)
       if (comoFuncionaImageFile) fd.append('como_funciona_image', comoFuncionaImageFile)
       if (resultadosImageFile) fd.append('resultados_image', resultadosImageFile)
@@ -368,23 +378,39 @@ export default function AdminTreatmentCategoryEdit() {
           </FormSection>
 
           <FormSection title="Conteúdo Detalhado">
+            <div className="flex justify-end mb-2">
+              <HeadingSizesEditor
+                compact
+                sizes={headingSizes}
+                onChange={(sizes) => setFormData({ ...formData, heading_sizes: sizes })}
+              />
+            </div>
             <RichTextEditor
               value={formData.detailed_content || ''}
               onChange={(html) => setFormData({ ...formData, detailed_content: html })}
               editorLabel="Conteúdo da seção"
               variant="content"
+              headingSizes={headingSizes}
             />
           </FormSection>
 
           <FormSection title="1. Como Funciona" defaultOpen>
             <div className="space-y-2">
-              <Label className="font-semibold text-primary">Título da seção</Label>
+              <div className="flex items-center justify-between gap-2">
+                <Label className="font-semibold text-primary">Título da seção</Label>
+                <HeadingSizesEditor
+                  compact
+                  sizes={headingSizes}
+                  onChange={(sizes) => setFormData({ ...formData, heading_sizes: sizes })}
+                />
+              </div>
               <RichTextEditor
                 value={formData.como_funciona_title || ''}
                 onChange={(html) => setFormData({ ...formData, como_funciona_title: html })}
                 editorLabel="Título da seção"
                 className="border-primary/20"
                 variant="title"
+                headingSizes={headingSizes}
               />
             </div>
             <div className="space-y-2">
@@ -394,6 +420,7 @@ export default function AdminTreatmentCategoryEdit() {
                 onChange={(html) => setFormData({ ...formData, como_funciona_text: html })}
                 editorLabel="Conteúdo da seção"
                 variant="content"
+                headingSizes={headingSizes}
               />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -477,13 +504,21 @@ export default function AdminTreatmentCategoryEdit() {
 
           <FormSection title="3. Resultados" defaultOpen>
             <div className="space-y-2">
-              <Label className="font-semibold text-primary">Título da seção</Label>
+              <div className="flex items-center justify-between gap-2">
+                <Label className="font-semibold text-primary">Título da seção</Label>
+                <HeadingSizesEditor
+                  compact
+                  sizes={headingSizes}
+                  onChange={(sizes) => setFormData({ ...formData, heading_sizes: sizes })}
+                />
+              </div>
               <RichTextEditor
                 value={formData.resultados_title || ''}
                 onChange={(html) => setFormData({ ...formData, resultados_title: html })}
                 editorLabel="Título da seção"
                 className="border-primary/20"
                 variant="title"
+                headingSizes={headingSizes}
               />
             </div>
             <div className="space-y-2">
@@ -493,6 +528,7 @@ export default function AdminTreatmentCategoryEdit() {
                 onChange={(html) => setFormData({ ...formData, resultados_text: html })}
                 editorLabel="Conteúdo da seção"
                 variant="content"
+                headingSizes={headingSizes}
               />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -514,13 +550,21 @@ export default function AdminTreatmentCategoryEdit() {
 
           <FormSection title="4. Sintomas">
             <div className="space-y-2">
-              <Label className="font-semibold text-primary">Título da seção</Label>
+              <div className="flex items-center justify-between gap-2">
+                <Label className="font-semibold text-primary">Título da seção</Label>
+                <HeadingSizesEditor
+                  compact
+                  sizes={headingSizes}
+                  onChange={(sizes) => setFormData({ ...formData, heading_sizes: sizes })}
+                />
+              </div>
               <RichTextEditor
                 value={formData.sintomas_title || ''}
                 onChange={(html) => setFormData({ ...formData, sintomas_title: html })}
                 editorLabel="Título da seção (Ex: Sintomas da Ansiedade?)"
                 className="border-primary/20"
                 variant="title"
+                headingSizes={headingSizes}
               />
             </div>
 
@@ -532,6 +576,7 @@ export default function AdminTreatmentCategoryEdit() {
                   onChange={(html) => setFormData({ ...formData, sintomas_corpo_text: html })}
                   editorLabel="Conteúdo: No Corpo (Sinais Físicos)"
                   variant="content"
+                  headingSizes={headingSizes}
                 />
               </div>
 
@@ -544,6 +589,7 @@ export default function AdminTreatmentCategoryEdit() {
                   onChange={(html) => setFormData({ ...formData, sintomas_mente_text: html })}
                   editorLabel="Conteúdo: Na Mente e no Comportamento (Sinais Emocionais)"
                   variant="content"
+                  headingSizes={headingSizes}
                 />
               </div>
             </div>
@@ -566,6 +612,13 @@ export default function AdminTreatmentCategoryEdit() {
           </FormSection>
 
           <FormSection title="5. CTA">
+            <div className="flex justify-end mb-2">
+              <HeadingSizesEditor
+                compact
+                sizes={headingSizes}
+                onChange={(sizes) => setFormData({ ...formData, heading_sizes: sizes })}
+              />
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label className="font-semibold text-primary">Título da seção</Label>
@@ -575,6 +628,7 @@ export default function AdminTreatmentCategoryEdit() {
                   editorLabel="Título da seção"
                   className="border-primary/20"
                   variant="title"
+                  headingSizes={headingSizes}
                 />
               </div>
               <div className="space-y-2">
@@ -584,6 +638,7 @@ export default function AdminTreatmentCategoryEdit() {
                   onChange={(html) => setFormData({ ...formData, cta_text: html })}
                   editorLabel="Conteúdo da seção"
                   variant="content"
+                  headingSizes={headingSizes}
                 />
               </div>
             </div>

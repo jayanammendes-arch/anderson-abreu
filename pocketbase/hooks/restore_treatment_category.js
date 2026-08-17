@@ -59,6 +59,7 @@ routerAdd(
       'por_que_tantas_content',
       'comparacao_title',
       'comparacao_content',
+      'heading_sizes',
     ]
 
     for (var i = 0; i < fieldNames.length; i++) {

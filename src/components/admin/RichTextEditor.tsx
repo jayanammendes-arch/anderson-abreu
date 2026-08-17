@@ -17,6 +17,9 @@ import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { cn } from '@/lib/utils'
 import { GRADIENT_OPTIONS, getActiveGradient } from '@/lib/rte-gradients'
+import { HeadingLevelSelect, type BlockTag } from '@/components/admin/HeadingLevelSelect'
+import { DEFAULT_HEADING_SIZES, normalizeHeadingSizes } from '@/lib/heading-sizes'
+import type { HeadingSizes } from '@/types'
 
 interface RichTextEditorProps {
   value: string
@@ -28,6 +31,13 @@ interface RichTextEditorProps {
    * "title"   — Playfair Display, 40px, bold, dourado (preview de título de seção)
    */
   variant?: 'content' | 'title'
+  /**
+   * Tamanhos (px) de cada nível de heading configurados no admin. Quando
+   * informado, o preview do editor reflete o tamanho do heading atualmente
+   * selecionado no bloco, em vez do padrão fixo (40px). O seletor de heading
+   * exibe os px (mobile/desktop) ao lado de cada opção.
+   */
+  headingSizes?: HeadingSizes | unknown
 }
 
 interface ActiveState {
@@ -54,12 +64,25 @@ export function RichTextEditor({
   className,
   editorLabel,
   variant,
+  headingSizes,
 }: RichTextEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null)
   const lastSetValue = useRef<string>('')
   const savedRange = useRef<Range | null>(null)
   const [active, setActive] = useState<ActiveState>(DEFAULT_ACTIVE)
   const [gradientOpen, setGradientOpen] = useState(false)
+
+  // Tamanhos de heading (h1..h6) configurados no admin. Quando ausentes, usa
+  // a tabela padrão (fallback: h1 32/38, h2 26/30, h3 22/24, ...).
+  const sizes: HeadingSizes = normalizeHeadingSizes(headingSizes)
+  const currentBlock = (active.block as BlockTag) || 'p'
+  // Preview do editor reflete o tamanho do heading atualmente selecionado.
+  const previewSize =
+    currentBlock !== 'p' && sizes[currentBlock]
+      ? Math.max(sizes[currentBlock].desktop, sizes[currentBlock].mobile)
+      : variant === 'title'
+        ? 40
+        : undefined
 
   useEffect(() => {
     const editor = editorRef.current
@@ -195,16 +218,25 @@ export function RichTextEditor({
   const divider = <div className="w-px h-5 bg-border mx-1" />
   const groupDivider = <div className="w-px h-6 bg-border/60 mx-1.5" />
 
+  // Aplica um nível de heading (h1..h6) ou parágrafo no bloco atual.
+  const applyBlock = (tag: BlockTag) => {
+    exec('formatBlock', `<${tag}>`)
+  }
+
   return (
     <div className={cn('rounded-md border border-input overflow-visible', className)}>
       <div className="flex items-center gap-0.5 border-b border-input bg-muted/50 p-1.5 flex-wrap">
         {/* Group 1: Basic formatting — headings, inline styles, lists */}
+        {/* Seletor de heading (p, h1..h6) com tamanhos em px (mobile/desktop). */}
+        <HeadingLevelSelect active={{ block: currentBlock }} onSelect={applyBlock} sizes={sizes} />
+        {divider}
+        {/* Atalhos rápidos para h1/h2/h3 (mantidos para fluxo antigo). */}
         <Button
           type="button"
           variant="ghost"
           size="icon"
           className={cn(btn, active.block === 'h1' && activeCls)}
-          onClick={() => exec('formatBlock', '<h1>')}
+          onClick={() => applyBlock('h1')}
           title="Título 1"
         >
           <Heading1 className="h-3.5 w-3.5" />
@@ -214,7 +246,7 @@ export function RichTextEditor({
           variant="ghost"
           size="icon"
           className={cn(btn, active.block === 'h2' && activeCls)}
-          onClick={() => exec('formatBlock', '<h2>')}
+          onClick={() => applyBlock('h2')}
           title="Título 2"
         >
           <Heading2 className="h-3.5 w-3.5" />
@@ -224,7 +256,7 @@ export function RichTextEditor({
           variant="ghost"
           size="icon"
           className={cn(btn, active.block === 'h3' && activeCls)}
-          onClick={() => exec('formatBlock', '<h3>')}
+          onClick={() => applyBlock('h3')}
           title="Título 3"
         >
           <Heading3 className="h-3.5 w-3.5" />
@@ -234,7 +266,7 @@ export function RichTextEditor({
           variant="ghost"
           size="icon"
           className={cn(btn, active.block === 'p' && activeCls)}
-          onClick={() => exec('formatBlock', '<p>')}
+          onClick={() => applyBlock('p')}
           title="Parágrafo"
         >
           <Pilcrow className="h-3.5 w-3.5" />
@@ -418,7 +450,7 @@ export function RichTextEditor({
           variant === 'title'
             ? {
                 fontFamily: "'Playfair Display', serif",
-                fontSize: '40px',
+                fontSize: previewSize ? `${previewSize}px` : '40px',
                 fontWeight: 700,
                 color: '#ffffff',
                 lineHeight: 1.2,

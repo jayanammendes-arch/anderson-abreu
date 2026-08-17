@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import {
   getTreatmentCategoryBySlug,
@@ -21,19 +21,31 @@ import { GlobalBlueBand } from '@/components/GlobalBlueBand'
 import { HypnotherapyComparisonSection } from '@/components/HypnotherapyComparisonSection'
 import { getCropPositionCss } from '@/lib/image-position'
 import { renderSectionTitleHtml } from '@/lib/section-title-gradient'
+import { buildHeadingSizesCss, normalizeHeadingSizes } from '@/lib/heading-sizes'
 import { cn } from '@/lib/utils'
 
 const proseClass =
   'prose prose-lg prose-invert max-w-none text-white [&_*]:!font-["Open_Sans",sans-serif] [&_p]:!font-["Open_Sans",sans-serif] [&_p]:!leading-[1.6] [&_p]:!text-white [&_p_*]:!font-["Open_Sans",sans-serif] [&_p_*]:!text-white [&_h1]:!text-white [&_h1]:font-bold [&_h1]:text-3xl [&_h1]:mb-4 [&_h2]:!text-white [&_h2]:font-bold [&_h3]:!text-white [&_h3]:font-semibold [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:!font-["Open_Sans",sans-serif] [&_li]:!leading-[1.6] [&_li]:!text-white [&_li_*]:!font-["Open_Sans",sans-serif] [&_li_*]:!text-white [&_li]:mb-2 [&_strong]:!font-["Open_Sans",sans-serif] [&_strong]:!font-bold [&_b]:!font-["Open_Sans",sans-serif] [&_b]:!font-bold [&_a]:text-primary [&_span:not([class*="rte-gradient"])]:!text-white [&_font]:!text-white [&_font]:!font-["Open_Sans",sans-serif] [&_span]:!bg-transparent [&_font]:!bg-transparent'
 
-function SectionTitle({ title, defaultTitle }: { title?: string; defaultTitle: string }) {
+function SectionTitle({
+  title,
+  defaultTitle,
+  headingScopeClass = '',
+}: {
+  title?: string
+  defaultTitle: string
+  headingScopeClass?: string
+}) {
   const content = title?.trim() || defaultTitle
   // Aplica o padrão automático: todas as palavras em branco, exceto a última
   // com gradiente dourado. Exceção: "APROVADO PELA CIÊNCIA" fica inteiro dourado.
   const html = renderSectionTitleHtml(content)
   return (
     <div
-      className="section-title-serif text-white mb-6 py-1 text-[40px] leading-[1.2]"
+      className={cn(
+        'section-title-serif text-white mb-6 py-1 text-[40px] leading-[1.2]',
+        headingScopeClass,
+      )}
       dangerouslySetInnerHTML={{ __html: html }}
     />
   )
@@ -68,6 +80,18 @@ export default function TreatmentDetail() {
   const [allCategories, setAllCategories] = useState<TreatmentCategory[]>([])
   const [settings, setSettings] = useState<PlatformSettings | null>(null)
   const [loading, setLoading] = useState(true)
+
+  // CSS dinâmico injetado com os tamanhos de heading (h1..h6) configurados no
+  // admin. Escopo: a classe `.td-heading-scope` envolve as seções editáveis,
+  // sobrepondo o CSS global que força todos os headings iguais.
+  const headingSizes = useMemo(
+    () => normalizeHeadingSizes(category?.heading_sizes),
+    [category?.heading_sizes],
+  )
+  const headingSizesCss = useMemo(
+    () => buildHeadingSizesCss(headingSizes, '.td-heading-scope'),
+    [headingSizes],
+  )
 
   useEffect(() => {
     if (!slug) return
@@ -144,6 +168,7 @@ export default function TreatmentDetail() {
 
   return (
     <LandingLayout settings={settings}>
+      <style dangerouslySetInnerHTML={{ __html: headingSizesCss }} />
       <ScrollFadeIn>
         <section className="relative min-h-[60vh] flex items-center overflow-hidden pt-20">
           {imageUrl ? (
@@ -189,7 +214,7 @@ export default function TreatmentDetail() {
           <section className="py-24 bg-card overflow-visible">
             <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 overflow-visible">
               <div
-                className={proseClass}
+                className={cn(proseClass, 'td-heading-scope')}
                 dangerouslySetInnerHTML={{ __html: category.detailed_content! }}
               />
             </div>
@@ -201,8 +226,12 @@ export default function TreatmentDetail() {
         <ScrollFadeIn>
           <section className="py-24 bg-card overflow-visible">
             <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 grid md:grid-cols-2 gap-8 lg:gap-12 items-center overflow-visible">
-              <div className={cn(comoFuncionaImgLeft && 'md:order-2')}>
-                <SectionTitle title={category.como_funciona_title} defaultTitle="Como Funciona" />
+              <div className={cn('td-heading-scope', comoFuncionaImgLeft && 'md:order-2')}>
+                <SectionTitle
+                  title={category.como_funciona_title}
+                  defaultTitle="Como Funciona"
+                  headingScopeClass="td-heading-scope"
+                />
                 <div
                   className={proseClass}
                   dangerouslySetInnerHTML={{ __html: category.como_funciona_text! }}
@@ -279,6 +308,7 @@ export default function TreatmentDetail() {
             <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 grid md:grid-cols-2 gap-8 lg:gap-12 items-center overflow-visible">
               <div
                 className={cn(
+                  'td-heading-scope',
                   resultadosImg ? 'md:col-span-1' : 'md:col-span-2',
                   resultadosImgLeft && 'md:order-2',
                 )}
@@ -286,6 +316,7 @@ export default function TreatmentDetail() {
                 <SectionTitle
                   title={category.resultados_title}
                   defaultTitle="Resultados Respaldados Pela Ciência"
+                  headingScopeClass="td-heading-scope"
                 />
                 <div
                   className={proseClass}
@@ -310,8 +341,12 @@ export default function TreatmentDetail() {
         <ScrollFadeIn>
           <section className="py-24 bg-card overflow-visible">
             <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 grid md:grid-cols-2 gap-8 lg:gap-12 items-center overflow-visible">
-              <div className={cn('w-full', sintomasImgLeft && 'md:order-2')}>
-                <SectionTitle title={category.sintomas_title} defaultTitle="Sintomas" />
+              <div className={cn('td-heading-scope w-full', sintomasImgLeft && 'md:order-2')}>
+                <SectionTitle
+                  title={category.sintomas_title}
+                  defaultTitle="Sintomas"
+                  headingScopeClass="td-heading-scope"
+                />
 
                 {hasSintomasCorpo || hasSintomasMente ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
@@ -359,8 +394,12 @@ export default function TreatmentDetail() {
       {hasCta && (
         <ScrollFadeIn>
           <section className="py-24 bg-card overflow-visible">
-            <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 text-center overflow-visible">
-              <SectionTitle title={category.cta_title} defaultTitle="" />
+            <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 text-center overflow-visible td-heading-scope">
+              <SectionTitle
+                title={category.cta_title}
+                defaultTitle=""
+                headingScopeClass="td-heading-scope"
+              />
               <div
                 className={proseClass}
                 dangerouslySetInnerHTML={{ __html: category.cta_text! }}
