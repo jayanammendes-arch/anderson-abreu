@@ -8,7 +8,7 @@ export const GRADIENT_OPTIONS: GradientOption[] = [
   {
     className: 'rte-gradient-gold',
     label: 'Dourado',
-    preview: 'linear-gradient(135deg, #D4AF37, #D4AF37)',
+    preview: 'linear-gradient(135deg, #C5A030, #FFD700, #D4AF37)',
   },
   {
     className: 'rte-gradient-blue',

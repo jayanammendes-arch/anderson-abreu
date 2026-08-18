@@ -332,7 +332,7 @@ export default function TreatmentDetail() {
                 {/* Sinais Físicos */}
                 {hasSintomasCorpo ? (
                   <div className="bg-[#111622] border border-white/10 rounded-2xl p-6 shadow-xl flex flex-col space-y-4">
-                    <h3 className="font-['Playfair_Display',serif] text-xl md:text-2xl font-bold text-[#D4AF37] leading-snug">
+                    <h3 className="font-['Playfair_Display',serif] text-xl md:text-2xl font-bold leading-snug rte-gradient-gold">
                       Sinais Físicos
                     </h3>
                     <div
@@ -348,7 +348,7 @@ export default function TreatmentDetail() {
                 {/* Sinais Emocionais */}
                 {hasSintomasMente ? (
                   <div className="bg-[#111622] border border-white/10 rounded-2xl p-6 shadow-xl flex flex-col space-y-4">
-                    <h3 className="font-['Playfair_Display',serif] text-xl md:text-2xl font-bold text-[#D4AF37] leading-snug">
+                    <h3 className="font-['Playfair_Display',serif] text-xl md:text-2xl font-bold leading-snug rte-gradient-gold">
                       Sinais Emocionais
                     </h3>
                     <div
