@@ -408,10 +408,11 @@
     padding-left: 1.5rem;
   }
 
-  /* Preview real: editor de título (Playfair Display, 40px, bold).
-     Nenhuma cor é forçada aqui — o título aparece exatamente como o usuário
-     formatou no editor. A cor padrão (branco) vem do style inline do editor;
-     cores/gradientes aplicados manualmente são respeitados. */
+  /* Preview real: editor de título (Playfair Display, bold).
+     O font-size NÃO é forçado aqui — ele vem do style inline do editor
+     (40px por padrão) e pode ser sobrescrito por spans aplicados via toolbar
+     (botões +/-), que precisam ter precedência. Apenas família/peso/linha
+     são fixados para manter a identidade do título. */
   .rte-title-preview,
   .rte-title-preview p,
   .rte-title-preview span,
@@ -423,7 +424,6 @@
   .rte-title-preview h2,
   .rte-title-preview h3 {
     font-family: 'Playfair Display', serif !important;
-    font-size: 40px !important;
     font-weight: 700 !important;
     line-height: 1.2 !important;
   }

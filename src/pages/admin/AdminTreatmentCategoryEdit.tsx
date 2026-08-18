@@ -16,9 +16,8 @@ import { RichTextEditor } from '@/components/admin/RichTextEditor'
 import { IconPicker } from '@/components/admin/IconPicker'
 import { FileUploadField } from '@/components/admin/FileUploadField'
 import { CropImageUploader } from '@/components/admin/CropImageUploader'
-import { FontSizeInput } from '@/components/admin/FontSizeInput'
 import { extractFieldErrors, type FieldErrors } from '@/lib/pocketbase/errors'
-import { DEFAULT_FONT_SIZES, normalizeFontSizes, type FontSizeSection } from '@/lib/font-sizes'
+import { normalizeFontSizes } from '@/lib/font-sizes'
 import { toast } from 'sonner'
 import { ArrowLeft, Save, Loader2, ChevronDown, ExternalLink, Check, History } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -122,23 +121,11 @@ export default function AdminTreatmentCategoryEdit() {
   const [snapshotOpen, setSnapshotOpen] = useState(false)
   const initialDataRef = useRef<Partial<TreatmentCategory>>({})
 
-  // Tamanhos de fonte (px) por seção, configurados manualmente no admin.
-  // Substitui o antigo sistema de níveis h1–h6 por um input numérico simples.
+  // Tamanhos de fonte (px) por seção. O ajuste fino de tamanho agora é feito
+  // inteiramente dentro do RichTextEditor (toolbar Canva-like), mas o campo
+  // `font_sizes` ainda é persistido para preservar valores legados/configurações
+  // existentes no banco — apenas sem UI externa.
   const fontSizes = normalizeFontSizes(formData.font_sizes)
-
-  const setFontSize = (section: FontSizeSection, key: 'title' | 'content', value: number) => {
-    setFormData((prev) => {
-      const prevSizes = normalizeFontSizes(prev.font_sizes)
-      const current = prevSizes[section] || DEFAULT_FONT_SIZES[section]
-      return {
-        ...prev,
-        font_sizes: {
-          ...prevSizes,
-          [section]: { title: current.title, content: current.content, [key]: value },
-        },
-      }
-    })
-  }
 
   useEffect(() => {
     if (!id) {
@@ -390,22 +377,6 @@ export default function AdminTreatmentCategoryEdit() {
           </FormSection>
 
           <FormSection title="Conteúdo Detalhado">
-            <div className="flex flex-wrap items-center justify-end gap-3">
-              <FontSizeInput
-                compact
-                label="Título"
-                value={fontSizes.detailed_content.title}
-                placeholder={DEFAULT_FONT_SIZES.detailed_content.title}
-                onChange={(v) => setFontSize('detailed_content', 'title', v)}
-              />
-              <FontSizeInput
-                compact
-                label="Conteúdo"
-                value={fontSizes.detailed_content.content}
-                placeholder={DEFAULT_FONT_SIZES.detailed_content.content}
-                onChange={(v) => setFontSize('detailed_content', 'content', v)}
-              />
-            </div>
             <RichTextEditor
               value={formData.detailed_content || ''}
               onChange={(html) => setFormData({ ...formData, detailed_content: html })}
@@ -418,22 +389,6 @@ export default function AdminTreatmentCategoryEdit() {
             <div className="space-y-2">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <Label className="font-semibold text-primary">Título da seção</Label>
-                <div className="flex items-center gap-3">
-                  <FontSizeInput
-                    compact
-                    label="Título"
-                    value={fontSizes.como_funciona.title}
-                    placeholder={DEFAULT_FONT_SIZES.como_funciona.title}
-                    onChange={(v) => setFontSize('como_funciona', 'title', v)}
-                  />
-                  <FontSizeInput
-                    compact
-                    label="Conteúdo"
-                    value={fontSizes.como_funciona.content}
-                    placeholder={DEFAULT_FONT_SIZES.como_funciona.content}
-                    onChange={(v) => setFontSize('como_funciona', 'content', v)}
-                  />
-                </div>
               </div>
               <RichTextEditor
                 value={formData.como_funciona_title || ''}
@@ -535,22 +490,6 @@ export default function AdminTreatmentCategoryEdit() {
             <div className="space-y-2">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <Label className="font-semibold text-primary">Título da seção</Label>
-                <div className="flex items-center gap-3">
-                  <FontSizeInput
-                    compact
-                    label="Título"
-                    value={fontSizes.resultados.title}
-                    placeholder={DEFAULT_FONT_SIZES.resultados.title}
-                    onChange={(v) => setFontSize('resultados', 'title', v)}
-                  />
-                  <FontSizeInput
-                    compact
-                    label="Conteúdo"
-                    value={fontSizes.resultados.content}
-                    placeholder={DEFAULT_FONT_SIZES.resultados.content}
-                    onChange={(v) => setFontSize('resultados', 'content', v)}
-                  />
-                </div>
               </div>
               <RichTextEditor
                 value={formData.resultados_title || ''}
@@ -590,22 +529,6 @@ export default function AdminTreatmentCategoryEdit() {
             <div className="space-y-2">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <Label className="font-semibold text-primary">Título da seção</Label>
-                <div className="flex items-center gap-3">
-                  <FontSizeInput
-                    compact
-                    label="Título"
-                    value={fontSizes.sintomas_corpo.title}
-                    placeholder={DEFAULT_FONT_SIZES.sintomas_corpo.title}
-                    onChange={(v) => setFontSize('sintomas_corpo', 'title', v)}
-                  />
-                  <FontSizeInput
-                    compact
-                    label="Conteúdo"
-                    value={fontSizes.sintomas_corpo.content}
-                    placeholder={DEFAULT_FONT_SIZES.sintomas_corpo.content}
-                    onChange={(v) => setFontSize('sintomas_corpo', 'content', v)}
-                  />
-                </div>
               </div>
               <RichTextEditor
                 value={formData.sintomas_title || ''}
@@ -620,15 +543,6 @@ export default function AdminTreatmentCategoryEdit() {
               <div className="space-y-2 rounded-lg border border-border/60 bg-background/50 p-4">
                 <div className="flex items-center justify-between gap-2">
                   <Label className="font-semibold text-[#D4AF37]">Sinais Físicos</Label>
-                  <div className="flex items-center gap-2">
-                    <FontSizeInput
-                      compact
-                      label="Conteúdo"
-                      value={fontSizes.sintomas_corpo.content}
-                      placeholder={DEFAULT_FONT_SIZES.sintomas_corpo.content}
-                      onChange={(v) => setFontSize('sintomas_corpo', 'content', v)}
-                    />
-                  </div>
                 </div>
                 <RichTextEditor
                   value={formData.sintomas_corpo_text || ''}
@@ -641,15 +555,6 @@ export default function AdminTreatmentCategoryEdit() {
               <div className="space-y-2 rounded-lg border border-border/60 bg-background/50 p-4">
                 <div className="flex items-center justify-between gap-2">
                   <Label className="font-semibold text-[#D4AF37]">Sinais Emocionais</Label>
-                  <div className="flex items-center gap-2">
-                    <FontSizeInput
-                      compact
-                      label="Conteúdo"
-                      value={fontSizes.sintomas_mente.content}
-                      placeholder={DEFAULT_FONT_SIZES.sintomas_mente.content}
-                      onChange={(v) => setFontSize('sintomas_mente', 'content', v)}
-                    />
-                  </div>
                 </div>
                 <RichTextEditor
                   value={formData.sintomas_mente_text || ''}
@@ -677,22 +582,6 @@ export default function AdminTreatmentCategoryEdit() {
           </FormSection>
 
           <FormSection title="5. CTA">
-            <div className="flex flex-wrap items-center justify-end gap-3 mb-2">
-              <FontSizeInput
-                compact
-                label="Título"
-                value={fontSizes.cta.title}
-                placeholder={DEFAULT_FONT_SIZES.cta.title}
-                onChange={(v) => setFontSize('cta', 'title', v)}
-              />
-              <FontSizeInput
-                compact
-                label="Conteúdo"
-                value={fontSizes.cta.content}
-                placeholder={DEFAULT_FONT_SIZES.cta.content}
-                onChange={(v) => setFontSize('cta', 'content', v)}
-              />
-            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label className="font-semibold text-primary">Título da seção</Label>

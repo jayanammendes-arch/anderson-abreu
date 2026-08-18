@@ -100,7 +100,11 @@ export function RichTextEditor({
     }
   }, [value])
 
-  // Helper to extract styled font size or family from selection anchor
+  // Helper to extract styled font size or family from selection anchor.
+  // Faz o walker a partir do anchorNode até o editor lendo estilos inline; se
+  // nada for encontrado (seleção no editor vazio ou cursor em texto sem span),
+  // cai no getComputedStyle do próprio editor (default) — assim o campo nunca
+  // aparece "zerado".
   const updateActiveState = useCallback(() => {
     const editor = editorRef.current
     if (!editor) return
@@ -111,16 +115,23 @@ export function RichTextEditor({
     let currentFontFamily = defaultFontFamily
     let currentAlign: 'left' | 'center' | 'right' | 'justify' = 'left'
 
+    let foundInlineSize = false
+    let foundInlineFamily = false
+
     let node: Node | null = sel.anchorNode
     while (node && node !== editor) {
       if (node.nodeType === Node.ELEMENT_NODE) {
         const el = node as HTMLElement
-        if (el.style.fontSize) {
+        if (!foundInlineSize && el.style.fontSize) {
           const parsed = parseInt(el.style.fontSize, 10)
-          if (!isNaN(parsed)) currentFontSize = parsed
+          if (!isNaN(parsed)) {
+            currentFontSize = parsed
+            foundInlineSize = true
+          }
         }
-        if (el.style.fontFamily) {
+        if (!foundInlineFamily && el.style.fontFamily) {
           currentFontFamily = el.style.fontFamily
+          foundInlineFamily = true
         }
         if (el.style.textAlign) {
           const alignVal = el.style.textAlign.toLowerCase()
@@ -130,6 +141,19 @@ export function RichTextEditor({
         }
       }
       node = node.parentNode
+    }
+
+    // Fallback: se nenhum estilo inline foi encontrado, lemos o estilo
+    // computado do editor (que carrega os defaults do variant) para que o
+    // input de tamanho/família mostre o valor real em vez de ficar vazio.
+    if (!foundInlineSize) {
+      const computed = window.getComputedStyle(editor).fontSize
+      const parsed = parseInt(computed, 10)
+      if (!isNaN(parsed)) currentFontSize = parsed
+    }
+    if (!foundInlineFamily) {
+      const computed = window.getComputedStyle(editor).fontFamily
+      if (computed) currentFontFamily = computed
     }
 
     // Also check queryCommandState/Value for align
@@ -282,15 +306,101 @@ export function RichTextEditor({
     const clamped = clampFontSize(newSize)
     setFontSizeInput(clamped.toString())
     setActive((prev) => ({ ...prev, fontSize: clamped }))
-    // After applying, focus moves to the editor and a selectionchange fires that
-    // may read a stale/adjacent size; suppress the next DOM-driven input sync so
-    // the value we just set survives.
+    // After applying, a selectionchange fires that may read a stale/adjacent
+    // size; suppress the next DOM-driven input sync so the value survives.
     skipNextFontSizeSync.current = true
+
+    // Se há uma seleção de texto salva, aplicamos o tamanho a ela preservando o
+    // foco (sem roubar do input) e re-selecionamos o span estilizado, de modo
+    // que cliques consecutivos em +/- continuem ajustando o MESMO trecho —
+    // igual ao comportamento do Canva.
+    if (savedRange.current && !savedRange.current.collapsed) {
+      applyFontSizeToSavedRange(clamped)
+      const sel = window.getSelection()
+      if (sel && savedRange.current) {
+        sel.removeAllRanges()
+        try {
+          sel.addRange(savedRange.current)
+        } catch {
+          /* noop */
+        }
+      }
+      return
+    }
+
+    // Cursor colapsado (sem seleção): tenta expandir para o bloco de texto
+    // atual (a "palavra"/linha onde o cursor está) para que +/- tenha efeito
+    // visível mesmo sem o usuário ter selecionado nada previamente.
+    const editor = editorRef.current
+    if (editor) {
+      const sel = window.getSelection()
+      if (sel && sel.rangeCount > 0 && editor.contains(sel.anchorNode)) {
+        let n: Node | null = sel.anchorNode
+        while (n && n !== editor) {
+          if (n.nodeType === Node.ELEMENT_NODE) {
+            const r = document.createRange()
+            try {
+              r.selectNodeContents(n)
+              savedRange.current = r
+              applyFontSizeToSavedRange(clamped)
+              const sel2 = window.getSelection()
+              if (sel2 && savedRange.current) {
+                sel2.removeAllRanges()
+                try {
+                  sel2.addRange(savedRange.current)
+                } catch {
+                  /* noop */
+                }
+              }
+              return
+            } catch {
+              /* noop */
+            }
+          }
+          n = n.parentNode
+        }
+      }
+    }
+    // Último recurso: aplica via applyCustomSpanStyle (que move o foco p/ o editor).
     applyCustomSpanStyle('fontSize', `${clamped}px`)
   }
 
   const handleFontFamilyChange = (val: string) => {
     setActive((prev) => ({ ...prev, fontFamily: val }))
+    // Mesma lógica do handleFontSizeChange: se há seleção salva, aplica ao
+    // trecho e re-seleciona, preservando o foco (comportamento Canva-like).
+    if (savedRange.current && !savedRange.current.collapsed) {
+      const range = savedRange.current
+      const ancestor = range.commonAncestorContainer
+      if (ancestor.nodeType === Node.ELEMENT_NODE && (ancestor as HTMLElement).tagName === 'SPAN') {
+        ;(ancestor as HTMLElement).style.fontFamily = val
+        notifyChange()
+        return
+      }
+      const span = document.createElement('span')
+      span.style.fontFamily = val
+      try {
+        range.surroundContents(span)
+      } catch {
+        const contents = range.extractContents()
+        span.appendChild(contents)
+        range.insertNode(span)
+      }
+      const newRange = document.createRange()
+      newRange.selectNodeContents(span)
+      savedRange.current = newRange
+      notifyChange()
+      const sel = window.getSelection()
+      if (sel && savedRange.current) {
+        sel.removeAllRanges()
+        try {
+          sel.addRange(savedRange.current)
+        } catch {
+          /* noop */
+        }
+      }
+      return
+    }
     applyCustomSpanStyle('fontFamily', val)
   }
 
