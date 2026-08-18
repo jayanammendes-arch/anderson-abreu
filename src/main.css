@@ -346,14 +346,14 @@
   }
 
   .royal-btn-gradient {
-    background: linear-gradient(135deg, #c5a030 0%, #ffd700 50%, #d4af37 100%);
+    background: linear-gradient(135deg, #8b7620 0%, #b8960c 50%, #a68a26 100%);
     transition:
       background 0.3s ease,
       transform 0.2s ease;
   }
 
   .royal-btn-gradient:hover {
-    background: linear-gradient(135deg, #b89028 0%, #e6c200 50%, #c5a030 100%);
+    background: linear-gradient(135deg, #735c18 0%, #a68a26 50%, #8b7620 100%);
   }
 
   .brand-gradient-text {
@@ -429,7 +429,7 @@
   }
 
   .rte-gradient-gold {
-    background: linear-gradient(135deg, #c5a030, #ffd700, #d4af37);
+    background: linear-gradient(135deg, #8b7620, #b8960c, #a68a26);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
