@@ -233,8 +233,53 @@ export function RichTextEditor({
     [onChange],
   )
 
+  const FONT_SIZE_MIN = 5
+  const FONT_SIZE_MAX = 200
+
+  const clampFontSize = (size: number) => Math.max(FONT_SIZE_MIN, Math.min(FONT_SIZE_MAX, size))
+
+  /**
+   * Aplica o tamanho da fonte à seleção salva no editor SEM roubar o foco do
+   * input (diferente do applyCustomSpanStyle, que move o foco para o editor).
+   * Usado a cada tecla digitada no campo de tamanho, para que o tamanho reaja
+   * imediatamente enquanto o usuário continua digitando. Atualiza a seleção
+   * salva para envolver o span recém-criado; se a seleção já envolve um span
+   * de font-size criado pela tecla anterior, atualiza o valor in-place em vez
+   * de aninhar spans.
+   */
+  const applyFontSizeToSavedRange = (size: number) => {
+    const range = savedRange.current
+    if (!range || range.collapsed) return
+
+    const ancestor = range.commonAncestorContainer
+    if (
+      ancestor.nodeType === Node.ELEMENT_NODE &&
+      (ancestor as HTMLElement).tagName === 'SPAN' &&
+      (ancestor as HTMLElement).style.fontSize
+    ) {
+      ;(ancestor as HTMLElement).style.fontSize = `${size}px`
+      notifyChange()
+      return
+    }
+
+    const span = document.createElement('span')
+    span.style.fontSize = `${size}px`
+    try {
+      range.surroundContents(span)
+    } catch {
+      const contents = range.extractContents()
+      span.appendChild(contents)
+      range.insertNode(span)
+    }
+
+    const newRange = document.createRange()
+    newRange.selectNodeContents(span)
+    savedRange.current = newRange
+    notifyChange()
+  }
+
   const handleFontSizeChange = (newSize: number) => {
-    const clamped = Math.max(8, Math.min(200, newSize))
+    const clamped = clampFontSize(newSize)
     setFontSizeInput(clamped.toString())
     setActive((prev) => ({ ...prev, fontSize: clamped }))
     // After applying, focus moves to the editor and a selectionchange fires that
@@ -405,13 +450,20 @@ export function RichTextEditor({
               fontSizeInputFocused.current = true
               saveCurrentSelection()
             }}
-            onChange={(e) => setFontSizeInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                e.preventDefault()
-                const val = parseInt(fontSizeInput, 10)
-                if (!isNaN(val)) handleFontSizeChange(val)
+            onChange={(e) => {
+              const raw = e.target.value
+              // Permite campo vazio enquanto o usuário apaga para digitar um novo valor.
+              if (raw === '') {
+                setFontSizeInput('')
+                return
               }
+              const parsed = parseInt(raw, 10)
+              if (isNaN(parsed)) return
+              const clamped = clampFontSize(parsed)
+              setFontSizeInput(String(clamped))
+              setActive((prev) => ({ ...prev, fontSize: clamped }))
+              skipNextFontSizeSync.current = true
+              applyFontSizeToSavedRange(clamped)
             }}
             onBlur={() => {
               fontSizeInputFocused.current = false
