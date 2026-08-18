@@ -61,7 +61,11 @@ export function HypnotherapyComparisonSection({ settings }: { settings: Platform
       <div className="max-w-7xl mx-auto px-6 overflow-visible">
         <div className="text-center max-w-3xl mx-auto mb-12 md:mb-16 overflow-visible py-1">
           <div className="inline-block w-12 h-1 bg-gradient-to-r from-primary to-primary/60 rounded-full mb-6" />
-          <h2 className="section-title-serif text-foreground mb-4 py-1">{title}</h2>
+          <h2
+            className="section-title-serif text-foreground mb-4 py-3"
+            style={{ overflow: 'visible' }}
+            dangerouslySetInnerHTML={{ __html: title }}
+          />
           <p className="text-muted-foreground text-base md:text-lg leading-relaxed">{subtitle}</p>
         </div>
 
