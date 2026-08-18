@@ -114,7 +114,6 @@ export default function AdminTreatmentCategoryEdit() {
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null)
   const [comoFuncionaImageFile, setComoFuncionaImageFile] = useState<File | null>(null)
   const [resultadosImageFile, setResultadosImageFile] = useState<File | null>(null)
-  const [sintomasImageFile, setSintomasImageFile] = useState<File | null>(null)
   const [faixaAzulImageFile, setFaixaAzulImageFile] = useState<File | null>(null)
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [showIconPicker, setShowIconPicker] = useState(false)
@@ -222,7 +221,6 @@ export default function AdminTreatmentCategoryEdit() {
       if (imageFile) fd.append('image', imageFile)
       if (comoFuncionaImageFile) fd.append('como_funciona_image', comoFuncionaImageFile)
       if (resultadosImageFile) fd.append('resultados_image', resultadosImageFile)
-      if (sintomasImageFile) fd.append('sintomas_image', sintomasImageFile)
       if (faixaAzulImageFile) fd.append('faixa_azul_image', faixaAzulImageFile)
 
       if (id) {
@@ -232,7 +230,6 @@ export default function AdminTreatmentCategoryEdit() {
         setComoFuncionaImageFile(null)
         setResultadosImageFile(null)
         setFaixaAzulImageFile(null)
-        setSintomasImageFile(null)
         toast.success('✅ Salvo com sucesso')
         setSaveSuccess(true)
         setTimeout(() => setSaveSuccess(false), 5000)
@@ -564,21 +561,6 @@ export default function AdminTreatmentCategoryEdit() {
                 />
               </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-              <div className="max-w-[300px]">
-                <FileUploadField
-                  label="Imagem da seção"
-                  currentSrc={getExistingImageSrc('sintomas_image', sintomasImageFile)}
-                  file={sintomasImageFile}
-                  onChange={setSintomasImageFile}
-                  accept="image/jpeg,image/png,image/webp,image/svg+xml"
-                  error={fieldErrors.sintomas_image}
-                />
-              </div>
-              <p className="self-end text-xs text-muted-foreground">
-                Tamanho ideal de upload recomendado: 800×400 px (proporção 2:1).
-              </p>
-            </div>
           </FormSection>
 
           <FormSection title="5. CTA">
@@ -638,7 +620,6 @@ export default function AdminTreatmentCategoryEdit() {
                 setComoFuncionaImageFile(null)
                 setResultadosImageFile(null)
                 setFaixaAzulImageFile(null)
-                setSintomasImageFile(null)
               })
             }
           }}

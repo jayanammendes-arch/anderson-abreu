@@ -6,7 +6,6 @@ import {
   getTreatmentCategoryImageUrl,
   getTreatmentCategoryComoFuncionaImageUrl,
   getTreatmentCategoryResultadosImageUrl,
-  getTreatmentCategorySintomasImageUrl,
   getTreatmentCategoryFaixaAzulImageUrl,
 } from '@/services/treatment-categories'
 import { getPlatformSettingsPublic } from '@/services/landing'
@@ -29,15 +28,7 @@ import { cn } from '@/lib/utils'
 const proseClass =
   'prose prose-lg prose-invert max-w-none text-white [&_*]:!font-["Open_Sans",sans-serif] [&_p]:!font-["Open_Sans",sans-serif] [&_p]:!leading-[1.6] [&_p]:!text-white [&_p_*]:!font-["Open_Sans",sans-serif] [&_p_*]:!text-white [&_h1]:!text-white [&_h1]:font-bold [&_h1]:mb-4 [&_h2]:!text-white [&_h2]:font-bold [&_h3]:!text-white [&_h3]:font-semibold [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:!font-["Open_Sans",sans-serif] [&_li]:!leading-[1.6] [&_li]:!text-white [&_li_*]:!font-["Open_Sans",sans-serif] [&_li_*]:!text-white [&_li]:mb-2 [&_strong]:!font-["Open_Sans",sans-serif] [&_strong]:!font-bold [&_b]:!font-["Open_Sans",sans-serif] [&_b]:!font-bold [&_a]:text-primary [&_span:not([class*="rte-gradient"])]:!text-white [&_font]:!text-white [&_font]:!font-["Open_Sans",sans-serif] [&_span]:!bg-transparent [&_font]:!bg-transparent'
 
-function SectionTitle({
-  title,
-  defaultTitle,
-  fontSizePx = 40,
-}: {
-  title?: string
-  defaultTitle: string
-  fontSizePx?: number
-}) {
+function SectionTitle({ title, defaultTitle }: { title?: string; defaultTitle: string }) {
   const content = title?.trim() || defaultTitle
   // Renderiza EXATAMENTE o HTML do título salvo no banco, sem nenhum
   // pós-processamento de cores. Cores/gradientes aplicados manualmente no
@@ -45,7 +36,6 @@ function SectionTitle({
   return (
     <div
       className="section-title-serif text-white mb-6 py-1 leading-[1.2]"
-      style={{ fontSize: `${fontSizePx}px` }}
       dangerouslySetInnerHTML={{ __html: content }}
     />
   )
@@ -132,7 +122,6 @@ export default function TreatmentDetail() {
   const agendarText = settings?.agendar_sessao_text || 'Agendar Sessão'
   const comoFuncionaImg = getTreatmentCategoryComoFuncionaImageUrl(category)
   const resultadosImg = getTreatmentCategoryResultadosImageUrl(category)
-  const sintomasImg = getTreatmentCategorySintomasImageUrl(category)
   const faixaAzulImg = getTreatmentCategoryFaixaAzulImageUrl(category)
   const whatsappNumber = (settings?.whatsapp_number || '').replace(/\D/g, '')
 
@@ -153,10 +142,6 @@ export default function TreatmentDetail() {
   })()
   const resultadosImgLeft = (() => {
     if (!hasResultados || !resultadosImg) return false
-    return imgSectionIdx++ % 2 === 1
-  })()
-  const sintomasImgLeft = (() => {
-    if (!hasSintomas || !sintomasImg) return false
     return imgSectionIdx++ % 2 === 1
   })()
 
@@ -228,11 +213,7 @@ export default function TreatmentDetail() {
           <section className="py-24 bg-card overflow-visible">
             <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 grid md:grid-cols-2 gap-8 lg:gap-12 items-center overflow-visible">
               <div className={cn(comoFuncionaImgLeft && 'md:order-2')}>
-                <SectionTitle
-                  title={category.como_funciona_title}
-                  defaultTitle="Como Funciona"
-                  fontSizePx={comoFuncionaStyles.title}
-                />
+                <SectionTitle title={category.como_funciona_title} defaultTitle="Como Funciona" />
                 <div
                   className={proseClass}
                   style={{ fontSize: `${comoFuncionaStyles.content}px` }}
@@ -317,7 +298,6 @@ export default function TreatmentDetail() {
                 <SectionTitle
                   title={category.resultados_title}
                   defaultTitle="Resultados Respaldados Pela Ciência"
-                  fontSizePx={resultadosStyles.title}
                 />
                 <div
                   className={proseClass}
@@ -343,19 +323,9 @@ export default function TreatmentDetail() {
         <ScrollFadeIn>
           <section className="py-24 bg-card overflow-visible">
             <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 overflow-visible">
-              {sintomasImg && sintomasImgLeft && (
-                <div className="w-full mb-8 lg:mb-12">
-                  <FramedImage src={sintomasImg} alt="Sintomas" position="left" />
-                </div>
-              )}
-
               {/* Título centralizado acima dos dois quadros */}
               <div className="text-center mb-8 md:mb-12">
-                <SectionTitle
-                  title={category.sintomas_title}
-                  defaultTitle="Sintomas"
-                  fontSizePx={sintomasCorpoStyles.title}
-                />
+                <SectionTitle title={category.sintomas_title} defaultTitle="Sintomas" />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 lg:gap-12 items-stretch overflow-visible">
@@ -391,12 +361,6 @@ export default function TreatmentDetail() {
                   <div className="hidden md:block" aria-hidden />
                 )}
               </div>
-
-              {sintomasImg && !sintomasImgLeft && (
-                <div className="w-full mt-8 lg:mt-12">
-                  <FramedImage src={sintomasImg} alt="Sintomas" position="right" />
-                </div>
-              )}
             </div>
           </section>
         </ScrollFadeIn>
@@ -406,11 +370,7 @@ export default function TreatmentDetail() {
         <ScrollFadeIn>
           <section className="py-24 bg-card overflow-visible">
             <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 text-center overflow-visible">
-              <SectionTitle
-                title={category.cta_title}
-                defaultTitle=""
-                fontSizePx={ctaStyles.title}
-              />
+              <SectionTitle title={category.cta_title} defaultTitle="" />
               <div
                 className={proseClass}
                 style={{ fontSize: `${ctaStyles.content}px` }}
