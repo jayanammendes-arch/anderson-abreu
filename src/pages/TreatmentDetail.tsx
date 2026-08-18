@@ -349,8 +349,17 @@ export default function TreatmentDetail() {
                 </div>
               )}
 
-              <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-6 md:gap-8 lg:gap-12 items-stretch overflow-visible">
-                {/* Sinais Físicos (esquerda no desktop / cima no mobile) */}
+              {/* Título centralizado acima dos dois quadros */}
+              <div className="text-center mb-8 md:mb-12">
+                <SectionTitle
+                  title={category.sintomas_title}
+                  defaultTitle="Sintomas"
+                  fontSizePx={sintomasCorpoStyles.title}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 lg:gap-12 items-stretch overflow-visible">
+                {/* Sinais Físicos */}
                 {hasSintomasCorpo ? (
                   <div className="bg-[#111622] border border-white/10 rounded-2xl p-6 shadow-xl flex flex-col space-y-4">
                     <h3 className="font-['Playfair_Display',serif] text-xl md:text-2xl font-bold text-[#D4AF37] leading-snug">
@@ -366,16 +375,7 @@ export default function TreatmentDetail() {
                   <div className="hidden md:block" aria-hidden />
                 )}
 
-                {/* Título centralizado entre os dois quadros */}
-                <div className="text-center flex flex-col items-center justify-center md:min-w-[220px] py-2 md:py-0">
-                  <SectionTitle
-                    title={category.sintomas_title}
-                    defaultTitle="Sintomas"
-                    fontSizePx={sintomasCorpoStyles.title}
-                  />
-                </div>
-
-                {/* Sinais Emocionais (direita no desktop / baixo no mobile) */}
+                {/* Sinais Emocionais */}
                 {hasSintomasMente ? (
                   <div className="bg-[#111622] border border-white/10 rounded-2xl p-6 shadow-xl flex flex-col space-y-4">
                     <h3 className="font-['Playfair_Display',serif] text-xl md:text-2xl font-bold text-[#D4AF37] leading-snug">
