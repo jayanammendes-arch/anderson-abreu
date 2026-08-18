@@ -5,6 +5,8 @@ import {
   AlignCenter,
   AlignRight,
   AlignJustify,
+  List,
+  ListOrdered,
   Minus,
   Plus,
   Sparkles,
@@ -44,6 +46,8 @@ interface ActiveState {
   gradient: string
   fontFamily: string
   fontSize: number
+  unorderedList: boolean
+  orderedList: boolean
 }
 
 const FONT_FAMILIES = [
@@ -87,6 +91,8 @@ export function RichTextEditor({
     gradient: '',
     fontFamily: defaultFontFamily,
     fontSize: defaultFontSize,
+    unorderedList: false,
+    orderedList: false,
   })
 
   const [gradientOpen, setGradientOpen] = useState(false)
@@ -172,6 +178,8 @@ export function RichTextEditor({
       gradient: getActiveGradient(editor),
       fontFamily: currentFontFamily,
       fontSize: currentFontSize,
+      unorderedList: document.queryCommandState('insertUnorderedList'),
+      orderedList: document.queryCommandState('insertOrderedList'),
     })
     // Only sync the input from the DOM when the user is NOT actively typing in it
     // and we are not in the suppression window right after a toolbar apply.
@@ -833,6 +841,38 @@ export function RichTextEditor({
             title="Justificar"
           >
             <AlignJustify className="h-4 w-4" />
+          </Button>
+        </div>
+
+        {/* 7. LIST BUTTONS (ul/li e ol/li) — toggle via execCommand */}
+        <div className="flex items-center gap-0.5 shrink-0 border-l border-[#27272a] pl-1.5 ml-0.5">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className={cn(
+              'h-8 w-8 rounded-lg text-zinc-300 hover:text-white hover:bg-[#27272a]',
+              active.unorderedList &&
+                'bg-[#6366f1]/30 text-purple-300 hover:bg-[#6366f1]/40 hover:text-purple-200',
+            )}
+            onClick={() => exec('insertUnorderedList')}
+            title="Lista com marcadores"
+          >
+            <List className="h-4 w-4" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className={cn(
+              'h-8 w-8 rounded-lg text-zinc-300 hover:text-white hover:bg-[#27272a]',
+              active.orderedList &&
+                'bg-[#6366f1]/30 text-purple-300 hover:bg-[#6366f1]/40 hover:text-purple-200',
+            )}
+            onClick={() => exec('insertOrderedList')}
+            title="Lista numerada"
+          >
+            <ListOrdered className="h-4 w-4" />
           </Button>
         </div>
       </div>
