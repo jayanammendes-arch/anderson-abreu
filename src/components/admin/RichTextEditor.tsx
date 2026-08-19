@@ -198,7 +198,14 @@ export function RichTextEditor({
   const saveCurrentSelection = () => {
     const sel = window.getSelection()
     if (sel && sel.rangeCount > 0 && editorRef.current?.contains(sel.anchorNode)) {
-      savedRange.current = sel.getRangeAt(0).cloneRange()
+      const range = sel.getRangeAt(0).cloneRange()
+      // Evita sobrescrever uma seleção boa (não-colapsada) por uma colapsada,
+      // o que acontecia no blur do editor ao abrir o dropdown de fonte e
+      // impedia a troca de fonte ao vivo.
+      if (range.collapsed && savedRange.current && !savedRange.current.collapsed) {
+        return
+      }
+      savedRange.current = range
     }
   }
 
