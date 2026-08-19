@@ -538,7 +538,7 @@ export function RichTextEditor({
         <Select value={selectedFontObj.value} onValueChange={(val) => handleFontFamilyChange(val)}>
           <SelectTrigger
             className="h-8 w-[130px] sm:w-[145px] bg-[#27272a]/60 border-[#3f3f46] text-white text-xs font-medium rounded-lg px-2.5 focus:ring-1 focus:ring-purple-500 hover:bg-[#27272a] transition-colors shrink-0"
-            onFocus={saveCurrentSelection}
+            onPointerDownCapture={saveCurrentSelection}
           >
             <SelectValue>{selectedFontObj.label}</SelectValue>
           </SelectTrigger>
