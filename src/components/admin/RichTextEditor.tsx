@@ -241,6 +241,72 @@ export function RichTextEditor({
     [onChange],
   )
 
+  /**
+   * Limpa nós <br> ou espaços vazios/invisíveis do final do Range para evitar
+   * falhas no surroundContents / extractContents causadas por <br>s fantasmas
+   * inseridos pelo contentEditable ao final de linhas/blocos.
+   */
+  const trimRangeTrailingBrs = (range: Range): Range => {
+    let modified = true
+    while (modified && !range.collapsed) {
+      modified = false
+      const endContainer = range.endContainer
+      const endOffset = range.endOffset
+
+      // Se o container final é um elemento (ex: o próprio editor ou div/p)
+      if (endContainer.nodeType === Node.ELEMENT_NODE) {
+        const elem = endContainer as Element
+        if (endOffset > 0) {
+          const lastChild = elem.childNodes[endOffset - 1]
+          if (lastChild) {
+            // Se o nó logo antes do endOffset for um <br>
+            if (lastChild.nodeName === 'BR') {
+              range.setEnd(endContainer, endOffset - 1)
+              modified = true
+              continue
+            }
+            // Se for um nó de texto vazio no final do elemento
+            if (
+              lastChild.nodeType === Node.TEXT_NODE &&
+              (!lastChild.textContent || lastChild.textContent.length === 0)
+            ) {
+              range.setEnd(endContainer, endOffset - 1)
+              modified = true
+              continue
+            }
+          }
+        }
+      }
+
+      // Se o container final for um nó de texto colapsado no início (offset 0)
+      if (endContainer.nodeType === Node.TEXT_NODE && endOffset === 0) {
+        const parent = endContainer.parentNode
+        if (parent) {
+          const idx = Array.prototype.indexOf.call(parent.childNodes, endContainer)
+          if (idx >= 0) {
+            range.setEnd(parent, idx)
+            modified = true
+            continue
+          }
+        }
+      }
+
+      // Se o nó final for um <br>
+      if (endContainer.nodeName === 'BR') {
+        const parent = endContainer.parentNode
+        if (parent) {
+          const idx = Array.prototype.indexOf.call(parent.childNodes, endContainer)
+          if (idx >= 0) {
+            range.setEnd(parent, idx)
+            modified = true
+            continue
+          }
+        }
+      }
+    }
+    return range
+  }
+
   // Custom inline style wrapper for Font Size and Font Family
   const applyCustomSpanStyle = useCallback(
     (styleProp: 'fontSize' | 'fontFamily', styleValue: string) => {
@@ -248,7 +314,8 @@ export function RichTextEditor({
       const sel = window.getSelection()
       if (!sel || sel.rangeCount === 0) return
 
-      const range = sel.getRangeAt(0)
+      let range = sel.getRangeAt(0)
+      trimRangeTrailingBrs(range)
       if (range.collapsed) {
         // If no text selected, focus back
         editorRef.current?.focus()
@@ -287,8 +354,11 @@ export function RichTextEditor({
    * de aninhar spans.
    */
   const applyFontSizeToSavedRange = (size: number) => {
-    const range = savedRange.current
+    let range = savedRange.current
     if (!range || range.collapsed) return
+
+    trimRangeTrailingBrs(range)
+    if (range.collapsed) return
 
     const ancestor = range.commonAncestorContainer
     if (
@@ -386,35 +456,41 @@ export function RichTextEditor({
     // trecho e re-seleciona, preservando o foco (comportamento Canva-like).
     if (savedRange.current && !savedRange.current.collapsed) {
       const range = savedRange.current
-      const ancestor = range.commonAncestorContainer
-      if (ancestor.nodeType === Node.ELEMENT_NODE && (ancestor as HTMLElement).tagName === 'SPAN') {
-        ;(ancestor as HTMLElement).style.fontFamily = val
+      trimRangeTrailingBrs(range)
+      if (!range.collapsed) {
+        const ancestor = range.commonAncestorContainer
+        if (
+          ancestor.nodeType === Node.ELEMENT_NODE &&
+          (ancestor as HTMLElement).tagName === 'SPAN'
+        ) {
+          ;(ancestor as HTMLElement).style.fontFamily = val
+          notifyChange()
+          return
+        }
+        const span = document.createElement('span')
+        span.style.fontFamily = val
+        try {
+          range.surroundContents(span)
+        } catch {
+          const contents = range.extractContents()
+          span.appendChild(contents)
+          range.insertNode(span)
+        }
+        const newRange = document.createRange()
+        newRange.selectNodeContents(span)
+        savedRange.current = newRange
         notifyChange()
+        const sel = window.getSelection()
+        if (sel && savedRange.current) {
+          sel.removeAllRanges()
+          try {
+            sel.addRange(savedRange.current)
+          } catch {
+            /* noop */
+          }
+        }
         return
       }
-      const span = document.createElement('span')
-      span.style.fontFamily = val
-      try {
-        range.surroundContents(span)
-      } catch {
-        const contents = range.extractContents()
-        span.appendChild(contents)
-        range.insertNode(span)
-      }
-      const newRange = document.createRange()
-      newRange.selectNodeContents(span)
-      savedRange.current = newRange
-      notifyChange()
-      const sel = window.getSelection()
-      if (sel && savedRange.current) {
-        sel.removeAllRanges()
-        try {
-          sel.addRange(savedRange.current)
-        } catch {
-          /* noop */
-        }
-      }
-      return
     }
     applyCustomSpanStyle('fontFamily', val)
   }
@@ -458,6 +534,7 @@ export function RichTextEditor({
       const sel = window.getSelection()
       if (!sel || sel.rangeCount === 0) return
       const range = sel.getRangeAt(0)
+      trimRangeTrailingBrs(range)
       if (range.collapsed) return
       const span = document.createElement('span')
       span.className = gradientClass
