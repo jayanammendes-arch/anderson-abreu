@@ -305,6 +305,16 @@
     }
   }
 
+  .parallax-faixa-desktop {
+    background-attachment: fixed;
+  }
+
+  @media (max-width: 768px) {
+    .parallax-faixa-desktop {
+      background-attachment: scroll;
+    }
+  }
+
   .parallax-cta-section {
     position: relative;
     overflow: hidden;

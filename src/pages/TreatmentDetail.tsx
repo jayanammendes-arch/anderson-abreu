@@ -283,12 +283,11 @@ export default function TreatmentDetail() {
         faixaAzulImg ||
         category.faixa_azul_whatsapp_enabled) && (
         <section
-          className="relative w-full overflow-hidden"
+          className="relative w-full overflow-hidden parallax-faixa-desktop"
           style={
             faixaAzulImg
               ? {
                   backgroundImage: `url(${faixaAzulImg})`,
-                  backgroundAttachment: 'fixed',
                   backgroundPosition: 'center',
                   backgroundRepeat: 'no-repeat',
                   backgroundSize: 'cover',
