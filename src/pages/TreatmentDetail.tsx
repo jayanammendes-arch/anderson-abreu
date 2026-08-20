@@ -71,7 +71,7 @@ function SectionTitle({
   // editor (RichTextEditor) são respeitados; ausência de cor => branco (padrão).
   return (
     <div
-      className="section-title-serif text-white mb-6 py-3 leading-[1.35]"
+      className="section-title-serif text-white mb-6 py-3 leading-[1.4]"
       style={{
         overflow: 'visible',
         fontSize: size ? `${size}px` : undefined,
