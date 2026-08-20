@@ -28,7 +28,15 @@ import { cn } from '@/lib/utils'
 const proseClass =
   'prose prose-lg prose-invert max-w-none text-white [&_h1]:font-bold [&_h1]:mb-4 [&_h2]:font-bold [&_h3]:font-semibold [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mb-2 [&_strong]:!font-bold [&_b]:!font-bold [&_a]:text-primary [&_span]:!bg-transparent [&_font]:!bg-transparent'
 
-function SectionTitle({ title, defaultTitle }: { title?: string; defaultTitle: string }) {
+function SectionTitle({
+  title,
+  defaultTitle,
+  size,
+}: {
+  title?: string
+  defaultTitle: string
+  size?: number
+}) {
   const content = title?.trim() || defaultTitle
   // Renderiza EXATAMENTE o HTML do título salvo no banco, sem nenhum
   // pós-processamento de cores. Cores/gradientes aplicados manualmente no
@@ -36,7 +44,10 @@ function SectionTitle({ title, defaultTitle }: { title?: string; defaultTitle: s
   return (
     <div
       className="section-title-serif text-white mb-6 py-3 leading-[1.35]"
-      style={{ overflow: 'visible' }}
+      style={{
+        overflow: 'visible',
+        fontSize: size ? `${size}px` : undefined,
+      }}
       dangerouslySetInnerHTML={{ __html: content }}
     />
   )
@@ -149,6 +160,7 @@ export default function TreatmentDetail() {
   const detailedStyles = sizeFor('detailed_content')
   const comoFuncionaStyles = sizeFor('como_funciona')
   const resultadosStyles = sizeFor('resultados')
+  const sintomasStyles = sizeFor('sintomas')
   const sintomasCorpoStyles = sizeFor('sintomas_corpo')
   const sintomasMenteStyles = sizeFor('sintomas_mente')
   const ctaStyles = sizeFor('cta')
@@ -214,7 +226,11 @@ export default function TreatmentDetail() {
           <section className="py-24 bg-card overflow-visible">
             <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 grid md:grid-cols-2 gap-8 lg:gap-12 items-center overflow-visible">
               <div className={cn(comoFuncionaImgLeft && 'md:order-2')}>
-                <SectionTitle title={category.como_funciona_title} defaultTitle="Como Funciona" />
+                <SectionTitle
+                  title={category.como_funciona_title}
+                  defaultTitle="Como Funciona"
+                  size={comoFuncionaStyles.title}
+                />
                 <div
                   className={proseClass}
                   style={{ fontSize: `${comoFuncionaStyles.content}px` }}
@@ -299,6 +315,7 @@ export default function TreatmentDetail() {
                 <SectionTitle
                   title={category.resultados_title}
                   defaultTitle="Resultados Respaldados Pela Ciência"
+                  size={resultadosStyles.title}
                 />
                 <div
                   className={proseClass}
@@ -326,7 +343,11 @@ export default function TreatmentDetail() {
             <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 overflow-visible">
               {/* Título centralizado acima dos dois quadros */}
               <div className="text-center mb-8 md:mb-12">
-                <SectionTitle title={category.sintomas_title} defaultTitle="Sintomas" />
+                <SectionTitle
+                  title={category.sintomas_title}
+                  defaultTitle="Sintomas"
+                  size={sintomasStyles.title}
+                />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 lg:gap-12 items-stretch overflow-visible">
@@ -369,7 +390,7 @@ export default function TreatmentDetail() {
         <ScrollFadeIn>
           <section className="py-24 bg-card overflow-visible">
             <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 text-center overflow-visible">
-              <SectionTitle title={category.cta_title} defaultTitle="" />
+              <SectionTitle title={category.cta_title} defaultTitle="" size={ctaStyles.title} />
               <div
                 className={proseClass}
                 style={{ fontSize: `${ctaStyles.content}px` }}
@@ -384,7 +405,11 @@ export default function TreatmentDetail() {
         <ScrollFadeIn>
           <section className="py-24 bg-card overflow-visible">
             <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 overflow-visible">
-              <SectionTitle title={category.por_que_tantas_title} defaultTitle="" />
+              <SectionTitle
+                title={category.por_que_tantas_title}
+                defaultTitle=""
+                size={detailedStyles.title}
+              />
               <div
                 className={proseClass}
                 dangerouslySetInnerHTML={{ __html: category.por_que_tantas_content! }}
@@ -398,7 +423,11 @@ export default function TreatmentDetail() {
         <ScrollFadeIn>
           <section className="py-24 bg-card/50 overflow-visible">
             <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 overflow-visible">
-              <SectionTitle title={category.comparacao_title} defaultTitle="" />
+              <SectionTitle
+                title={category.comparacao_title}
+                defaultTitle=""
+                size={detailedStyles.title}
+              />
               <div
                 className={proseClass}
                 dangerouslySetInnerHTML={{ __html: category.comparacao_content! }}

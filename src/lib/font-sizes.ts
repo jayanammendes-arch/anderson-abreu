@@ -12,6 +12,7 @@
 export type FontSizeSection =
   | 'como_funciona'
   | 'resultados'
+  | 'sintomas'
   | 'sintomas_corpo'
   | 'sintomas_mente'
   | 'cta'
@@ -30,6 +31,7 @@ export type FontSizes = Partial<Record<FontSizeSection, Partial<FontSizeEntry>>>
 export const DEFAULT_FONT_SIZES: Record<FontSizeSection, FontSizeEntry> = {
   como_funciona: { title: 40, content: 18 },
   resultados: { title: 40, content: 18 },
+  sintomas: { title: 40, content: 18 },
   sintomas_corpo: { title: 40, content: 18 },
   sintomas_mente: { title: 40, content: 18 },
   cta: { title: 40, content: 18 },
@@ -39,6 +41,7 @@ export const DEFAULT_FONT_SIZES: Record<FontSizeSection, FontSizeEntry> = {
 export const FONT_SIZE_SECTIONS: FontSizeSection[] = [
   'como_funciona',
   'resultados',
+  'sintomas',
   'sintomas_corpo',
   'sintomas_mente',
   'cta',
@@ -48,6 +51,7 @@ export const FONT_SIZE_SECTIONS: FontSizeSection[] = [
 export const FONT_SIZE_SECTION_LABELS: Record<FontSizeSection, string> = {
   como_funciona: 'Como Funciona',
   resultados: 'Resultados',
+  sintomas: 'Sintomas',
   sintomas_corpo: 'Sintomas no Corpo',
   sintomas_mente: 'Sintomas na Mente',
   cta: 'CTA',
@@ -66,6 +70,7 @@ export function normalizeFontSizes(raw: unknown): Record<FontSizeSection, FontSi
   const base: Record<FontSizeSection, FontSizeEntry> = {
     como_funciona: { ...DEFAULT_FONT_SIZES.como_funciona },
     resultados: { ...DEFAULT_FONT_SIZES.resultados },
+    sintomas: { ...DEFAULT_FONT_SIZES.sintomas },
     sintomas_corpo: { ...DEFAULT_FONT_SIZES.sintomas_corpo },
     sintomas_mente: { ...DEFAULT_FONT_SIZES.sintomas_mente },
     cta: { ...DEFAULT_FONT_SIZES.cta },
