@@ -222,7 +222,7 @@
 
 @layer components {
   .section-title-serif {
-    font-family: 'Playfair Display', serif !important;
+    font-family: 'Playfair Display', serif;
     font-weight: 700 !important;
     line-height: 1.2 !important;
   }
@@ -429,7 +429,7 @@
   .rte-title-preview h1,
   .rte-title-preview h2,
   .rte-title-preview h3 {
-    font-family: 'Playfair Display', serif !important;
+    font-family: 'Playfair Display', serif;
     font-weight: 700 !important;
     line-height: 1.2 !important;
   }
