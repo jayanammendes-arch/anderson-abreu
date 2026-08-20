@@ -32,8 +32,8 @@ export const DEFAULT_FONT_SIZES: Record<FontSizeSection, FontSizeEntry> = {
   como_funciona: { title: 40, content: 18 },
   resultados: { title: 40, content: 18 },
   sintomas: { title: 40, content: 18 },
-  sintomas_corpo: { title: 40, content: 20 },
-  sintomas_mente: { title: 40, content: 20 },
+  sintomas_corpo: { title: 20, content: 20 },
+  sintomas_mente: { title: 20, content: 20 },
   cta: { title: 40, content: 18 },
   detailed_content: { title: 40, content: 15 },
 }

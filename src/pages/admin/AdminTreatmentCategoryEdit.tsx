@@ -42,7 +42,9 @@ const emptyForm: Partial<TreatmentCategory> = {
   resultados_text: '',
   sintomas_title: '',
   sintomas_text: '',
+  sintomas_corpo_title: '',
   sintomas_corpo_text: '',
+  sintomas_mente_title: '',
   sintomas_mente_text: '',
   cta_title: '',
   cta_text: '',
@@ -202,7 +204,9 @@ export default function AdminTreatmentCategoryEdit() {
       fd.append('resultados_text', safeRichText('resultados_text'))
       fd.append('sintomas_title', safeRichText('sintomas_title'))
       fd.append('sintomas_text', safeRichText('sintomas_text'))
+      fd.append('sintomas_corpo_title', safeRichText('sintomas_corpo_title'))
       fd.append('sintomas_corpo_text', safeRichText('sintomas_corpo_text'))
+      fd.append('sintomas_mente_title', safeRichText('sintomas_mente_title'))
       fd.append('sintomas_mente_text', safeRichText('sintomas_mente_text'))
       fd.append('cta_title', safeRichText('cta_title'))
       fd.append('cta_text', safeRichText('cta_text'))
@@ -537,28 +541,48 @@ export default function AdminTreatmentCategoryEdit() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-              <div className="space-y-2 rounded-lg border border-border/60 bg-background/50 p-4">
-                <div className="flex items-center justify-between gap-2">
-                  <Label className="font-semibold text-[#D4AF37]">Sinais Físicos</Label>
+              <div className="space-y-4 rounded-lg border border-border/60 bg-background/50 p-4">
+                <div className="space-y-2">
+                  <Label className="font-semibold text-[#D4AF37]">Título: Sinais Físicos</Label>
+                  <RichTextEditor
+                    value={formData.sintomas_corpo_title || ''}
+                    onChange={(html) => setFormData({ ...formData, sintomas_corpo_title: html })}
+                    editorLabel="Título: Sinais Físicos"
+                    variant="title"
+                  />
                 </div>
-                <RichTextEditor
-                  value={formData.sintomas_corpo_text || ''}
-                  onChange={(html) => setFormData({ ...formData, sintomas_corpo_text: html })}
-                  editorLabel="Conteúdo: Sinais Físicos"
-                  variant="content"
-                />
+                <div className="space-y-2">
+                  <Label className="text-muted-foreground text-xs">Conteúdo: Sinais Físicos</Label>
+                  <RichTextEditor
+                    value={formData.sintomas_corpo_text || ''}
+                    onChange={(html) => setFormData({ ...formData, sintomas_corpo_text: html })}
+                    editorLabel="Conteúdo: Sinais Físicos"
+                    variant="content"
+                  />
+                </div>
               </div>
 
-              <div className="space-y-2 rounded-lg border border-border/60 bg-background/50 p-4">
-                <div className="flex items-center justify-between gap-2">
-                  <Label className="font-semibold text-[#D4AF37]">Sinais Emocionais</Label>
+              <div className="space-y-4 rounded-lg border border-border/60 bg-background/50 p-4">
+                <div className="space-y-2">
+                  <Label className="font-semibold text-[#D4AF37]">Título: Sinais Emocionais</Label>
+                  <RichTextEditor
+                    value={formData.sintomas_mente_title || ''}
+                    onChange={(html) => setFormData({ ...formData, sintomas_mente_title: html })}
+                    editorLabel="Título: Sinais Emocionais"
+                    variant="title"
+                  />
                 </div>
-                <RichTextEditor
-                  value={formData.sintomas_mente_text || ''}
-                  onChange={(html) => setFormData({ ...formData, sintomas_mente_text: html })}
-                  editorLabel="Conteúdo: Sinais Emocionais"
-                  variant="content"
-                />
+                <div className="space-y-2">
+                  <Label className="text-muted-foreground text-xs">
+                    Conteúdo: Sinais Emocionais
+                  </Label>
+                  <RichTextEditor
+                    value={formData.sintomas_mente_text || ''}
+                    onChange={(html) => setFormData({ ...formData, sintomas_mente_text: html })}
+                    editorLabel="Conteúdo: Sinais Emocionais"
+                    variant="content"
+                  />
+                </div>
               </div>
             </div>
           </FormSection>

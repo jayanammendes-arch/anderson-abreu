@@ -175,7 +175,12 @@ export function TreatmentCategoryPreview({ data, imageUrls }: PreviewProps) {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {data.sintomas_corpo_text && (
                   <div className="p-3 bg-slate-900 text-white rounded-lg space-y-1">
-                    <h3 className="text-sm font-bold">Sinais Físicos</h3>
+                    <div
+                      className="text-sm font-bold"
+                      dangerouslySetInnerHTML={{
+                        __html: data.sintomas_corpo_title?.trim() || 'Sinais Físicos',
+                      }}
+                    />
                     <div
                       className={cn(
                         proseClass,
@@ -189,7 +194,12 @@ export function TreatmentCategoryPreview({ data, imageUrls }: PreviewProps) {
                 )}
                 {data.sintomas_mente_text && (
                   <div className="p-3 bg-slate-900 text-white rounded-lg space-y-1">
-                    <h3 className="text-sm font-bold">Sinais Emocionais</h3>
+                    <div
+                      className="text-sm font-bold"
+                      dangerouslySetInnerHTML={{
+                        __html: data.sintomas_mente_title?.trim() || 'Sinais Emocionais',
+                      }}
+                    />
                     <div
                       className={cn(
                         proseClass,

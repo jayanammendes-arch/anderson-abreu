@@ -381,7 +381,13 @@ export default function TreatmentDetail() {
                 {/* Sinais Físicos */}
                 {hasSintomasCorpo ? (
                   <div className="bg-[#111622] border border-white/10 rounded-2xl p-6 shadow-xl flex flex-col space-y-4">
-                    <h3 className="text-xl md:text-2xl font-bold leading-snug">Sinais Físicos</h3>
+                    <div
+                      className="section-title-serif text-white font-bold leading-snug"
+                      style={{ fontSize: `${sintomasCorpoStyles.title}px` }}
+                      dangerouslySetInnerHTML={{
+                        __html: category.sintomas_corpo_title?.trim() || 'Sinais Físicos',
+                      }}
+                    />
                     <div
                       className={proseSintomasClass}
                       style={{ fontSize: `${sintomasCorpoStyles.content}px` }}
@@ -397,9 +403,13 @@ export default function TreatmentDetail() {
                 {/* Sinais Emocionais */}
                 {hasSintomasMente ? (
                   <div className="bg-[#111622] border border-white/10 rounded-2xl p-6 shadow-xl flex flex-col space-y-4">
-                    <h3 className="text-xl md:text-2xl font-bold leading-snug">
-                      Sinais Emocionais
-                    </h3>
+                    <div
+                      className="section-title-serif text-white font-bold leading-snug"
+                      style={{ fontSize: `${sintomasMenteStyles.title}px` }}
+                      dangerouslySetInnerHTML={{
+                        __html: category.sintomas_mente_title?.trim() || 'Sinais Emocionais',
+                      }}
+                    />
                     <div
                       className={proseSintomasClass}
                       style={{ fontSize: `${sintomasMenteStyles.content}px` }}

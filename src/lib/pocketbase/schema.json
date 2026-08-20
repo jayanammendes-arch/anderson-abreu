@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-20T20:06:27.618Z",
+  "generatedAt": "2026-08-20T20:13:21.423Z",
   "collections": [
     {
       "name": "users",
@@ -2426,6 +2426,18 @@
         {
           "name": "font_sizes",
           "type": "json",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "sintomas_corpo_title",
+          "type": "editor",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "sintomas_mente_title",
+          "type": "editor",
           "required": false,
           "system": false
         }
