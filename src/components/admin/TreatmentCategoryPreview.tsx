@@ -19,6 +19,16 @@ interface PreviewProps {
 const proseClass =
   'prose prose-sm max-w-none text-slate-600 [&_h2]:text-slate-900 [&_h2]:font-bold [&_h2]:text-lg [&_h2]:mb-2 [&_ul]:list-disc [&_ul]:pl-4 [&_li]:mb-1 [&_a]:text-blue-600 [&_span]:!bg-transparent'
 
+function normalizeSymptomHtml(html?: string): string {
+  if (!html) return ''
+  let out = html
+  out = out.replace(/font-size\s*:\s*[^;"]+;?/gi, '')
+  out = out.replace(/\s+style=["']\s*["']/gi, '')
+  out = out.replace(/<div>\s*<br\s*\/?>\s*<\/div>/gi, '')
+  out = out.replace(/<p>\s*<br\s*\/?>\s*<\/p>/gi, '')
+  return out
+}
+
 function stripHtml(html: string): string {
   return html.replace(/<[^>]*>/g, '').trim()
 }
@@ -167,8 +177,13 @@ export function TreatmentCategoryPreview({ data, imageUrls }: PreviewProps) {
                   <div className="p-3 bg-slate-900 text-white rounded-lg space-y-1">
                     <h3 className="text-sm font-bold">Sinais Físicos</h3>
                     <div
-                      className={cn(proseClass, 'text-white')}
-                      dangerouslySetInnerHTML={{ __html: data.sintomas_corpo_text }}
+                      className={cn(
+                        proseClass,
+                        'text-white prose-sintomas [&_div]:!m-0 [&_div]:!p-0 [&_br]:!hidden [&_p]:!m-0 [&_ul]:!my-0 [&_ul]:!list-disc [&_ul]:!pl-4 [&_li]:!mb-1',
+                      )}
+                      dangerouslySetInnerHTML={{
+                        __html: normalizeSymptomHtml(data.sintomas_corpo_text),
+                      }}
                     />
                   </div>
                 )}
@@ -176,8 +191,13 @@ export function TreatmentCategoryPreview({ data, imageUrls }: PreviewProps) {
                   <div className="p-3 bg-slate-900 text-white rounded-lg space-y-1">
                     <h3 className="text-sm font-bold">Sinais Emocionais</h3>
                     <div
-                      className={cn(proseClass, 'text-white')}
-                      dangerouslySetInnerHTML={{ __html: data.sintomas_mente_text }}
+                      className={cn(
+                        proseClass,
+                        'text-white prose-sintomas [&_div]:!m-0 [&_div]:!p-0 [&_br]:!hidden [&_p]:!m-0 [&_ul]:!my-0 [&_ul]:!list-disc [&_ul]:!pl-4 [&_li]:!mb-1',
+                      )}
+                      dangerouslySetInnerHTML={{
+                        __html: normalizeSymptomHtml(data.sintomas_mente_text),
+                      }}
                     />
                   </div>
                 )}

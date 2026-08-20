@@ -26,7 +26,35 @@ import { cn } from '@/lib/utils'
 // agora são aplicados inline por seção a partir dos valores de `font_sizes`
 // configurados no admin, em vez do CSS global forçado de h1–h6.
 const proseClass =
-  'prose prose-lg prose-invert max-w-none text-white [&_h1]:font-bold [&_h1]:mb-4 [&_h2]:font-bold [&_h3]:font-semibold [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mb-2 [&_strong]:!font-bold [&_b]:!font-bold [&_a]:text-primary [&_span]:!bg-transparent [&_font]:!bg-transparent'
+  'prose prose-lg prose-invert max-w-none text-white [&_h1]:font-bold [&_h1]:mb-4 [&_h2]:font-bold [&_h3]:font-semibold [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mb-2 [&_strong]:!font-bold [&_b]:!font-bold [&_a]:text-primary [&_span]:!bg-transparent [&_font]:!bg-transparent [&_span]:!text-inherit'
+
+// Prose específico para seções de sintomas (Sinais Físicos / Sinais Emocionais)
+// Remove margens extras de <div> e <br>, iguala espaçamentos de listas e
+// garante que o font-size configurado na seção prevaleça sobre estilos inline menores.
+const proseSintomasClass = cn(
+  proseClass,
+  'prose-sintomas [&_div]:!m-0 [&_div]:!p-0 [&_br]:!hidden [&_p]:!m-0 [&_ul]:!my-0 [&_ul]:!list-disc [&_ul]:!pl-6 [&_ol]:!my-0 [&_ol]:!list-decimal [&_ol]:!pl-6 [&_li]:!mb-2 [&_*]:!text-inherit [&_span]:!text-[length:inherit] [&_b]:!text-[length:inherit] [&_strong]:!text-[length:inherit] [&_p]:!text-[length:inherit] [&_li]:!text-[length:inherit] [&_div]:!text-[length:inherit]',
+)
+
+/**
+ * Normaliza o HTML de sintomas para garantir consistência estrutural:
+ * - Remove tags <br> soltas entre itens
+ * - Remove font-size inline legados (como 0.875rem, 14px etc.) para respeitar o font-size da seção
+ * - Envelopa itens em <ul><li> quando necessário se vierem como div soltas
+ */
+function normalizeSymptomHtml(html?: string): string {
+  if (!html) return ''
+  let out = html
+  // Remove font-size inline para que o tamanho configurado na seção prevaleça
+  out = out.replace(/font-size\s*:\s*[^;"]+;?/gi, '')
+  // Limpa style="" vazios
+  out = out.replace(/\s+style=["']\s*["']/gi, '')
+  // Se o conteúdo for uma série de <div>...</div> sem <ul>, ou misturado
+  // remove <br> vazios entre divs
+  out = out.replace(/<div>\s*<br\s*\/?>\s*<\/div>/gi, '')
+  out = out.replace(/<p>\s*<br\s*\/?>\s*<\/p>/gi, '')
+  return out
+}
 
 function SectionTitle({
   title,
@@ -356,9 +384,11 @@ export default function TreatmentDetail() {
                   <div className="bg-[#111622] border border-white/10 rounded-2xl p-6 shadow-xl flex flex-col space-y-4">
                     <h3 className="text-xl md:text-2xl font-bold leading-snug">Sinais Físicos</h3>
                     <div
-                      className={proseClass}
+                      className={proseSintomasClass}
                       style={{ fontSize: `${sintomasCorpoStyles.content}px` }}
-                      dangerouslySetInnerHTML={{ __html: category.sintomas_corpo_text! }}
+                      dangerouslySetInnerHTML={{
+                        __html: normalizeSymptomHtml(category.sintomas_corpo_text),
+                      }}
                     />
                   </div>
                 ) : (
@@ -372,9 +402,11 @@ export default function TreatmentDetail() {
                       Sinais Emocionais
                     </h3>
                     <div
-                      className={proseClass}
+                      className={proseSintomasClass}
                       style={{ fontSize: `${sintomasMenteStyles.content}px` }}
-                      dangerouslySetInnerHTML={{ __html: category.sintomas_mente_text! }}
+                      dangerouslySetInnerHTML={{
+                        __html: normalizeSymptomHtml(category.sintomas_mente_text),
+                      }}
                     />
                   </div>
                 ) : (
@@ -401,9 +433,9 @@ export default function TreatmentDetail() {
         </ScrollFadeIn>
       )}
 
-      {hasPorQueTantas && <ScrollFadeIn></ScrollFadeIn>}
+      {hasPorQueTantas && null}
 
-      {hasComparacao && <ScrollFadeIn></ScrollFadeIn>}
+      {hasComparacao && null}
 
       {settings && (
         <ScrollFadeIn>

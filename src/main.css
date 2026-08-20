@@ -173,6 +173,35 @@
     line-height: 1.6;
   }
 
+  /* Normalização de sintomas e listas dentro de .prose-sintomas ou .prose */
+  .prose-sintomas div {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .prose-sintomas br {
+    display: none !important;
+  }
+  .prose-sintomas ul {
+    list-style-type: disc !important;
+    padding-left: 1.5rem !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+  .prose-sintomas li {
+    margin-top: 0.25rem !important;
+    margin-bottom: 0.5rem !important;
+    line-height: 1.6 !important;
+  }
+  .prose-sintomas span,
+  .prose-sintomas p,
+  .prose-sintomas div,
+  .prose-sintomas li,
+  .prose-sintomas b,
+  .prose-sintomas strong,
+  .prose-sintomas font {
+    font-size: inherit !important;
+  }
+
   .prose font {
     font-family: inherit;
   }
