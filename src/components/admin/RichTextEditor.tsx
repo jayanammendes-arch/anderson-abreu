@@ -307,6 +307,21 @@ export function RichTextEditor({
     return range
   }
 
+  /**
+   * Encontra o SPAN ancestral mais próximo que contém totalmente o Range dentro do editor.
+   */
+  const getEnclosingSpan = (range: Range, editor: HTMLElement | null): HTMLElement | null => {
+    if (!editor) return null
+    let node: Node | null = range.commonAncestorContainer
+    while (node && node !== editor) {
+      if (node.nodeType === Node.ELEMENT_NODE && (node as HTMLElement).tagName === 'SPAN') {
+        return node as HTMLElement
+      }
+      node = node.parentNode
+    }
+    return null
+  }
+
   // Custom inline style wrapper for Font Size and Font Family
   const applyCustomSpanStyle = useCallback(
     (styleProp: 'fontSize' | 'fontFamily', styleValue: string) => {
@@ -322,6 +337,23 @@ export function RichTextEditor({
         return
       }
 
+      const enclosingSpan = getEnclosingSpan(range, editorRef.current)
+      if (enclosingSpan) {
+        enclosingSpan.style[styleProp] = styleValue
+        const newRange = document.createRange()
+        newRange.selectNodeContents(enclosingSpan)
+        savedRange.current = newRange
+        sel.removeAllRanges()
+        try {
+          sel.addRange(newRange)
+        } catch {
+          /* noop */
+        }
+        notifyChange()
+        editorRef.current?.focus()
+        return
+      }
+
       const span = document.createElement('span')
       span.style[styleProp] = styleValue
 
@@ -331,6 +363,16 @@ export function RichTextEditor({
         const contents = range.extractContents()
         span.appendChild(contents)
         range.insertNode(span)
+      }
+
+      const newRange = document.createRange()
+      newRange.selectNodeContents(span)
+      savedRange.current = newRange
+      sel.removeAllRanges()
+      try {
+        sel.addRange(newRange)
+      } catch {
+        /* noop */
       }
 
       notifyChange()
@@ -360,13 +402,12 @@ export function RichTextEditor({
     trimRangeTrailingBrs(range)
     if (range.collapsed) return
 
-    const ancestor = range.commonAncestorContainer
-    if (
-      ancestor.nodeType === Node.ELEMENT_NODE &&
-      (ancestor as HTMLElement).tagName === 'SPAN' &&
-      (ancestor as HTMLElement).style.fontSize
-    ) {
-      ;(ancestor as HTMLElement).style.fontSize = `${size}px`
+    const enclosingSpan = getEnclosingSpan(range, editorRef.current)
+    if (enclosingSpan) {
+      enclosingSpan.style.fontSize = `${size}px`
+      const newRange = document.createRange()
+      newRange.selectNodeContents(enclosingSpan)
+      savedRange.current = newRange
       notifyChange()
       return
     }
@@ -452,19 +493,27 @@ export function RichTextEditor({
 
   const handleFontFamilyChange = (val: string) => {
     setActive((prev) => ({ ...prev, fontFamily: val }))
-    // Mesma lógica do handleFontSizeChange: se há seleção salva, aplica ao
-    // trecho e re-seleciona, preservando o foco (comportamento Canva-like).
+    // Se há seleção salva, aplica ao trecho e re-seleciona, preservando o foco (comportamento Canva-like).
     if (savedRange.current && !savedRange.current.collapsed) {
       const range = savedRange.current
       trimRangeTrailingBrs(range)
       if (!range.collapsed) {
-        const ancestor = range.commonAncestorContainer
-        if (
-          ancestor.nodeType === Node.ELEMENT_NODE &&
-          (ancestor as HTMLElement).tagName === 'SPAN'
-        ) {
-          ;(ancestor as HTMLElement).style.fontFamily = val
+        const enclosingSpan = getEnclosingSpan(range, editorRef.current)
+        if (enclosingSpan) {
+          enclosingSpan.style.fontFamily = val
+          const newRange = document.createRange()
+          newRange.selectNodeContents(enclosingSpan)
+          savedRange.current = newRange
           notifyChange()
+          const sel = window.getSelection()
+          if (sel && savedRange.current) {
+            sel.removeAllRanges()
+            try {
+              sel.addRange(savedRange.current)
+            } catch {
+              /* noop */
+            }
+          }
           return
         }
         const span = document.createElement('span')
@@ -536,6 +585,27 @@ export function RichTextEditor({
       const range = sel.getRangeAt(0)
       trimRangeTrailingBrs(range)
       if (range.collapsed) return
+
+      const enclosingSpan = getEnclosingSpan(range, editorRef.current)
+      if (enclosingSpan) {
+        // Remove existing gradient classes from this span first
+        GRADIENT_OPTIONS.forEach((g) => enclosingSpan.classList.remove(g.className))
+        enclosingSpan.classList.add(gradientClass)
+        const newRange = document.createRange()
+        newRange.selectNodeContents(enclosingSpan)
+        savedRange.current = newRange
+        sel.removeAllRanges()
+        try {
+          sel.addRange(newRange)
+        } catch {
+          /* noop */
+        }
+        notifyChange()
+        setGradientOpen(false)
+        editorRef.current?.focus()
+        return
+      }
+
       const span = document.createElement('span')
       span.className = gradientClass
       try {
@@ -545,6 +615,17 @@ export function RichTextEditor({
         span.appendChild(contents)
         range.insertNode(span)
       }
+
+      const newRange = document.createRange()
+      newRange.selectNodeContents(span)
+      savedRange.current = newRange
+      sel.removeAllRanges()
+      try {
+        sel.addRange(newRange)
+      } catch {
+        /* noop */
+      }
+
       notifyChange()
       setGradientOpen(false)
       editorRef.current?.focus()
@@ -563,10 +644,15 @@ export function RichTextEditor({
       if (node.nodeType === Node.ELEMENT_NODE) {
         const el = node as HTMLElement
         if (GRADIENT_OPTIONS.some((g) => el.classList.contains(g.className))) {
-          const parent = el.parentNode
-          if (parent) {
-            while (el.firstChild) parent.insertBefore(el.firstChild, el)
-            parent.removeChild(el)
+          // Remove all gradient classes
+          GRADIENT_OPTIONS.forEach((g) => el.classList.remove(g.className))
+          // If the span has no other classes or styles, unwrap it to keep DOM clean
+          if (!el.getAttribute('style') && el.classList.length === 0) {
+            const parent = el.parentNode
+            if (parent) {
+              while (el.firstChild) parent.insertBefore(el.firstChild, el)
+              parent.removeChild(el)
+            }
           }
           break
         }
