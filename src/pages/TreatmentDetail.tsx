@@ -26,7 +26,7 @@ import { cn } from '@/lib/utils'
 // agora são aplicados inline por seção a partir dos valores de `font_sizes`
 // configurados no admin, em vez do CSS global forçado de h1–h6.
 const proseClass =
-  'prose prose-lg prose-invert max-w-none text-white [&_p]:!leading-[1.6] [&_p]:!text-white [&_p_*]:!text-white [&_h1]:!text-white [&_h1]:font-bold [&_h1]:mb-4 [&_h2]:!text-white [&_h2]:font-bold [&_h3]:!text-white [&_h3]:font-semibold [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:!leading-[1.6] [&_li]:!text-white [&_li_*]:!text-white [&_li]:mb-2 [&_strong]:!font-bold [&_b]:!font-bold [&_a]:text-primary [&_span:not([class*="rte-gradient"])]:!text-white [&_font]:!text-white [&_span]:!bg-transparent [&_font]:!bg-transparent'
+  'prose prose-lg prose-invert max-w-none text-white [&_h1]:font-bold [&_h1]:mb-4 [&_h2]:font-bold [&_h3]:font-semibold [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mb-2 [&_strong]:!font-bold [&_b]:!font-bold [&_a]:text-primary [&_span]:!bg-transparent [&_font]:!bg-transparent'
 
 function SectionTitle({ title, defaultTitle }: { title?: string; defaultTitle: string }) {
   const content = title?.trim() || defaultTitle
@@ -333,9 +333,7 @@ export default function TreatmentDetail() {
                 {/* Sinais Físicos */}
                 {hasSintomasCorpo ? (
                   <div className="bg-[#111622] border border-white/10 rounded-2xl p-6 shadow-xl flex flex-col space-y-4">
-                    <h3 className="font-['Playfair_Display',serif] text-xl md:text-2xl font-bold leading-snug rte-gradient-gold">
-                      Sinais Físicos
-                    </h3>
+                    <h3 className="text-xl md:text-2xl font-bold leading-snug">Sinais Físicos</h3>
                     <div
                       className={proseClass}
                       style={{ fontSize: `${sintomasCorpoStyles.content}px` }}
@@ -349,7 +347,7 @@ export default function TreatmentDetail() {
                 {/* Sinais Emocionais */}
                 {hasSintomasMente ? (
                   <div className="bg-[#111622] border border-white/10 rounded-2xl p-6 shadow-xl flex flex-col space-y-4">
-                    <h3 className="font-['Playfair_Display',serif] text-xl md:text-2xl font-bold leading-snug rte-gradient-gold">
+                    <h3 className="text-xl md:text-2xl font-bold leading-snug">
                       Sinais Emocionais
                     </h3>
                     <div

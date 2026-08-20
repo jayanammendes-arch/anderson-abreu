@@ -419,17 +419,18 @@
      (40px por padrão) e pode ser sobrescrito por spans aplicados via toolbar
      (botões +/-), que precisam ter precedência. Apenas família/peso/linha
      são fixados para manter a identidade do título. */
-  .rte-title-preview,
+  .rte-title-preview {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700 !important;
+    line-height: 1.2 !important;
+  }
   .rte-title-preview p,
-  .rte-title-preview span,
   .rte-title-preview div,
-  .rte-title-preview font,
   .rte-title-preview b,
   .rte-title-preview strong,
   .rte-title-preview h1,
   .rte-title-preview h2,
   .rte-title-preview h3 {
-    font-family: 'Playfair Display', serif;
     font-weight: 700 !important;
     line-height: 1.2 !important;
   }
