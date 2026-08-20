@@ -405,3 +405,32 @@ export interface ContentSnapshot {
   updated: string
   expand?: { user?: { id: string; name: string } }
 }
+
+// Global legacy types compatibility
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type AnyRecord = Record<string, any>
+export type Module = AnyRecord
+export type Lesson = AnyRecord
+export type UserProgress = AnyRecord
+export type CourseWithProgress = Course & AnyRecord
+export type CourseDetailData = AnyRecord
+export type Quiz = AnyRecord
+export type QuizQuestion = AnyRecord
+export type QuizResult = AnyRecord
+export type LessonMaterial = AnyRecord
+export type LessonComment = AnyRecord
+export type Testimonial = AnyRecord
+export type FAQ = AnyRecord
+export type SiteFAQ = AnyRecord
+export type CertificationLogo = AnyRecord
+export type Certificate = AnyRecord
+export type UserAccess = AnyRecord
+export type CommunityPost = AnyRecord
+export type CommunityInteraction = AnyRecord
+export type CommunityFollow = AnyRecord
+export type CommunityUser = AnyRecord
+export type AppNotification = AnyRecord
+export type LifeWheelCategory = AnyRecord
+export type LifeWheelQuestion = AnyRecord
+export type LifeWheelAssessment = AnyRecord
+export type Event = AnyRecord

@@ -26,7 +26,7 @@ import { cn } from '@/lib/utils'
 // agora são aplicados inline por seção a partir dos valores de `font_sizes`
 // configurados no admin, em vez do CSS global forçado de h1–h6.
 const proseClass =
-  'prose prose-lg prose-invert max-w-none text-white [&_*]:!font-["Open_Sans",sans-serif] [&_p]:!font-["Open_Sans",sans-serif] [&_p]:!leading-[1.6] [&_p]:!text-white [&_p_*]:!font-["Open_Sans",sans-serif] [&_p_*]:!text-white [&_h1]:!text-white [&_h1]:font-bold [&_h1]:mb-4 [&_h2]:!text-white [&_h2]:font-bold [&_h3]:!text-white [&_h3]:font-semibold [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:!font-["Open_Sans",sans-serif] [&_li]:!leading-[1.6] [&_li]:!text-white [&_li_*]:!font-["Open_Sans",sans-serif] [&_li_*]:!text-white [&_li]:mb-2 [&_strong]:!font-["Open_Sans",sans-serif] [&_strong]:!font-bold [&_b]:!font-["Open_Sans",sans-serif] [&_b]:!font-bold [&_a]:text-primary [&_span:not([class*="rte-gradient"])]:!text-white [&_font]:!text-white [&_font]:!font-["Open_Sans",sans-serif] [&_span]:!bg-transparent [&_font]:!bg-transparent'
+  'prose prose-lg prose-invert max-w-none text-white [&_p]:!leading-[1.6] [&_p]:!text-white [&_p_*]:!text-white [&_h1]:!text-white [&_h1]:font-bold [&_h1]:mb-4 [&_h2]:!text-white [&_h2]:font-bold [&_h3]:!text-white [&_h3]:font-semibold [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:!leading-[1.6] [&_li]:!text-white [&_li_*]:!text-white [&_li]:mb-2 [&_strong]:!font-bold [&_b]:!font-bold [&_a]:text-primary [&_span:not([class*="rte-gradient"])]:!text-white [&_font]:!text-white [&_span]:!bg-transparent [&_font]:!bg-transparent'
 
 function SectionTitle({ title, defaultTitle }: { title?: string; defaultTitle: string }) {
   const content = title?.trim() || defaultTitle
@@ -382,9 +382,33 @@ export default function TreatmentDetail() {
         </ScrollFadeIn>
       )}
 
-      {hasPorQueTantas && <ScrollFadeIn></ScrollFadeIn>}
+      {hasPorQueTantas && (
+        <ScrollFadeIn>
+          <section className="py-24 bg-card overflow-visible">
+            <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 overflow-visible">
+              <SectionTitle title={category.por_que_tantas_title} defaultTitle="" />
+              <div
+                className={proseClass}
+                dangerouslySetInnerHTML={{ __html: category.por_que_tantas_content! }}
+              />
+            </div>
+          </section>
+        </ScrollFadeIn>
+      )}
 
-      {hasComparacao && <ScrollFadeIn></ScrollFadeIn>}
+      {hasComparacao && (
+        <ScrollFadeIn>
+          <section className="py-24 bg-card/50 overflow-visible">
+            <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 overflow-visible">
+              <SectionTitle title={category.comparacao_title} defaultTitle="" />
+              <div
+                className={proseClass}
+                dangerouslySetInnerHTML={{ __html: category.comparacao_content! }}
+              />
+            </div>
+          </section>
+        </ScrollFadeIn>
+      )}
 
       {settings && (
         <ScrollFadeIn>
