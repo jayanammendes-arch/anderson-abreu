@@ -308,7 +308,7 @@
   .parallax-cta-section {
     position: relative;
     overflow: hidden;
-    min-height: 400px;
+    min-height: 280px;
   }
 
   .parallax-cta-bg {

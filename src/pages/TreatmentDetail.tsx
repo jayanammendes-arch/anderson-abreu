@@ -212,7 +212,7 @@ export default function TreatmentDetail() {
           ) : (
             <div className="absolute inset-0 bg-gradient-to-br from-background to-card" />
           )}
-          <div className="relative z-10 w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 py-20">
+          <div className="relative z-10 w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 py-12">
             <div className="max-w-2xl">
               {!category.hide_icon && (
                 <Icon className="h-12 w-12 text-primary mb-6" strokeWidth={1.5} />
@@ -237,7 +237,7 @@ export default function TreatmentDetail() {
 
       {hasDetailedContent && (
         <ScrollFadeIn>
-          <section className="py-24 bg-card overflow-visible">
+          <section className="py-14 bg-card overflow-visible">
             <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 overflow-visible">
               <div
                 className={proseClass}
@@ -251,7 +251,7 @@ export default function TreatmentDetail() {
 
       {hasComoFunciona && (
         <ScrollFadeIn>
-          <section className="py-24 bg-card overflow-visible">
+          <section className="py-14 bg-card overflow-visible">
             <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 grid md:grid-cols-2 gap-8 lg:gap-12 items-center overflow-visible">
               <div className={cn(comoFuncionaImgLeft && 'md:order-2')}>
                 <SectionTitle
@@ -299,7 +299,7 @@ export default function TreatmentDetail() {
         >
           {!faixaAzulImg && <div className="absolute inset-0 bg-[#0B1D3A]" />}
           {faixaAzulImg && <div className="absolute inset-0 bg-[#0B1D3A]/70" />}
-          <div className="relative z-10 w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 py-16 md:py-24 flex flex-col items-center gap-8">
+          <div className="relative z-10 w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 py-10 md:py-14 flex flex-col items-center gap-8">
             {category.faixa_azul_frase?.trim() && (
               <p className="text-white text-2xl md:text-3xl lg:text-4xl font-bold leading-tight text-center max-w-4xl">
                 {category.faixa_azul_frase}
@@ -332,7 +332,7 @@ export default function TreatmentDetail() {
 
       {hasResultados && (
         <ScrollFadeIn>
-          <section className="py-24 bg-card/50 overflow-visible">
+          <section className="py-14 bg-card/50 overflow-visible">
             <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 grid md:grid-cols-2 gap-8 lg:gap-12 items-center overflow-visible">
               <div
                 className={cn(
@@ -367,7 +367,7 @@ export default function TreatmentDetail() {
 
       {hasSintomas && (
         <ScrollFadeIn>
-          <section className="py-24 bg-card overflow-visible">
+          <section className="py-14 bg-card overflow-visible">
             <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 overflow-visible">
               {/* Título centralizado acima dos dois quadros */}
               <div className="text-center mb-8 md:mb-12">
@@ -420,7 +420,7 @@ export default function TreatmentDetail() {
 
       {hasCta && (
         <ScrollFadeIn>
-          <section className="py-24 bg-card overflow-visible">
+          <section className="py-14 bg-card overflow-visible">
             <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 text-center overflow-visible">
               <SectionTitle title={category.cta_title} defaultTitle="" size={ctaStyles.title} />
               <div
@@ -445,7 +445,7 @@ export default function TreatmentDetail() {
 
       {otherCategories.length > 0 && (
         <ScrollFadeIn>
-          <section className="py-24 bg-card/50 overflow-visible">
+          <section className="py-14 bg-card/50 overflow-visible">
             <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 overflow-visible">
               <h2 className="text-3xl font-bold text-white mb-8 text-center">Outros Tratamentos</h2>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">

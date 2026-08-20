@@ -34,7 +34,7 @@ function ParallaxCTASection({ settings }: { settings: PlatformSettings }) {
     <section className="parallax-cta-section">
       <div className="parallax-cta-bg" style={{ backgroundImage: `url(${bgUrl})` }} />
       <div className="parallax-cta-overlay" />
-      <div className="relative z-10 max-w-4xl mx-auto px-6 text-center flex flex-col items-center justify-center min-h-[70vh]">
+      <div className="relative z-10 max-w-4xl mx-auto px-6 text-center flex flex-col items-center justify-center min-h-[45vh]">
         <h2 className="parallax-cta-headline not-italic font-normal text-center text-[50px] text-[#ffffff] opacity-[1]">
           {settings.parallax_headline}
         </h2>
@@ -286,7 +286,7 @@ export default function Landing() {
 
       {/* CTA */}
       <ScrollFadeIn>
-        <section className="py-24 royal-cta-gradient">
+        <section className="py-14 royal-cta-gradient">
           <div className="max-w-3xl mx-auto px-6 text-center">
             {settings?.journey_title ? (
               <div

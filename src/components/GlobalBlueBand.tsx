@@ -33,7 +33,7 @@ export function GlobalBlueBand({ settings, className = '' }: GlobalBlueBandProps
 
   return (
     <section
-      className={`relative w-full overflow-hidden bg-[#0A0D14] text-white py-8 md:py-10 ${className}`}
+      className={`relative w-full overflow-hidden bg-[#0A0D14] text-white py-5 md:py-6 ${className}`}
       style={sectionStyle}
     >
       {bgImageUrl && <div className="absolute inset-0 bg-[#0A0D14]/70" />}
