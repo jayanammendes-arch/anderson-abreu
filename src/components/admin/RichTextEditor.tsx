@@ -322,6 +322,55 @@ export function RichTextEditor({
     return null
   }
 
+  /**
+   * Verifica se o Range cobre exatamente TODO o conteúdo de texto / nós do elemento container.
+   * Retorna true apenas se a seleção cobrir o container por inteiro.
+   */
+  const rangeCoversEntireElement = (range: Range, elem: HTMLElement): boolean => {
+    try {
+      const elemRange = document.createRange()
+      elemRange.selectNodeContents(elem)
+      trimRangeTrailingBrs(elemRange)
+
+      // Compara ponto inicial: se o range começa antes ou no mesmo ponto do elemRange
+      const startCmp = range.compareBoundaryPoints(Range.START_TO_START, elemRange)
+      // Compara ponto final: se o range termina depois ou no mesmo ponto do elemRange
+      const endCmp = range.compareBoundaryPoints(Range.END_TO_END, elemRange)
+
+      return startCmp <= 0 && endCmp >= 0
+    } catch {
+      return false
+    }
+  }
+
+  /**
+   * Obtém os estilos herdados de font-family e font-size a partir do elemento/nó pai até o editor.
+   */
+  const getInheritedTypography = (
+    fromNode: Node | null,
+    editor: HTMLElement | null,
+  ): { fontFamily?: string; fontSize?: string } => {
+    let fontFamily: string | undefined
+    let fontSize: string | undefined
+    let curr: Node | null = fromNode
+
+    while (curr && curr !== editor) {
+      if (curr.nodeType === Node.ELEMENT_NODE) {
+        const el = curr as HTMLElement
+        if (!fontFamily && el.style.fontFamily) {
+          fontFamily = el.style.fontFamily
+        }
+        if (!fontSize && el.style.fontSize) {
+          fontSize = el.style.fontSize
+        }
+      }
+      if (fontFamily && fontSize) break
+      curr = curr.parentNode
+    }
+
+    return { fontFamily, fontSize }
+  }
+
   // Custom inline style wrapper for Font Size and Font Family
   const applyCustomSpanStyle = useCallback(
     (styleProp: 'fontSize' | 'fontFamily', styleValue: string) => {
@@ -338,7 +387,7 @@ export function RichTextEditor({
       }
 
       const enclosingSpan = getEnclosingSpan(range, editorRef.current)
-      if (enclosingSpan) {
+      if (enclosingSpan && rangeCoversEntireElement(range, enclosingSpan)) {
         enclosingSpan.style[styleProp] = styleValue
         const newRange = document.createRange()
         newRange.selectNodeContents(enclosingSpan)
@@ -354,7 +403,16 @@ export function RichTextEditor({
         return
       }
 
+      // Se não há enclosingSpan OU a seleção é apenas PARCIAL dentro do enclosingSpan:
+      // Cria um span interno apenas para o trecho selecionado, herdando font-family e font-size do pai.
+      const inherited = getInheritedTypography(
+        enclosingSpan || range.commonAncestorContainer,
+        editorRef.current,
+      )
+
       const span = document.createElement('span')
+      if (inherited.fontFamily) span.style.fontFamily = inherited.fontFamily
+      if (inherited.fontSize) span.style.fontSize = inherited.fontSize
       span.style[styleProp] = styleValue
 
       try {
@@ -403,7 +461,7 @@ export function RichTextEditor({
     if (range.collapsed) return
 
     const enclosingSpan = getEnclosingSpan(range, editorRef.current)
-    if (enclosingSpan) {
+    if (enclosingSpan && rangeCoversEntireElement(range, enclosingSpan)) {
       enclosingSpan.style.fontSize = `${size}px`
       const newRange = document.createRange()
       newRange.selectNodeContents(enclosingSpan)
@@ -412,7 +470,14 @@ export function RichTextEditor({
       return
     }
 
+    // Herda font-family e font-size do pai se a seleção for parcial ou novo span
+    const inherited = getInheritedTypography(
+      enclosingSpan || range.commonAncestorContainer,
+      editorRef.current,
+    )
+
     const span = document.createElement('span')
+    if (inherited.fontFamily) span.style.fontFamily = inherited.fontFamily
     span.style.fontSize = `${size}px`
     try {
       range.surroundContents(span)
@@ -499,7 +564,7 @@ export function RichTextEditor({
       trimRangeTrailingBrs(range)
       if (!range.collapsed) {
         const enclosingSpan = getEnclosingSpan(range, editorRef.current)
-        if (enclosingSpan) {
+        if (enclosingSpan && rangeCoversEntireElement(range, enclosingSpan)) {
           enclosingSpan.style.fontFamily = val
           const newRange = document.createRange()
           newRange.selectNodeContents(enclosingSpan)
@@ -516,7 +581,14 @@ export function RichTextEditor({
           }
           return
         }
+
+        const inherited = getInheritedTypography(
+          enclosingSpan || range.commonAncestorContainer,
+          editorRef.current,
+        )
+
         const span = document.createElement('span')
+        if (inherited.fontSize) span.style.fontSize = inherited.fontSize
         span.style.fontFamily = val
         try {
           range.surroundContents(span)
@@ -587,7 +659,7 @@ export function RichTextEditor({
       if (range.collapsed) return
 
       const enclosingSpan = getEnclosingSpan(range, editorRef.current)
-      if (enclosingSpan) {
+      if (enclosingSpan && rangeCoversEntireElement(range, enclosingSpan)) {
         // Remove existing gradient classes from this span first
         GRADIENT_OPTIONS.forEach((g) => enclosingSpan.classList.remove(g.className))
         enclosingSpan.classList.add(gradientClass)
@@ -606,8 +678,17 @@ export function RichTextEditor({
         return
       }
 
+      // Herda font-family e font-size do pai ao criar span interno com gradiente
+      const inherited = getInheritedTypography(
+        enclosingSpan || range.commonAncestorContainer,
+        editorRef.current,
+      )
+
       const span = document.createElement('span')
       span.className = gradientClass
+      if (inherited.fontFamily) span.style.fontFamily = inherited.fontFamily
+      if (inherited.fontSize) span.style.fontSize = inherited.fontSize
+
       try {
         range.surroundContents(span)
       } catch {
