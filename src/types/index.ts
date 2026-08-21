@@ -66,7 +66,8 @@ export interface CrmPurchase {
 export interface OnboardingStep {
   id?: string
   type: 'form' | 'life_wheel' | 'lesson' | 'audio'
-  label: string
+  label?: string
+  title?: string
   courseId?: string
   lessonId?: string
   form_id?: string
@@ -310,7 +311,7 @@ export interface Course {
   manual_workload?: number
   certificate_template?: string
   level?: 'Prata' | 'Ouro' | 'Diamante' | 'all'
-  access_type?: 'free' | 'paid'
+  access_type?: 'free' | 'paid' | 'hypnosis' | 'patient' | string
   created?: string
   updated?: string
 }

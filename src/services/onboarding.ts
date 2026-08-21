@@ -4,7 +4,7 @@ import type { OnboardingConfig } from '@/types'
 export async function getOnboardingConfig(): Promise<OnboardingConfig | null> {
   try {
     const records = await pb.collection('onboarding_config').getFullList()
-    return records[0] || null
+    return (records[0] as unknown as OnboardingConfig) || null
   } catch {
     return null
   }

@@ -11,7 +11,7 @@ import {
 
 export interface ChartData {
   category: string
-  score: number
+  score?: number
   pre?: number
   post?: number
 }

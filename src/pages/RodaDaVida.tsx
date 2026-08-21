@@ -1,6 +1,11 @@
 import { useState, useEffect, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/hooks/use-auth'
 import { useRealtime } from '@/hooks/use-realtime'
+import { toast } from 'sonner'
+import { getOnboardingConfig } from '@/services/onboarding'
+import { getFormSubmission } from '@/services/forms'
+import { getPreHypnosisForm } from '@/services/pre-hypnosis-forms'
 import {
   getLifeWheelCategories,
   getLifeWheelQuestions,
@@ -17,10 +22,23 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Loader2, ClipboardList, ArrowLeft } from 'lucide-react'
-import type { LifeWheelCategory, LifeWheelQuestion, LifeWheelAssessment } from '@/types'
+import type {
+  LifeWheelCategory,
+  LifeWheelQuestion,
+  LifeWheelAssessment,
+  OnboardingStep,
+} from '@/types'
+
+const DEFAULT_STEPS: OnboardingStep[] = [
+  { type: 'form', label: 'Formulário Pré-Hipnose' },
+  { type: 'life_wheel', label: 'Roda da Vida' },
+  { type: 'lesson', label: 'Primeira Aula' },
+  { type: 'audio', label: 'Primeiro Áudio' },
+]
 
 export default function RodaDaVida() {
   const { user } = useAuth()
+  const navigate = useNavigate()
   const [categories, setCategories] = useState<LifeWheelCategory[]>([])
   const [questions, setQuestions] = useState<LifeWheelQuestion[]>([])
   const [assessments, setAssessments] = useState<LifeWheelAssessment[]>([])
@@ -30,9 +48,36 @@ export default function RodaDaVida() {
   const [showForm, setShowForm] = useState(false)
   const [chartAssessment, setChartAssessment] = useState<LifeWheelAssessment | null>(null)
 
+  const checkFormCompleted = useCallback(async (userId: string) => {
+    const cfg = await getOnboardingConfig()
+    const formSteps = (cfg?.steps || DEFAULT_STEPS).filter((s) => s.type === 'form')
+    const stepsWithFormId = formSteps.filter((s) => s.form_id)
+    const stepsWithoutFormId = formSteps.filter((s) => !s.form_id)
+
+    if (stepsWithFormId.length > 0) {
+      const submission = await getFormSubmission(userId, stepsWithFormId[0].form_id!)
+      return !!submission
+    }
+
+    if (stepsWithoutFormId.length > 0) {
+      const preHypnosisForm = await getPreHypnosisForm(userId)
+      return !!preHypnosisForm
+    }
+
+    // Se não há steps de formulário configurados, permite o acesso
+    return true
+  }, [])
+
   const loadData = useCallback(async () => {
     if (!user) return
     try {
+      const isFormDone = await checkFormCompleted(user.id)
+      if (!isFormDone) {
+        toast.info('Complete o formulário inicial antes de acessar a Roda da Vida.')
+        navigate('/dashboard/comece-por-aqui', { replace: true })
+        return
+      }
+
       const [cats, qs, assmts] = await Promise.all([
         getLifeWheelCategories(),
         getLifeWheelQuestions(),
@@ -47,7 +92,7 @@ export default function RodaDaVida() {
     } finally {
       setLoading(false)
     }
-  }, [user])
+  }, [user, checkFormCompleted, navigate])
 
   useEffect(() => {
     loadData()

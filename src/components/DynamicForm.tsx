@@ -96,7 +96,7 @@ export function DynamicForm({ formId, userId, onSubmitted }: Props) {
     setSubmitting(true)
     try {
       const result = await createFormSubmission({ user: userId, form: formId, answers })
-      setSubmission(result as FormSubmission)
+      setSubmission(result as unknown as FormSubmission)
       setJustSubmitted(true)
       toast.success('Formulário enviado com sucesso!')
       onSubmitted?.()
