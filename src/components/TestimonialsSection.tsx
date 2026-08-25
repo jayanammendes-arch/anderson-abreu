@@ -131,7 +131,7 @@ export function TestimonialsSection({ customTitle }: { customTitle?: string }) {
   const title = customTitle || 'Depoimentos'
 
   return (
-    <section className="py-16 px-4 sm:px-6 lg:px-8 bg-card/50">
+    <section className="py-16 px-4 sm:px-6 lg:px-8 bg-[#0E1D2F]">
       <div className="max-w-7xl mx-auto">
         <h2 className="section-title-serif text-center text-foreground mb-2">{title}</h2>
         <div className="w-20 h-1 bg-primary mx-auto mb-10 rounded-full" />
