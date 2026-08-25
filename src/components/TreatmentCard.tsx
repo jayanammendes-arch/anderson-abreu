@@ -8,7 +8,7 @@ export function TreatmentCard({ category }: { category: TreatmentCategory }) {
   return (
     <Link
       to={`/tratamentos/${category.slug}`}
-      className="group flex flex-col items-center text-center p-6 bg-card rounded-2xl border border-border/50 hover:border-primary/30 hover:shadow-lg transition-all duration-300"
+      className="group flex flex-col items-center text-center p-6 bg-card rounded-2xl border border-[#0E1D2F] hover:border-primary/30 hover:shadow-lg transition-all duration-300"
     >
       <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors duration-300 mb-4">
         <Icon className="h-7 w-7 text-primary" strokeWidth={2} />

@@ -16,7 +16,7 @@ export function BlogCard({ post }: { post: BlogPost }) {
   return (
     <Link
       to={`/blog/${post.slug}`}
-      className="group flex flex-col bg-card border border-border rounded-xl overflow-hidden hover:shadow-lg hover:border-primary/30 transition-all duration-300"
+      className="group flex flex-col bg-card border border-[#0E1D2F] rounded-xl overflow-hidden hover:shadow-lg hover:border-primary/30 transition-all duration-300"
     >
       <div className="aspect-[16/10] overflow-hidden bg-muted">
         {imageUrl ? (
