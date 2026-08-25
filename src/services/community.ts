@@ -74,8 +74,11 @@ export function unfollowUser(id: string) {
   return pb.collection('community_follows').delete(id)
 }
 
-export function getUserPostCount(userId: string): Promise<number> {
-  return pb.collection('community_posts').count(`user = "${userId}"`)
+export async function getUserPostCount(userId: string): Promise<number> {
+  const result = await pb.collection('community_posts').getList(1, 1, {
+    filter: `user = "${userId}"`,
+  })
+  return result.totalItems
 }
 
 export function getUserProfile(userId: string) {

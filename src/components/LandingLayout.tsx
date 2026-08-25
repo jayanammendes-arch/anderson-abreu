@@ -144,8 +144,15 @@ export function LandingLayout({
         isDarkPage ? 'royal-gradient-bg text-white' : 'bg-background text-foreground',
       )}
     >
-      <header className="text-[#0E1D2F]">
-        <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 flex items-center justify-between">
+      <header
+        className={cn(
+          'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
+          isScrolled
+            ? 'bg-[#0E1D2F]/95 backdrop-blur-md shadow-lg border-b border-white/10'
+            : 'bg-[#0E1D2F]/80 backdrop-blur-sm',
+        )}
+      >
+        <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 flex items-center justify-between h-20">
           <Link to="/" className="flex items-center gap-2">
             {logoUrl && (
               <img src={logoUrl} alt="Logo" className="h-9 w-auto object-contain flex-shrink-0" />
@@ -160,19 +167,14 @@ export function LandingLayout({
           <nav className="hidden lg:flex items-center gap-1">
             {navLinks.map((link) =>
               link.name === 'Tratamentos' ? (
-                <TreatmentsDropdown key={link.name} isDark={isDarkPage}>
+                <TreatmentsDropdown key={link.name} isDark={true}>
                   Tratamentos
                 </TreatmentsDropdown>
               ) : (
                 <button
                   key={link.name}
                   onClick={() => handleNavClick(link)}
-                  className={cn(
-                    'text-sm font-medium px-3 py-2 rounded-md transition-colors',
-                    isDarkPage
-                      ? 'text-white/80 hover:text-white hover:bg-white/10'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-white/5',
-                  )}
+                  className="text-sm font-medium px-3 py-2 rounded-md transition-colors text-white/80 hover:text-white hover:bg-white/10"
                 >
                   {link.name}
                 </button>
@@ -200,10 +202,7 @@ export function LandingLayout({
               </Button>
             )}
           </div>
-          <button
-            className={cn('lg:hidden p-2', isDarkPage ? 'text-white' : 'text-foreground')}
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
+          <button className="lg:hidden p-2 text-white" onClick={() => setIsMenuOpen(!isMenuOpen)}>
             {isMenuOpen ? <X /> : <Menu />}
           </button>
         </div>

@@ -251,7 +251,7 @@ export async function getSiteLeadsWithSummary(): Promise<SiteLeadSummary[]> {
     leads.map(async (lead) => {
       const userId = lead.linked_user
       if (!userId) {
-        return { ...lead, courseCount: 0, lastAssessmentDate: null } as SiteLeadSummary
+        return { ...lead, courseCount: 0, lastAssessmentDate: null } as unknown as SiteLeadSummary
       }
       const [access, assessments] = await Promise.all([
         pb.collection('user_access').getFullList({ filter: `user = "${userId}"` }),
@@ -264,7 +264,7 @@ export async function getSiteLeadsWithSummary(): Promise<SiteLeadSummary[]> {
         courseCount: access.length,
         lastAssessmentDate:
           (assessments[0] as any)?.date || (assessments[0] as any)?.created || null,
-      } as SiteLeadSummary
+      } as unknown as SiteLeadSummary
     }),
   )
   return summaries

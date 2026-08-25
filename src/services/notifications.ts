@@ -8,8 +8,11 @@ export function getNotifications(userId: string) {
   })
 }
 
-export function getUnreadCount(userId: string): Promise<number> {
-  return pb.collection('notifications').count(`user = "${userId}" && read = false`)
+export async function getUnreadCount(userId: string): Promise<number> {
+  const result = await pb.collection('notifications').getList(1, 1, {
+    filter: `user = "${userId}" && read = false`,
+  })
+  return result.totalItems
 }
 
 export function markAsRead(id: string) {

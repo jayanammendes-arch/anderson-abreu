@@ -46,7 +46,7 @@ export function VideoPlayer({
 }: VideoPlayerProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const playerRef = useRef<any>(null)
-  const intervalRef = useRef<ReturnType<typeof setInterval>>()
+  const intervalRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined)
   const tickCountRef = useRef(0)
   const completedRef = useRef(false)
   const lastPositionRef = useRef(0)
@@ -62,7 +62,9 @@ export function VideoPlayer({
     lastPositionRef.current = 0
     if (playerRef.current) {
       try {
-        playerRef.current.destroy?.()
+        if (typeof playerRef.current.destroy === 'function') {
+          playerRef.current.destroy()
+        }
       } catch {
         /* ignored */
       }
@@ -184,7 +186,9 @@ export function VideoPlayer({
         progressRef.current(lastPositionRef.current)
       if (playerRef.current) {
         try {
-          playerRef.current.destroy?.()
+          if (typeof playerRef.current.destroy === 'function') {
+            playerRef.current.destroy()
+          }
         } catch {
           /* ignored */
         }

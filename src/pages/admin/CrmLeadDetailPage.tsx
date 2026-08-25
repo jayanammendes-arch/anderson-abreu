@@ -351,7 +351,9 @@ export default function CrmLeadDetailPage() {
             socialLead={socialLead}
             socialInteractions={socialInteractions}
             userCreated={
-              lead.expand?.linked_user?.created || (lead as any).expand?.linked_user?.created || ''
+              (lead.expand?.linked_user as any)?.created ||
+              (lead as any).expand?.linked_user?.created ||
+              ''
             }
             courses={courses}
             certificates={certificates}
