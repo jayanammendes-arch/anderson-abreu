@@ -290,21 +290,21 @@ export default function Landing() {
           <div className="max-w-3xl mx-auto px-6 text-center">
             {settings?.journey_title ? (
               <div
-                className="text-3xl md:text-4xl font-bold text-white mb-6 [&_h1]:text-3xl [&_h1]:md:text-4xl [&_h1]:font-bold [&_h1]:text-white [&_h2]:text-3xl [&_h2]:md:text-4xl [&_h2]:font-bold [&_h2]:text-white [&_h3]:text-2xl [&_h3]:font-semibold [&_h3]:text-white [&_p]:text-white [&_p]:mb-0"
+                className="text-center text-3xl md:text-4xl font-bold text-white mb-6 [&_*]:text-center [&_h1]:text-3xl [&_h1]:md:text-4xl [&_h1]:font-bold [&_h1]:text-white [&_h2]:text-3xl [&_h2]:md:text-4xl [&_h2]:font-bold [&_h2]:text-white [&_h3]:text-2xl [&_h3]:font-semibold [&_h3]:text-white [&_p]:text-white [&_p]:mb-0"
                 dangerouslySetInnerHTML={{ __html: settings.journey_title }}
               />
             ) : (
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+              <h2 className="text-center text-3xl md:text-4xl font-bold text-white mb-6">
                 Pronto para transformar sua vida?
               </h2>
             )}
             {settings?.journey_text ? (
               <div
-                className="text-white/80 text-lg mb-10 leading-relaxed [&_p]:text-white/80 [&_p]:text-lg [&_p]:leading-relaxed [&_p]:mb-4"
+                className="text-center text-white/80 text-lg mb-10 leading-relaxed [&_*]:text-center [&_p]:text-white/80 [&_p]:text-lg [&_p]:leading-relaxed [&_p]:mb-4"
                 dangerouslySetInnerHTML={{ __html: settings.journey_text }}
               />
             ) : (
-              <p className="text-white/80 text-lg mb-10 leading-relaxed">
+              <p className="text-center text-white/80 text-lg mb-10 leading-relaxed">
                 Agende sua sessão de hipnose clínica e dê o primeiro passo rumo ao bem-estar.
               </p>
             )}
