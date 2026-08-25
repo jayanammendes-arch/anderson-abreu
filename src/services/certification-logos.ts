@@ -2,10 +2,10 @@ import pb from '@/lib/pocketbase/client'
 import type { CertificationLogo } from '@/types'
 
 export const getCertificationLogos = (): Promise<CertificationLogo[]> =>
-  pb.collection('certification_logos').getFullList({ sort: 'order' })
+  pb.collection('certification_logos').getFullList<CertificationLogo>({ sort: 'order' })
 
 export const adminGetCertificationLogos = (): Promise<CertificationLogo[]> =>
-  pb.collection('certification_logos').getFullList({ sort: 'order' })
+  pb.collection('certification_logos').getFullList<CertificationLogo>({ sort: 'order' })
 
 export const createCertificationLogo = (data: FormData | Record<string, unknown>) =>
   pb.collection('certification_logos').create(data)

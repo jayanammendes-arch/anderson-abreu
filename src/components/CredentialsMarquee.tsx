@@ -37,7 +37,7 @@ export function CredentialsMarquee() {
   return (
     <section
       className="credentials-marquee-section w-full overflow-hidden"
-      style={{ backgroundColor: '#0a192f' }}
+      style={{ backgroundColor: '#0E1D2F' }}
     >
       <div className="credentials-marquee">
         {doubledUrls.map((url, i) => (

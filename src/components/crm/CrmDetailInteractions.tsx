@@ -28,7 +28,7 @@ export function CrmDetailInteractions({ leadId, interactions, onAdded }: Props) 
         type: type || 'Nota',
         content,
       })
-      onAdded(created as CrmInteraction)
+      onAdded(created as unknown as CrmInteraction)
       setType('')
       setContent('')
       toast.success('Interação registrada!')

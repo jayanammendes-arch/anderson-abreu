@@ -60,7 +60,7 @@ export default function AdminOnboarding() {
           pb.collection('lessons').getFullList({ sort: 'order' }),
           getForms(),
         ])
-        setCourses(c as Course[])
+        setCourses(c as unknown as Course[])
         setModules(m as Module[])
         setLessons(l as Lesson[])
         setForms(f as FormConfig[])

@@ -149,7 +149,7 @@ export function LandingLayout({
           'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
           isScrolled
             ? isDarkPage
-              ? 'bg-[#020412]/90 backdrop-blur-md shadow-sm border-b border-white/10 py-3'
+              ? 'bg-[#0E1D2F]/90 backdrop-blur-md shadow-sm border-b border-white/10 py-3'
               : 'bg-background/95 backdrop-blur-md shadow-sm border-b border-border py-3'
             : isDarkPage
               ? 'bg-transparent py-5'
@@ -223,7 +223,7 @@ export function LandingLayout({
       <div
         className={cn(
           'fixed inset-0 z-40 transition-transform duration-300 lg:hidden flex flex-col pt-24 px-6',
-          isDarkPage ? 'bg-[#020412] text-white' : 'bg-background text-foreground',
+          isDarkPage ? 'bg-[#0E1D2F] text-white' : 'bg-background text-foreground',
           isMenuOpen ? 'translate-x-0' : 'translate-x-full',
         )}
       >

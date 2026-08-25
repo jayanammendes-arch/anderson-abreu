@@ -63,7 +63,7 @@ export function FormResponses({ formId, questions }: Props) {
         <div className="space-y-2">
           {submissions.map((sub) => {
             const isOpen = expanded === sub.id
-            const userName = sub.expand?.user?.name || 'Usuário'
+            const userName = (sub.expand as any)?.user?.name || 'Usuário'
             const answers = sub.answers as FormAnswers
             return (
               <Card key={sub.id} className="bg-card/50 border-border/50">

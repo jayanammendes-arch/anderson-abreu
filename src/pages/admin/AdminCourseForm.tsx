@@ -92,7 +92,7 @@ export default function AdminCourseForm() {
   const loadCourse = useCallback(async () => {
     if (!courseId) return
     try {
-      const c = (await adminGetCourse(courseId)) as Course
+      const c = (await adminGetCourse(courseId)) as unknown as Course
       setForm({
         title: c.title || '',
         short_description: c.short_description || '',

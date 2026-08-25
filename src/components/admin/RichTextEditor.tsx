@@ -885,9 +885,8 @@ export function RichTextEditor({
             <div className="text-xs font-semibold text-zinc-400 mb-2 px-1">Cores do texto</div>
             <div className="grid grid-cols-7 gap-1.5">
               {[
-                { name: 'Azul Royal', value: '#0047AB' },
-                { name: 'Azul Escuro', value: '#0B1D3A' },
-                { name: 'Azul Céu', value: '#0EA5E9' },
+                { name: 'Azul Médio', value: '#1F3552' },
+                { name: 'Azul Escuro', value: '#0E1D2F' },
                 { name: 'Dourado', value: '#C59A2A' },
                 { name: 'Verde Esmeralda', value: '#10B981' },
                 { name: 'Verde Escuro', value: '#065F46' },

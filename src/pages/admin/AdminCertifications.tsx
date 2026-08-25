@@ -157,7 +157,7 @@ export default function AdminCertifications() {
       ) : (
         <div className="grid gap-3">
           {logos.map((logo, index) => {
-            const url = getCertificationLogoUrl(logo)
+            const url = getCertificationLogoUrl(logo as any)
             return (
               <Card
                 key={logo.id}
@@ -184,7 +184,7 @@ export default function AdminCertifications() {
                   </Button>
                 </div>
 
-                <div className="flex h-16 w-32 shrink-0 items-center justify-center rounded-lg bg-[#0a1628] border border-border/30 overflow-hidden">
+                <div className="flex h-16 w-32 shrink-0 items-center justify-center rounded-lg bg-[#1F3552] border border-border/30 overflow-hidden">
                   {url ? (
                     <img
                       src={url}

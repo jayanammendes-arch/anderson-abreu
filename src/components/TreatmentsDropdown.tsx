@@ -42,7 +42,7 @@ export function TreatmentsDropdown({
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="start"
-        className="w-[480px] p-4 rounded-xl shadow-2xl border border-white/10 bg-[#0b101d] text-white backdrop-blur-xl z-50"
+        className="w-[480px] p-4 rounded-xl shadow-2xl border border-white/10 bg-[#0E1D2F] text-white backdrop-blur-xl z-50"
       >
         <div className="grid grid-cols-2 gap-1">
           {categories.slice(0, 12).map((category) => {

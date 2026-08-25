@@ -35,7 +35,7 @@ export default function AdminCourses() {
     setLoading(true)
     try {
       const data = await adminGetCourses()
-      setCourses(data as Course[])
+      setCourses(data as unknown as Course[])
       const counts: Record<string, number> = {}
       for (const c of data) counts[c.id] = await adminGetCourseAccessCount(c.id)
       setAccessCounts(counts)

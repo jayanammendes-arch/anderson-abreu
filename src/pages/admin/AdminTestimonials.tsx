@@ -71,8 +71,8 @@ export default function AdminTestimonials() {
     setIsLoading(true)
     try {
       const [data, courseData] = await Promise.all([adminGetTestimonials(), adminGetCourses()])
-      setTestimonials(data as Testimonial[])
-      setCourses(courseData as Course[])
+      setTestimonials(data as unknown as Testimonial[])
+      setCourses(courseData as unknown as Course[])
     } catch {
       toast.error('Erro ao carregar depoimentos')
     } finally {
@@ -96,7 +96,7 @@ export default function AdminTestimonials() {
   }
 
   const handleEdit = (testimonial: Testimonial) => {
-    setFormData({ ...testimonial })
+    setFormData({ ...testimonial, is_active: testimonial.is_active ?? true })
     setImageFile(null)
     setFieldErrors({})
     setDialogOpen(true)

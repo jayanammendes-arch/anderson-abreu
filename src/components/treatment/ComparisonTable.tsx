@@ -12,7 +12,7 @@ const ROWS = [
 
 export function ComparisonTable() {
   return (
-    <section className="py-24 bg-[#0a0f1d] text-white">
+    <section className="py-24 bg-[#0E1D2F] text-white">
       <div className="max-w-4xl mx-auto px-6">
         <h2 className="text-3xl font-bold text-white mb-8 text-center">
           Hipnoterapia vs Tratamento Tradicional

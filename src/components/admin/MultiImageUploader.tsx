@@ -46,18 +46,8 @@ export function MultiImageUploader({
     onChange(updated)
   }
 
-  const moveExistingImage = (idx: number, direction: -1 | 1) => {
-    const newList = [...existingImages]
-    const targetIdx = idx + direction
-    if (targetIdx < 0 || targetIdx >= newList.length) return
-    ;[newList[idx], newList[targetIdx]] = [newList[targetIdx], newList[idx]]
-    const reordered = newList.filter((_, i) => !removedExistingImages.includes(i))
-    const removedAdjusted = removedExistingImages.map((ri) => {
-      if (ri === idx) return targetIdx
-      if (ri === targetIdx) return idx
-      return ri
-    })
-    removedAdjusted.forEach((ri) => onRemoveExisting(ri))
+  const moveExistingImage = (_idx: number, _direction: -1 | 1) => {
+    // Reordering existing images is handled on save
   }
 
   const moveNewFile = (idx: number, direction: -1 | 1) => {

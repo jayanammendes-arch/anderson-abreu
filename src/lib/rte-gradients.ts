@@ -13,7 +13,7 @@ export const GRADIENT_OPTIONS: GradientOption[] = [
   {
     className: 'rte-gradient-blue',
     label: 'Azul',
-    preview: 'linear-gradient(135deg, #1e40af, #3b82f6)',
+    preview: 'linear-gradient(135deg, #0E1D2F, #1F3552)',
   },
   {
     className: 'rte-gradient-purple',
@@ -38,12 +38,12 @@ export const GRADIENT_OPTIONS: GradientOption[] = [
   {
     className: 'rte-gradient-ocean',
     label: 'Oceano',
-    preview: 'linear-gradient(135deg, #0ea5e9, #06b6d4)',
+    preview: 'linear-gradient(135deg, #0E1D2F, #1F3552)',
   },
   {
     className: 'rte-gradient-royal',
     label: 'Royal',
-    preview: 'linear-gradient(135deg, #1e3a8a, #6366f1)',
+    preview: 'linear-gradient(135deg, #0E1D2F, #1F3552)',
   },
 ]
 

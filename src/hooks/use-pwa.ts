@@ -57,7 +57,7 @@ export function usePWA() {
             { src: '/skip.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
             { src: '/og-image.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
           ],
-          theme_color: settings.primary_color || '#0ea5e9',
+          theme_color: settings.primary_color || '#1F3552',
           background_color: '#ffffff',
           display: 'standalone' as const,
           start_url: '/',

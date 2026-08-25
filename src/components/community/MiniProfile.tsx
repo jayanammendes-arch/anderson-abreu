@@ -78,7 +78,7 @@ export function MiniProfile({
         ) : profile ? (
           <div className="space-y-4 text-center">
             <Avatar className="h-20 w-20 mx-auto">
-              {profile.avatar && <AvatarImage src={getAvatarUrl(profile)} />}
+              {profile.avatar && <AvatarImage src={getAvatarUrl(profile as any)} />}
               <AvatarFallback className="text-lg">
                 {profile.name?.[0]?.toUpperCase() || 'U'}
               </AvatarFallback>

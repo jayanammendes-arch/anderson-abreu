@@ -184,7 +184,7 @@ export default function AdminGlobalSettings() {
       name: f.key,
       value: settings?.[f.key],
       required: f.required,
-      type: f.type,
+      type: f.type as any,
     }))
     if (!validate(rules)) return
 
@@ -212,7 +212,7 @@ export default function AdminGlobalSettings() {
   }
 
   const getFileSrc = (key: string) =>
-    settings?.[key] ? getFileUrl('platform_settings', settings.id, settings[key]) : null
+    settings?.[key] ? getFileUrl({ id: settings.id, collectionName: 'platform_settings' } as any, settings[key]) : null
 
   const renderField = (field: FieldDef) => {
     if (field.type === 'boolean') {

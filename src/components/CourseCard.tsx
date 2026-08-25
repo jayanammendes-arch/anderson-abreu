@@ -67,7 +67,7 @@ export function CourseCard({ course, hasAccess }: CourseCardProps) {
         </div>
         {hasAccess ? (
           <Button
-            className="w-full bg-[#0F2A5E] text-white hover:bg-[#1a3a6e] border border-[#0F2A5E]/50"
+            className="w-full bg-[#1F3552] text-white hover:bg-[#1F3552]/80 border border-[#1F3552]/50"
             asChild
           >
             <Link to={`/dashboard/curso/${course.id}`}>
@@ -85,7 +85,7 @@ export function CourseCard({ course, hasAccess }: CourseCardProps) {
           </Button>
         ) : (
           <Button
-            className="w-full bg-[#0F2A5E] text-white hover:bg-[#1a3a6e] border border-[#0F2A5E]/50"
+            className="w-full bg-[#1F3552] text-white hover:bg-[#1F3552]/80 border border-[#1F3552]/50"
             asChild
           >
             <Link to={`/cursos/${course.id}`}>Ver Detalhes</Link>

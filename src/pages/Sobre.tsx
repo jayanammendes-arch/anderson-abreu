@@ -334,7 +334,7 @@ export default function Sobre() {
             {ctaBg ? (
               <>
                 <img src={ctaBg} alt="" className="absolute inset-0 h-full w-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-b from-[#020412]/80 via-[#0a1a5e]/80 to-[#0e2575]" />{' '}
+                <div className="absolute inset-0 bg-gradient-to-b from-[#0E1D2F]/80 to-[#1F3552]/80" />{' '}
               </>
             ) : (
               <div className="absolute inset-0 royal-cta-gradient" />

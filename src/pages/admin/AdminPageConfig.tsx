@@ -290,9 +290,8 @@ function ImageUpload({
 }
 
 const PRIMARY_COLOR_PRESETS = [
-  { name: 'Azul Royal', value: '#0047AB' },
-  { name: 'Azul Escuro', value: '#0B1D3A' },
-  { name: 'Azul Céu', value: '#0EA5E9' },
+  { name: 'Azul Médio', value: '#1F3552' },
+  { name: 'Azul Escuro', value: '#0E1D2F' },
   { name: 'Dourado', value: '#D4AF37' },
   { name: 'Verde Esmeralda', value: '#10B981' },
   { name: 'Verde Escuro', value: '#065F46' },
@@ -347,11 +346,11 @@ function ColorInput({
       <div className="flex gap-2 items-center pt-1">
         <input
           type="color"
-          value={value || '#0047AB'}
+          value={value || '#1F3552'}
           onChange={(e) => onChange(e.target.value)}
-          className="h-9 w-12 rounded border border-border cursor-pointer bg-transparent"
+          className="w-10 h-10 rounded-lg border border-border p-1 bg-transparent cursor-pointer shrink-0"
         />
-        <Input value={value} onChange={(e) => onChange(e.target.value)} placeholder="#0047AB" />
+        <Input value={value} onChange={(e) => onChange(e.target.value)} placeholder="#1F3552" />{' '}
         {!isPreset && value && (
           <span className="text-xs text-muted-foreground whitespace-nowrap">Cor personalizada</span>
         )}

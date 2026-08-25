@@ -239,7 +239,7 @@ export default function Index() {
               </div>
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {lockedCourses.map((course) => (
-                  <CourseCard key={course.id} course={course} locked />
+                  <CourseCard key={course.id} course={course} />
                 ))}
               </div>
             </section>

@@ -296,8 +296,8 @@ export default function TreatmentDetail() {
               : undefined
           }
         >
-          {!faixaAzulImg && <div className="absolute inset-0 bg-[#0B1D3A]" />}
-          {faixaAzulImg && <div className="absolute inset-0 bg-[#0B1D3A]/70" />}
+          {!faixaAzulImg && <div className="absolute inset-0 bg-[#0E1D2F]" />}
+          {faixaAzulImg && <div className="absolute inset-0 bg-[#0E1D2F]/70" />}
           <div className="relative z-10 w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 py-10 md:py-14 flex flex-col items-center gap-8">
             {category.faixa_azul_frase?.trim() && (
               <p className="text-white text-2xl md:text-3xl lg:text-4xl font-bold leading-tight text-center max-w-4xl">
@@ -380,7 +380,7 @@ export default function TreatmentDetail() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 lg:gap-12 items-stretch overflow-visible">
                 {/* Sinais Físicos */}
                 {hasSintomasCorpo ? (
-                  <div className="bg-[#111622] border border-white/10 rounded-2xl p-6 shadow-xl flex flex-col space-y-4">
+                  <div className="bg-[#0E1D2F] border border-white/10 rounded-2xl p-6 shadow-xl flex flex-col space-y-4">
                     <div
                       className="section-title-serif text-white font-bold leading-snug"
                       style={{ fontSize: `${sintomasCorpoStyles.title}px` }}
@@ -402,7 +402,7 @@ export default function TreatmentDetail() {
 
                 {/* Sinais Emocionais */}
                 {hasSintomasMente ? (
-                  <div className="bg-[#111622] border border-white/10 rounded-2xl p-6 shadow-xl flex flex-col space-y-4">
+                  <div className="bg-[#0E1D2F] border border-white/10 rounded-2xl p-6 shadow-xl flex flex-col space-y-4">
                     <div
                       className="section-title-serif text-white font-bold leading-snug"
                       style={{ fontSize: `${sintomasMenteStyles.title}px` }}

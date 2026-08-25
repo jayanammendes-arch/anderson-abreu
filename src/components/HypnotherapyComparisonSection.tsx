@@ -70,7 +70,7 @@ export function HypnotherapyComparisonSection({ settings }: { settings: Platform
         </div>
 
         <div className="grid md:grid-cols-2 gap-6 lg:gap-8 items-stretch overflow-visible">
-          <div className="relative bg-gradient-to-br from-[#0a1a3a] to-[#06122a] text-white rounded-3xl p-6 sm:p-8 lg:p-10 shadow-2xl overflow-hidden border border-[#d4af37]/20">
+          <div className="relative bg-gradient-to-br from-[#0E1D2F] to-[#1F3552] text-white rounded-3xl p-6 sm:p-8 lg:p-10 shadow-2xl overflow-hidden border border-[#d4af37]/20">
             <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#d4af37] via-[#c9a227] to-[#d4af37]" />
             <div className="absolute -top-20 -right-20 w-40 h-40 bg-[#d4af37]/5 rounded-full blur-2xl" />
             <div className="relative">

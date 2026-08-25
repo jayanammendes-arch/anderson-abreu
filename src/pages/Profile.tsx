@@ -59,10 +59,9 @@ export default function Profile() {
     const { error } = await updateProfile({
       name,
       phone,
-      birth_date: birthDate,
-      instagram_handle: instagram,
+      birth_date: birthDate || undefined,
       avatar: avatarFile || undefined,
-    })
+    } as any)
     if (error) {
       setFieldErrors(extractFieldErrors(error))
       toast.error(getErrorMessage(error))

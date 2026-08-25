@@ -232,7 +232,7 @@ export default function AdminAgenda() {
       ) : (
         <div className="grid gap-3">
           {events.map((event) => {
-            const imageUrl = getEventImageUrl(event)
+            const imageUrl = getEventImageUrl(event as any)
             return (
               <Card
                 key={event.id}

@@ -33,7 +33,7 @@ export function SupportSettings() {
           setForm({
             whatsapp_number: data.whatsapp_number || '',
             support_email: data.support_email || '',
-            about_content: data.about_content || '',
+            about_content: (data as any).about_content || '',
           })
         }
       } catch {

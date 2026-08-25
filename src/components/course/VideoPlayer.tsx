@@ -117,7 +117,7 @@ export function VideoPlayer({
                     tickCountRef.current++
                     if (!completedRef.current && dur > 0 && cur >= dur - 20) {
                       completedRef.current = true
-                      nearCompleteRef.current()
+                      nearCompleteRef.current?.()
                     }
                     if (tickCountRef.current % 15 === 0 && progressRef.current) {
                       progressRef.current(cur)
@@ -157,7 +157,7 @@ export function VideoPlayer({
           vimeoTick++
           if (!completedRef.current && data.duration > 0 && data.seconds >= data.duration - 20) {
             completedRef.current = true
-            nearCompleteRef.current()
+            nearCompleteRef.current?.()
           }
           if (vimeoTick % 15 === 0 && progressRef.current) progressRef.current(data.seconds)
         })

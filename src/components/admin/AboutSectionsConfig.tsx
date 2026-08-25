@@ -175,8 +175,8 @@ export function AboutSectionsConfig({
           <Label>Lista de Formações (uma por linha)</Label>
           <Textarea
             value={parseList(form.about_formations_list)}
-            onChange={(v) => {
-              const a = v.split('\n').filter((l) => l.trim())
+            onChange={(e) => {
+              const a = e.target.value.split('\n').filter((l) => l.trim())
               set('about_formations_list', JSON.stringify(a))
             }}
             className="min-h-[100px]"
