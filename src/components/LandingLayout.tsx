@@ -144,18 +144,7 @@ export function LandingLayout({
         isDarkPage ? 'royal-gradient-bg text-white' : 'bg-background text-foreground',
       )}
     >
-      <header
-        className={cn(
-          'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-          isScrolled
-            ? isDarkPage
-              ? 'bg-[#0E1D2F]/90 backdrop-blur-md shadow-sm border-b border-white/10 py-3'
-              : 'bg-background/95 backdrop-blur-md shadow-sm border-b border-border py-3'
-            : isDarkPage
-              ? 'bg-transparent py-5'
-              : 'bg-background/80 backdrop-blur-sm py-5',
-        )}
-      >
+      <header className="text-[#0E1D2F]">
         <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
             {logoUrl && (
