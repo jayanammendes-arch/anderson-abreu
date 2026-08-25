@@ -174,8 +174,20 @@ export default function AdminGlobalSettings() {
     )
   }
 
+  const stripTextAlign = (html: string): string => {
+    if (!html) return ''
+    let out = html
+    out = out.replace(/text-align\s*:\s*[^;"]+;?/gi, '')
+    out = out.replace(/\s+style=["']\s*["']/gi, '')
+    return out
+  }
+
   const updateField = (key: string, value: string) => {
-    setSettings((prev) => ({ ...prev, [key]: value }))
+    let finalValue = value
+    if (key === 'journey_title' || key === 'journey_text') {
+      finalValue = stripTextAlign(value)
+    }
+    setSettings((prev) => ({ ...prev, [key]: finalValue }))
     clearFieldError(key)
   }
 

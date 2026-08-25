@@ -37,6 +37,16 @@ const proseSintomasClass = cn(
 )
 
 /**
+ * Remove alinhamentos inline como text-align: left para evitar injeção residual
+ */
+export function stripTextAlign(html?: string): string {
+  if (!html) return ''
+  let out = html
+  out = out.replace(/text-align\s*:\s*[^;"]+;?/gi, '')
+  out = out.replace(/\s+style=["']\s*["']/gi, '')
+  return out
+}
+/**
  * Normaliza o HTML de sintomas para garantir consistência estrutural:
  * - Remove tags <br> soltas entre itens
  * - Remove font-size inline legados (como 0.875rem, 14px etc.) para respeitar o font-size da seção
