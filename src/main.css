@@ -374,12 +374,12 @@
   }
 
   .royal-cta-gradient {
-    background: linear-gradient(180deg, #0e1d2f 0%, #1f3552 100%);
+    background: #0e1d2f;
   }
 
   .royal-gradient-footer,
   .royal-footer-gradient {
-    background: linear-gradient(180deg, #0e1d2f 0%, #1f3552 100%);
+    background: #0e1d2f;
   }
 
   .royal-btn-gradient {
