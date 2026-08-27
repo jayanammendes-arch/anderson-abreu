@@ -31,7 +31,7 @@ export function AdminLayout() {
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-black">
+      <div className="flex h-screen items-center justify-center bg-[#1F3552]">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     )
@@ -56,7 +56,7 @@ export function AdminLayout() {
     <SidebarProvider>
       <AdminSidebar />
       <SidebarInset>
-        <header className="flex h-16 items-center gap-3 border-b border-white/10 bg-black px-6">
+        <header className="flex h-16 items-center gap-3 border-b border-[#0E1D2F] bg-[#0E1D2F] px-6">
           <SidebarTrigger className="-ml-1 text-white hover:bg-white/5" />
           <Separator orientation="vertical" className="h-5 bg-white/10" />
           <h1 className="text-lg font-semibold text-white">{pageTitle}</h1>

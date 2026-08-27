@@ -184,11 +184,11 @@ export function AppSidebar() {
     href === '/dashboard' ? location.pathname === '/dashboard' : location.pathname.startsWith(href)
 
   return (
-    <Sidebar>
-      <SidebarHeader className="border-b px-6 py-4">
+    <Sidebar className="border-r border-[#0E1D2F] bg-[#0E1D2F] text-white">
+      <SidebarHeader className="border-b border-[#0E1D2F] px-6 py-4">
         <Link to="/dashboard" className="flex items-center gap-2">
           <GraduationCap className="h-8 w-8 text-primary" />
-          <span className="text-lg font-bold">Anderson Abreu</span>
+          <span className="text-lg font-bold text-white">Anderson Abreu</span>
         </Link>
       </SidebarHeader>
       <SidebarContent>

@@ -85,7 +85,7 @@ export function DashboardLayout() {
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <header className="flex h-16 items-center gap-3 border-b border-border bg-background px-6">
+        <header className="flex h-16 items-center gap-3 border-b border-[#0E1D2F] bg-[#0E1D2F] px-6">
           <SidebarTrigger className="-ml-1 text-foreground hover:bg-muted" />
           <Separator orientation="vertical" className="h-5 bg-border" />
           {platformSettings && shouldShowLogo(platformSettings) && getLogoUrl(platformSettings) && (

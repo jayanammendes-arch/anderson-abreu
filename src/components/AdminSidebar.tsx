@@ -37,7 +37,7 @@ export function AdminSidebar() {
   const isItemActive = (href: string) => location.pathname.startsWith(href)
 
   return (
-    <Sidebar className="border-r border-white/10">
+    <Sidebar className="border-r border-[#0E1D2F] bg-[#0E1D2F] text-white">
       <SidebarHeader>
         <div className="flex items-center gap-3 px-2 py-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">

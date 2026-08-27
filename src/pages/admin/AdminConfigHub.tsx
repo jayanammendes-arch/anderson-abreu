@@ -14,7 +14,7 @@ export default function AdminConfigHub() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {adminNavItems.map((item) => (
           <Link key={item.href} to={item.href} className="group">
-            <Card className="bg-card/50 border-border/50 transition-all duration-300 hover:border-amber-500/50 hover:shadow-lg hover:shadow-amber-500/5 h-full">
+            <Card className="bg-[#1F3552] border border-[#0E1D2F] transition-all duration-300 hover:shadow-lg hover:shadow-amber-500/5 h-full">
               <CardContent className="flex items-start gap-4 p-6">
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors duration-300 group-hover:bg-amber-500/10 group-hover:text-amber-400">
                   <item.icon className="h-6 w-6" />
