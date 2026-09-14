@@ -148,7 +148,7 @@ export default function Sobre() {
                       'https://img.usecurling.com/p/600/800?q=hypnotherapist%20portrait&color=gray'
                     }
                     alt="Anderson Abreu"
-                    className="rounded-2xl shadow-xl w-full h-[400px] md:h-[500px] object-cover border border-white/10"
+                    className="rounded-2xl shadow-xl w-full max-w-[600px] aspect-[3/4] object-cover border border-white/10"
                   />
                 </div>
                 <div>
