@@ -8,37 +8,28 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Brain, Eye, EyeOff, ArrowLeft, CheckCircle2, Loader2 } from 'lucide-react'
 import { extractFieldErrors, getErrorMessage, type FieldErrors } from '@/lib/pocketbase/errors'
-import { GoogleIcon } from '@/components/SocialIcons'
 import {
   getPlatformSettingsPublic,
   getLogoUrl,
-  getLoginImageUrl,
   applyBrandColor,
   shouldShowLogo,
 } from '@/services/landing'
 import type { PlatformSettings } from '@/types'
 import { cn } from '@/lib/utils'
 
-type AuthMode = 'login' | 'signup' | 'recovery'
+type AuthMode = 'login' | 'recovery'
 
 export default function Login() {
-  const { signIn, signUp, signInWithOAuth, requestPasswordReset, isAuthenticated, loading } =
-    useAuth()
+  const { signIn, requestPasswordReset, isAuthenticated, loading } = useAuth()
   const navigate = useNavigate()
 
   const [mode, setMode] = useState<AuthMode>('login')
-  const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [phone, setPhone] = useState('')
-  const [birthDate, setBirthDate] = useState('')
-  const [instagram, setInstagram] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [submitting, setSubmitting] = useState(false)
   const [recoverySent, setRecoverySent] = useState(false)
-  const [oauthLoading, setOauthLoading] = useState<string | null>(null)
   const [loginSettings, setLoginSettings] = useState<PlatformSettings | null>(null)
 
   useEffect(() => {
@@ -66,41 +57,11 @@ export default function Login() {
   }
   if (isAuthenticated) return <Navigate to="/dashboard" replace />
 
-  const handleOAuth = async (provider: 'google') => {
-    setOauthLoading(provider)
-    setFieldErrors({})
-    const { error } = await signInWithOAuth(provider)
-    if (error) {
-      toast.error(getErrorMessage(error))
-    } else {
-      navigate('/dashboard')
-    }
-    setOauthLoading(null)
-  }
-
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault()
     setSubmitting(true)
     setFieldErrors({})
     const { error } = await signIn(email, password)
-    if (error) {
-      setFieldErrors(extractFieldErrors(error))
-      toast.error(getErrorMessage(error))
-    } else {
-      navigate('/dashboard')
-    }
-    setSubmitting(false)
-  }
-
-  const handleSignUp = async (e: FormEvent) => {
-    e.preventDefault()
-    if (password !== confirmPassword) {
-      setFieldErrors({ confirmPassword: 'As senhas não coincidem' })
-      return
-    }
-    setSubmitting(true)
-    setFieldErrors({})
-    const { error } = await signUp(name, email, password, phone, birthDate, instagram)
     if (error) {
       setFieldErrors(extractFieldErrors(error))
       toast.error(getErrorMessage(error))
@@ -251,85 +212,12 @@ export default function Login() {
               </Link>
               <div>
                 <h2 className="text-2xl font-bold text-foreground tracking-tight">
-                  {mode === 'login' ? 'Bem-vindo de volta' : 'Criar sua conta'}
+                  Bem-vindo de volta
                 </h2>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  {mode === 'login'
-                    ? 'Acesse sua área do aluno'
-                    : 'Comece sua jornada de aprendizado'}
-                </p>
+                <p className="mt-1 text-sm text-muted-foreground">Acesse sua área do aluno</p>
               </div>
 
-              <form onSubmit={mode === 'login' ? handleLogin : handleSignUp} className="space-y-4">
-                {mode === 'signup' && (
-                  <div className="space-y-2">
-                    <Label htmlFor="name" className="text-foreground text-sm font-medium">
-                      Nome completo
-                    </Label>
-                    <Input
-                      id="name"
-                      placeholder="Seu nome completo"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      required
-                      className={inputClass}
-                    />
-                    {fieldErrors.name && <p className="text-sm text-red-400">{fieldErrors.name}</p>}
-                  </div>
-                )}
-
-                {mode === 'signup' && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div className="space-y-2">
-                      <Label htmlFor="phone" className="text-foreground text-sm font-medium">
-                        Telefone *
-                      </Label>
-                      <Input
-                        id="phone"
-                        placeholder="(11) 99999-9999"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        required
-                        className={inputClass}
-                      />
-                      {fieldErrors.phone && (
-                        <p className="text-sm text-red-400">{fieldErrors.phone}</p>
-                      )}
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="birthDate" className="text-foreground text-sm font-medium">
-                        Data de Nascimento *
-                      </Label>
-                      <Input
-                        id="birthDate"
-                        type="date"
-                        value={birthDate}
-                        onChange={(e) => setBirthDate(e.target.value)}
-                        required
-                        className={inputClass}
-                      />
-                      {fieldErrors.birth_date && (
-                        <p className="text-sm text-red-400">{fieldErrors.birth_date}</p>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                {mode === 'signup' && (
-                  <div className="space-y-2">
-                    <Label htmlFor="instagram" className="text-foreground text-sm font-medium">
-                      Instagram
-                    </Label>
-                    <Input
-                      id="instagram"
-                      placeholder="@seuusuario"
-                      value={instagram}
-                      onChange={(e) => setInstagram(e.target.value)}
-                      className={inputClass}
-                    />
-                  </div>
-                )}
-
+              <form onSubmit={handleLogin} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-foreground text-sm font-medium">
                     Email
@@ -374,79 +262,20 @@ export default function Login() {
                   )}
                 </div>
 
-                {mode === 'signup' && (
-                  <div className="space-y-2">
-                    <Label
-                      htmlFor="confirmPassword"
-                      className="text-foreground text-sm font-medium"
-                    >
-                      Confirmar senha
-                    </Label>
-                    <Input
-                      id="confirmPassword"
-                      type={showPassword ? 'text' : 'password'}
-                      placeholder="••••••••"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      required
-                      className={inputClass}
-                    />
-                    {fieldErrors.confirmPassword && (
-                      <p className="text-sm text-red-400">{fieldErrors.confirmPassword}</p>
-                    )}
-                  </div>
-                )}
-
-                {mode === 'login' && (
-                  <div className="flex justify-end">
-                    <button
-                      type="button"
-                      onClick={() => switchMode('recovery')}
-                      className="text-sm text-[#D4AF37]/90 hover:text-[#D4AF37] transition-colors font-medium"
-                    >
-                      Esqueci minha senha
-                    </button>
-                  </div>
-                )}
+                <div className="flex justify-end">
+                  <button
+                    type="button"
+                    onClick={() => switchMode('recovery')}
+                    className="text-sm text-[#D4AF37]/90 hover:text-[#D4AF37] transition-colors font-medium"
+                  >
+                    Esqueci minha senha
+                  </button>
+                </div>
 
                 <Button type="submit" className={goldButtonClass} disabled={submitting}>
-                  {submitting ? 'Aguarde...' : mode === 'login' ? 'Entrar' : 'Criar Conta'}
+                  {submitting ? 'Aguarde...' : 'Entrar'}
                 </Button>
               </form>
-
-              <div className="relative my-4">
-                <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t border-foreground/10" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-transparent px-3 text-muted-foreground font-medium">ou</span>
-                </div>
-              </div>
-
-              <Button
-                variant="outline"
-                type="button"
-                onClick={() => handleOAuth('google')}
-                disabled={oauthLoading !== null}
-                className="w-full border-foreground/15 bg-foreground/5 text-foreground hover:bg-foreground/10 hover:text-foreground h-11 rounded-xl font-medium transition-all"
-              >
-                {oauthLoading === 'google' ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin text-blue-400" />
-                ) : (
-                  <GoogleIcon className="mr-2" />
-                )}
-                Entrar com Google
-              </Button>
-
-              <p className="text-center text-sm text-muted-foreground pt-2">
-                {mode === 'login' ? 'Não tem conta? ' : 'Já tem conta? '}
-                <button
-                  onClick={() => switchMode(mode === 'login' ? 'signup' : 'login')}
-                  className="font-medium text-[#D4AF37] hover:text-[#C5A030] transition-colors underline-offset-4 hover:underline"
-                >
-                  {mode === 'login' ? 'Criar conta' : 'Entrar'}
-                </button>
-              </p>
             </div>
           )}
         </div>
