@@ -433,57 +433,62 @@ export default function AdminStudents() {
           )}
         </div>
 
-        <Card className="bg-card/50 border-border/50">
-          <CardContent className="p-4 space-y-3">
+        <Card className="bg-[#1F3552] border border-[#0E1D2F]">
+          <CardContent className="p-5 space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="font-semibold text-foreground flex items-center gap-2">
-                <UserCircle className="h-4 w-4 text-primary" /> Dados de Cadastro
+              <h3 className="font-semibold text-white flex items-center gap-2">
+                <UserCircle className="h-4 w-4 text-[#C9A15A]" /> Dados de Cadastro
               </h3>
               {isAdmin && (
-                <Button size="sm" onClick={handleSaveProfile} disabled={savingProfile}>
+                <Button
+                  size="sm"
+                  onClick={handleSaveProfile}
+                  disabled={savingProfile}
+                  className="bg-[#C9A15A] hover:bg-[#b08b47] text-white font-semibold"
+                >
                   {savingProfile && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   Salvar
                 </Button>
               )}
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="text-xs text-muted-foreground">Nome</label>
+                <label className="text-xs font-medium text-gray-200">Nome</label>
                 {isAdmin ? (
                   <>
                     <Input
                       value={editName}
                       onChange={(e) => setEditName(e.target.value)}
-                      className="h-9"
+                      className="h-9 bg-[#0E1D2F] border border-[#0E1D2F] text-white focus:border-[#C9A15A]"
                     />
-                    {fieldErrors.name && (
-                      <p className="text-xs text-destructive">{fieldErrors.name}</p>
-                    )}
+                    {fieldErrors.name && <p className="text-xs text-red-400">{fieldErrors.name}</p>}
                   </>
                 ) : (
-                  <p className="text-sm text-foreground font-medium">{selected.name || '—'}</p>
+                  <p className="text-sm text-white font-medium">{selected.name || '—'}</p>
                 )}
               </div>
               <div className="space-y-1">
-                <label className="text-xs text-muted-foreground">Email</label>
+                <label className="text-xs font-medium text-gray-200">Email</label>
                 {isAdmin ? (
                   <>
                     <Input
                       type="email"
                       value={editEmail}
                       onChange={(e) => setEditEmail(e.target.value)}
-                      className="h-9"
+                      className="h-9 bg-[#0E1D2F] border border-[#0E1D2F] text-white focus:border-[#C9A15A]"
                     />
                     {fieldErrors.email && (
-                      <p className="text-xs text-destructive">{fieldErrors.email}</p>
+                      <p className="text-xs text-red-400">{fieldErrors.email}</p>
                     )}
                   </>
                 ) : (
-                  <p className="text-sm text-foreground font-medium">{selected.email || '—'}</p>
+                  <p className="text-sm text-white font-medium">{selected.email || '—'}</p>
                 )}
               </div>
               <div className="space-y-1">
-                <label className="text-xs text-muted-foreground">CPF</label>
+                <label className="text-xs font-medium text-gray-200 flex items-center gap-1">
+                  <CreditCard className="h-3 w-3 text-[#C9A15A]" /> CPF
+                </label>
                 {isAdmin ? (
                   <>
                     <Input
@@ -491,81 +496,79 @@ export default function AdminStudents() {
                       onChange={(e) => setEditCpf(formatCpf(e.target.value))}
                       placeholder="000.000.000-00"
                       maxLength={14}
-                      className="h-9"
+                      className="h-9 bg-[#0E1D2F] border border-[#0E1D2F] text-white placeholder:text-gray-500 focus:border-[#C9A15A]"
                     />
-                    {fieldErrors.cpf && (
-                      <p className="text-xs text-destructive">{fieldErrors.cpf}</p>
-                    )}
+                    {fieldErrors.cpf && <p className="text-xs text-red-400">{fieldErrors.cpf}</p>}
                   </>
                 ) : (
-                  <p className="text-sm text-foreground font-medium">{selected.cpf || '—'}</p>
+                  <p className="text-sm text-white font-medium">{selected.cpf || '—'}</p>
                 )}
               </div>
               <div className="space-y-1">
-                <label className="text-xs text-muted-foreground">Telefone</label>
+                <label className="text-xs font-medium text-gray-200">Telefone / WhatsApp</label>
                 {isAdmin ? (
                   <Input
                     value={editPhone}
                     onChange={(e) => setEditPhone(e.target.value)}
-                    className="h-9"
+                    className="h-9 bg-[#0E1D2F] border border-[#0E1D2F] text-white focus:border-[#C9A15A]"
                   />
                 ) : (
-                  <p className="text-sm text-foreground font-medium">{selected.phone || '—'}</p>
+                  <p className="text-sm text-white font-medium">{selected.phone || '—'}</p>
                 )}
-              </div>{' '}
+              </div>
               <div className="space-y-1">
-                <label className="text-xs text-muted-foreground">Instagram</label>
+                <label className="text-xs font-medium text-gray-200">Instagram</label>
                 {isAdmin ? (
                   <Input
                     value={editInstagram}
                     onChange={(e) => setEditInstagram(e.target.value)}
-                    className="h-9"
+                    className="h-9 bg-[#0E1D2F] border border-[#0E1D2F] text-white placeholder:text-gray-500 focus:border-[#C9A15A]"
                     placeholder="@usuario"
                   />
                 ) : (
-                  <p className="text-sm text-foreground font-medium">
+                  <p className="text-sm text-white font-medium">
                     {selected.instagram_handle ? `@${selected.instagram_handle}` : '—'}
                   </p>
                 )}
               </div>
               <div className="space-y-1">
-                <label className="text-xs text-muted-foreground">Nascimento</label>
+                <label className="text-xs font-medium text-gray-200">Data de nascimento</label>
                 {isAdmin ? (
                   <Input
                     type="date"
                     value={editBirthDate}
                     onChange={(e) => setEditBirthDate(e.target.value)}
-                    className="h-9"
+                    className="h-9 bg-[#0E1D2F] border border-[#0E1D2F] text-white focus:border-[#C9A15A]"
                   />
                 ) : (
-                  <p className="text-sm text-foreground font-medium">
+                  <p className="text-sm text-white font-medium">
                     {formatDate(selected.birth_date)}
                   </p>
                 )}
               </div>
-              <div className="flex items-center gap-2 text-sm">
-                <Calendar className="h-4 w-4 text-muted-foreground shrink-0" />
-                <span className="text-muted-foreground">Cadastro:</span>
-                <span className="text-foreground font-medium">{formatDate(selected.created)}</span>
+              <div className="flex items-center gap-2 text-sm pt-1">
+                <Calendar className="h-4 w-4 text-[#C9A15A] shrink-0" />
+                <span className="text-gray-300">Cadastro:</span>
+                <span className="text-white font-medium">{formatDate(selected.created)}</span>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-card/50 border-border/50 p-4 space-y-4">
+        <Card className="bg-[#1F3552] border border-[#0E1D2F] p-5 space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="font-semibold text-foreground">Nível do Aluno</h3>
-              <p className="text-sm text-muted-foreground">
+              <h3 className="font-semibold text-white">Nível do Aluno</h3>
+              <p className="text-sm text-gray-300">
                 Prata e Diamante são atribuídos manualmente. Ouro é automático ao comprar um curso.
               </p>
             </div>
             {isAdmin && (
               <Select value={selected.level || NO_LEVEL} onValueChange={(v) => setPendingLevel(v)}>
-                <SelectTrigger className="w-40">
+                <SelectTrigger className="w-40 bg-[#0E1D2F] border border-[#0E1D2F] text-white focus:border-[#C9A15A]">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-[#1F3552] border border-[#0E1D2F] text-white">
                   <SelectItem value={NO_LEVEL}>Sem nível</SelectItem>
                   <SelectItem value="Prata">Prata</SelectItem>
                   <SelectItem value="Ouro">Ouro</SelectItem>
@@ -578,10 +581,10 @@ export default function AdminStudents() {
           {/* Liberação manual do "Comece por Aqui" — disponível apenas para Ouro/Diamante.
               Prata já possui acesso por padrão ao módulo. */}
           {isAdmin && canManuallyReleaseComecePorAqui(selected.level) && (
-            <div className="pt-4 border-t border-border/50 flex items-center justify-between">
+            <div className="pt-4 border-t border-[#0E1D2F] flex items-center justify-between">
               <div>
-                <h3 className="font-semibold text-foreground">Acesso ao “Comece por Aqui”</h3>
-                <p className="text-sm text-muted-foreground">
+                <h3 className="font-semibold text-white">Acesso ao “Comece por Aqui”</h3>
+                <p className="text-sm text-gray-300">
                   Libera manualmente o módulo de onboarding para este aluno.
                 </p>
               </div>
@@ -593,18 +596,18 @@ export default function AdminStudents() {
             </div>
           )}
           {isAdmin && selected.level === 'Prata' && (
-            <div className="pt-4 border-t border-border/50">
-              <p className="text-sm text-muted-foreground">
+            <div className="pt-4 border-t border-[#0E1D2F]">
+              <p className="text-sm text-gray-300">
                 ℹ️ Alunos Prata já possuem acesso automático ao “Comece por Aqui”.
               </p>
             </div>
           )}
 
           {isAdmin && (
-            <div className="pt-4 border-t border-border/50 flex items-center justify-between">
+            <div className="pt-4 border-t border-[#0E1D2F] flex items-center justify-between">
               <div>
-                <h3 className="font-semibold text-foreground">Administrador</h3>
-                <p className="text-sm text-muted-foreground">
+                <h3 className="font-semibold text-white">Administrador</h3>
+                <p className="text-sm text-gray-300">
                   Concede privilégios de administrador na plataforma
                 </p>
               </div>
@@ -614,24 +617,33 @@ export default function AdminStudents() {
         </Card>
 
         <AlertDialog open={!!pendingLevel} onOpenChange={(open) => !open && setPendingLevel(null)}>
-          <AlertDialogContent>
+          <AlertDialogContent className="bg-[#1F3552] border border-[#0E1D2F] text-white">
             <AlertDialogHeader>
-              <AlertDialogTitle>Confirmar alteração de nível</AlertDialogTitle>
-              <AlertDialogDescription>
-                Deseja alterar o nível do aluno para {pendingLevel}? Esta ação pode afetar o acesso
-                a conteúdos da plataforma.
+              <AlertDialogTitle className="text-[#C9A15A]">
+                Confirmar alteração de nível
+              </AlertDialogTitle>
+              <AlertDialogDescription className="text-gray-300">
+                Deseja alterar o nível do aluno para <strong>{pendingLevel}</strong>? Esta ação pode
+                afetar o acesso a conteúdos da plataforma.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancelar</AlertDialogCancel>
-              <AlertDialogAction onClick={handleLevelChange}>Confirmar</AlertDialogAction>
+              <AlertDialogCancel className="bg-[#0E1D2F] text-white hover:bg-[#0E1D2F]/80 border border-[#0E1D2F]">
+                Cancelar
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleLevelChange}
+                className="bg-[#C9A15A] hover:bg-[#b08b47] text-white font-semibold"
+              >
+                Confirmar
+              </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
 
         {accessLoading ? (
           <div className="flex justify-center py-8">
-            <Loader2 className="h-6 w-6 animate-spin text-primary" />
+            <Loader2 className="h-6 w-6 animate-spin text-[#C9A15A]" />
           </div>
         ) : (
           <div className="grid gap-3">
@@ -640,19 +652,20 @@ export default function AdminStudents() {
               return (
                 <Card
                   key={course.id}
-                  className="flex items-center justify-between p-4 bg-card/50 border-border/50"
+                  className="flex items-center justify-between p-4 bg-[#1F3552] border border-[#0E1D2F]"
                 >
                   <div>
-                    <h3 className="font-semibold text-foreground">{course.title}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {course.category || 'Sem categoria'}
-                    </p>
+                    <h3 className="font-semibold text-white">{course.title}</h3>
+                    <p className="text-sm text-gray-300">{course.category || 'Sem categoria'}</p>
                   </div>
                   <div className="flex items-center gap-3">
                     {has ? (
                       <Badge className="bg-green-500/90 text-white">Liberado</Badge>
                     ) : (
-                      <Badge variant="secondary">
+                      <Badge
+                        variant="secondary"
+                        className="bg-[#0E1D2F] text-gray-300 border border-[#0E1D2F]"
+                      >
                         <Lock className="mr-1 h-3 w-3" /> Bloqueado
                       </Badge>
                     )}
@@ -660,6 +673,11 @@ export default function AdminStudents() {
                       size="sm"
                       variant={has ? 'destructive' : 'default'}
                       onClick={() => toggleAccess(course.id)}
+                      className={
+                        has
+                          ? 'bg-red-600 hover:bg-red-700 text-white'
+                          : 'bg-[#C9A15A] hover:bg-[#b08b47] text-white font-semibold'
+                      }
                     >
                       {has ? (
                         <>
@@ -793,18 +811,18 @@ export default function AdminStudents() {
       </div>
 
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
         <Input
           placeholder="Buscar por nome ou email..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="pl-9"
+          className="pl-9 bg-[#1F3552] border border-[#0E1D2F] text-white placeholder:text-gray-400 focus:border-[#C9A15A]"
         />
       </div>
       <div className="grid gap-3">
         {students.length === 0 ? (
-          <Card className="bg-card/50 border-border/50">
-            <CardContent className="py-12 text-center text-muted-foreground">
+          <Card className="bg-[#1F3552] border border-[#0E1D2F]">
+            <CardContent className="py-12 text-center text-gray-400">
               Nenhum aluno encontrado.
             </CardContent>
           </Card>
@@ -812,11 +830,11 @@ export default function AdminStudents() {
           students.map((s) => (
             <Card
               key={s.id}
-              className="flex items-center gap-4 p-4 bg-card/50 border-border/50 cursor-pointer hover:border-primary/50 transition-colors"
+              className="flex items-center gap-4 p-4 bg-[#1F3552] border border-[#0E1D2F] cursor-pointer hover:border-[#C9A15A] transition-colors"
               onClick={() => openStudent(s)}
             >
-              <Avatar className="h-10 w-10">
-                <AvatarFallback className="bg-primary text-white text-xs">
+              <Avatar className="h-10 w-10 border border-[#0E1D2F]">
+                <AvatarFallback className="bg-[#0E1D2F] text-[#C9A15A] font-bold text-xs">
                   {(s.name || 'A')
                     .split(' ')
                     .map((n: string) => n[0])
@@ -828,18 +846,18 @@ export default function AdminStudents() {
               <div className="flex-1 min-w-0">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                   <div>
-                    <h3 className="font-semibold flex items-center gap-2 text-foreground truncate">
+                    <h3 className="font-semibold flex items-center gap-2 text-white truncate">
                       {s.name || 'Sem nome'}
                     </h3>
                     <div className="flex flex-wrap items-center gap-2 mt-1">
                       <LevelBadge level={s.level} size="sm" showNoLevel />
                       {s.cpf && (
-                        <span className="text-xs font-mono text-muted-foreground bg-muted/50 px-2 py-0.5 rounded border border-border/40">
+                        <span className="text-xs font-mono text-[#C9A15A] bg-[#0E1D2F] px-2 py-0.5 rounded border border-[#0E1D2F]">
                           CPF: {formatCpf(s.cpf)}
                         </span>
                       )}
                     </div>
-                    <p className="text-sm text-muted-foreground mt-1 truncate">{s.email}</p>
+                    <p className="text-sm text-gray-300 mt-1 truncate">{s.email}</p>
                   </div>
 
                   {isAdmin && (
@@ -855,7 +873,7 @@ export default function AdminStudents() {
                           e.stopPropagation()
                           setResetConfirmStudent(s)
                         }}
-                        className="text-amber-400 hover:text-amber-300 hover:bg-amber-500/10 h-8 px-2"
+                        className="text-amber-400 hover:text-amber-300 hover:bg-amber-500/10 h-8 px-2 border border-transparent hover:border-amber-500/30"
                       >
                         <RotateCcw className="h-4 w-4 mr-1" />
                         <span className="text-xs hidden md:inline">Zerar</span>
@@ -868,7 +886,7 @@ export default function AdminStudents() {
                           e.stopPropagation()
                           setDeleteConfirmStudent(s)
                         }}
-                        className="text-red-400 hover:text-red-300 hover:bg-red-500/10 h-8 px-2"
+                        className="text-red-400 hover:text-red-300 hover:bg-red-500/10 h-8 px-2 border border-transparent hover:border-red-500/30"
                       >
                         <Trash2 className="h-4 w-4 mr-1" />
                         <span className="text-xs hidden md:inline">Excluir</span>
@@ -904,7 +922,7 @@ export default function AdminStudents() {
                 value={newStudentData.name}
                 onChange={(e) => setNewStudentData({ ...newStudentData, name: e.target.value })}
                 placeholder="Ex: Anderson Silva"
-                className="bg-[#0E1D2F] border-border/50 text-white placeholder:text-gray-500"
+                className="bg-[#0E1D2F] border border-[#0E1D2F] text-white placeholder:text-gray-500 focus:border-[#C9A15A]"
                 required
               />
               {createErrors.name && <p className="text-xs text-red-400">{createErrors.name}</p>}
@@ -920,7 +938,7 @@ export default function AdminStudents() {
                   value={newStudentData.email}
                   onChange={(e) => setNewStudentData({ ...newStudentData, email: e.target.value })}
                   placeholder="aluno@email.com"
-                  className="bg-[#0E1D2F] border-border/50 text-white placeholder:text-gray-500"
+                  className="bg-[#0E1D2F] border border-[#0E1D2F] text-white placeholder:text-gray-500 focus:border-[#C9A15A]"
                   required
                 />
                 {createErrors.email && <p className="text-xs text-red-400">{createErrors.email}</p>}
@@ -940,7 +958,7 @@ export default function AdminStudents() {
                   }
                   placeholder="000.000.000-00"
                   maxLength={14}
-                  className="bg-[#0E1D2F] border-border/50 text-white placeholder:text-gray-500"
+                  className="bg-[#0E1D2F] border border-[#0E1D2F] text-white placeholder:text-gray-500 focus:border-[#C9A15A]"
                 />
                 {createErrors.cpf && <p className="text-xs text-red-400">{createErrors.cpf}</p>}
               </div>
@@ -959,7 +977,7 @@ export default function AdminStudents() {
                     setNewStudentData({ ...newStudentData, password: e.target.value })
                   }
                   placeholder="Mínimo 8 caracteres"
-                  className="bg-[#0E1D2F] border-border/50 text-white placeholder:text-gray-500"
+                  className="bg-[#0E1D2F] border border-[#0E1D2F] text-white placeholder:text-gray-500 focus:border-[#C9A15A]"
                   required
                 />
                 {createErrors.password && (
@@ -982,7 +1000,7 @@ export default function AdminStudents() {
                     })
                   }
                   placeholder="Repita a senha"
-                  className="bg-[#0E1D2F] border-border/50 text-white placeholder:text-gray-500"
+                  className="bg-[#0E1D2F] border border-[#0E1D2F] text-white placeholder:text-gray-500 focus:border-[#C9A15A]"
                   required
                 />
                 {createErrors.passwordConfirm && (
@@ -1003,7 +1021,7 @@ export default function AdminStudents() {
                     })
                   }
                 >
-                  <SelectTrigger className="bg-[#0E1D2F] border-border/50 text-white">
+                  <SelectTrigger className="bg-[#0E1D2F] border border-[#0E1D2F] text-white focus:border-[#C9A15A]">
                     <SelectValue placeholder="Selecione o nível" />
                   </SelectTrigger>
                   <SelectContent className="bg-[#1F3552] border border-[#0E1D2F] text-white">
@@ -1021,7 +1039,7 @@ export default function AdminStudents() {
                   value={newStudentData.phone}
                   onChange={(e) => setNewStudentData({ ...newStudentData, phone: e.target.value })}
                   placeholder="(11) 99999-9999"
-                  className="bg-[#0E1D2F] border-border/50 text-white placeholder:text-gray-500"
+                  className="bg-[#0E1D2F] border border-[#0E1D2F] text-white placeholder:text-gray-500 focus:border-[#C9A15A]"
                 />
               </div>
             </div>
@@ -1038,7 +1056,7 @@ export default function AdminStudents() {
                     })
                   }
                   placeholder="@usuario"
-                  className="bg-[#0E1D2F] border-border/50 text-white placeholder:text-gray-500"
+                  className="bg-[#0E1D2F] border border-[#0E1D2F] text-white placeholder:text-gray-500 focus:border-[#C9A15A]"
                 />
               </div>
 
@@ -1050,18 +1068,18 @@ export default function AdminStudents() {
                   onChange={(e) =>
                     setNewStudentData({ ...newStudentData, birth_date: e.target.value })
                   }
-                  className="bg-[#0E1D2F] border-border/50 text-white"
+                  className="bg-[#0E1D2F] border border-[#0E1D2F] text-white focus:border-[#C9A15A]"
                 />
               </div>
             </div>
 
-            <DialogFooter className="pt-4 border-t border-border/40 gap-2">
+            <DialogFooter className="pt-4 border-t border-[#0E1D2F] gap-2">
               <Button
                 type="button"
                 variant="outline"
                 disabled={creatingStudent}
                 onClick={() => setCreateDialogOpen(false)}
-                className="bg-[#0E1D2F] text-white hover:bg-[#0E1D2F]/80 border-border/50"
+                className="bg-[#0E1D2F] text-white hover:bg-[#0E1D2F]/80 border border-[#0E1D2F]"
               >
                 Cancelar
               </Button>
@@ -1105,7 +1123,7 @@ export default function AdminStudents() {
           <AlertDialogFooter>
             <AlertDialogCancel
               disabled={deletingStudent}
-              className="bg-[#0E1D2F] text-white hover:bg-[#0E1D2F]/80 border-border/50"
+              className="bg-[#0E1D2F] text-white hover:bg-[#0E1D2F]/80 border border-[#0E1D2F]"
             >
               Cancelar
             </AlertDialogCancel>
@@ -1153,7 +1171,7 @@ export default function AdminStudents() {
           <AlertDialogFooter>
             <AlertDialogCancel
               disabled={resettingStudent}
-              className="bg-[#0E1D2F] text-white hover:bg-[#0E1D2F]/80 border-border/50"
+              className="bg-[#0E1D2F] text-white hover:bg-[#0E1D2F]/80 border border-[#0E1D2F]"
             >
               Cancelar
             </AlertDialogCancel>
