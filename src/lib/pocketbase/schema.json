@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-09T17:25:00.688Z",
+  "generatedAt": "2026-10-09T17:36:38.564Z",
   "collections": [
     {
       "name": "users",
@@ -9,7 +9,7 @@
         "view": "id = @request.auth.id || @request.auth.is_admin = true",
         "create": "@request.auth.is_admin = true || (@request.body.is_admin != true && @request.body.comece_por_aqui_access != true && @request.body.level != 'Prata' && @request.body.level != 'Ouro' && @request.body.level != 'Diamante')",
         "update": "@request.auth.is_admin = true || @request.auth.id = id",
-        "delete": "id = @request.auth.id"
+        "delete": "@request.auth.is_admin = true || id = @request.auth.id"
       },
       "fields": [
         {
@@ -84,6 +84,12 @@
         {
           "name": "comece_por_aqui_access",
           "type": "bool",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "cpf",
+          "type": "text",
           "required": false,
           "system": false
         }
@@ -3141,7 +3147,7 @@
         "view": "@request.auth.id = user || @request.auth.is_admin = true",
         "create": "@request.auth.id != '' && user = @request.auth.id",
         "update": null,
-        "delete": null
+        "delete": "@request.auth.is_admin = true || @request.auth.id = user"
       },
       "fields": [
         {

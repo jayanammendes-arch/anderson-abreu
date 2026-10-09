@@ -8,6 +8,9 @@ import {
   adminUpdateComecePorAquiAccess,
   adminUpdateStudent,
   adminUpdateAdminStatus,
+  adminCreateStudent,
+  adminDeleteStudent,
+  adminResetComecePorAqui,
 } from '@/services/admin-students'
 import { canManuallyReleaseComecePorAqui, NO_LEVEL } from '@/lib/level-access'
 import { getCourses } from '@/services/courses'
@@ -27,7 +30,20 @@ import {
   Calendar,
   Mail,
   UserCircle,
+  Plus,
+  Trash2,
+  RotateCcw,
+  CreditCard,
+  KeyRound,
 } from 'lucide-react'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { toast } from 'sonner'
 import {
   Select,
@@ -62,6 +78,14 @@ function formatDate(dateStr: string): string {
   })
 }
 
+function formatCpf(val: string): string {
+  const digits = (val || '').replace(/\D/g, '').slice(0, 11)
+  if (digits.length <= 3) return digits
+  if (digits.length <= 6) return `${digits.slice(0, 3)}.${digits.slice(3)}`
+  if (digits.length <= 9) return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6)}`
+  return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9, 11)}`
+}
+
 export default function AdminStudents() {
   const { isAdmin } = useAuth()
   const [students, setStudents] = useState<any[]>([])
@@ -73,6 +97,7 @@ export default function AdminStudents() {
   const [accessLoading, setAccessLoading] = useState(false)
   const [editName, setEditName] = useState('')
   const [editEmail, setEditEmail] = useState('')
+  const [editCpf, setEditCpf] = useState('')
   const [editPhone, setEditPhone] = useState('')
   const [editInstagram, setEditInstagram] = useState('')
   const [editBirthDate, setEditBirthDate] = useState('')
@@ -80,6 +105,28 @@ export default function AdminStudents() {
   const [savingProfile, setSavingProfile] = useState(false)
   const [pendingLevel, setPendingLevel] = useState<string | null>(null)
   const [comeceLoading, setComeceLoading] = useState(false)
+
+  // Modais de Criação e Ações
+  const [createDialogOpen, setCreateDialogOpen] = useState(false)
+  const [creatingStudent, setCreatingStudent] = useState(false)
+  const [newStudentData, setNewStudentData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    passwordConfirm: '',
+    level: '',
+    cpf: '',
+    phone: '',
+    instagram_handle: '',
+    birth_date: '',
+  })
+  const [createErrors, setCreateErrors] = useState<Record<string, string>>({})
+
+  // Diálogos de confirmação
+  const [deleteConfirmStudent, setDeleteConfirmStudent] = useState<any | null>(null)
+  const [deletingStudent, setDeletingStudent] = useState(false)
+  const [resetConfirmStudent, setResetConfirmStudent] = useState<any | null>(null)
+  const [resettingStudent, setResettingStudent] = useState(false)
 
   const loadStudents = useCallback(async () => {
     setLoading(true)
@@ -175,6 +222,7 @@ export default function AdminStudents() {
     setFieldErrors({})
     setEditName(student.name || '')
     setEditEmail(student.email || '')
+    setEditCpf(formatCpf(student.cpf || ''))
     setEditPhone(student.phone || '')
     setEditInstagram(student.instagram_handle || '')
     setEditBirthDate(student.birth_date ? student.birth_date.split(' ')[0] : '')
@@ -193,11 +241,103 @@ export default function AdminStudents() {
     if (selected) {
       setEditName(selected.name || '')
       setEditEmail(selected.email || '')
+      setEditCpf(formatCpf(selected.cpf || ''))
       setEditPhone(selected.phone || '')
       setEditInstagram(selected.instagram_handle || '')
       setEditBirthDate(selected.birth_date ? selected.birth_date.split(' ')[0] : '')
     }
   }, [selected?.id])
+
+  const handleCreateStudent = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setCreateErrors({})
+
+    const errs: Record<string, string> = {}
+    if (!newStudentData.name.trim()) errs.name = 'Nome é obrigatório'
+    if (!newStudentData.email.trim()) errs.email = 'E-mail é obrigatório'
+    if (!newStudentData.password) errs.password = 'Senha é obrigatória'
+    else if (newStudentData.password.length < 8)
+      errs.password = 'A senha deve ter no mínimo 8 caracteres'
+    if (newStudentData.password !== newStudentData.passwordConfirm) {
+      errs.passwordConfirm = 'As senhas não coincidem'
+    }
+
+    if (Object.keys(errs).length > 0) {
+      setCreateErrors(errs)
+      return
+    }
+
+    setCreatingStudent(true)
+    try {
+      const created = await adminCreateStudent({
+        name: newStudentData.name,
+        email: newStudentData.email,
+        password: newStudentData.password,
+        passwordConfirm: newStudentData.passwordConfirm,
+        level: newStudentData.level || undefined,
+        cpf: newStudentData.cpf || undefined,
+        phone: newStudentData.phone || undefined,
+        instagram_handle: newStudentData.instagram_handle || undefined,
+        birth_date: newStudentData.birth_date || undefined,
+      })
+      toast.success('Aluno cadastrado com sucesso!')
+      setCreateDialogOpen(false)
+      setNewStudentData({
+        name: '',
+        email: '',
+        password: '',
+        passwordConfirm: '',
+        level: '',
+        cpf: '',
+        phone: '',
+        instagram_handle: '',
+        birth_date: '',
+      })
+      await loadStudents()
+      // Abre direto o detalhe do aluno criado
+      openStudent(created)
+    } catch (err: any) {
+      const extracted = extractFieldErrors(err)
+      if (Object.keys(extracted).length > 0) {
+        setCreateErrors(extracted)
+      }
+      toast.error(err?.message || 'Erro ao cadastrar aluno')
+    } finally {
+      setCreatingStudent(false)
+    }
+  }
+
+  const handleDeleteStudent = async () => {
+    if (!deleteConfirmStudent) return
+    setDeletingStudent(true)
+    try {
+      await adminDeleteStudent(deleteConfirmStudent.id)
+      toast.success('Aluno e dados dependentes excluídos com sucesso!')
+      if (selected?.id === deleteConfirmStudent.id) {
+        setSelected(null)
+      }
+      setDeleteConfirmStudent(null)
+      await loadStudents()
+    } catch (err: any) {
+      toast.error(err?.message || 'Erro ao excluir aluno')
+    } finally {
+      setDeletingStudent(false)
+    }
+  }
+
+  const handleResetComecePorAqui = async () => {
+    if (!resetConfirmStudent) return
+    setResettingStudent(true)
+    try {
+      await adminResetComecePorAqui(resetConfirmStudent.id)
+      toast.success('Fluxo "Comece por Aqui" zerado com sucesso! Cursos e acessos preservados.')
+      setResetConfirmStudent(null)
+    } catch (err: any) {
+      toast.error(err?.message || 'Erro ao zerar Comece por Aqui')
+    } finally {
+      setResettingStudent(false)
+    }
+  }
 
   const handleSaveProfile = async () => {
     if (!selected) return
@@ -207,6 +347,7 @@ export default function AdminStudents() {
       const updated = await adminUpdateStudent(selected.id, {
         name: editName,
         email: editEmail,
+        cpf: editCpf,
         phone: editPhone,
         instagram_handle: editInstagram,
         birth_date: editBirthDate || undefined,
@@ -251,17 +392,45 @@ export default function AdminStudents() {
   if (selected) {
     return (
       <div className="space-y-6 animate-fade-in">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="sm" onClick={() => setSelected(null)}>
-            <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
-          </Button>
-          <div>
-            <h1 className="text-2xl font-bold flex items-center gap-2 text-foreground">
-              {selected.name || 'Aluno'}
-              <LevelBadge level={selected.level} size="md" showNoLevel />
-            </h1>
-            <p className="text-sm text-muted-foreground">{selected.email}</p>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setSelected(null)}
+              className="border-[#0E1D2F] bg-[#1F3552] text-white hover:bg-[#1F3552]/80"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
+            </Button>
+            <div>
+              <h1 className="text-2xl font-bold flex items-center gap-2 text-foreground">
+                {selected.name || 'Aluno'}
+                <LevelBadge level={selected.level} size="md" showNoLevel />
+              </h1>
+              <p className="text-sm text-muted-foreground">{selected.email}</p>
+            </div>
           </div>
+
+          {isAdmin && (
+            <div className="flex flex-wrap items-center gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setResetConfirmStudent(selected)}
+                className="border-amber-500/50 text-amber-400 bg-amber-500/10 hover:bg-amber-500/20"
+              >
+                <RotateCcw className="mr-2 h-4 w-4" /> Zerar Comece por Aqui
+              </Button>
+              <Button
+                size="sm"
+                variant="destructive"
+                onClick={() => setDeleteConfirmStudent(selected)}
+                className="bg-red-600 hover:bg-red-700 text-white"
+              >
+                <Trash2 className="mr-2 h-4 w-4" /> Excluir cadastro
+              </Button>
+            </div>
+          )}
         </div>
 
         <Card className="bg-card/50 border-border/50">
@@ -314,6 +483,25 @@ export default function AdminStudents() {
                 )}
               </div>
               <div className="space-y-1">
+                <label className="text-xs text-muted-foreground">CPF</label>
+                {isAdmin ? (
+                  <>
+                    <Input
+                      value={editCpf}
+                      onChange={(e) => setEditCpf(formatCpf(e.target.value))}
+                      placeholder="000.000.000-00"
+                      maxLength={14}
+                      className="h-9"
+                    />
+                    {fieldErrors.cpf && (
+                      <p className="text-xs text-destructive">{fieldErrors.cpf}</p>
+                    )}
+                  </>
+                ) : (
+                  <p className="text-sm text-foreground font-medium">{selected.cpf || '—'}</p>
+                )}
+              </div>
+              <div className="space-y-1">
                 <label className="text-xs text-muted-foreground">Telefone</label>
                 {isAdmin ? (
                   <Input
@@ -324,7 +512,7 @@ export default function AdminStudents() {
                 ) : (
                   <p className="text-sm text-foreground font-medium">{selected.phone || '—'}</p>
                 )}
-              </div>
+              </div>{' '}
               <div className="space-y-1">
                 <label className="text-xs text-muted-foreground">Instagram</label>
                 {isAdmin ? (
@@ -489,13 +677,121 @@ export default function AdminStudents() {
             })}
           </div>
         )}
+
+        {/* Diálogos de Confirmação no modo detalhe */}
+        <AlertDialog
+          open={!!deleteConfirmStudent}
+          onOpenChange={(open) => !open && setDeleteConfirmStudent(null)}
+        >
+          <AlertDialogContent className="bg-[#1F3552] border border-[#0E1D2F] text-white">
+            <AlertDialogHeader>
+              <AlertDialogTitle className="text-red-400 flex items-center gap-2">
+                <Trash2 className="h-5 w-5" /> Excluir cadastro do aluno?
+              </AlertDialogTitle>
+              <AlertDialogDescription className="text-gray-300">
+                Tem certeza de que deseja excluir o cadastro de{' '}
+                <strong className="text-white">
+                  {deleteConfirmStudent?.name || deleteConfirmStudent?.email}
+                </strong>
+                ?
+                <br />
+                <span className="text-red-300 font-medium mt-2 block">
+                  Esta ação é irreversível e apagará todos os dados dependentes (progresso nas
+                  aulas, acessos a cursos, respostas de formulários, fichas pré-hipnose, avaliações
+                  da Roda da Vida e certificados).
+                </span>
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel
+                disabled={deletingStudent}
+                className="bg-[#0E1D2F] text-white hover:bg-[#0E1D2F]/80 border-border/50"
+              >
+                Cancelar
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleDeleteStudent}
+                disabled={deletingStudent}
+                className="bg-red-600 text-white hover:bg-red-700 font-semibold"
+              >
+                {deletingStudent && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Confirmar Exclusão
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        <AlertDialog
+          open={!!resetConfirmStudent}
+          onOpenChange={(open) => !open && setResetConfirmStudent(null)}
+        >
+          <AlertDialogContent className="bg-[#1F3552] border border-[#0E1D2F] text-white">
+            <AlertDialogHeader>
+              <AlertDialogTitle className="text-amber-400 flex items-center gap-2">
+                <RotateCcw className="h-5 w-5" /> Zerar "Comece por Aqui"?
+              </AlertDialogTitle>
+              <AlertDialogDescription className="text-gray-300">
+                Esta ação vai reiniciar o fluxo de boas-vindas do aluno{' '}
+                <strong className="text-white">
+                  {resetConfirmStudent?.name || resetConfirmStudent?.email}
+                </strong>
+                .
+                <br />
+                <br />
+                <strong>Serão apagados:</strong>
+                <ul className="list-disc list-inside mt-1 text-sm text-amber-200">
+                  <li>Respostas de formulários de onboarding (form_submissions)</li>
+                  <li>Ficha pré-hipnose (pre_hypnosis_forms)</li>
+                  <li>Avaliação inicial da Roda da Vida (tipo "pre")</li>
+                </ul>
+                <br />
+                <span className="text-green-300 font-medium">
+                  Cursos, acessos, progresso de aulas, certificados e quizzes serão mantidos
+                  intactos.
+                </span>
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel
+                disabled={resettingStudent}
+                className="bg-[#0E1D2F] text-white hover:bg-[#0E1D2F]/80 border-border/50"
+              >
+                Cancelar
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleResetComecePorAqui}
+                disabled={resettingStudent}
+                className="bg-amber-600 text-white hover:bg-amber-700 font-semibold"
+              >
+                {resettingStudent && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Confirmar e Zerar
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     )
   }
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <h1 className="text-2xl font-bold text-foreground">Alunos</h1>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Alunos</h1>
+          <p className="text-sm text-muted-foreground">
+            Gerenciamento de estudantes, acessos, níveis e dados cadastrais.
+          </p>
+        </div>
+        {isAdmin && (
+          <Button
+            onClick={() => setCreateDialogOpen(true)}
+            className="bg-[#C9A15A] hover:bg-[#b08b47] text-white font-semibold shadow-sm"
+          >
+            <Plus className="mr-2 h-4 w-4" /> Cadastrar novo aluno
+          </Button>
+        )}
+      </div>
+
       <div className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
@@ -529,21 +825,349 @@ export default function AdminStudents() {
                     .slice(0, 2)}
                 </AvatarFallback>
               </Avatar>
-              <div className="flex-1">
-                <div>
-                  <h3 className="font-semibold flex items-center gap-2 text-foreground">
-                    {s.name || 'Sem nome'}
-                  </h3>
-                  <div className="mt-0.5">
-                    <LevelBadge level={s.level} size="sm" showNoLevel />
+              <div className="flex-1 min-w-0">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                  <div>
+                    <h3 className="font-semibold flex items-center gap-2 text-foreground truncate">
+                      {s.name || 'Sem nome'}
+                    </h3>
+                    <div className="flex flex-wrap items-center gap-2 mt-1">
+                      <LevelBadge level={s.level} size="sm" showNoLevel />
+                      {s.cpf && (
+                        <span className="text-xs font-mono text-muted-foreground bg-muted/50 px-2 py-0.5 rounded border border-border/40">
+                          CPF: {formatCpf(s.cpf)}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-1 truncate">{s.email}</p>
                   </div>
-                  <p className="text-sm text-muted-foreground mt-0.5">{s.email}</p>
+
+                  {isAdmin && (
+                    <div
+                      className="flex items-center gap-1 shrink-0"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        title="Zerar Comece por Aqui"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setResetConfirmStudent(s)
+                        }}
+                        className="text-amber-400 hover:text-amber-300 hover:bg-amber-500/10 h-8 px-2"
+                      >
+                        <RotateCcw className="h-4 w-4 mr-1" />
+                        <span className="text-xs hidden md:inline">Zerar</span>
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        title="Excluir aluno"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setDeleteConfirmStudent(s)
+                        }}
+                        className="text-red-400 hover:text-red-300 hover:bg-red-500/10 h-8 px-2"
+                      >
+                        <Trash2 className="h-4 w-4 mr-1" />
+                        <span className="text-xs hidden md:inline">Excluir</span>
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </div>
             </Card>
           ))
         )}
       </div>
+
+      {/* Modal de Cadastro de Novo Aluno */}
+      <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+        <DialogContent className="max-w-lg bg-[#1F3552] border border-[#0E1D2F] text-white">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold flex items-center gap-2 text-[#C9A15A]">
+              <Plus className="h-5 w-5" /> Cadastrar Novo Aluno
+            </DialogTitle>
+            <DialogDescription className="text-gray-300">
+              Preencha as informações para registrar o aluno no sistema. Ele poderá usar o e-mail e
+              a senha para entrar.
+            </DialogDescription>
+          </DialogHeader>
+
+          <form onSubmit={handleCreateStudent} className="space-y-4 pt-2">
+            <div className="space-y-1">
+              <label className="text-xs font-medium text-gray-200">
+                Nome completo <span className="text-red-400">*</span>
+              </label>
+              <Input
+                value={newStudentData.name}
+                onChange={(e) => setNewStudentData({ ...newStudentData, name: e.target.value })}
+                placeholder="Ex: Anderson Silva"
+                className="bg-[#0E1D2F] border-border/50 text-white placeholder:text-gray-500"
+                required
+              />
+              {createErrors.name && <p className="text-xs text-red-400">{createErrors.name}</p>}
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <label className="text-xs font-medium text-gray-200">
+                  E-mail <span className="text-red-400">*</span>
+                </label>
+                <Input
+                  type="email"
+                  value={newStudentData.email}
+                  onChange={(e) => setNewStudentData({ ...newStudentData, email: e.target.value })}
+                  placeholder="aluno@email.com"
+                  className="bg-[#0E1D2F] border-border/50 text-white placeholder:text-gray-500"
+                  required
+                />
+                {createErrors.email && <p className="text-xs text-red-400">{createErrors.email}</p>}
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-medium text-gray-200 flex items-center gap-1">
+                  <CreditCard className="h-3 w-3 text-[#C9A15A]" /> CPF
+                </label>
+                <Input
+                  value={newStudentData.cpf}
+                  onChange={(e) =>
+                    setNewStudentData({
+                      ...newStudentData,
+                      cpf: formatCpf(e.target.value),
+                    })
+                  }
+                  placeholder="000.000.000-00"
+                  maxLength={14}
+                  className="bg-[#0E1D2F] border-border/50 text-white placeholder:text-gray-500"
+                />
+                {createErrors.cpf && <p className="text-xs text-red-400">{createErrors.cpf}</p>}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <label className="text-xs font-medium text-gray-200 flex items-center gap-1">
+                  <KeyRound className="h-3 w-3 text-[#C9A15A]" /> Senha inicial{' '}
+                  <span className="text-red-400">*</span>
+                </label>
+                <Input
+                  type="password"
+                  value={newStudentData.password}
+                  onChange={(e) =>
+                    setNewStudentData({ ...newStudentData, password: e.target.value })
+                  }
+                  placeholder="Mínimo 8 caracteres"
+                  className="bg-[#0E1D2F] border-border/50 text-white placeholder:text-gray-500"
+                  required
+                />
+                {createErrors.password && (
+                  <p className="text-xs text-red-400">{createErrors.password}</p>
+                )}
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-medium text-gray-200 flex items-center gap-1">
+                  <KeyRound className="h-3 w-3 text-[#C9A15A]" /> Confirmar senha{' '}
+                  <span className="text-red-400">*</span>
+                </label>
+                <Input
+                  type="password"
+                  value={newStudentData.passwordConfirm}
+                  onChange={(e) =>
+                    setNewStudentData({
+                      ...newStudentData,
+                      passwordConfirm: e.target.value,
+                    })
+                  }
+                  placeholder="Repita a senha"
+                  className="bg-[#0E1D2F] border-border/50 text-white placeholder:text-gray-500"
+                  required
+                />
+                {createErrors.passwordConfirm && (
+                  <p className="text-xs text-red-400">{createErrors.passwordConfirm}</p>
+                )}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <label className="text-xs font-medium text-gray-200">Nível do aluno</label>
+                <Select
+                  value={newStudentData.level || NO_LEVEL}
+                  onValueChange={(v) =>
+                    setNewStudentData({
+                      ...newStudentData,
+                      level: v === NO_LEVEL ? '' : v,
+                    })
+                  }
+                >
+                  <SelectTrigger className="bg-[#0E1D2F] border-border/50 text-white">
+                    <SelectValue placeholder="Selecione o nível" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#1F3552] border border-[#0E1D2F] text-white">
+                    <SelectItem value={NO_LEVEL}>Sem nível</SelectItem>
+                    <SelectItem value="Prata">Prata</SelectItem>
+                    <SelectItem value="Ouro">Ouro</SelectItem>
+                    <SelectItem value="Diamante">Diamante</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-medium text-gray-200">Telefone / WhatsApp</label>
+                <Input
+                  value={newStudentData.phone}
+                  onChange={(e) => setNewStudentData({ ...newStudentData, phone: e.target.value })}
+                  placeholder="(11) 99999-9999"
+                  className="bg-[#0E1D2F] border-border/50 text-white placeholder:text-gray-500"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <label className="text-xs font-medium text-gray-200">Instagram</label>
+                <Input
+                  value={newStudentData.instagram_handle}
+                  onChange={(e) =>
+                    setNewStudentData({
+                      ...newStudentData,
+                      instagram_handle: e.target.value,
+                    })
+                  }
+                  placeholder="@usuario"
+                  className="bg-[#0E1D2F] border-border/50 text-white placeholder:text-gray-500"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-medium text-gray-200">Data de nascimento</label>
+                <Input
+                  type="date"
+                  value={newStudentData.birth_date}
+                  onChange={(e) =>
+                    setNewStudentData({ ...newStudentData, birth_date: e.target.value })
+                  }
+                  className="bg-[#0E1D2F] border-border/50 text-white"
+                />
+              </div>
+            </div>
+
+            <DialogFooter className="pt-4 border-t border-border/40 gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                disabled={creatingStudent}
+                onClick={() => setCreateDialogOpen(false)}
+                className="bg-[#0E1D2F] text-white hover:bg-[#0E1D2F]/80 border-border/50"
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="submit"
+                disabled={creatingStudent}
+                className="bg-[#C9A15A] hover:bg-[#b08b47] text-white font-semibold"
+              >
+                {creatingStudent && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Cadastrar Aluno
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Diálogos de Confirmação na listagem */}
+      <AlertDialog
+        open={!!deleteConfirmStudent}
+        onOpenChange={(open) => !open && setDeleteConfirmStudent(null)}
+      >
+        <AlertDialogContent className="bg-[#1F3552] border border-[#0E1D2F] text-white">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-red-400 flex items-center gap-2">
+              <Trash2 className="h-5 w-5" /> Excluir cadastro do aluno?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-300">
+              Tem certeza de que deseja excluir o cadastro de{' '}
+              <strong className="text-white">
+                {deleteConfirmStudent?.name || deleteConfirmStudent?.email}
+              </strong>
+              ?
+              <br />
+              <span className="text-red-300 font-medium mt-2 block">
+                Esta ação é irreversível e apagará todos os dados dependentes (progresso nas aulas,
+                acessos a cursos, respostas de formulários, fichas pré-hipnose, avaliações da Roda
+                da Vida e certificados).
+              </span>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              disabled={deletingStudent}
+              className="bg-[#0E1D2F] text-white hover:bg-[#0E1D2F]/80 border-border/50"
+            >
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteStudent}
+              disabled={deletingStudent}
+              className="bg-red-600 text-white hover:bg-red-700 font-semibold"
+            >
+              {deletingStudent && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Confirmar Exclusão
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog
+        open={!!resetConfirmStudent}
+        onOpenChange={(open) => !open && setResetConfirmStudent(null)}
+      >
+        <AlertDialogContent className="bg-[#1F3552] border border-[#0E1D2F] text-white">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-amber-400 flex items-center gap-2">
+              <RotateCcw className="h-5 w-5" /> Zerar "Comece por Aqui"?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-300">
+              Esta ação vai reiniciar o fluxo de boas-vindas do aluno{' '}
+              <strong className="text-white">
+                {resetConfirmStudent?.name || resetConfirmStudent?.email}
+              </strong>
+              .
+              <br />
+              <br />
+              <strong>Serão apagados:</strong>
+              <ul className="list-disc list-inside mt-1 text-sm text-amber-200">
+                <li>Respostas de formulários de onboarding (form_submissions)</li>
+                <li>Ficha pré-hipnose (pre_hypnosis_forms)</li>
+                <li>Avaliação inicial da Roda da Vida (tipo "pre")</li>
+              </ul>
+              <br />
+              <span className="text-green-300 font-medium">
+                Cursos, acessos, progresso de aulas, certificados e quizzes serão mantidos intactos.
+              </span>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              disabled={resettingStudent}
+              className="bg-[#0E1D2F] text-white hover:bg-[#0E1D2F]/80 border-border/50"
+            >
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleResetComecePorAqui}
+              disabled={resettingStudent}
+              className="bg-amber-600 text-white hover:bg-amber-700 font-semibold"
+            >
+              {resettingStudent && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Confirmar e Zerar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
