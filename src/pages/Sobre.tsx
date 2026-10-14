@@ -224,7 +224,7 @@ export default function Sobre() {
         </ScrollFadeIn>
       )}
 
-      {settings?.about_media_visible !== false && mediaMentions.length > 0 && (
+      {settings?.about_media_visible === true && mediaMentions.length > 0 && (
         <ScrollFadeIn>
           <section className="py-20 bg-card/50">
             <div className="max-w-7xl mx-auto px-6">
