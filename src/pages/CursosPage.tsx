@@ -7,7 +7,16 @@ import { getPlatformSettingsPublic } from '@/services/landing'
 import { LandingLayout } from '@/components/LandingLayout'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { ExternalLink, PlayCircle, Lock, Loader2 } from 'lucide-react'
+import {
+  ExternalLink,
+  PlayCircle,
+  Lock,
+  Loader2,
+  Sparkles,
+  GraduationCap,
+  ArrowRight,
+  MessageCircle,
+} from 'lucide-react'
 import { canAccessCourse } from '@/lib/level-access'
 import type { Course, PlatformSettings } from '@/types'
 
@@ -169,8 +178,71 @@ export default function CursosPage() {
                 )
               })
             ) : (
-              <div className="col-span-full text-center py-20 text-muted-foreground">
-                Nenhum curso disponível no momento.
+              <div className="col-span-full">
+                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0E1D2F] to-[#1F3552] border border-[#0E1D2F] p-8 sm:p-12 md:p-16 text-center shadow-xl">
+                  {/* Linha de destaque dourada no topo */}
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#C9A15A] to-transparent" />
+
+                  {/* Efeito de brilho de fundo sutil */}
+                  <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 bg-[#C9A15A]/10 rounded-full blur-3xl pointer-events-none" />
+
+                  {/* Badge de status */}
+                  <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#C9A15A]/15 border border-[#C9A15A]/30 text-[#C9A15A] text-xs sm:text-sm font-semibold mb-8 backdrop-blur-sm">
+                    <Sparkles className="w-4 h-4 text-[#C9A15A]" />
+                    <span>Novidades em Breve</span>
+                  </div>
+
+                  {/* Ícone central elegante */}
+                  <div className="relative mx-auto mb-6 w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-[#0E1D2F] border border-[#0E1D2F] flex items-center justify-center shadow-inner">
+                    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-[#1F3552] border border-[#0E1D2F] flex items-center justify-center">
+                      <GraduationCap
+                        className="w-8 h-8 sm:w-9 sm:h-9 text-[#C9A15A]"
+                        strokeWidth={2}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Título */}
+                  <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4 tracking-tight">
+                    Cursos em desenvolvimento
+                  </h3>
+
+                  {/* Texto descritivo */}
+                  <p className="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed mb-8">
+                    Estamos preparando formações exclusivas para você. Em breve, novos cursos e
+                    metodologias transformadoras estarão disponíveis aqui.
+                  </p>
+
+                  {/* Ações de apoio */}
+                  <div className="flex flex-wrap items-center justify-center gap-4">
+                    <Button
+                      asChild
+                      className="rounded-full bg-[#1F3552] text-white hover:bg-[#1F3552]/80 border border-[#0E1D2F] px-6 py-2.5 font-medium shadow-sm transition-all duration-200"
+                    >
+                      <Link to="/agendar">
+                        Conhecer Hipnoterapia
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </Link>
+                    </Button>
+
+                    {settings?.whatsapp_number && (
+                      <Button
+                        asChild
+                        variant="outline"
+                        className="rounded-full bg-[#0E1D2F] text-white hover:bg-[#0E1D2F]/80 hover:text-white border border-[#0E1D2F] px-6 py-2.5 font-medium transition-all duration-200"
+                      >
+                        <a
+                          href={`https://wa.me/${settings.whatsapp_number.replace(/\D/g, '')}?text=${encodeURIComponent('Olá! Gostaria de saber mais sobre os próximos cursos e formações.')}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <MessageCircle className="mr-2 h-4 w-4 text-[#C9A15A]" />
+                          Falar no WhatsApp
+                        </a>
+                      </Button>
+                    )}
+                  </div>
+                </div>
               </div>
             )}
           </div>
