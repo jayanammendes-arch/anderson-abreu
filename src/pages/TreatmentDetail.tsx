@@ -447,6 +447,45 @@ export default function TreatmentDetail() {
                 style={{ fontSize: `${ctaStyles.content}px` }}
                 dangerouslySetInnerHTML={{ __html: category.cta_text! }}
               />
+              <div className="mt-8 flex justify-center">
+                {(() => {
+                  const ctaBtnText =
+                    settings?.journey_button_text ||
+                    settings?.agendar_sessao_text ||
+                    'Agendar Sessão'
+                  const ctaBtnType = settings?.journey_button_type || 'internal'
+                  const ctaBtnLink = settings?.journey_button_link || '/agendar'
+
+                  if (ctaBtnType === 'whatsapp' && whatsappNumber) {
+                    return (
+                      <Button
+                        size="lg"
+                        className="bg-[#C9A15A] hover:bg-[#b08b47] text-[#0E1D2F] font-semibold rounded-full px-10 py-6 text-lg shadow-lg transition-all hover:scale-105 border-none"
+                        asChild
+                      >
+                        <a
+                          href={`https://wa.me/${whatsappNumber}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <MessageCircle className="mr-2 h-5 w-5" />
+                          {ctaBtnText}
+                        </a>
+                      </Button>
+                    )
+                  }
+
+                  return (
+                    <Button
+                      size="lg"
+                      className="bg-[#C9A15A] hover:bg-[#b08b47] text-[#0E1D2F] font-semibold rounded-full px-10 py-6 text-lg shadow-lg transition-all hover:scale-105 border-none"
+                      onClick={() => navigate(ctaBtnLink)}
+                    >
+                      {ctaBtnText}
+                    </Button>
+                  )
+                })()}
+              </div>
             </div>
           </section>
         </ScrollFadeIn>
