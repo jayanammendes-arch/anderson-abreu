@@ -321,15 +321,17 @@ export function LandingLayout({
             </div>
             <div className="flex flex-col gap-3">
               <h4 className="text-white font-semibold mb-2">Navegação</h4>
-              {navLinks.map((link) => (
-                <button
-                  key={link.name}
-                  onClick={() => handleNavClick(link)}
-                  className="text-white/60 hover:text-white text-sm text-left transition-colors"
-                >
-                  {link.name}
-                </button>
-              ))}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-3">
+                {navLinks.map((link) => (
+                  <button
+                    key={link.name}
+                    onClick={() => handleNavClick(link)}
+                    className="text-white/60 hover:text-white text-sm text-left transition-colors whitespace-nowrap"
+                  >
+                    {link.name}
+                  </button>
+                ))}
+              </div>
             </div>
             <div className="flex flex-col gap-3">
               <h4 className="text-white font-semibold mb-2">Contato</h4>
