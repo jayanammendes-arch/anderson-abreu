@@ -20,6 +20,7 @@ import {
   Contact,
   Sparkles,
   ClipboardList,
+  Instagram,
 } from 'lucide-react'
 
 export interface AdminNavItem {
@@ -172,6 +173,12 @@ export const adminNavGroups: AdminNavGroup[] = [
         href: '/admin/sobre-conteudo',
         icon: Images,
         description: 'Gerenciar galerias e conteúdo da página Sobre',
+      },
+      {
+        title: 'Instagram — Mentoria',
+        href: '/admin/instagram',
+        icon: Instagram,
+        description: 'Gerenciar posts do Instagram exibidos na página Mentoria',
       },
     ],
   },

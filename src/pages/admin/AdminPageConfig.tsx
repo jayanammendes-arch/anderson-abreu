@@ -41,6 +41,7 @@ interface FormState {
   whatsapp_number: string
   contact_phone: string
   instagram_handle: string
+  instagram_url: string
   facebook_url: string
   linkedin_url: string
   youtube_url: string
@@ -135,6 +136,7 @@ const emptyForm: FormState = {
   whatsapp_number: '',
   contact_phone: '',
   instagram_handle: '',
+  instagram_url: '',
   facebook_url: '',
   linkedin_url: '',
   youtube_url: '',
@@ -410,6 +412,7 @@ export default function AdminPageConfig() {
             whatsapp_number: data.whatsapp_number || '',
             contact_phone: data.contact_phone || '',
             instagram_handle: data.instagram_handle || '',
+            instagram_url: data.instagram_url || '',
             facebook_url: data.facebook_url || '',
             linkedin_url: data.linkedin_url || '',
             youtube_url: data.youtube_url || '',
@@ -1112,10 +1115,17 @@ export default function AdminPageConfig() {
                     <Label className="text-base font-semibold">Redes Sociais</Label>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                       <LabeledInput
-                        label="Instagram"
-                        description="Handle do Instagram (ex: @andersonabreu)"
+                        label="Instagram (Handle)"
+                        description="Handle do Instagram (ex: @andersonabreu.expansao)"
                         value={form.instagram_handle}
                         onChange={(v) => set('instagram_handle', v)}
+                      />
+                      <LabeledInput
+                        label="Instagram (URL do Perfil)"
+                        description="Link direto para o perfil oficial no Instagram"
+                        value={form.instagram_url}
+                        onChange={(v) => set('instagram_url', v)}
+                        placeholder="https://instagram.com/andersonabreu.expansao"
                       />
                       <LabeledInput
                         label="Facebook"
@@ -1211,6 +1221,15 @@ export default function AdminPageConfig() {
                 onChange={(v) => set('mentorship_whatsapp_number', v)}
                 placeholder="Ex: 5511999999999"
               />
+              <div className="pt-4 border-t border-border/50">
+                <LabeledInput
+                  label="URL do Perfil do Instagram (Botão 'Seguir')"
+                  description="URL do perfil que abrirá ao clicar no botão 'Seguir no Instagram' da seção Acompanhe no Instagram"
+                  value={form.instagram_url}
+                  onChange={(v) => set('instagram_url', v)}
+                  placeholder="https://instagram.com/andersonabreu.expansao"
+                />
+              </div>
             </CardContent>
           </Card>
         </TabsContent>

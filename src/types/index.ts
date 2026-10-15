@@ -148,6 +148,7 @@ export interface PlatformSettings {
   login_gradient?: string
   whatsapp_number?: string
   instagram_handle?: string
+  instagram_url?: string
   support_email?: string
   agenda_highlight_title?: string
   home_hero_image?: string
@@ -276,6 +277,17 @@ export interface AboutRecommendation {
   video_url: string
   description?: string
   order?: number
+  created?: string
+  updated?: string
+}
+
+export interface InstagramPost {
+  id: string
+  image: string
+  caption?: string
+  post_url: string
+  order?: number
+  is_active?: boolean
   created?: string
   updated?: string
 }

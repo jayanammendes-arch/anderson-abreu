@@ -37,6 +37,7 @@ import AdminCertificates from '@/pages/admin/AdminCertificates'
 import AdminContacts from '@/pages/admin/AdminContacts'
 import AdminCertifications from '@/pages/admin/AdminCertifications'
 import AdminAboutContent from '@/pages/admin/AdminAboutContent'
+import AdminInstagram from '@/pages/admin/AdminInstagram'
 import CrmPage from '@/pages/admin/CrmPage'
 import CrmLeadDetailPage from '@/pages/admin/CrmLeadDetailPage'
 import AdminTreatments from '@/pages/admin/AdminTreatments'
@@ -112,6 +113,7 @@ const App = () => (
               <Route path="contatos" element={<AdminContacts />} />
               <Route path="certificacoes" element={<AdminCertifications />} />
               <Route path="sobre-conteudo" element={<AdminAboutContent />} />
+              <Route path="instagram" element={<AdminInstagram />} />
               <Route path="crm" element={<CrmPage />} />
               <Route path="crm/aluno/:leadId" element={<CrmLeadDetailPage />} />
             </Route>

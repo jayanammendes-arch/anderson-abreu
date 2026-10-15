@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-14T19:56:40.075Z",
+  "generatedAt": "2026-10-15T12:22:04.619Z",
   "collections": [
     {
       "name": "users",
@@ -1288,6 +1288,12 @@
         {
           "name": "mentorship_whatsapp_number",
           "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "instagram_url",
+          "type": "url",
           "required": false,
           "system": false
         }
@@ -3555,6 +3561,67 @@
       "indexes": [
         "CREATE INDEX idx_content_snapshots_record ON content_snapshots (record_id)",
         "CREATE INDEX idx_content_snapshots_created ON content_snapshots (created DESC)"
+      ]
+    },
+    {
+      "name": "instagram_posts",
+      "type": "base",
+      "apiRules": {
+        "list": "",
+        "view": "",
+        "create": "@request.auth.is_admin = true",
+        "update": "@request.auth.is_admin = true",
+        "delete": "@request.auth.is_admin = true"
+      },
+      "fields": [
+        {
+          "name": "image",
+          "type": "file",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "caption",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "post_url",
+          "type": "url",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "order",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "is_active",
+          "type": "bool",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": [
+        "CREATE INDEX idx_instagram_posts_order ON instagram_posts (order)",
+        "CREATE INDEX idx_instagram_posts_active ON instagram_posts (is_active)"
       ]
     }
   ]
