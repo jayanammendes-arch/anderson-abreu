@@ -14,6 +14,16 @@ import {
 import { FormQuestionInput } from '@/components/FormQuestionInput'
 import type { FormQuestion, FormSubmission, FormAnswers, FormConfig } from '@/types'
 
+interface ViaCepResponse {
+  cep?: string
+  logradouro?: string
+  complemento?: string
+  bairro?: string
+  localidade?: string
+  uf?: string
+  erro?: boolean | string
+}
+
 interface Props {
   formId: string
   userId: string
@@ -31,6 +41,11 @@ export function DynamicForm({ formId, userId, onSubmitted }: Props) {
   const [otherValues, setOtherValues] = useState<Record<string, string>>({})
   const [currentStep, setCurrentStep] = useState(0)
   const [stepError, setStepError] = useState<string | null>(null)
+  const [loadingCep, setLoadingCep] = useState(false)
+  const [cepNotice, setCepNotice] = useState<{
+    message: string
+    type: 'success' | 'warning' | 'error'
+  } | null>(null)
 
   useEffect(() => {
     const load = async () => {
@@ -53,9 +68,120 @@ export function DynamicForm({ formId, userId, onSubmitted }: Props) {
     load()
   }, [formId, userId])
 
+  const normalizeText = (txt: string) =>
+    txt
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+
+  const fetchCepAddress = async (rawCep: string) => {
+    const digitsOnly = String(rawCep || '').replace(/\D/g, '')
+    if (digitsOnly.length !== 8) return
+
+    setLoadingCep(true)
+    setCepNotice(null)
+    try {
+      const res = await fetch(`https://viacep.com.br/ws/${digitsOnly}/json/`)
+      if (!res.ok) {
+        setCepNotice({
+          message: 'CEP não encontrado. Por favor, preencha o endereço manualmente.',
+          type: 'warning',
+        })
+        return
+      }
+      const data: ViaCepResponse = await res.json()
+      if (data.erro === true || data.erro === 'true') {
+        setCepNotice({
+          message: 'CEP não encontrado. Por favor, preencha o endereço manualmente.',
+          type: 'warning',
+        })
+        return
+      }
+
+      // Procurar as perguntas de endereço no formulário
+      let ruaQ: FormQuestion | undefined
+      let bairroQ: FormQuestion | undefined
+      let cidadeQ: FormQuestion | undefined
+      let estadoQ: FormQuestion | undefined
+
+      for (const q of questions) {
+        const norm = normalizeText(q.question_text)
+        if (
+          !ruaQ &&
+          (norm.includes('rua') || norm.includes('endereco') || norm.includes('logradouro'))
+        ) {
+          ruaQ = q
+        } else if (!bairroQ && norm.includes('bairro')) {
+          bairroQ = q
+        } else if (!cidadeQ && norm.includes('cidade')) {
+          cidadeQ = q
+        } else if (!estadoQ && (norm.includes('estado') || norm.includes('uf'))) {
+          estadoQ = q
+        }
+      }
+
+      setAnswers((prev) => {
+        const next = { ...prev }
+        if (ruaQ && data.logradouro) {
+          next[ruaQ.id] = data.logradouro
+        }
+        if (bairroQ && data.bairro) {
+          next[bairroQ.id] = data.bairro
+        }
+        if (cidadeQ && data.localidade) {
+          next[cidadeQ.id] = data.localidade
+        }
+        if (estadoQ && data.uf) {
+          next[estadoQ.id] = data.uf
+        }
+        return next
+      })
+
+      setCepNotice({
+        message:
+          'Endereço localizado e preenchido automaticamente! Você pode editá-lo se necessário.',
+        type: 'success',
+      })
+    } catch {
+      setCepNotice({
+        message: 'Não foi possível buscar o CEP automaticamente. Preencha manualmente.',
+        type: 'warning',
+      })
+    } finally {
+      setLoadingCep(false)
+    }
+  }
+
   const setAnswer = (qId: string, val: string | string[] | number) => {
     setAnswers((prev) => ({ ...prev, [qId]: val }))
     setStepError(null)
+
+    // Se for campo de CEP e atingir 8 dígitos, buscar automaticamente
+    const q = questions.find((item) => item.id === qId)
+    if (q) {
+      const norm = normalizeText(q.question_text)
+      if (norm.includes('cep')) {
+        const clean = String(val || '').replace(/\D/g, '')
+        if (clean.length === 8) {
+          fetchCepAddress(clean)
+        } else {
+          setCepNotice(null)
+        }
+      }
+    }
+  }
+
+  const handleBlur = (qId: string) => {
+    const q = questions.find((item) => item.id === qId)
+    if (q) {
+      const norm = normalizeText(q.question_text)
+      if (norm.includes('cep')) {
+        const clean = String(answers[qId] || '').replace(/\D/g, '')
+        if (clean.length === 8 && !loadingCep) {
+          fetchCepAddress(clean)
+        }
+      }
+    }
   }
 
   const validateQuestion = (q: FormQuestion): boolean => {
@@ -196,7 +322,27 @@ export function DynamicForm({ formId, userId, onSubmitted }: Props) {
           otherValue={otherValues[currentQuestion.id]}
           onAnswer={(v) => setAnswer(currentQuestion.id, v)}
           onOtherChange={(v) => setOtherValues((p) => ({ ...p, [currentQuestion.id]: v }))}
+          onBlur={() => handleBlur(currentQuestion.id)}
         />
+
+        {loadingCep && (
+          <div className="flex items-center gap-2 text-xs text-muted-foreground animate-fade-in">
+            <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+            <span>Consultando CEP no ViaCEP...</span>
+          </div>
+        )}
+
+        {cepNotice && (
+          <div
+            className={`text-xs p-2.5 rounded border animate-fade-in ${
+              cepNotice.type === 'success'
+                ? 'bg-green-500/10 border-green-500/20 text-green-700 dark:text-green-400'
+                : 'bg-amber-500/10 border-amber-500/20 text-amber-700 dark:text-amber-400'
+            }`}
+          >
+            {cepNotice.message}
+          </div>
+        )}
 
         {stepError && (
           <div className="flex items-center gap-2 text-sm text-red-500">

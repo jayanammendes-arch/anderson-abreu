@@ -18,6 +18,7 @@ interface Props {
   otherValue?: string
   onAnswer: (val: string | string[] | number) => void
   onOtherChange: (val: string) => void
+  onBlur?: () => void
 }
 
 function shuffleArray<T>(arr: T[]): T[] {
@@ -35,6 +36,7 @@ export function FormQuestionInput({
   otherValue = '',
   onAnswer,
   onOtherChange,
+  onBlur,
 }: Props) {
   const rawOpts = (q.options || []).filter(Boolean)
   const options = q.shuffle_options ? shuffleArray(rawOpts) : rawOpts
@@ -50,12 +52,17 @@ export function FormQuestionInput({
       </Label>
       {q.description && <p className="text-xs text-muted-foreground">{q.description}</p>}
       {q.question_type === 'short_text' && (
-        <Input value={String(answer || '')} onChange={(e) => onAnswer(e.target.value)} />
+        <Input
+          value={String(answer || '')}
+          onChange={(e) => onAnswer(e.target.value)}
+          onBlur={onBlur}
+        />
       )}
       {q.question_type === 'paragraph' && (
         <Textarea
           value={String(answer || '')}
           onChange={(e) => onAnswer(e.target.value)}
+          onBlur={onBlur}
           rows={3}
         />
       )}
