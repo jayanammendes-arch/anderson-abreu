@@ -53,6 +53,24 @@ export default function AdminFormEdit() {
     if (isEdit) loadForm()
   }, [isEdit, loadForm])
 
+  const validateQuestionsList = (qs: FormQuestion[]) => {
+    for (const q of qs) {
+      if (!q.question_text.trim()) {
+        toast.error('Todas as perguntas devem ter texto')
+        return false
+      }
+      if (q.question_type === 'linear_scale') {
+        const sMin = q.scale_min ?? 1
+        const sMax = q.scale_max ?? 5
+        if (sMin >= sMax) {
+          toast.error('Escala linear: mínimo deve ser menor que máximo')
+          return false
+        }
+      }
+    }
+    return true
+  }
+
   const handleSaveForm = async () => {
     if (!title.trim()) {
       toast.error('Título é obrigatório')
@@ -62,8 +80,18 @@ export default function AdminFormEdit() {
     try {
       const data = { title, description, is_active: isActive }
       if (formId) {
+        if (questions.length > 0) {
+          if (!validateQuestionsList(questions)) {
+            setSavingForm(false)
+            return
+          }
+        }
         await updateForm(formId, data)
-        toast.success('Formulário salvo!')
+        if (questions.length > 0) {
+          const result = await bulkSaveFormQuestions(formId, questions)
+          setQuestions(result.questions as FormQuestion[])
+        }
+        toast.success('Formulário e perguntas salvos!')
       } else {
         const created = await createForm(data)
         toast.success('Formulário criado!')
@@ -132,19 +160,8 @@ export default function AdminFormEdit() {
       toast.error('Salve o formulário primeiro')
       return
     }
-    for (const q of questions) {
-      if (!q.question_text.trim()) {
-        toast.error('Todas as perguntas devem ter texto')
-        return
-      }
-      if (q.question_type === 'linear_scale') {
-        const sMin = q.scale_min ?? 1
-        const sMax = q.scale_max ?? 5
-        if (sMin >= sMax) {
-          toast.error('Escala linear: mínimo deve ser menor que máximo')
-          return
-        }
-      }
+    if (!validateQuestionsList(questions)) {
+      return
     }
     setSavingAll(true)
     try {

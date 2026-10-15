@@ -61,7 +61,8 @@ routerAdd(
           record.set('question_type', qType)
           record.set('options', Array.isArray(q.options) ? q.options : [])
           record.set('order', i)
-          record.set('required', q.required !== false)
+          const isReq = q.required === true || q.required === 'true' || q.required === 1
+          record.set('required', isReq)
           record.set('description', q.description || '')
           record.set('shuffle_options', q.shuffle_options === true)
           record.set('scale_min', q.scale_min || 0)

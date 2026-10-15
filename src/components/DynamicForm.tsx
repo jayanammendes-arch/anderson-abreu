@@ -59,7 +59,9 @@ export function DynamicForm({ formId, userId, onSubmitted }: Props) {
   }
 
   const validateQuestion = (q: FormQuestion): boolean => {
-    if (!q.required) return true
+    const isRequired =
+      q.required === true || (q.required as unknown) === 'true' || (q.required as unknown) === 1
+    if (!isRequired) return true
     const val = answers[q.id]
     if (val == null || val === '' || (Array.isArray(val) && val.length === 0)) {
       return false
@@ -183,7 +185,13 @@ export function DynamicForm({ formId, userId, onSubmitted }: Props) {
 
         <FormQuestionInput
           key={currentQuestion.id}
-          question={currentQuestion}
+          question={{
+            ...currentQuestion,
+            required:
+              currentQuestion.required === true ||
+              (currentQuestion.required as unknown) === 'true' ||
+              (currentQuestion.required as unknown) === 1,
+          }}
           answer={answers[currentQuestion.id]}
           otherValue={otherValues[currentQuestion.id]}
           onAnswer={(v) => setAnswer(currentQuestion.id, v)}
